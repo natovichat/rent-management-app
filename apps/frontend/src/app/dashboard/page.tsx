@@ -26,6 +26,7 @@ import PropertyValueChart from '@/components/charts/PropertyValueChart';
 import LeaseExpirationTimeline from '@/components/dashboard/LeaseExpirationTimeline';
 import CashFlowChart from '@/components/dashboard/CashFlowChart';
 import ROIMetricCard from '@/components/dashboard/ROIMetricCard';
+import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
  * Dashboard & Analytics page - Epic 10
@@ -229,37 +230,40 @@ export default function DashboardPage() {
         <Typography variant="h4" component="h1">
           לוח בקרה ואנליטיקה
         </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            variant="outlined"
-            startIcon={<SettingsIcon />}
-            onClick={handleOpenCustomize}
-          >
-            התאם אישית
-          </Button>
-          <Button
-            variant="outlined"
-            startIcon={<DownloadIcon />}
-            onClick={(e) => setExportMenuAnchor(e.currentTarget)}
-            disabled={exporting}
-          >
-            {exporting ? 'מייצא...' : 'ייצא נתונים'}
-          </Button>
-          <Menu
-            anchorEl={exportMenuAnchor}
-            open={Boolean(exportMenuAnchor)}
-            onClose={() => setExportMenuAnchor(null)}
-          >
-            <MenuItem onClick={() => handleExport('excel')}>ייצא דוח כספי ל-Excel</MenuItem>
-            <MenuItem onClick={() => handleExport('pdf')}>ייצא סיכום תיק ל-PDF</MenuItem>
-          </Menu>
-          <Button
-            variant="outlined"
-            startIcon={<LogoutIcon />}
-            onClick={logout}
-          >
-            התנתק
-          </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="outlined"
+              startIcon={<SettingsIcon />}
+              onClick={handleOpenCustomize}
+            >
+              התאם אישית
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              onClick={(e) => setExportMenuAnchor(e.currentTarget)}
+              disabled={exporting}
+            >
+              {exporting ? 'מייצא...' : 'ייצא נתונים'}
+            </Button>
+            <Menu
+              anchorEl={exportMenuAnchor}
+              open={Boolean(exportMenuAnchor)}
+              onClose={() => setExportMenuAnchor(null)}
+            >
+              <MenuItem onClick={() => handleExport('excel')}>ייצא דוח כספי ל-Excel</MenuItem>
+              <MenuItem onClick={() => handleExport('pdf')}>ייצא סיכום תיק ל-PDF</MenuItem>
+            </Menu>
+            <Button
+              variant="outlined"
+              startIcon={<LogoutIcon />}
+              onClick={logout}
+            >
+              התנתק
+            </Button>
+          </Box>
         </Box>
       </Box>
 

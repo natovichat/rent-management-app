@@ -6,6 +6,7 @@ import { Container, Typography, Box } from '@mui/material';
 import { isAuthenticated } from '@/lib/auth';
 import OwnerList from '@/components/owners/OwnerList';
 import { AccountSelector } from '@/components/layout/AccountSelector';
+import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
  * Owners management page.
@@ -39,7 +40,8 @@ export default function OwnersPage() {
             ניהול בעלים, צפייה בפרטים וחיפוש
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
           <AccountSelector />
         </Box>
       </Box>

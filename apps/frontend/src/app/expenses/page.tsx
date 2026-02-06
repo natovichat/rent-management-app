@@ -6,6 +6,7 @@ import { Container, Typography, Box } from '@mui/material';
 import { isAuthenticated } from '@/lib/auth';
 import ExpensesListPage from '@/components/financials/ExpensesListPage';
 import { AccountSelector } from '@/components/layout/AccountSelector';
+import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
  * Expenses management page.
@@ -40,7 +41,8 @@ export default function ExpensesPage() {
             ניהול הוצאות נכסים, צפייה בפרטים וסינון
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
           <AccountSelector />
         </Box>
       </Box>
