@@ -361,26 +361,36 @@ npm install
 npm install --workspaces
 ```
 
-## 🚀 Deployment to Production (GCP)
+## 🚀 Deployment to Production (GCP + Supabase)
 
-This project includes automatic CI/CD deployment to Google Cloud Platform using GitHub Actions.
+This project includes automatic CI/CD deployment using:
+- **Google Cloud Run** - Backend & Frontend hosting
+- **Supabase** - PostgreSQL database (Free tier!)
+- **GitHub Actions** - Automatic deployment pipeline
 
 ### Quick Deploy (5 minutes!)
 
 ```bash
-# 1. Run setup script
-./scripts/setup-gcp.sh
+# 1. Setup GCP (Service Account)
+gcloud auth login
+gcloud config set project calm-armor-616
+# (see full commands in QUICK_DEPLOY.md)
 
-# 2. Add GitHub Secrets (from script output)
+# 2. Setup Supabase (Database - FREE!)
+# Go to: https://supabase.com
+# Create project and get connection string
+
+# 3. Add GitHub Secrets
 # Go to: https://github.com/natovichat/rent-management-app/settings/secrets/actions
 # Add: GCP_SA_KEY, DATABASE_URL, JWT_SECRET
 
-# 3. Push to GitHub (triggers automatic deployment)
+# 4. Push to GitHub (triggers automatic deployment)
 git push origin main
 ```
 
 **📖 Detailed Guides:**
 - [Quick Deploy Guide](docs/QUICK_DEPLOY.md) - 5 minute setup ⚡
+- [Supabase Setup](docs/SUPABASE_SETUP.md) - Database configuration 🗄️
 - [Full Deployment Guide](docs/DEPLOYMENT_GUIDE.md) - Complete documentation 📚
 
 **🎯 Deployment Features:**
@@ -389,6 +399,7 @@ git push origin main
 - ✅ Frontend deployed to Cloud Run
 - ✅ Database migrations run automatically
 - ✅ Zero-downtime deployments
+- 💰 **Free database** with Supabase!
 
 ## 📚 Documentation
 
@@ -396,8 +407,9 @@ git push origin main
 - [Requirements](docs/REQUIRMENTS)
 - [Database Schema](docs/database-schema.mdc)
 - [Rent Application Standards](.cursor/rules/rent-application-standards.mdc)
-- [Deployment Guide](docs/DEPLOYMENT_GUIDE.md) 🆕
-- [Quick Deploy](docs/QUICK_DEPLOY.md) 🆕
+- [Quick Deploy Guide](docs/QUICK_DEPLOY.md) ⚡ - Start here!
+- [Supabase Setup](docs/SUPABASE_SETUP.md) 🗄️ - Free database
+- [Full Deployment Guide](docs/DEPLOYMENT_GUIDE.md) 📚 - Complete docs
 
 ## 🔗 Useful Links
 

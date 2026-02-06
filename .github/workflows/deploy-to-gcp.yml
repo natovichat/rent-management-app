@@ -147,7 +147,7 @@ jobs:
           echo "✅ Frontend deployed to: $URL"
           echo "✅ Backend URL: ${{ steps.backend-url.outputs.url }}"
 
-  # Job 3: Run Database Migrations (optional)
+  # Job 3: Run Database Migrations
   run-migrations:
     name: Run Database Migrations
     runs-on: ubuntu-latest
@@ -177,3 +177,10 @@ jobs:
           cd apps/backend
           npx prisma migrate deploy
           npx prisma generate
+      
+      - name: Show migration status
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          cd apps/backend
+          npx prisma migrate status

@@ -2,28 +2,64 @@
 
 ## 🚀 התחלה מהירה
 
-### שלב 1: הרץ סקריפט Setup (פעם אחת)
+### שלב 1: הגדר GCP (Cloud Run)
 
 ```bash
-# הרץ את סקריפט ההגדרה
-./scripts/setup-gcp.sh
+# התחבר לGCP
+gcloud auth login
+
+# בחר את החשבון האישי: natovichat@gmail.com
+gcloud config set account natovichat@gmail.com
+
+# הגדר את הפרויקט
+gcloud config set project calm-armor-616
+
+# הפעל APIs
+gcloud services enable \
+  cloudbuild.googleapis.com \
+  run.googleapis.com \
+  containerregistry.googleapis.com
+
+# צור Service Account
+gcloud iam service-accounts create github-actions \
+  --display-name="GitHub Actions"
+
+# הענק הרשאות
+SA_EMAIL=$(gcloud iam service-accounts list \
+  --filter="displayName:GitHub Actions" \
+  --format='value(email)')
+
+gcloud projects add-iam-policy-binding calm-armor-616 \
+  --member="serviceAccount:$SA_EMAIL" \
+  --role="roles/run.admin"
+
+gcloud projects add-iam-policy-binding calm-armor-616 \
+  --member="serviceAccount:$SA_EMAIL" \
+  --role="roles/storage.admin"
+
+gcloud projects add-iam-policy-binding calm-armor-616 \
+  --member="serviceAccount:$SA_EMAIL" \
+  --role="roles/iam.serviceAccountUser"
+
+# צור JSON key
+gcloud iam service-accounts keys create ~/gcp-key.json \
+  --iam-account=$SA_EMAIL
 ```
 
-הסקריפט יבצע אוטומטית:
-- ✅ הפעלת APIs נדרשים
-- ✅ יצירת Service Account
-- ✅ הענקת הרשאות
-- ✅ יצירת JSON key
-- ✅ הקמת Cloud SQL database
+### שלב 2: הגדר Supabase (Database) - חינמי! 🎉
 
-### שלב 2: העתק את המפתח ל-GitHub
+1. **עבור ל:** https://supabase.com
+2. **התחבר עם:** GitHub (natovichat@gmail.com)
+3. **צור פרויקט:**
+   - Name: `rent-management-app`
+   - Password: בחר password חזק
+   - Region: `us-east-1`
+   - Plan: **Free** ($0)
+4. **קבל Connection String:**
+   - Settings → Database → Connection string
+   - העתק את ה-URI
 
-```bash
-# הצג את תוכן המפתח
-cat ~/gcp-github-actions-key.json
-
-# העתק את כל התוכן (כולל { } )
-```
+📖 **מדריך מפורט:** [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
 
 ### שלב 3: הוסף Secrets ב-GitHub
 
@@ -32,15 +68,18 @@ cat ~/gcp-github-actions-key.json
 הוסף 3 secrets:
 
 #### 1. GCP_SA_KEY
-```
-# הדבק את כל תוכן הקובץ מהשלב הקודם
+```bash
+# הצג את תוכן המפתח
+cat ~/gcp-key.json
+
+# העתק את כל התוכן (כולל { } )
 ```
 
-#### 2. DATABASE_URL
-```bash
-# הסקריפט הציג את זה - העתק מהפלט
-postgresql://rentapp_user:PASSWORD@IP:5432/rentapp
+#### 2. DATABASE_URL (Supabase!)
 ```
+postgresql://postgres:YOUR_PASSWORD@db.xxxx.supabase.co:5432/postgres
+```
+החלף `YOUR_PASSWORD` בpassword שבחרת ב-Supabase
 
 #### 3. JWT_SECRET
 ```bash
@@ -84,17 +123,21 @@ git push origin main
 
 ## 📋 Checklist
 
-- [ ] הרצתי `./scripts/setup-gcp.sh`
-- [ ] שמרתי את הפלט (passwords, IPs)
-- [ ] העתקתי את `~/gcp-github-actions-key.json`
+- [ ] הגדרתי GCP (Service Account + APIs)
+- [ ] יצרתי `~/gcp-key.json`
+- [ ] נרשמתי ל-Supabase (חינמי!)
+- [ ] יצרתי פרויקט ב-Supabase
+- [ ] שמרתי את Database Password
+- [ ] העתקתי את Supabase Connection String
 - [ ] הוספתי את 3 הsecrets ב-GitHub:
-  - [ ] GCP_SA_KEY
-  - [ ] DATABASE_URL
-  - [ ] JWT_SECRET
+  - [ ] GCP_SA_KEY (מ-`~/gcp-key.json`)
+  - [ ] DATABASE_URL (מSupabase)
+  - [ ] JWT_SECRET (מ-`openssl rand`)
 - [ ] Push לGitHub
 - [ ] ה-workflow עובר בהצלחה
-- [ ] Backend פעיל
-- [ ] Frontend פעיל
+- [ ] Backend פעיל ב-Cloud Run
+- [ ] Frontend פעיל ב-Cloud Run
+- [ ] Migrations רצו בהצלחה
 
 ---
 
@@ -136,8 +179,8 @@ git push origin main
 ## 💰 עלויות
 
 - **Cloud Run:** כמעט חינם (Free tier מכסה רוב השימוש)
-- **Cloud SQL:** ~$10-12/חודש (db-f1-micro)
-- **סה"כ:** ~$10-15/חודש לשימוש רגיל
+- **Supabase Database:** **חינמי!** (Free tier: 500MB storage)
+- **סה"כ:** **$0/חודש** לשימוש רגיל! 🎉
 
 ---
 
