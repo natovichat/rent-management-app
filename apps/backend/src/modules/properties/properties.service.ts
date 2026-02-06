@@ -548,12 +548,12 @@ export class PropertiesService {
     }, 0);
 
     // Calculate total mortgage debt (remaining balance)
-    const totalMortgageDebt = properties.reduce((sum, p) => {
+    const totalMortgageDebt = properties.reduce((sum: number, p) => {
       return (
         sum +
-        p.mortgages.reduce((mortgageSum, m) => {
+        p.mortgages.reduce((mortgageSum: number, m) => {
           // Calculate remaining balance: loanAmount - sum of principal payments
-          const totalPrincipalPaid = m.payments.reduce((paymentSum, payment) => {
+          const totalPrincipalPaid = m.payments.reduce((paymentSum: number, payment) => {
             return paymentSum + Number(payment.principal || 0);
           }, 0);
           const remainingBalance = Number(m.loanAmount) - totalPrincipalPaid;
@@ -563,25 +563,25 @@ export class PropertiesService {
     }, 0);
 
     // Group by property type
-    const propertiesByType = properties.reduce((acc, p) => {
+    const propertiesByType = properties.reduce((acc: Record<string, number>, p) => {
       const type = p.type || 'UNKNOWN';
       acc[type] = (acc[type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     // Group by status
-    const propertiesByStatus = properties.reduce((acc, p) => {
+    const propertiesByStatus = properties.reduce((acc: Record<string, number>, p) => {
       const status = p.status || 'UNKNOWN';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     // Calculate total area
-    const totalArea = properties.reduce((sum, p) => {
+    const totalArea = properties.reduce((sum: number, p) => {
       return sum + (p.totalArea ? Number(p.totalArea) : 0);
     }, 0);
 
-    const landArea = properties.reduce((sum, p) => {
+    const landArea = properties.reduce((sum: number, p) => {
       return sum + (p.landArea ? Number(p.landArea) : 0);
     }, 0);
 
@@ -612,13 +612,13 @@ export class PropertiesService {
       },
     });
 
-    const distributionByType = properties.reduce((acc, p) => {
+    const distributionByType = properties.reduce((acc: Record<string, number>, p) => {
       const type = p.type || 'UNKNOWN';
       acc[type] = (acc[type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const distributionByStatus = properties.reduce((acc, p) => {
+    const distributionByStatus = properties.reduce((acc: Record<string, number>, p) => {
       const status = p.status || 'UNKNOWN';
       acc[status] = (acc[status] || 0) + 1;
       return acc;
@@ -661,7 +661,7 @@ export class PropertiesService {
     });
 
     // Aggregate by date (sum values for same date)
-    const aggregatedByDate = valuations.reduce((acc, v) => {
+    const aggregatedByDate = valuations.reduce((acc: Record<string, number>, v) => {
       const dateKey = v.valuationDate.toISOString().split('T')[0];
       if (!acc[dateKey]) {
         acc[dateKey] = 0;
@@ -672,7 +672,7 @@ export class PropertiesService {
 
     // Convert to array format
     return Object.entries(aggregatedByDate)
-      .map(([date, totalValue]) => ({
+      .map(([date, totalValue]: [string, number]) => ({
         date,
         totalValue: Number(totalValue.toFixed(2)),
       }))
