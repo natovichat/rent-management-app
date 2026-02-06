@@ -198,6 +198,8 @@ export default function NotificationList() {
       headerName: 'נכס',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
       valueGetter: (params) => params.row.lease?.unit?.property?.address || 'לא זמין',
       renderCell: (params) => (
         <Typography
@@ -213,12 +215,16 @@ export default function NotificationList() {
       headerName: 'דייר',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
       valueGetter: (params) => params.row.lease?.tenant?.name || 'לא זמין',
     },
     {
       field: 'type',
       headerName: 'סוג התראה',
       width: 150,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Chip
           label={params.value === 'LEASE_EXPIRING' ? 'חוזה מסתיים' : 'חוזה פג תוקף'}
@@ -239,6 +245,8 @@ export default function NotificationList() {
       field: 'status',
       headerName: 'סטטוס',
       width: 120,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => {
         const statusColors: Record<NotificationStatus, 'default' | 'primary' | 'success' | 'error'> = {
           PENDING: 'default',
@@ -263,6 +271,8 @@ export default function NotificationList() {
       field: 'sentAt',
       headerName: 'תאריך שליחה',
       width: 150,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         if (!params.value) return 'לא נשלח';
         return new Date(params.value).toLocaleDateString('he-IL');
@@ -273,6 +283,8 @@ export default function NotificationList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="view"
@@ -423,14 +435,14 @@ export default function NotificationList() {
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              direction: 'rtl',
             },
             '& .MuiDataGrid-columnHeader': {
-              textAlign: 'right',
-              justifyContent: 'flex-end',
+              direction: 'rtl',
             },
             '& .MuiDataGrid-cell': {
+              direction: 'rtl',
               textAlign: 'right',
-              justifyContent: 'flex-end',
             },
           }}
         />

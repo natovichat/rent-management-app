@@ -71,12 +71,16 @@ export const IncomeList: React.FC<IncomeListProps> = ({
       field: 'incomeDate',
       headerName: 'תאריך',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
     },
     {
       field: 'type',
       headerName: 'סוג',
       width: 120,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Chip
           label={INCOME_TYPE_LABELS[params.value as IncomeType] || params.value}
@@ -90,8 +94,8 @@ export const IncomeList: React.FC<IncomeListProps> = ({
       headerName: 'סכום',
       width: 120,
       type: 'number',
-      align: 'left',
-      headerAlign: 'left',
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatCurrency(params.value),
     },
     {
@@ -99,18 +103,24 @@ export const IncomeList: React.FC<IncomeListProps> = ({
       headerName: 'מקור',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'description',
       headerName: 'תיאור',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'פעולות',
       width: 120,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="edit"
@@ -149,7 +159,20 @@ export const IncomeList: React.FC<IncomeListProps> = ({
             rows={income}
             columns={columns}
             loading={isLoading}
-            sx={{ direction: 'rtl' }}
+            sx={{
+              direction: 'rtl',
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                direction: 'rtl',
+              },
+              '& .MuiDataGrid-columnHeader': {
+                direction: 'rtl',
+              },
+              '& .MuiDataGrid-cell': {
+                direction: 'rtl',
+                textAlign: 'right',
+              },
+            }}
             initialState={{
               pagination: {
                 paginationModel: { pageSize: 10 },

@@ -70,6 +70,8 @@ export default function TenantList() {
       headerName: 'שם',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
       renderCell: (params) => (
         <Button
           onClick={() => router.push(`/tenants/${params.row.id}`)}
@@ -91,17 +93,23 @@ export default function TenantList() {
       headerName: 'אימייל',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'phone',
       headerName: 'טלפון',
       flex: 1,
       minWidth: 120,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'leases',
       headerName: 'חוזים פעילים',
       width: 120,
+      align: 'center',
+      headerAlign: 'center',
       valueGetter: (params) => {
         const leases = params?.value || [];
         return leases.filter((l: any) => l.status === 'ACTIVE').length;
@@ -111,6 +119,8 @@ export default function TenantList() {
       field: 'createdAt',
       headerName: 'תאריך יצירה',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString('he-IL');
       },
@@ -120,6 +130,8 @@ export default function TenantList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="view"
@@ -271,11 +283,17 @@ export default function TenantList() {
             pagination: { paginationModel: { pageSize: 10 } },
           }}
           sx={{
-            '& .MuiDataGrid-cell': {
+            direction: 'rtl',
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: 'rgba(0, 0, 0, 0.05)',
               direction: 'rtl',
             },
             '& .MuiDataGrid-columnHeader': {
               direction: 'rtl',
+            },
+            '& .MuiDataGrid-cell': {
+              direction: 'rtl',
+              textAlign: 'right',
             },
           }}
         />

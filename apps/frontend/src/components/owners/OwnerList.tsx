@@ -97,29 +97,39 @@ export default function OwnerList() {
       headerName: 'שם',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'email',
       headerName: 'אימייל',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'phone',
       headerName: 'טלפון',
       flex: 1,
       minWidth: 120,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'address',
       headerName: 'כתובת',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'ownerships',
       headerName: 'מספר נכסים',
       width: 120,
+      align: 'center',
+      headerAlign: 'center',
       valueGetter: (params) => {
         const ownerships = params?.value || [];
         return ownerships.length;
@@ -129,6 +139,8 @@ export default function OwnerList() {
       field: 'createdAt',
       headerName: 'תאריך יצירה',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
     },
     {
@@ -136,6 +148,8 @@ export default function OwnerList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="edit"
@@ -229,6 +243,14 @@ export default function OwnerList() {
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-cell': {
+              direction: 'rtl',
+              textAlign: 'right',
             },
           }}
           paginationMode="server"

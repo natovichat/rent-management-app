@@ -374,6 +374,8 @@ export default function PropertyList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="view"
@@ -539,28 +541,16 @@ export default function PropertyList() {
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
           sx={{
+            direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              direction: 'rtl',
             },
             '& .MuiDataGrid-columnHeader': {
-              textAlign: 'right',
-              justifyContent: 'flex-end',
-              '& .MuiDataGrid-columnHeaderTitle': {
-                textAlign: 'right',
-                width: '100%',
-              },
-              '& .MuiDataGrid-columnHeaderTitleContainer': {
-                justifyContent: 'flex-end',
-              },
+              direction: 'rtl',
             },
             '& .MuiDataGrid-cell': {
-              textAlign: 'right',
-              justifyContent: 'flex-end',
-              '& > *': {
-                textAlign: 'right',
-              },
-            },
-            '& .MuiDataGrid-cellContent': {
+              direction: 'rtl',
               textAlign: 'right',
             },
           }}

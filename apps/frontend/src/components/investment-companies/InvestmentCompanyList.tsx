@@ -115,24 +115,30 @@ export default function InvestmentCompanyList() {
       headerName: 'שם',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'registrationNumber',
       headerName: 'מספר רישום',
       width: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'country',
       headerName: 'מדינה',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'investmentAmount',
       headerName: 'סכום השקעה',
       width: 150,
       type: 'number',
-      align: 'center',
-      headerAlign: 'center',
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatCurrency(params.value),
     },
     {
@@ -148,6 +154,8 @@ export default function InvestmentCompanyList() {
       field: 'createdAt',
       headerName: 'תאריך יצירה',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
     },
     {
@@ -155,6 +163,8 @@ export default function InvestmentCompanyList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="edit"
@@ -252,6 +262,14 @@ export default function InvestmentCompanyList() {
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-cell': {
+              direction: 'rtl',
+              textAlign: 'right',
             },
           }}
           paginationMode="server"

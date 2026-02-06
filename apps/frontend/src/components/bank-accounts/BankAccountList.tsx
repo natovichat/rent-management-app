@@ -132,22 +132,30 @@ export default function BankAccountList() {
       headerName: 'שם בנק',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'branchNumber',
       headerName: 'מספר סניף',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'accountNumber',
       headerName: 'מספר חשבון',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'accountType',
       headerName: 'סוג',
       width: 100,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Chip
           label={ACCOUNT_TYPE_LABELS[params.value] || params.value}
@@ -160,11 +168,15 @@ export default function BankAccountList() {
       headerName: 'בעל חשבון',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'isActive',
       headerName: 'סטטוס',
       width: 100,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Chip
           label={params.value ? 'פעיל' : 'לא פעיל'}
@@ -177,6 +189,8 @@ export default function BankAccountList() {
       field: 'createdAt',
       headerName: 'תאריך יצירה',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
     },
     {
@@ -184,6 +198,8 @@ export default function BankAccountList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 200,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="toggle"
@@ -295,6 +311,14 @@ export default function BankAccountList() {
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-cell': {
+              direction: 'rtl',
+              textAlign: 'right',
             },
           }}
           initialState={{

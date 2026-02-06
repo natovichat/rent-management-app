@@ -177,6 +177,8 @@ export default function ExpensesListPage() {
       headerName: 'נכס',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
       renderCell: (params) => {
         const property = params.row.property;
         if (!property) return '-';
@@ -198,12 +200,16 @@ export default function ExpensesListPage() {
       field: 'expenseDate',
       headerName: 'תאריך',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
     },
     {
       field: 'type',
       headerName: 'סוג',
       width: 120,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Chip
           label={EXPENSE_TYPE_LABELS[params.value as ExpenseType] || params.value}
@@ -216,14 +222,16 @@ export default function ExpensesListPage() {
       headerName: 'קטגוריה',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'amount',
       headerName: 'סכום',
       width: 120,
       type: 'number',
-      align: 'center',
-      headerAlign: 'center',
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => formatCurrency(params.value),
     },
     {
@@ -231,12 +239,16 @@ export default function ExpensesListPage() {
       headerName: 'תיאור',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'actions',
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="view"
@@ -370,6 +382,14 @@ export default function ExpensesListPage() {
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-cell': {
+              direction: 'rtl',
+              textAlign: 'right',
             },
           }}
           initialState={{

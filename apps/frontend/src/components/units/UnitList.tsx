@@ -217,12 +217,16 @@ export default function UnitList() {
       headerName: 'דירה',
       flex: 1,
       minWidth: 120,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'property',
       headerName: 'נכס',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
       valueGetter: (params) => params.row.property?.address || '',
       renderCell: (params) => params.row.property?.address || '-',
     },
@@ -231,6 +235,8 @@ export default function UnitList() {
       headerName: 'קומה',
       width: 100,
       type: 'number',
+      align: 'center',
+      headerAlign: 'center',
       valueGetter: (params) => params.value ?? '-',
     },
     {
@@ -238,6 +244,8 @@ export default function UnitList() {
       headerName: 'חדרים',
       width: 100,
       type: 'number',
+      align: 'center',
+      headerAlign: 'center',
       valueGetter: (params) => params.value ?? '-',
     },
     {
@@ -245,6 +253,8 @@ export default function UnitList() {
       headerName: 'תאריך יצירה',
       width: 150,
       type: 'dateTime',
+      align: 'right',
+      headerAlign: 'right',
       valueGetter: (params) => new Date(params.value),
     },
     {
@@ -252,6 +262,8 @@ export default function UnitList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => [
         <GridActionsCellItem
           key="view"
@@ -466,11 +478,17 @@ export default function UnitList() {
         autoHeight
         disableRowSelectionOnClick
         sx={{
+          direction: 'rtl',
           '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: 'rgba(0, 0, 0, 0.05)',
+            direction: 'rtl',
+          },
+          '& .MuiDataGrid-columnHeader': {
             direction: 'rtl',
           },
           '& .MuiDataGrid-cell': {
             direction: 'rtl',
+            textAlign: 'right',
           },
         }}
       />

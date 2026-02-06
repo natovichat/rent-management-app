@@ -133,6 +133,8 @@ export default function LeaseList() {
       headerName: 'נכס',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
       valueGetter: (params) => {
         const unit = params?.value;
         if (!unit) return '';
@@ -144,12 +146,16 @@ export default function LeaseList() {
       headerName: 'דייר',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
       valueGetter: (params) => params?.value?.name || '',
     },
     {
       field: 'startDate',
       headerName: 'תאריך התחלה',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString('he-IL');
       },
@@ -158,6 +164,8 @@ export default function LeaseList() {
       field: 'endDate',
       headerName: 'תאריך סיום',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString('he-IL');
       },
@@ -166,6 +174,8 @@ export default function LeaseList() {
       field: 'monthlyRent',
       headerName: 'שכירות חודשית',
       width: 130,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return `₪${Number(params.value).toLocaleString()}`;
       },
@@ -174,6 +184,8 @@ export default function LeaseList() {
       field: 'status',
       headerName: 'סטטוס',
       width: 110,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Chip
           label={getStatusLabel(params.value)}
@@ -187,6 +199,8 @@ export default function LeaseList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => {
         const actions = [
           <GridActionsCellItem
@@ -316,12 +330,14 @@ export default function LeaseList() {
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
-            },
-            '& .MuiDataGrid-cell': {
               direction: 'rtl',
             },
             '& .MuiDataGrid-columnHeader': {
               direction: 'rtl',
+            },
+            '& .MuiDataGrid-cell': {
+              direction: 'rtl',
+              textAlign: 'right',
             },
           }}
           getRowId={(row) => row.id}

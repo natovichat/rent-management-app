@@ -34,6 +34,7 @@ import { useAccount } from '@/contexts/AccountContext';
 import MortgageForm from './MortgageForm';
 import GenericCsvImport from '../import/GenericCsvImport';
 import MortgageFilterPanel from './MortgageFilterPanel';
+import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
  * Get status color for mortgage.
@@ -136,6 +137,8 @@ export default function MortgageList() {
       headerName: 'נכס',
       flex: 1,
       minWidth: 200,
+      align: 'right',
+      headerAlign: 'right',
       valueGetter: (params) => {
         const property = params?.value;
         if (!property) return '';
@@ -147,11 +150,15 @@ export default function MortgageList() {
       headerName: 'בנק',
       flex: 1,
       minWidth: 150,
+      align: 'right',
+      headerAlign: 'right',
     },
     {
       field: 'loanAmount',
       headerName: 'סכום הלוואה',
       width: 150,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return `₪${Number(params.value).toLocaleString()}`;
       },
@@ -160,6 +167,8 @@ export default function MortgageList() {
       field: 'interestRate',
       headerName: 'ריבית (%)',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return params.value ? `${Number(params.value).toFixed(2)}%` : '-';
       },
@@ -168,6 +177,8 @@ export default function MortgageList() {
       field: 'monthlyPayment',
       headerName: 'תשלום חודשי',
       width: 130,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return params.value ? `₪${Number(params.value).toLocaleString()}` : '-';
       },
@@ -176,6 +187,8 @@ export default function MortgageList() {
       field: 'startDate',
       headerName: 'תאריך התחלה',
       width: 120,
+      align: 'right',
+      headerAlign: 'right',
       valueFormatter: (params) => {
         return new Date(params.value).toLocaleDateString('he-IL');
       },
@@ -184,6 +197,8 @@ export default function MortgageList() {
       field: 'status',
       headerName: 'סטטוס',
       width: 110,
+      align: 'center',
+      headerAlign: 'center',
       renderCell: (params) => (
         <Chip
           label={getStatusLabel(params.value)}
@@ -197,6 +212,8 @@ export default function MortgageList() {
       type: 'actions',
       headerName: 'פעולות',
       width: 150,
+      align: 'left',
+      headerAlign: 'left',
       getActions: (params) => {
         const actions = [
           <GridActionsCellItem
@@ -254,22 +271,25 @@ export default function MortgageList() {
         <Typography variant="h4" component="h1">
           משכנתאות והלוואות
         </Typography>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <GenericCsvImport
-            importType="mortgages"
-            entityLabel="משכנתאות"
-            queryKey={['mortgages', selectedAccountId]}
-          />
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => {
-              setSelectedMortgage(null);
-              setOpenDialog(true);
-            }}
-          >
-            משכנתא חדשה
-          </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <GenericCsvImport
+              importType="mortgages"
+              entityLabel="משכנתאות"
+              queryKey={['mortgages', selectedAccountId]}
+            />
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => {
+                setSelectedMortgage(null);
+                setOpenDialog(true);
+              }}
+            >
+              משכנתא חדשה
+            </Button>
+          </Box>
         </Box>
       </Box>
 
@@ -301,6 +321,14 @@ export default function MortgageList() {
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-columnHeader': {
+              direction: 'rtl',
+            },
+            '& .MuiDataGrid-cell': {
+              direction: 'rtl',
+              textAlign: 'right',
             },
           }}
           paginationMode="server"
