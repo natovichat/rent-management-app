@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>דוחות - ניהול תיק נדל"ן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item active">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Breadcrumbs -->
+      <div class="breadcrumbs">
+        <a href="index.html">דשבורד</a>
+        <span class="breadcrumbs-separator">›</span>
+        <span>דוחות</span>
+      </div>
+
+      <h1>דוחות פיננסיים</h1>
+
+      <!-- Available Reports -->
+      <div class="paper">
+        <h2>דוחות זמינים</h2>
+        <div class="divider"></div>
+
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>שם הדוח</th>
+                <th>תיאור</th>
+                <th>תקופה</th>
+                <th>סטטוס</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>דוח הכנסות והוצאות חודשי</strong></td>
+                <td>סיכום הכנסות והוצאות לפי חודש</td>
+                <td>ינואר 2026</td>
+                <td><span class="chip chip-success">מעודכן</span></td>
+                <td>
+                  <button class="btn btn-primary">הצג דוח</button>
+                  <button class="btn btn-secondary">ייצא PDF</button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><strong>דוח רווח והפסד שנתי</strong></td>
+                <td>רווח והפסד כולל לשנת המס</td>
+                <td>2025</td>
+                <td><span class="chip chip-success">מעודכן</span></td>
+                <td>
+                  <button class="btn btn-primary">הצג דוח</button>
+                  <button class="btn btn-secondary">ייצא PDF</button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><strong>דוח תפוסה ותשלומים</strong></td>
+                <td>אחוז תפוסה ותשלומי שכירות לפי נכס</td>
+                <td>ינואר 2026</td>
+                <td><span class="chip chip-warning">דורש עדכון</span></td>
+                <td>
+                  <button class="btn btn-primary">הצג דוח</button>
+                  <button class="btn btn-secondary">ייצא PDF</button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><strong>דוח שערוך נכסים</strong></td>
+                <td>שווי נכסים ושינויים רבעוני</td>
+                <td>Q4 2025</td>
+                <td><span class="chip chip-success">מעודכן</span></td>
+                <td>
+                  <button class="btn btn-primary">הצג דוח</button>
+                  <button class="btn btn-secondary">ייצא PDF</button>
+                </td>
+              </tr>
+
+              <tr>
+                <td><strong>דוח משכנתאות</strong></td>
+                <td>מצב משכנתאות ותשלומים</td>
+                <td>ינואר 2026</td>
+                <td><span class="chip chip-success">מעודכן</span></td>
+                <td>
+                  <button class="btn btn-primary">הצג דוח</button>
+                  <button class="btn btn-secondary">ייצא PDF</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Report Preview: Income & Expenses -->
+      <div class="paper">
+        <h2>דוגמה: דוח הכנסות והוצאות - ינואר 2026</h2>
+        <div class="divider"></div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success">📥</div>
+            <div class="stat-value">₪165,000</div>
+            <div class="stat-label">סה"כ הכנסות</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-error">📤</div>
+            <div class="stat-value">₪73,500</div>
+            <div class="stat-label">סה"כ הוצאות</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-warning">🏦</div>
+            <div class="stat-value">₪45,000</div>
+            <div class="stat-label">תשלומי משכנתא</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success">💰</div>
+            <div class="stat-value">₪91,500</div>
+            <div class="stat-label">רווח נקי</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 32px;">פירוט הכנסות לפי מקור</h3>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>מקור</th>
+                <th>סכום</th>
+                <th>אחוז</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>דמי שכירות</td>
+                <td>₪152,000</td>
+                <td>92.1%</td>
+              </tr>
+              <tr>
+                <td>תשלומי חניה</td>
+                <td>₪8,500</td>
+                <td>5.2%</td>
+              </tr>
+              <tr>
+                <td>דמי ניהול</td>
+                <td>₪4,500</td>
+                <td>2.7%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin-top: 32px;">פירוט הוצאות לפי קטגוריה</h3>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>קטגוריה</th>
+                <th>סכום</th>
+                <th>אחוז</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>תשלומי משכנתא</td>
+                <td>₪45,000</td>
+                <td>61.2%</td>
+              </tr>
+              <tr>
+                <td>תחזוקה ותיקונים</td>
+                <td>₪15,500</td>
+                <td>21.1%</td>
+              </tr>
+              <tr>
+                <td>ארנונה</td>
+                <td>₪8,000</td>
+                <td>10.9%</td>
+              </tr>
+              <tr>
+                <td>ביטוח</td>
+                <td>₪3,500</td>
+                <td>4.8%</td>
+              </tr>
+              <tr>
+                <td>שונות</td>
+                <td>₪1,500</td>
+                <td>2.0%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Report Generation -->
+      <div class="paper">
+        <h2>צור דוח מותאם אישית</h2>
+        <div class="divider"></div>
+
+        <div class="detail-grid">
+          <div class="detail-field">
+            <div class="detail-field-label">סוג דוח</div>
+            <select class="detail-field-value" style="padding: 8px; border: 1px solid var(--divider); border-radius: 4px; width: 100%;">
+              <option>הכנסות והוצאות</option>
+              <option>רווח והפסד</option>
+              <option>תפוסה</option>
+              <option>משכנתאות</option>
+              <option>שערוך נכסים</option>
+            </select>
+          </div>
+
+          <div class="detail-field">
+            <div class="detail-field-label">תקופה</div>
+            <select class="detail-field-value" style="padding: 8px; border: 1px solid var(--divider); border-radius: 4px; width: 100%;">
+              <option>חודש נוכחי</option>
+              <option>רבעון נוכחי</option>
+              <option>שנה נוכחית</option>
+              <option>תקופה מותאמת אישית</option>
+            </select>
+          </div>
+
+          <div class="detail-field">
+            <div class="detail-field-label">פורמט ייצוא</div>
+            <select class="detail-field-value" style="padding: 8px; border: 1px solid var(--divider); border-radius: 4px; width: 100%;">
+              <option>PDF</option>
+              <option>Excel</option>
+              <option>CSV</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <button class="btn btn-primary">צור דוח</button>
+          <button class="btn btn-secondary">איפוס</button>
+        </div>
+      </div>
+
+      <!-- Tax Reports -->
+      <div class="paper">
+        <h2>דוחות מס</h2>
+        <div class="divider"></div>
+
+        <div class="list-item">
+          <div class="list-item-primary">דוח שנתי למס הכנסה - 2025</div>
+          <div class="list-item-secondary">כולל כל ההכנסות וההוצאות המוכרות לצורכי מס</div>
+          <div style="margin-top: 12px;">
+            <button class="btn btn-primary">הצג דוח</button>
+            <button class="btn btn-secondary">ייצא למס הכנסה</button>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">דוח מע"מ - Q4 2025</div>
+          <div class="list-item-secondary">דוח מע"מ רבעוני להגשה לרשויות</div>
+          <div style="margin-top: 12px;">
+            <button class="btn btn-primary">הצג דוח</button>
+            <button class="btn btn-secondary">ייצא למע"מ</button>
+          </div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">דוח מיסוי מקרקעין - 2025</div>
+          <div class="list-item-secondary">דוח למיסוי מקרקעין בגין מכירת נכסים</div>
+          <div style="margin-top: 12px;">
+            <button class="btn btn-primary">הצג דוח</button>
+            <button class="btn btn-secondary">ייצא PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

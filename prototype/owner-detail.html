@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>פרטי בעלים - ניהול תיק נדל"ן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item active">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Breadcrumbs -->
+      <div class="breadcrumbs">
+        <a href="index.html">דשבורד</a>
+        <span class="breadcrumbs-separator">/</span>
+        <a href="owners.html">בעלים</a>
+        <span class="breadcrumbs-separator">/</span>
+        <span>פרטי בעלים</span>
+      </div>
+
+      <div class="detail-header">
+        <h1>אברהם ישראלי</h1>
+        <div>
+          <a href="owners.html" class="btn btn-secondary">← חזרה לרשימה</a>
+          <a href="owner-detail.html" class="btn btn-primary">✏️ ערוך</a>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="paper">
+        <h2>פרטים אישיים</h2>
+        <div class="divider"></div>
+        <div class="detail-grid">
+          <div class="detail-field">
+            <div class="detail-field-label">שם מלא</div>
+            <div class="detail-field-value">אברהם ישראלי</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">תעודת זהות</div>
+            <div class="detail-field-value">111222333</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">מספר נכסים</div>
+            <div class="detail-field-value"><span class="chip chip-info">3</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Properties Owned -->
+      <div class="paper">
+        <h2>נכסים בבעלות</h2>
+        <div class="divider"></div>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>נכס</th>
+                <th>אחוז בעלות</th>
+                <th>שווי משוער</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='property-detail.html?id=1'">
+                <td><a href="property-detail.html?id=1">רח' הרצל 10, תל אביב</a></td>
+                <td>100%</td>
+                <td>₪4,500,000</td>
+                <td><a href="property-detail.html?id=1" class="action-icon">👁️</a></td>
+              </tr>
+              <tr onclick="window.location.href='property-detail.html?id=2'">
+                <td><a href="property-detail.html?id=2">רח' בן יהודה 22, תל אביב</a></td>
+                <td>75%</td>
+                <td>₪2,400,000</td>
+                <td><a href="property-detail.html?id=2" class="action-icon">👁️</a></td>
+              </tr>
+              <tr onclick="window.location.href='property-detail.html?id=3'">
+                <td><a href="property-detail.html?id=3">רח' שאול המלך 45, רמת גן</a></td>
+                <td>50%</td>
+                <td>₪2,800,000</td>
+                <td><a href="property-detail.html?id=3" class="action-icon">👁️</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 16px;">
+          <a href="properties.html?ownerId=1" class="btn btn-secondary">צפה בכל הנכסים</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,621 @@
+
+Running 15 tests using 2 workers
+
+(node:19908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19909) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19909) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19908) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: d468f260-6671-4e23-8f55-84248cf449a2
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Test property created with ID: c82c66d6-b9a3-4dec-acdd-803467d01e68
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-009: View Plot Information ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-001: Navigate to Property Details via URL ===
+→ Navigating to /properties/d468f260-6671-4e23-8f55-84248cf449a2...
+→ Verifying plot information (Gush/Helka) is displayed...
+→ Verifying page loaded...
+✓ Property details page loaded
+✓ Test completed successfully
+
+  ✓   1 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:113:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-001: Navigate to property details page via URL (2.5s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 0fb804ae-7bd6-4ad5-9707-0d1c6f28bf37
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-002: View All Property Fields ===
+→ Verifying property fields are displayed...
+✓ Address displayed
+✓ File number displayed
+✓ Property type displayed
+✓ Property status displayed
+✓ City displayed
+  ✘   2 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:361:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-009: View plot information (if available) (7.6s)
+(node:20175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 96d47ea4-06f1-4787-ad12-912e1d7ebb44
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-009: View Plot Information ===
+  ✘   3 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:129:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-002: View all property fields displayed correctly (7.6s)
+(node:20268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+→ Verifying plot information (Gush/Helka) is displayed...
+(node:20268) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: ee22c726-308d-4838-8108-e733afd97d6a
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-002: View All Property Fields ===
+→ Verifying property fields are displayed...
+✓ Address displayed
+✓ File number displayed
+✓ Property type displayed
+✓ Property status displayed
+✓ City displayed
+  ✘   4 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:361:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-009: View plot information (if available) (retry #1) (7.5s)
+(node:20440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20440) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: cb4835bd-8839-4971-ab9c-2d9d357465f1
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-009: View Plot Information ===
+  ✘   5 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:129:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-002: View all property fields displayed correctly (retry #1) (7.5s)
+(node:20544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20544) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+→ Verifying plot information (Gush/Helka) is displayed...
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 86e17b32-0927-4fe4-8353-58f74407602c
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-002: View All Property Fields ===
+→ Verifying property fields are displayed...
+✓ Address displayed
+✓ File number displayed
+✓ Property type displayed
+✓ Property status displayed
+✓ City displayed
+  ✘   6 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:361:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-009: View plot information (if available) (retry #2) (7.6s)
+(node:20708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 9efcb829-967f-46ad-b44a-1cd7e2e287b2
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-010: View Investment Company ===
+  ✘   7 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:129:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-002: View all property fields displayed correctly (retry #2) (7.9s)
+→ Looking for investment company information...
+✓ Details section accessible (investment company would be shown here if linked)
+✓ Test completed successfully
+
+(node:20816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓   8 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:381:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-010: View investment company (if linked) (2.5s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 3db32bf9-d34f-4397-8610-f946c11056a2
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+(node:20816) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 289ca388-4912-40ad-9792-c953e9daa5c2
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-011: Edit Button Available ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-003: View Related Units ===
+→ Looking for edit button...
+✓ Edit button found
+→ Clicking edit button...
+→ Looking for units tab or section...
+✓ Units tab/section found
+✓ Edit dialog/form opened
+✓ Units section displayed
+✓ Test completed successfully
+
+  ✓  10 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:205:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-003: View related units count and list (3.1s)
+✓ Test completed successfully
+
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: efac65a6-aede-4ebd-8fd0-a40b131ecd52
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+  ✓   9 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:399:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-011: Edit button available and functional (3.8s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 57d43a80-3c3e-409c-8fb9-9ef31482b4ab
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-004: View Ownership Information ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-012: Back Button Returns to List ===
+→ Looking for ownership tab or section...
+✓ Ownership tab found
+✓ Ownership section displayed
+✓ Test completed successfully
+
+  ✓  11 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:233:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-004: View ownership information (if available) (3.0s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: a9e926bb-ca31-40d9-99b5-352ec79da80b
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Looking for back button...
+→ Using browser back button...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-005: View Mortgage Information ===
+✓ Returned to properties list via browser back
+✓ Test completed successfully
+
+  ✓  12 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:436:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-012: Back button returns to list (4.3s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: cd423e46-dc2e-48de-951b-05e0c3f6e487
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Looking for mortgages tab or section...
+✓ Mortgages tab found
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-013: Loading State Displayed ===
+→ Navigating to /properties/cd423e46-dc2e-48de-951b-05e0c3f6e487...
+✓ Mortgages section displayed
+✓ Test completed successfully
+
+  ✓  13 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:260:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-005: View mortgage information (if available) (3.0s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: ee3b398d-9e3a-49cf-aeb6-d2ed311ca1a6
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Checking for loading indicator...
+⚠️ Loading indicator not visible (might be too fast or not implemented)
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-006: View Valuation History ===
+✓ Page content loaded
+✓ Test completed successfully
+
+  ✓  14 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:471:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-013: Shows loading state while fetching (2.7s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: ffe4b9d9-8b3b-4ba2-8952-a4f26663e6ca
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-014: Error State for Not Found ===
+→ Navigating to /properties/00000000-0000-0000-0000-000000000000 (non-existent)...
+→ Looking for financials/valuations tab...
+✓ Financials tab found
+✓ Financials/Valuations section accessible
+✓ Test completed successfully
+
+  ✓  15 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:287:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-006: View valuation history (if available) (3.1s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: ee1c5671-e83f-4316-8b60-881f2e9e5ac8
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Checking for error message...
+✓ Error message displayed
+✓ Test completed successfully
+
+  ✓  16 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:501:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-014: Shows error if property not found (2.5s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 0f636ebc-23b6-4291-8a14-ff98bb387e65
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-007: View Expenses ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-015: Multi-Tenancy Enforcement ===
+→ Attempting to access property from different account...
+→ Property created with ID: 8175e668-c910-4e42-b235-b3d6c6b466a9
+→ Accessing property with test account (should succeed)...
+→ Looking for expenses in financials tab...
+✓ Expenses section accessible in financials tab
+✓ Test completed successfully
+
+  ✓  17 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:315:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-007: View expenses (if available) (3.5s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Property accessible with correct account
+✓ Multi-tenancy verified (property accessible only with correct account)
+✓ Test completed successfully
+
+✓ Test property created with ID: 91420c08-f2e9-47e8-897f-4f907fa2ca16
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+  ✓  18 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:520:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-015: Multi-tenancy enforced (cannot view other account's property) (3.2s)
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-008: View Income ===
+→ Looking for income in financials tab...
+✓ Income section accessible in financials tab
+✓ Test completed successfully
+
+  ✓  19 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:338:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-008: View income (if available) (3.1s)
+
+
+  1) [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:129:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-002: View all property fields displayed correctly 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=ישראל').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=ישראל').first()[22m
+
+
+      162 |     // Verify country is displayed
+      163 |     const country = page.locator('text=ישראל').first();
+    > 164 |     await expect(country).toBeVisible({ timeout: 5000 });
+          |                           ^
+      165 |     console.log('✓ Country displayed');
+      166 |     
+      167 |     // Verify total area is displayed
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.9-view-property-details-e2e.spec.ts:164:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=ישראל').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=ישראל').first()[22m
+
+
+      162 |     // Verify country is displayed
+      163 |     const country = page.locator('text=ישראל').first();
+    > 164 |     await expect(country).toBeVisible({ timeout: 5000 });
+          |                           ^
+      165 |     console.log('✓ Country displayed');
+      166 |     
+      167 |     // Verify total area is displayed
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.9-view-property-details-e2e.spec.ts:164:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry1/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=ישראל').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=ישראל').first()[22m
+
+
+      162 |     // Verify country is displayed
+      163 |     const country = page.locator('text=ישראל').first();
+    > 164 |     await expect(country).toBeVisible({ timeout: 5000 });
+          |                           ^
+      165 |     console.log('✓ Country displayed');
+      166 |     
+      167 |     // Verify total area is displayed
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.9-view-property-details-e2e.spec.ts:164:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry2/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry2/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry2/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.9-view-property-detail-2f560--fields-displayed-correctly-chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:361:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-009: View plot information (if available) 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=12345').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=12345').first()[22m
+
+
+      369 |     // Plot information (Gush/Helka) should be in details tab
+      370 |     const gush = page.locator('text=12345').first();
+    > 371 |     await expect(gush).toBeVisible({ timeout: 5000 });
+          |                        ^
+      372 |     console.log('✓ Gush displayed');
+      373 |     
+      374 |     const helka = page.locator('text=67').first();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.9-view-property-details-e2e.spec.ts:371:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=12345').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=12345').first()[22m
+
+
+      369 |     // Plot information (Gush/Helka) should be in details tab
+      370 |     const gush = page.locator('text=12345').first();
+    > 371 |     await expect(gush).toBeVisible({ timeout: 5000 });
+          |                        ^
+      372 |     console.log('✓ Gush displayed');
+      373 |     
+      374 |     const helka = page.locator('text=67').first();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.9-view-property-details-e2e.spec.ts:371:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry1/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=12345').first()
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=12345').first()[22m
+
+
+      369 |     // Plot information (Gush/Helka) should be in details tab
+      370 |     const gush = page.locator('text=12345').first();
+    > 371 |     await expect(gush).toBeVisible({ timeout: 5000 });
+          |                        ^
+      372 |     console.log('✓ Gush displayed');
+      373 |     
+      374 |     const helka = page.locator('text=67').first();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.9-view-property-details-e2e.spec.ts:371:24
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry2/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry2/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry2/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.9-view-property-detail-77bf1-t-information-if-available--chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2 failed
+    [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:129:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-002: View all property fields displayed correctly 
+    [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:361:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-009: View plot information (if available) 
+  13 passed (47.1s)

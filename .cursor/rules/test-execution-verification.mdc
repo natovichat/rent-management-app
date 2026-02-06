@@ -1,0 +1,491 @@
+# Test Execution Verification - MANDATORY
+
+**CRITICAL**: All tests MUST be executed with proof before marking any feature as production-ready.
+
+## Golden Rule
+
+```
+🚫 "Tests written" ≠ "Tests executed"
+✅ DEMAND EXECUTION PROOF, NOT JUST CODE
+📊 SEPARATE REPORTING BY TEST TYPE
+🔍 VERIFY INFRASTRUCTURE BEFORE TESTING
+```
+
+---
+
+## The Critical Takeaway
+
+**Shift from:**
+- ❌ "Trust that subagents did their job"
+
+**To:**
+- ✅ "Verify with evidence that work was completed"
+
+**"Code review" MUST include "test execution review"!**
+
+---
+
+## Why This Matters
+
+### Real-World Impact: US1.1 Case Study
+
+**What we claimed:**
+- ✅ "39/39 tests passing (100%)"
+- ✅ "Feature approved for production"
+
+**What was actually true:**
+- ✅ 39/39 **backend unit tests** passing
+- ❌ 0/8 **E2E tests** executed (Playwright not installed)
+- ⚠️ E2E test **files** written, but **never ran**
+
+**Result:** Feature marked production-ready with untested UI workflows.
+
+---
+
+## Mandatory Verification Process
+
+### Phase 2: Integration Testing (QA Team)
+
+**OLD Process (Insufficient):**
+```
+Engineer 2: E2E User Flow Tests
+Tasks:
+1. Write E2E test files ✅
+2. Document test scenarios ✅
+3. Create README with instructions ✅
+
+Result: Files exist → Phase 2 "complete" ❌
+```
+
+**NEW Process (Required):**
+```
+Engineer 2: E2E User Flow Tests
+Tasks:
+1. Write E2E test files ✅
+2. Verify test infrastructure:
+   □ Check: npm list @playwright/test
+   □ If missing: npm install -D @playwright/test
+   □ Install browsers: npx playwright install
+   □ Create config: playwright.config.ts
+3. RUN TESTS: npx playwright test 🔥
+4. Capture output/screenshots 🔥
+5. Report: "X/Y tests passing" with proof 🔥
+6. If failures: Debug OR report blockers
+7. Commit: Test code + execution proof
+
+🚨 GATE: Cannot proceed to Phase 3 without execution proof
+```
+
+---
+
+## Required Evidence by Test Type
+
+### 1. Backend Unit Tests
+
+**Evidence Required:**
+```bash
+# Run tests
+npm test
+
+# Capture output showing:
+✅ Test Suites: 5 passed, 5 total
+✅ Tests:       39 passed, 39 total
+✅ Snapshots:   0 total
+✅ Time:        12.345 s
+✅ Coverage:    87.2% statements, 84.1% branches
+
+# Save to file
+npm test > test-results/backend-unit-output.txt
+```
+
+**Report Format:**
+```
+✅ Backend Unit Tests: 39/39 passing (87% coverage)
+📄 Evidence: test-results/backend-unit-output.txt
+```
+
+---
+
+### 2. E2E Tests (Browser-Based)
+
+**Evidence Required:**
+```bash
+# Verify infrastructure
+npm list @playwright/test
+# If missing: npm install -D @playwright/test
+
+# Install browsers
+npx playwright install
+
+# Create config if missing
+# playwright.config.ts
+
+# RUN TESTS
+npx playwright test
+
+# Capture output showing:
+✅ Running 8 tests using 1 worker
+✅ 8 passed (12s)
+
+# Generate report
+npx playwright show-report
+```
+
+**Report Format:**
+```
+✅ E2E Tests: 8/8 passing
+📄 Evidence: playwright-report/index.html
+📸 Screenshots: playwright-report/screenshots/
+🎥 Videos: playwright-report/videos/
+```
+
+---
+
+### 3. API Integration Tests
+
+**Evidence Required:**
+```bash
+# Run integration tests with real backend
+npm run test:integration
+
+# Capture output showing:
+✅ API Integration Tests
+✅ POST /api/properties - Create property: PASS
+✅ GET /api/properties - List properties: PASS
+✅ GET /api/properties/:id - Get property: PASS
+✅ PUT /api/properties/:id - Update property: PASS
+✅ DELETE /api/properties/:id - Delete property: PASS
+✅ 12/12 integration tests passing
+```
+
+**Report Format:**
+```
+✅ API Integration Tests: 12/12 passing
+📄 Evidence: test-results/api-integration-output.txt
+```
+
+---
+
+## Phase 3: Review Verification
+
+### OLD Review Process (Insufficient)
+
+**QA Team Leader Review:**
+```
+✅ Test Coverage: All acceptance criteria are testable
+✅ Test files exist for all user flows
+✅ README documents test execution steps
+
+Approval: ✅ APPROVED FOR PRODUCTION
+```
+
+**Problem:** No verification that tests were **executed**.
+
+---
+
+### NEW Review Process (Required)
+
+**QA Team Leader Review:**
+```
+🔍 TEST EXECUTION VERIFICATION:
+
+Backend Tests:
+□ Test execution log provided?
+□ Pass/fail counts accurate?
+□ Coverage meets 80% threshold?
+Evidence file: test-results/backend-unit-output.txt
+
+E2E Tests:
+□ Test execution report provided?
+□ Infrastructure verified (Playwright installed)?
+□ All tests executed in real browser?
+□ Screenshots/videos captured?
+Evidence file: playwright-report/index.html
+
+API Tests:
+□ Test execution log provided?
+□ All endpoints tested?
+□ Real backend used (not mocked)?
+Evidence file: test-results/api-integration-output.txt
+
+🚨 REJECT IF:
+❌ Tests written but not executed
+❌ Test infrastructure missing
+❌ No execution proof provided
+❌ Execution logs not captured
+
+✅ APPROVE ONLY IF: All execution proof verified
+```
+
+---
+
+## Separate Test Reporting
+
+### ❌ BAD: Aggregate Numbers Hide Problems
+
+```
+🎯 39/39 tests passing (100%)
+```
+
+**Problem:** Doesn't show which test types passed.
+
+---
+
+### ✅ GOOD: Separate Reporting by Type
+
+```
+🎯 Test Results Summary:
+   Backend Unit Tests:    39/39 passing (100%) ✅
+   Backend Integration:   12/12 passing (100%) ✅
+   Frontend E2E:          8/8 passing (100%) ✅
+   Total:                 59/59 passing (100%) ✅
+   
+📊 Coverage:
+   Backend: 87%
+   Frontend: 92%
+```
+
+**Benefit:** Cannot hide untested E2E tests in aggregate numbers.
+
+---
+
+## Infrastructure Verification
+
+### Pre-Flight Check (Before Writing Tests)
+
+**Engineer 2 (E2E Tests) must run:**
+```bash
+#!/bin/bash
+# E2E Infrastructure Check
+
+echo "🔍 Verifying E2E test infrastructure..."
+
+# Check Playwright
+if ! npm list @playwright/test > /dev/null 2>&1; then
+  echo "⚠️  Playwright not installed"
+  echo "Installing: npm install -D @playwright/test"
+  npm install -D @playwright/test
+else
+  echo "✅ Playwright installed"
+fi
+
+# Check browsers
+if [ ! -d "$HOME/Library/Caches/ms-playwright" ]; then
+  echo "⚠️  Browsers not installed"
+  echo "Installing: npx playwright install"
+  npx playwright install
+else
+  echo "✅ Browsers installed"
+fi
+
+# Check config
+if [ ! -f "playwright.config.ts" ]; then
+  echo "⚠️  Config not found - creating..."
+  # Create default config
+  cat > playwright.config.ts << 'EOF'
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  testDir: './test/e2e',
+  fullyParallel: true,
+  use: {
+    baseURL: 'http://localhost:3000',
+  },
+});
+EOF
+  echo "✅ Config created"
+else
+  echo "✅ Config exists"
+fi
+
+echo "✅ Infrastructure ready - proceeding with tests"
+```
+
+---
+
+## Rejection Criteria
+
+### Phase 2 Must Be Rejected If:
+
+1. ❌ **Tests written but not executed**
+   - Test files exist in codebase
+   - No test execution output provided
+   - No pass/fail counts
+
+2. ❌ **Test infrastructure missing**
+   - Playwright not installed
+   - Browsers not installed
+   - Config file missing
+
+3. ❌ **No execution proof**
+   - No test output logs
+   - No screenshots/videos for E2E
+   - No coverage reports
+
+4. ❌ **Aggregate numbers hide gaps**
+   - "39/39 tests passing" without breakdown
+   - E2E tests not included in count
+   - Only backend tests reported
+
+5. ❌ **"Tests pass" without evidence**
+   - Claims tests pass
+   - No execution logs provided
+   - No way to verify claim
+
+---
+
+## Phase Gate Enforcement
+
+### Cannot Proceed to Phase 3 Without:
+
+**Required Documents:**
+- [ ] `test-results/backend-unit-output.txt`
+- [ ] `playwright-report/index.html`
+- [ ] `test-results/api-integration-output.txt`
+- [ ] Separate pass/fail counts by test type
+- [ ] Infrastructure verification checklist
+
+**Required Verification:**
+- [ ] All test files executed (not just written)
+- [ ] All test infrastructure installed
+- [ ] All execution logs captured
+- [ ] All pass/fail counts accurate
+- [ ] No hidden gaps in reporting
+
+**If ANY missing → BLOCK Phase 3**
+
+---
+
+## Implementation Checklist
+
+### For QA Engineers (Phase 2):
+
+**Before starting tests:**
+- [ ] Verify test infrastructure installed
+- [ ] Create infrastructure check script
+- [ ] Document environment setup
+
+**While writing tests:**
+- [ ] Write test files
+- [ ] Run tests continuously during development
+- [ ] Capture execution output
+
+**Before marking Phase 2 complete:**
+- [ ] Run ALL tests one final time
+- [ ] Capture all execution logs
+- [ ] Generate test reports (HTML, JSON)
+- [ ] Take screenshots/videos (E2E)
+- [ ] Document pass/fail counts by type
+- [ ] Commit execution proof files
+
+**Phase 2 Deliverables:**
+- [ ] Test code files
+- [ ] Execution proof (logs, reports, screenshots)
+- [ ] Separate test counts by type
+- [ ] Infrastructure verification document
+
+---
+
+### For Team Leads (Phase 3 Review):
+
+**Before approving Phase 3:**
+- [ ] Verify test execution logs exist
+- [ ] Check test infrastructure verified
+- [ ] Verify pass/fail counts by type
+- [ ] Review screenshots/videos (E2E)
+- [ ] Confirm no aggregate hiding
+- [ ] Demand proof if missing
+
+**Approval Checklist:**
+```
+□ Backend tests executed with proof
+□ E2E tests executed with proof
+□ API tests executed with proof
+□ All infrastructure verified
+□ Separate reporting by type
+□ No execution gaps found
+
+✅ APPROVED only if ALL checked
+```
+
+---
+
+## Quick Reference
+
+### Test Execution Commands
+
+```bash
+# Backend Unit Tests
+npm test
+npm test -- --coverage
+npm test > test-results/backend-unit-output.txt
+
+# E2E Tests (Playwright)
+npx playwright test
+npx playwright test --headed  # See browser
+npx playwright test --ui      # Interactive UI
+npx playwright show-report    # View HTML report
+
+# E2E Tests (Cypress)
+npx cypress run
+npx cypress open  # Interactive mode
+
+# API Integration Tests
+npm run test:integration
+npm run test:e2e
+```
+
+### Evidence Files to Commit
+
+```
+test-results/
+├── backend-unit-output.txt       # npm test output
+├── backend-coverage.json         # Coverage data
+├── api-integration-output.txt    # API test output
+└── playwright-report/
+    ├── index.html                # E2E test report
+    ├── screenshots/              # Test screenshots
+    └── videos/                   # Test videos
+```
+
+---
+
+## Benefits
+
+### For Quality:
+- ✅ Catch integration issues before production
+- ✅ Verify real user workflows work
+- ✅ Build confidence in releases
+
+### For Team:
+- ✅ Clear evidence of testing
+- ✅ No ambiguity about test status
+- ✅ Professional verification process
+
+### For Process:
+- ✅ Prevents "tests written but not run" gaps
+- ✅ Enforces proper verification gates
+- ✅ Maintains production quality standards
+
+---
+
+## Summary
+
+```
+🚫 Tests written ≠ Tests executed
+✅ Demand execution proof
+📊 Separate reporting by type
+🔍 Verify infrastructure first
+🚨 Block Phase 3 without proof
+📁 Commit execution evidence
+```
+
+**This rule ensures production quality by verifying tests were actually run, not just written!**
+
+---
+
+**Rule Status:** ✅ Active  
+**Applies To:** ALL user stories and epics  
+**Enforcement:** MANDATORY - Phase 3 cannot proceed without verification  
+**Created:** February 3, 2026  
+**Based On:** US1.1 lessons learned

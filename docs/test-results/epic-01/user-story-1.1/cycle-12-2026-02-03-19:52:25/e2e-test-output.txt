@@ -1,0 +1,404 @@
+
+Running 8 tests using 2 workers
+(node:7896) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7895) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7896) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7895) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Property type selected: מגוריםסוג נכס
+Property status selected: בבעלותסטטוס
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+Console error: Failed to load resource: the server responded with a status of 404 (Not Found)
+Form submit event: form-submitted
+Mutation pending: false
+×(node:9520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:9604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9520) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:9604) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Property type selected: מגוריםסוג נכס
+Property status selected: בבעלותסטטוס
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+Form submit event: form-submitted
+Mutation pending: false
+×(node:10557) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10557) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:10598) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:10598) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Property type selected: מגוריםסוג נכס
+Property status selected: בבעלותסטטוס
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+Form submit event: form-submitted
+Mutation pending: false
+F(node:11197) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11197) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:11301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+·(node:11301) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+·×(node:11475) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11475) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:11609) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11609) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:11733) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11733) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:11760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11760) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:12232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:12234) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12232) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12234) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:12708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12708) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:12770) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12770) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+·F
+
+  1) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:96:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+
+    TimeoutError: page.waitForResponse: Timeout 15000ms exceeded while waiting for event "response"
+
+      224 |     
+      225 |     // Wait for POST request to /properties to complete
+    > 226 |     const response = await page.waitForResponse(
+          |                                 ^
+      227 |       (response) => response.url().includes('/properties') && response.request().method() === 'POST',
+      228 |       { timeout: 15000 }
+      229 |     );
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:226:33
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForResponse: Timeout 15000ms exceeded while waiting for event "response"
+
+      224 |     
+      225 |     // Wait for POST request to /properties to complete
+    > 226 |     const response = await page.waitForResponse(
+          |                                 ^
+      227 |       (response) => response.url().includes('/properties') && response.request().method() === 'POST',
+      228 |       { timeout: 15000 }
+      229 |     );
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:226:33
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForResponse: Timeout 15000ms exceeded while waiting for event "response"
+
+      224 |     
+      225 |     // Wait for POST request to /properties to complete
+    > 226 |     const response = await page.waitForResponse(
+          |                                 ^
+      227 |       (response) => response.url().includes('/properties') && response.request().method() === 'POST',
+      228 |       { timeout: 15000 }
+      229 |     );
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:226:33
+
+  2) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:250:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+
+    TimeoutError: page.waitForResponse: Timeout 15000ms exceeded while waiting for event "response"
+
+      308 |     // Wait for POST request to /properties to complete
+      309 |     const [response] = await Promise.all([
+    > 310 |       page.waitForResponse(
+          |            ^
+      311 |         (response) => response.url().includes('/properties') && response.request().method() === 'POST',
+      312 |         { timeout: 15000 }
+      313 |       ),
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:310:12
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForResponse: Timeout 15000ms exceeded while waiting for event "response"
+
+      308 |     // Wait for POST request to /properties to complete
+      309 |     const [response] = await Promise.all([
+    > 310 |       page.waitForResponse(
+          |            ^
+      311 |         (response) => response.url().includes('/properties') && response.request().method() === 'POST',
+      312 |         { timeout: 15000 }
+      313 |       ),
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:310:12
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForResponse: Timeout 15000ms exceeded while waiting for event "response"
+
+      308 |     // Wait for POST request to /properties to complete
+      309 |     const [response] = await Promise.all([
+    > 310 |       page.waitForResponse(
+          |            ^
+      311 |         (response) => response.url().includes('/properties') && response.request().method() === 'POST',
+      312 |         { timeout: 15000 }
+      313 |       ),
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:310:12
+
+  3) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:402:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=הנכס נוסף בהצלחה')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('text=הנכס נוסף בהצלחה')[22m
+
+
+      454 |     // Wait for success
+      455 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+    > 456 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+          |                                                         ^
+      457 |     
+      458 |     // Verify property appears in list with special characters preserved
+      459 |     await expect(page.locator(`text=${specialAddress}`)).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:456:57
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=הנכס נוסף בהצלחה')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('text=הנכס נוסף בהצלחה')[22m
+
+
+      454 |     // Wait for success
+      455 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+    > 456 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+          |                                                         ^
+      457 |     
+      458 |     // Verify property appears in list with special characters preserved
+      459 |     await expect(page.locator(`text=${specialAddress}`)).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:456:57
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=הנכס נוסף בהצלחה')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('text=הנכס נוסף בהצלחה')[22m
+
+
+      454 |     // Wait for success
+      455 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+    > 456 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+          |                                                         ^
+      457 |     
+      458 |     // Verify property appears in list with special characters preserved
+      459 |     await expect(page.locator(`text=${specialAddress}`)).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:456:57
+
+  4) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:517:7 › US1.1 - Create Property (TDD) › TC-E2E-006: Navigation - Cancel creation flow 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m2[39m
+
+      542 |     // Verify property was NOT created (check list doesn't have the address)
+      543 |     const addressExists = await page.locator('text=רחוב הרצל 10, תל אביב').count();
+    > 544 |     expect(addressExists).toBe(0);
+          |                           ^
+      545 |     
+      546 |     // Verify no success message
+      547 |     const successMessage = await page.locator('text=הנכס נוסף בהצלחה').count();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:544:27
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m2[39m
+
+      542 |     // Verify property was NOT created (check list doesn't have the address)
+      543 |     const addressExists = await page.locator('text=רחוב הרצל 10, תל אביב').count();
+    > 544 |     expect(addressExists).toBe(0);
+          |                           ^
+      545 |     
+      546 |     // Verify no success message
+      547 |     const successMessage = await page.locator('text=הנכס נוסף בהצלחה').count();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:544:27
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--e252e-tion---Cancel-creation-flow-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--e252e-tion---Cancel-creation-flow-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m2[39m
+
+      542 |     // Verify property was NOT created (check list doesn't have the address)
+      543 |     const addressExists = await page.locator('text=רחוב הרצל 10, תל אביב').count();
+    > 544 |     expect(addressExists).toBe(0);
+          |                           ^
+      545 |     
+      546 |     // Verify no success message
+      547 |     const successMessage = await page.locator('text=הנכס נוסף בהצלחה').count();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:544:27
+
+  5) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:557:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=הנכס נוסף בהצלחה')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('text=הנכס נוסף בהצלחה')[22m
+
+
+      613 |     // Wait for success
+      614 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+    > 615 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+          |                                                         ^
+      616 |     
+      617 |     // Verify property appears in list
+      618 |     await expect(page.locator(`text=${testAddress}`)).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:615:57
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=הנכס נוסף בהצלחה')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('text=הנכס נוסף בהצלחה')[22m
+
+
+      613 |     // Wait for success
+      614 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+    > 615 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+          |                                                         ^
+      616 |     
+      617 |     // Verify property appears in list
+      618 |     await expect(page.locator(`text=${testAddress}`)).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:615:57
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=הנכס נוסף בהצלחה')
+    Expected: visible
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 10000ms[22m
+    [2m  - waiting for locator('text=הנכס נוסף בהצלחה')[22m
+
+
+      613 |     // Wait for success
+      614 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+    > 615 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+          |                                                         ^
+      616 |     
+      617 |     // Verify property appears in list
+      618 |     await expect(page.locator(`text=${testAddress}`)).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:615:57
+
+  5 failed
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:96:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:250:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:402:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:517:7 › US1.1 - Create Property (TDD) › TC-E2E-006: Navigation - Cancel creation flow 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:557:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+  3 passed (2.2m)

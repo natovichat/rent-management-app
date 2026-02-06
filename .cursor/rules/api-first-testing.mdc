@@ -1,0 +1,453 @@
+# API-First Test Design - MANDATORY
+
+**Context**: Prevents tests from failing due to missing API endpoints that tests assume exist.
+
+**Rationale**: Tests should be written based on **implemented** API contracts, not **assumed** contracts.
+
+---
+
+## Golden Rule
+
+```
+🎯 API Contract → Tests → Implementation
+🚫 NEVER write tests that assume endpoints exist
+✅ ALWAYS verify API availability before test implementation
+```
+
+---
+
+## The Problem
+
+### ❌ BAD - Test assumes endpoint exists
+
+```typescript
+// Test written without checking if POST /accounts exists
+test('switching accounts filters properties', async () => {
+  // ❌ Assumes POST /accounts is implemented
+  const account2 = await createTestAccount('Test Account 2');
+  // Runtime: 404 Not Found - endpoint doesn't exist!
+});
+```
+
+**Error**:
+```
+Failed to create test account: 404 Not Found
+```
+
+### ✅ GOOD - Test verifies endpoint availability
+
+```typescript
+// Test checks API availability first
+test('switching accounts filters properties', async () => {
+  // ✅ Check if endpoint exists
+  const canCreateAccounts = await checkEndpointExists('POST', '/accounts');
+  
+  if (canCreateAccounts) {
+    const account2 = await createTestAccount('Test Account 2');
+  } else {
+    console.log('⚠️ POST /accounts not available - using seed accounts');
+    const accounts = await getAllAccounts();
+    expect(accounts.length).toBeGreaterThanOrEqual(2);
+  }
+});
+```
+
+---
+
+## Test Design Workflow
+
+### Phase 0: API Contract Verification (BEFORE writing tests)
+
+**MANDATORY checklist before writing ANY E2E test:**
+
+```typescript
+/**
+ * US1.1.2 Test Requirements
+ * 
+ * Required API Endpoints:
+ * - GET /accounts ✅ (verified - exists)
+ * - POST /accounts ❌ (verified - does NOT exist)
+ * - GET /properties?accountId=X ✅ (verified - exists)
+ * - DELETE /properties/:id ✅ (verified - exists)
+ * 
+ * Decision: 
+ * - Cannot test dynamic account creation
+ * - Solution: Use seed data with 2 pre-created test accounts
+ * - Update prisma/seed.ts to create "Test Account" and "Test Account 2"
+ */
+```
+
+---
+
+## API Contract Validation
+
+### Helper: Check if Endpoint Exists
+
+```typescript
+// test/helpers/api-validator.ts
+export async function checkEndpointExists(
+  method: string,
+  path: string,
+  baseUrl: string = 'http://localhost:3001'
+): Promise<boolean> {
+  try {
+    const testPayload = method === 'POST' ? { test: true } : undefined;
+    
+    const response = await fetch(`${baseUrl}${path}`, {
+      method,
+      headers: testPayload ? { 'Content-Type': 'application/json' } : {},
+      body: testPayload ? JSON.stringify(testPayload) : undefined,
+    });
+    
+    // 404 = endpoint doesn't exist
+    // 400/422 = endpoint exists but bad request
+    // 200/201 = endpoint exists and works
+    return response.status !== 404;
+  } catch (error) {
+    return false;
+  }
+}
+```
+
+### Helper: Validate Multiple Endpoints
+
+```typescript
+export async function validateAPIContract(endpoints: {
+  method: string;
+  path: string;
+  required: boolean;
+  description: string;
+}[]): Promise<{
+  available: { method: string; path: string; description: string }[];
+  missing: { method: string; path: string; description: string }[];
+}> {
+  const available = [];
+  const missing = [];
+  
+  for (const endpoint of endpoints) {
+    const exists = await checkEndpointExists(endpoint.method, endpoint.path);
+    
+    if (exists) {
+      available.push(endpoint);
+    } else {
+      missing.push(endpoint);
+      
+      if (endpoint.required) {
+        throw new Error(
+          `❌ Required endpoint not available: ${endpoint.method} ${endpoint.path}\n` +
+          `Description: ${endpoint.description}\n` +
+          `Cannot run tests without this endpoint.`
+        );
+      }
+    }
+  }
+  
+  return { available, missing };
+}
+```
+
+---
+
+## Test File Template
+
+```typescript
+import { test, expect } from '@playwright/test';
+import { checkEndpointExists, validateAPIContract } from './helpers/api-validator';
+
+const BACKEND_URL = 'http://localhost:3001';
+
+/**
+ * Validate API contract before running tests
+ */
+test.beforeAll(async () => {
+  console.log('=== VALIDATING API CONTRACT ===');
+  
+  const { available, missing } = await validateAPIContract([
+    {
+      method: 'GET',
+      path: '/accounts',
+      required: true,
+      description: 'List all accounts'
+    },
+    {
+      method: 'POST',
+      path: '/accounts',
+      required: false, // Optional - tests adapt if missing
+      description: 'Create new account'
+    },
+    {
+      method: 'POST',
+      path: '/properties',
+      required: true,
+      description: 'Create new property'
+    },
+    {
+      method: 'DELETE',
+      path: '/properties/:id',
+      required: true,
+      description: 'Delete property'
+    },
+  ]);
+  
+  console.log(`✅ Available endpoints: ${available.length}`);
+  if (missing.length > 0) {
+    console.log(`⚠️ Missing optional endpoints: ${missing.length}`);
+    missing.forEach(e => {
+      console.log(`   - ${e.method} ${e.path}: ${e.description}`);
+    });
+  }
+});
+
+test('example test adapts to API availability', async () => {
+  const canCreateAccounts = await checkEndpointExists('POST', '/accounts');
+  
+  if (canCreateAccounts) {
+    // Dynamic strategy
+    const account = await createAccountDynamically();
+  } else {
+    // Seed strategy
+    const account = await getAccountFromSeed();
+  }
+});
+```
+
+---
+
+## Test Data Strategy Decision Matrix
+
+| Scenario | Use Seed Data | Use Dynamic Creation |
+|---|---|---|
+| **API Availability** | CRUD missing | CRUD exists |
+| **Test Isolation** | Reset + seed fast | Creation fast |
+| **Multiple Entities** | Pre-create variants | Create on-demand |
+| **Test Complexity** | Simple scenarios | Complex setups |
+| **Maintenance** | Centralized seed | Distributed tests |
+
+---
+
+## Example: Multi-Account Testing
+
+### Scenario: Need 2 test accounts for filtering tests
+
+#### Strategy 1: Seed Data (when POST /accounts missing)
+
+```typescript
+// prisma/seed.ts
+async function main() {
+  // Create 2 accounts for multi-account testing
+  const account1 = await prisma.account.create({
+    data: {
+      id: 'test-account-1',
+      name: 'Test Account',
+      status: 'ACTIVE',
+    },
+  });
+  
+  const account2 = await prisma.account.create({
+    data: {
+      id: 'test-account-2',
+      name: 'Test Account 2',
+      status: 'ACTIVE',
+    },
+  });
+  
+  console.log('✅ Created 2 test accounts for multi-account testing');
+}
+```
+
+```typescript
+// test/e2e/multi-account.spec.ts
+test.beforeEach(async () => {
+  // Reset DB (seeds both accounts)
+  execSync('npm run db:reset:force');
+  
+  // Fetch account IDs
+  TEST_ACCOUNT_1_ID = await fetchAccountByName('Test Account');
+  TEST_ACCOUNT_2_ID = await fetchAccountByName('Test Account 2');
+});
+
+test('switching accounts filters properties', async () => {
+  // Use pre-seeded accounts
+  await createProperty(TEST_ACCOUNT_1_ID, 'Account 1 Property');
+  await createProperty(TEST_ACCOUNT_2_ID, 'Account 2 Property');
+  
+  // Switch accounts and verify filtering
+  await selectAccount('Test Account');
+  expect(await page.locator('[data-testid="property-row"]').count()).toBe(1);
+  
+  await selectAccount('Test Account 2');
+  expect(await page.locator('[data-testid="property-row"]').count()).toBe(1);
+});
+```
+
+#### Strategy 2: Dynamic Creation (when POST /accounts exists)
+
+```typescript
+// test/e2e/multi-account.spec.ts
+test.beforeEach(async () => {
+  // Reset DB (creates base Test Account)
+  execSync('npm run db:reset:force');
+  TEST_ACCOUNT_1_ID = await fetchAccountByName('Test Account');
+});
+
+test('switching accounts filters properties', async () => {
+  // Create additional account dynamically
+  const account2 = await createTestAccount('Test Account 2');
+  
+  await createProperty(TEST_ACCOUNT_1_ID, 'Account 1 Property');
+  await createProperty(account2.id, 'Account 2 Property');
+  
+  // Switch accounts and verify filtering
+  // ...
+});
+```
+
+---
+
+## Adaptive Test Strategy
+
+```typescript
+// test/helpers/test-data-strategy.ts
+export async function getTestAccountStrategy(): Promise<{
+  strategy: 'seed' | 'dynamic';
+  getAccounts: () => Promise<{ id: string; name: string }[]>;
+}> {
+  const canCreateAccounts = await checkEndpointExists('POST', '/accounts');
+  
+  if (!canCreateAccounts) {
+    console.log('ℹ️ POST /accounts not available - using SEED strategy');
+    
+    return {
+      strategy: 'seed',
+      getAccounts: async () => {
+        // Fetch from seeded data
+        const response = await fetch(`${BACKEND_URL}/accounts`);
+        const accounts = await response.json();
+        
+        if (accounts.length < 2) {
+          throw new Error(
+            'Seed data must provide at least 2 test accounts.\n' +
+            'Update prisma/seed.ts to create "Test Account" and "Test Account 2"'
+          );
+        }
+        
+        return accounts.filter((a: any) => 
+          a.name === 'Test Account' || a.name === 'Test Account 2'
+        );
+      }
+    };
+  } else {
+    console.log('ℹ️ POST /accounts available - using DYNAMIC strategy');
+    
+    return {
+      strategy: 'dynamic',
+      getAccounts: async () => {
+        const account1 = await fetchAccountByName('Test Account');
+        const account2 = await createTestAccount('Test Account 2');
+        
+        return [
+          { id: account1.id, name: 'Test Account' },
+          { id: account2.id, name: 'Test Account 2' }
+        ];
+      }
+    };
+  }
+}
+```
+
+**Usage**:
+```typescript
+test('multi-account filtering', async () => {
+  const { strategy, getAccounts } = await getTestAccountStrategy();
+  const accounts = await getAccounts();
+  
+  console.log(`Using ${strategy} strategy with ${accounts.length} accounts`);
+  
+  // Test continues with available accounts...
+});
+```
+
+---
+
+## Documentation Template
+
+At the top of each test file, document the API contract:
+
+```typescript
+/**
+ * API Contract for US1.1.2 Tests
+ * ================================
+ * 
+ * Required Endpoints (tests will FAIL if missing):
+ * - GET /accounts
+ * - POST /properties
+ * - GET /properties?accountId={id}
+ * - DELETE /properties/:id
+ * 
+ * Optional Endpoints (tests will ADAPT if missing):
+ * - POST /accounts (fallback: use seed data)
+ * 
+ * Seed Data Requirements:
+ * - If POST /accounts missing:
+ *   → prisma/seed.ts must create "Test Account" and "Test Account 2"
+ * 
+ * Last Verified: 2026-02-04
+ */
+```
+
+---
+
+## Migration Path
+
+### Current Situation (2026-02-04)
+
+**US1.1.2 Tests**:
+- ❌ Assume `POST /accounts` exists
+- ❌ Tests fail with 404 Not Found
+- ❌ 2/7 tests failing
+
+**Solution Options**:
+
+#### Option A: Implement Endpoint (Long-term)
+```typescript
+// apps/backend/src/accounts/accounts.controller.ts
+@Post()
+async create(@Body() createAccountDto: CreateAccountDto) {
+  return this.accountsService.create(createAccountDto);
+}
+```
+
+#### Option B: Adapt Tests (Immediate)
+```typescript
+// Update prisma/seed.ts
+// Create 2 accounts instead of 1
+
+// Update tests to use seed strategy
+const accounts = await getAllAccounts();
+expect(accounts).toHaveLength(2);
+```
+
+**Recommendation**: Start with Option B (seed), migrate to Option A when endpoint is implemented.
+
+---
+
+## Benefits
+
+1. **No False Failures**: Tests fail only for real bugs
+2. **Clear Documentation**: API contract visible in test code
+3. **Flexible Tests**: Adapt to API availability
+4. **Early Detection**: Catch missing endpoints before test execution
+5. **Developer Guidance**: Clear error messages explain what's missing
+
+---
+
+## Related Rules
+
+- [E2E Test Infrastructure](mdc:.cursor/rules/e2e-test-infrastructure.mdc)
+- [Test Data Strategy](mdc:.cursor/rules/test-data-strategy.mdc)
+
+---
+
+**Last Updated**: 2026-02-04  
+**Origin**: [Retrospective - Test Execution Issues](mdc:docs/retrospectives/RETRO_TEST_EXECUTION_2026_02_04.md)  
+**Real Issue**: US1.1.2 tests failed because POST /accounts doesn't exist

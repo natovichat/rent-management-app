@@ -1,0 +1,481 @@
+
+Running 8 tests using 2 workers
+(node:31903) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31903) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:31904) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Property type selected: מגוריםסוג נכס
+Property status selected: בבעלותסטטוס
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+=== WAITING FOR FORM TO BE FULLY READY ===
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+=== CLICKING SUBMIT BUTTON ===
+Form submit event: form-submitted
+Mutation pending: false
+✓ POST request detected: 201
+=== WAITING FOR PROPERTY TO APPEAR IN LIST ===
+×(node:33252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:33252) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+⚠️ POST request not detected within timeout
+Property type selected: מגוריםסוג נכס
+Property status selected: בבעלותסטטוס
+×Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+(node:34199) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34199) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+=== WAITING FOR FORM TO BE FULLY READY ===
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+=== CLICKING SUBMIT BUTTON ===
+Form submit event: form-submitted
+Mutation pending: false
+✓ POST request detected: 201
+=== WAITING FOR PROPERTY TO APPEAR IN LIST ===
+×(node:34930) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:34930) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Property type selected: מגוריםסוג נכס
+Property status selected: בבעלותסטטוס
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+=== WAITING FOR FORM TO BE FULLY READY ===
+⚠️ POST request not detected within timeout
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+=== CLICKING SUBMIT BUTTON ===
+Form submit event: form-submitted
+Mutation pending: false
+✓ POST request detected: 201
+=== WAITING FOR PROPERTY TO APPEAR IN LIST ===
+F(node:36220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36220) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:36667) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:36667) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+··✓ POST request detected: 201
+×(node:37554) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:37554) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+⚠️ POST request not detected within timeout
+✓ POST request detected: 201
+×(node:38361) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:38416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38361) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:38416) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:38983) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ POST request detected: 201
+(node:38983) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:39190) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39190) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:39465) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39465) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ POST request detected: 201
+×(node:39692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+F(node:39718) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39692) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:39718) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ POST request detected: 201
+×·(node:40507) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:40507) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ POST request detected: 201
+F
+
+  1) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:103:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 1, תל אביב')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 1, תל אביב') resolved to 4 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(3)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 1, תל אביב')[22m
+
+
+      276 |     // Don't reload - just wait for list to update
+      277 |     console.log('=== WAITING FOR PROPERTY TO APPEAR IN LIST ===');
+    > 278 |     await expect(page.locator('text=רחוב הרצל 1, תל אביב')).toBeVisible({ timeout: 15000 });
+          |                                                             ^
+      279 |   });
+      280 |
+      281 |   // ============================================================================
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:278:61
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 1, תל אביב')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 1, תל אביב') resolved to 4 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(3)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 1, תל אביב')[22m
+
+
+      276 |     // Don't reload - just wait for list to update
+      277 |     console.log('=== WAITING FOR PROPERTY TO APPEAR IN LIST ===');
+    > 278 |     await expect(page.locator('text=רחוב הרצל 1, תל אביב')).toBeVisible({ timeout: 15000 });
+          |                                                             ^
+      279 |   });
+      280 |
+      281 |   // ============================================================================
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:278:61
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 1, תל אביב')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 1, תל אביב') resolved to 4 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 1, תל אביב</button> aka getByRole('button', { name: 'רחוב הרצל 1, תל אביב' }).nth(3)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 1, תל אביב')[22m
+
+
+      276 |     // Don't reload - just wait for list to update
+      277 |     console.log('=== WAITING FOR PROPERTY TO APPEAR IN LIST ===');
+    > 278 |     await expect(page.locator('text=רחוב הרצל 1, תל אביב')).toBeVisible({ timeout: 15000 });
+          |                                                             ^
+      279 |   });
+      280 |
+      281 |   // ============================================================================
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:278:61
+
+  2) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:284:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב דיזנגוף 50, תל אביב')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב דיזנגוף 50, תל אביב')[22m
+
+
+      370 |     
+      371 |     // Verify property in list with all details (wait for list to update)
+    > 372 |     await expect(page.locator('text=רחוב דיזנגוף 50, תל אביב')).toBeVisible({ timeout: 15000 });
+          |                                                                 ^
+      373 |   });
+      374 |
+      375 |   // ============================================================================
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:372:65
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב דיזנגוף 50, תל אביב')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב דיזנגוף 50, תל אביב')[22m
+
+
+      370 |     
+      371 |     // Verify property in list with all details (wait for list to update)
+    > 372 |     await expect(page.locator('text=רחוב דיזנגוף 50, תל אביב')).toBeVisible({ timeout: 15000 });
+          |                                                                 ^
+      373 |   });
+      374 |
+      375 |   // ============================================================================
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:372:65
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב דיזנגוף 50, תל אביב')
+    Expected: visible
+    Timeout: 15000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב דיזנגוף 50, תל אביב')[22m
+
+
+      370 |     
+      371 |     // Verify property in list with all details (wait for list to update)
+    > 372 |     await expect(page.locator('text=רחוב דיזנגוף 50, תל אביב')).toBeVisible({ timeout: 15000 });
+          |                                                                 ^
+      373 |   });
+      374 |
+      375 |   // ============================================================================
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:372:65
+
+  3) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:446:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)') resolved to 4 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(3)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)')[22m
+
+
+      510 |     
+      511 |     // Verify property appears in list with special characters preserved (wait for list to update)
+    > 512 |     await expect(page.locator(`text=${specialAddress}`)).toBeVisible({ timeout: 15000 });
+          |                                                          ^
+      513 |     
+      514 |     // Test another edge case: address with Hebrew quotes
+      515 |     await createButton.click();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:512:58
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)') resolved to 4 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(3)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)')[22m
+
+
+      510 |     
+      511 |     // Verify property appears in list with special characters preserved (wait for list to update)
+    > 512 |     await expect(page.locator(`text=${specialAddress}`)).toBeVisible({ timeout: 15000 });
+          |                                                          ^
+      513 |     
+      514 |     // Test another edge case: address with Hebrew quotes
+      515 |     await createButton.click();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:512:58
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)') resolved to 4 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 10, תל אביב (דירה מס' 45)</button> aka getByRole('button', { name: 'רחוב הרצל 10' }).nth(3)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 15000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 10, תל אביב (דירה מס\' 45)')[22m
+
+
+      510 |     
+      511 |     // Verify property appears in list with special characters preserved (wait for list to update)
+    > 512 |     await expect(page.locator(`text=${specialAddress}`)).toBeVisible({ timeout: 15000 });
+          |                                                          ^
+      513 |     
+      514 |     // Test another edge case: address with Hebrew quotes
+      515 |     await createButton.click();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:512:58
+
+  4) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:570:7 › US1.1 - Create Property (TDD) › TC-E2E-006: Navigation - Cancel creation flow 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m4[39m
+
+      595 |     // Verify property was NOT created (check list doesn't have the address)
+      596 |     const addressExists = await page.locator('text=רחוב הרצל 10, תל אביב').count();
+    > 597 |     expect(addressExists).toBe(0);
+          |                           ^
+      598 |     
+      599 |     // Verify no success message
+      600 |     const successMessage = await page.locator('text=הנכס נוסף בהצלחה').count();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:597:27
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m4[39m
+
+      595 |     // Verify property was NOT created (check list doesn't have the address)
+      596 |     const addressExists = await page.locator('text=רחוב הרצל 10, תל אביב').count();
+    > 597 |     expect(addressExists).toBe(0);
+          |                           ^
+      598 |     
+      599 |     // Verify no success message
+      600 |     const successMessage = await page.locator('text=הנכס נוסף בהצלחה').count();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:597:27
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--e252e-tion---Cancel-creation-flow-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--e252e-tion---Cancel-creation-flow-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: [32m0[39m
+    Received: [31m4[39m
+
+      595 |     // Verify property was NOT created (check list doesn't have the address)
+      596 |     const addressExists = await page.locator('text=רחוב הרצל 10, תל אביב').count();
+    > 597 |     expect(addressExists).toBe(0);
+          |                           ^
+      598 |     
+      599 |     // Verify no success message
+      600 |     const successMessage = await page.locator('text=הנכס נוסף בהצלחה').count();
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:597:27
+
+  5) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:610:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+      683 |     await page.waitForTimeout(1000); // Wait for list to fully render
+      684 |     const newPropertyCount = await page.locator('[data-testid="property-row"]').count();
+    > 685 |     expect(newPropertyCount).toBeGreaterThan(initialPropertyCount);
+          |                              ^
+      686 |     
+      687 |     // Verify property details are visible in list
+      688 |     const propertyRow = page.locator(`text=${testAddress}`).locator('..');
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:685:30
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+      683 |     await page.waitForTimeout(1000); // Wait for list to fully render
+      684 |     const newPropertyCount = await page.locator('[data-testid="property-row"]').count();
+    > 685 |     expect(newPropertyCount).toBeGreaterThan(initialPropertyCount);
+          |                              ^
+      686 |     
+      687 |     // Verify property details are visible in list
+      688 |     const propertyRow = page.locator(`text=${testAddress}`).locator('..');
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:685:30
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mtoBeGreaterThan[2m([22m[32mexpected[39m[2m)[22m
+
+    Expected: > [32m0[39m
+    Received:   [31m0[39m
+
+      683 |     await page.waitForTimeout(1000); // Wait for list to fully render
+      684 |     const newPropertyCount = await page.locator('[data-testid="property-row"]').count();
+    > 685 |     expect(newPropertyCount).toBeGreaterThan(initialPropertyCount);
+          |                              ^
+      686 |     
+      687 |     // Verify property details are visible in list
+      688 |     const propertyRow = page.locator(`text=${testAddress}`).locator('..');
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:685:30
+
+  5 failed
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:103:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:284:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:446:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:570:7 › US1.1 - Create Property (TDD) › TC-E2E-006: Navigation - Cancel creation flow 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:610:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+  3 passed (4.6m)

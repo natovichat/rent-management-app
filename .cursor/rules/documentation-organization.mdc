@@ -1,0 +1,918 @@
+# Documentation Organization Rule - MANDATORY
+
+**CRITICAL**: All documentation files MUST be placed in the correct folder according to their type and purpose.
+
+## Golden Rules
+
+```
+📖 Feature docs → docs/
+📊 Summaries/completions → docs/implementation_summaries/
+📋 Epics/stories → docs/project_management/
+🗂️ Entity models → docs/project_management/entities/
+🧪 Test results → docs/test-results/epic-XX/user-story-X.X/cycle-<index>-<readable-date-time>/
+```
+
+---
+
+## Folder Structure
+
+```
+docs/
+├── implementation_summaries/     # Implementation tracking & summaries
+├── project_management/           # Epics, requirements, templates
+│   └── entities/                 # Entity data models
+├── test-results/                 # Test execution results
+│   ├── epic-01/                  # Epic 01 tests
+│   │   ├── user-story-1.1/       # US1.1 tests
+│   │   │   ├── cycle-1-2026-02-03-14:30:22/  # Test cycle 1 with readable timestamp
+│   │   │   │   ├── backend-unit-output.txt
+│   │   │   │   ├── e2e-test-output.txt
+│   │   │   │   ├── api-integration-output.txt
+│   │   │   │   └── TEST_REPORT.md
+│   │   │   ├── cycle-2-2026-02-03-18:01:45/  # Test cycle 2 (re-run after fixes)
+│   │   │   │   ├── backend-unit-output.txt
+│   │   │   │   ├── e2e-test-output.txt
+│   │   │   │   └── TEST_REPORT.md
+│   │   │   └── latest -> cycle-2-2026-02-03-18:01:45/
+│   │   └── user-story-1.2/
+│   └── epic-02/
+├── Feature documentation         # Feature docs (root level)
+└── Technical guides              # Technical guides (root level)
+```
+
+---
+
+## Decision Tree
+
+### When Creating ANY Documentation File
+
+**Step 1:** What type of document is this?
+
+#### Is it a **completion report** or **implementation summary**?
+- Documents that a feature/epic was **completed**
+- Summarizes **what was implemented**
+- Reports **testing results** or **coverage**
+- Tracks **implementation progress**
+
+**→ Location:** `docs/implementation_summaries/`
+
+**Examples:**
+- `CSV_IMPORT_COMPLETE.md`
+- `FEATURES_SUMMARY.md`
+- `E2E_TESTING_SUMMARY.md`
+- `ACCOUNTS_SUMMARY.md`
+- `PROJECT_SUMMARY.md`
+
+---
+
+#### Is it a **process guide** or **strategy document**?
+- Explains **how to implement** something
+- Describes a **development process**
+- Provides **workflow instructions**
+- Documents **implementation strategies**
+- Contains **overviews** of systems
+
+**→ Location:** `docs/implementation_summaries/`
+
+**Examples:**
+- `EPIC_IMPLEMENTATION_GUIDE.md`
+- `EPIC_UPDATE_STRATEGY.md`
+- `COMPLETE_WORKFLOW_SYSTEM_SUMMARY.md`
+- `DATA_MIGRATION_ROADMAP.md`
+
+---
+
+#### Is it an **epic definition** or **user story**?
+- Defines an **epic** with user stories
+- Contains **acceptance criteria**
+- Lists **technical details** for stories
+- Epic-level **requirements**
+
+**→ Location:** `docs/project_management/`
+
+**Examples:**
+- `EPIC_01_PROPERTY_MANAGEMENT.md`
+- `EPIC_02_UNIT_MANAGEMENT.md`
+- Any file starting with `EPIC_`
+
+---
+
+#### Is it a **general requirement** or **template**?
+- Defines **general requirements** for all features
+- Provides **templates** for user stories
+- Contains **standards** that apply globally
+
+**→ Location:** `docs/project_management/`
+
+**Examples:**
+- `GENERAL_REQUIREMENTS.md`
+- `TESTING_USER_STORY_TEMPLATE.md`
+
+---
+
+#### Is it an **entity data model**?
+- Defines an **entity** structure
+- Documents **database schema**
+- Describes **relationships** between entities
+- Contains **field definitions**
+
+**→ Location:** `docs/project_management/entities/`
+
+**Examples:**
+- `01_Property.md`
+- `02_Owner.md`
+- `03_Mortgage.md`
+
+---
+
+#### Is it **feature documentation**?
+- Documents **how a feature works**
+- Explains **feature functionality**
+- Provides **user guide** for a feature
+- Contains **feature specifications**
+
+**→ Location:** `docs/` (root level)
+
+**Examples:**
+- `BANK_ACCOUNT_MORTGAGE_FEATURE.md`
+- `INLINE_OWNER_CREATION.md`
+- `NAVIGATION_ENHANCEMENT.md`
+- `COLUMN_REORDERING.md`
+
+---
+
+#### Is it a **technical guide** or **component guide**?
+- Explains **how to use** components
+- Provides **technical implementation** details
+- Documents **coding patterns**
+- Contains **developer guides**
+
+**→ Location:** `docs/` (root level)
+
+**Examples:**
+- `COMPONENT_USAGE_GUIDE.md`
+- `INLINE_OWNER_CREATION_GUIDE.md`
+- `MVP_IMPLEMENTATION_GUIDE.md`
+
+---
+
+#### Is it **requirements documentation**?
+- Defines **system requirements**
+- Contains **feature requirements**
+- Documents **business rules**
+
+**→ Location:** `docs/` (root level)
+
+**Examples:**
+- `REQUIRMENTS`
+- `PROPERTY_PLOT_FIELDS.md`
+
+---
+
+#### Is it **design documentation**?
+- Contains **UI mockups**
+- Documents **design patterns**
+- Provides **UX guidelines**
+
+**→ Location:** `docs/` (root level)
+
+**Examples:**
+- `UI_DESIGN_MOCKUPS.md`
+
+---
+
+#### Is it a **migration strategy** or **technical strategy**?
+- Documents **migration approach**
+- Explains **technical strategies**
+- Provides **implementation plans**
+
+**→ Location:** `docs/` (root level)
+
+**Examples:**
+- `MIGRATION_STRATEGY.md`
+- `PROPERTY_PORTFOLIO_IMPLEMENTATION.md`
+
+---
+
+## Quick Reference Matrix
+
+| Document Type | Location | Keywords in Filename/Content |
+|---------------|----------|------------------------------|
+| Completion reports | `implementation_summaries/` | `COMPLETE`, `SUMMARY`, ends with `_SUMMARY.md` |
+| Implementation summaries | `implementation_summaries/` | `FEATURES_SUMMARY`, `TESTING_SUMMARY` |
+| Process guides | `implementation_summaries/` | `GUIDE` + process, `STRATEGY`, `ROADMAP`, `OVERVIEW` |
+| Presentations | `implementation_summaries/` | `PRESENTATION`, `SLIDES` |
+| Epic definitions | `project_management/` | Starts with `EPIC_`, contains user stories |
+| General requirements | `project_management/` | `GENERAL_REQUIREMENTS`, `TEMPLATE` |
+| Entity models | `project_management/entities/` | `01_Property`, numbered entities |
+| Feature docs | `docs/` | `FEATURE`, describes functionality |
+| Technical guides | `docs/` | `GUIDE` + technical, `COMPONENT`, `USAGE` |
+| Requirements | `docs/` | `REQUIRMENTS`, `REQUIREMENTS` (not general) |
+| Design docs | `docs/` | `MOCKUPS`, `DESIGN`, `UI` |
+| Migration strategies | `docs/` | `MIGRATION`, `IMPLEMENTATION` + technical |
+| Test results | `docs/test-results/epic-XX/user-story-X.X/cycle-<index>-<readable-date-time>/` | `*-output.txt`, `TEST_REPORT.md`, test execution logs |
+
+---
+
+## Validation Checklist
+
+Before creating a documentation file, verify:
+
+### ✅ For `docs/implementation_summaries/`:
+- [ ] File reports **completion** of something
+- [ ] File **summarizes** implementations
+- [ ] File describes a **process** or **workflow**
+- [ ] File provides **overview** of system
+- [ ] File is a **presentation** about the system
+- [ ] File tracks **progress** or **status**
+
+### ✅ For `docs/project_management/`:
+- [ ] File defines an **epic** with user stories
+- [ ] File contains **general requirements** for all features
+- [ ] File is a **template** for user stories
+- [ ] File is a **README** for project management
+
+### ✅ For `docs/project_management/entities/`:
+- [ ] File defines an **entity** data model
+- [ ] File documents **database schema**
+- [ ] File is numbered (e.g., `01_`, `02_`)
+
+### ✅ For `docs/` (root):
+- [ ] File documents a **feature** for users/developers
+- [ ] File provides **technical guide** for using features
+- [ ] File defines **feature requirements** (not general)
+- [ ] File contains **design mockups**
+- [ ] File describes **migration strategy** (technical)
+
+---
+
+## Common Mistakes
+
+### ❌ Mistake 1: Putting summaries in `docs/` root
+
+```bash
+# ❌ Wrong
+docs/CSV_IMPORT_COMPLETE.md
+
+# ✅ Correct
+docs/implementation_summaries/CSV_IMPORT_COMPLETE.md
+```
+
+**Reason:** Completion reports are summaries, not feature documentation.
+
+---
+
+### ❌ Mistake 2: Putting feature docs in `implementation_summaries/`
+
+```bash
+# ❌ Wrong
+docs/implementation_summaries/BANK_ACCOUNT_FEATURE.md
+
+# ✅ Correct
+docs/BANK_ACCOUNT_FEATURE.md
+```
+
+**Reason:** Feature documentation belongs in root `docs/`.
+
+---
+
+### ❌ Mistake 3: Putting process guides in `docs/` root
+
+```bash
+# ❌ Wrong
+docs/EPIC_IMPLEMENTATION_GUIDE.md
+
+# ✅ Correct
+docs/implementation_summaries/EPIC_IMPLEMENTATION_GUIDE.md
+```
+
+**Reason:** Process guides are about implementation tracking, not features.
+
+---
+
+### ❌ Mistake 4: Putting epics in `implementation_summaries/`
+
+```bash
+# ❌ Wrong
+docs/implementation_summaries/EPIC_01_PROPERTY_MANAGEMENT.md
+
+# ✅ Correct
+docs/project_management/EPIC_01_PROPERTY_MANAGEMENT.md
+```
+
+**Reason:** Epics belong in `project_management/`.
+
+---
+
+### ❌ Mistake 5: Putting entity models in wrong location
+
+```bash
+# ❌ Wrong
+docs/Property.md
+docs/project_management/Property.md
+
+# ✅ Correct
+docs/project_management/entities/01_Property.md
+```
+
+**Reason:** Entity models have their own subfolder.
+
+---
+
+## Naming Conventions
+
+### Files in `implementation_summaries/`:
+- End with `_SUMMARY.md` for summaries
+- End with `_COMPLETE.md` for completion reports
+- End with `_GUIDE.md` for process guides (e.g., `EPIC_IMPLEMENTATION_GUIDE.md`)
+- End with `_STRATEGY.md` for strategy documents
+- End with `_OVERVIEW.md` for overview documents
+- End with `_ROADMAP.md` for roadmaps
+
+### Files in `project_management/`:
+- Start with `EPIC_` for epic definitions (e.g., `EPIC_01_PROPERTY_MANAGEMENT.md`)
+- `GENERAL_REQUIREMENTS.md` for general requirements
+- `*_TEMPLATE.md` for templates
+
+### Files in `project_management/entities/`:
+- Start with number (e.g., `01_Property.md`, `02_Owner.md`)
+- Use PascalCase for entity names
+
+### Files in `docs/` root:
+- `*_FEATURE.md` for feature documentation
+- `*_GUIDE.md` for technical guides (not process guides)
+- `*_ENHANCEMENT.md` for enhancement documentation
+- `REQUIRMENTS` or `*_REQUIREMENTS.md` for requirements (not general)
+- `*_MOCKUPS.md` or `*_DESIGN.md` for design docs
+
+---
+
+## Examples by Category
+
+### ✅ Completion Reports → `implementation_summaries/`
+```
+CSV_IMPORT_COMPLETE.md
+AUTHENTICATION_COMPLETE.md
+DASHBOARD_COMPLETE.md
+```
+
+### ✅ Implementation Summaries → `implementation_summaries/`
+```
+FEATURES_SUMMARY.md
+E2E_TESTING_SUMMARY.md
+ACCOUNTS_SUMMARY.md
+API_TESTING_SUMMARY.md
+```
+
+### ✅ Process Guides → `implementation_summaries/`
+```
+EPIC_IMPLEMENTATION_GUIDE.md
+TESTING_IMPLEMENTATION_GUIDE.md
+DEPLOYMENT_GUIDE.md
+```
+
+### ✅ Strategy Documents → `implementation_summaries/`
+```
+EPIC_UPDATE_STRATEGY.md
+TESTING_STRATEGY.md
+DEPLOYMENT_STRATEGY.md
+```
+
+### ✅ Overviews → `implementation_summaries/`
+```
+EPICS_OVERVIEW.md
+SYSTEM_OVERVIEW.md
+ARCHITECTURE_OVERVIEW.md
+```
+
+### ✅ Roadmaps → `implementation_summaries/`
+```
+DATA_MIGRATION_ROADMAP.md
+FEATURE_ROADMAP.md
+TESTING_ROADMAP.md
+```
+
+### ✅ Presentations → `implementation_summaries/`
+```
+CURSOR_IDE_PRESENTATION.md
+PROJECT_PRESENTATION.md
+DEMO_PRESENTATION.md
+```
+
+### ✅ Epic Definitions → `project_management/`
+```
+EPIC_01_PROPERTY_MANAGEMENT.md
+EPIC_02_UNIT_MANAGEMENT.md
+EPIC_03_TENANT_MANAGEMENT.md
+```
+
+### ✅ Requirements & Templates → `project_management/`
+```
+GENERAL_REQUIREMENTS.md
+TESTING_USER_STORY_TEMPLATE.md
+README.md
+```
+
+### ✅ Entity Models → `project_management/entities/`
+```
+01_Property.md
+02_Owner.md
+03_Mortgage.md
+```
+
+### ✅ Feature Documentation → `docs/`
+```
+BANK_ACCOUNT_MORTGAGE_FEATURE.md
+INLINE_OWNER_CREATION.md
+NAVIGATION_ENHANCEMENT.md
+COLUMN_REORDERING.md
+```
+
+### ✅ Technical Guides → `docs/`
+```
+COMPONENT_USAGE_GUIDE.md
+INLINE_OWNER_CREATION_GUIDE.md
+MVP_IMPLEMENTATION_GUIDE.md
+```
+
+### ✅ Requirements → `docs/`
+```
+REQUIRMENTS
+PROPERTY_PLOT_FIELDS.md
+```
+
+### ✅ Design Docs → `docs/`
+```
+UI_DESIGN_MOCKUPS.md
+DESIGN_SYSTEM.md
+```
+
+### ✅ Technical Strategies → `docs/`
+```
+MIGRATION_STRATEGY.md
+PROPERTY_PORTFOLIO_IMPLEMENTATION.md
+```
+
+---
+
+## Test Results Organization - MANDATORY
+
+**CRITICAL**: All test execution results MUST be organized by epic, user story, and test cycle index with readable timestamp.
+
+### Test Results Folder Structure
+
+```
+docs/
+└── test-results/
+    ├── epic-01/
+    │   ├── user-story-1.1/
+    │   │   ├── cycle-1-2026-02-03-14:30:22/
+    │   │   │   ├── backend-unit-output.txt
+    │   │   │   ├── e2e-test-output.txt
+    │   │   │   ├── api-integration-output.txt
+    │   │   │   ├── TEST_REPORT.md
+    │   │   │   └── screenshots/
+    │   │   ├── cycle-2-2026-02-03-18:01:45/  # Re-run after bug fixes
+    │   │   │   ├── backend-unit-output.txt
+    │   │   │   ├── e2e-test-output.txt
+    │   │   │   └── TEST_REPORT.md
+    │   │   ├── cycle-3-2026-02-04-09:15:30/  # Re-run after additional fixes
+    │   │   │   ├── backend-unit-output.txt
+    │   │   │   ├── e2e-test-output.txt
+    │   │   │   └── TEST_REPORT.md
+    │   │   └── latest -> cycle-3-2026-02-04-09:15:30/
+    │   ├── user-story-1.2/
+    │   │   └── cycle-1-2026-02-03-15:00:00/
+    │   └── epic-summary/
+    │       └── EPIC_01_TEST_SUMMARY.md
+    ├── epic-02/
+    │   └── user-story-2.1/
+    └── README.md
+```
+
+### Naming Convention
+
+**Test Cycle Folder Format:**
+```
+cycle-<index>-<YYYY-MM-DD-HH:MM:SS>
+```
+
+**Components:**
+- `<index>`: Sequential cycle number (1, 2, 3, ...) - increments with each re-test
+- `<YYYY-MM-DD-HH:MM:SS>`: Readable date and time
+
+**Examples:**
+- `cycle-1-2026-02-03-14:30:22` → Test cycle 1, February 3, 2026 at 14:30:22
+- `cycle-2-2026-02-03-18:01:45` → Test cycle 2 (re-run), February 3, 2026 at 18:01:45
+- `cycle-3-2026-02-04-09:15:30` → Test cycle 3 (second re-run), February 4, 2026 at 09:15:30
+
+**Rationale:**
+- Index helps track how many test cycles were needed (QA re-runs after bug fixes)
+- Readable timestamp format (YYYY-MM-DD-HH:MM:SS) is human-friendly
+- Easy to sort chronologically
+- Clear indication of test iteration history
+- Shows QA-to-Dev feedback loop cycles
+
+**Why Under `docs/` Folder:**
+- Test results are **documentation** of testing efforts
+- Part of the project's **quality assurance documentation**
+- Should be tracked in version control (unlike temporary test artifacts)
+- Provides **historical record** of testing cycles
+- Easy to find alongside other project documentation
+
+**Determining Cycle Index:**
+The cycle index is sequential and increments with each test run:
+- **Cycle 1:** Initial QA test run (Phase 2 first execution)
+- **Cycle 2:** Re-test after dev team fixes bugs from cycle 1
+- **Cycle 3:** Re-test after dev team fixes bugs from cycle 2
+- **Cycle N:** Continue until all tests pass and QA approves
+
+**How to Find Next Index:**
+```bash
+# List existing cycles
+ls -d docs/test-results/epic-01/user-story-1.1/cycle-* 2>/dev/null
+
+# If no cycles exist → Start with cycle-1
+# If cycles exist → Use (highest number + 1)
+
+# Example: If you see cycle-1 and cycle-2, create cycle-3
+```
+
+**Creating Test Cycle Folders:**
+```bash
+# First test run for US1.1 (Cycle 1)
+CYCLE_INDEX=1
+mkdir -p docs/test-results/epic-01/user-story-1.1/cycle-${CYCLE_INDEX}-$(date +%Y-%m-%d-%H:%M:%S)
+
+# Second test run after bug fixes (Cycle 2)
+CYCLE_INDEX=2
+mkdir -p docs/test-results/epic-01/user-story-1.1/cycle-${CYCLE_INDEX}-$(date +%Y-%m-%d-%H:%M:%S)
+
+# Create symlink to latest cycle
+cd docs/test-results/epic-01/user-story-1.1
+ln -sfn cycle-2-2026-02-03-18:01:45 latest
+```
+
+### Required Files in Each Test Cycle
+
+**MANDATORY files in every test cycle folder:**
+
+1. **Backend Test Output** (if applicable)
+   - `backend-unit-output.txt` - Full output from backend unit tests
+   - Must include: pass/fail counts, coverage, errors
+
+2. **E2E Test Output** (if applicable)
+   - `e2e-test-output.txt` - Full output from E2E tests
+   - Must include: pass/fail counts, error messages, traces
+
+3. **API Integration Test Output** (if applicable)
+   - `api-integration-output.txt` - Full output from API tests
+   - Must include: endpoint test results, response codes
+
+4. **Test Report** (MANDATORY)
+   - `TEST_REPORT.md` - Summary of test execution
+   - Must include:
+     - Test execution summary (X/Y passing)
+     - Issues found (critical, major, minor)
+     - Pass/fail decision
+     - Next steps (if failures)
+
+**Optional files:**
+- `screenshots/` - Screenshots from E2E tests
+- `traces/` - Playwright traces
+- `error-logs/` - Detailed error logs
+- `performance-metrics.txt` - Performance test results
+
+### Test Report Template
+
+Every `TEST_REPORT.md` must include:
+
+```markdown
+# Test Report - [Epic XX] [User Story X.X]
+
+**Test Cycle:** YYYY-MM-DD HH:MM:SS
+**Status:** ✅ PASS / ⚠️ CONDITIONAL / ❌ FAIL
+**QA Engineer:** [Name]
+
+---
+
+## Test Results Summary
+
+| Test Type | Total | Passed | Failed | Pass Rate |
+|-----------|-------|--------|--------|-----------|
+| Backend Unit | XX | XX | XX | XX% |
+| E2E | XX | XX | XX | XX% |
+| API Integration | XX | XX | XX | XX% |
+
+**Overall:** XX/XX tests passing (XX%)
+
+---
+
+## Issues Found
+
+### 🔴 Critical Issues (Blockers)
+- [List critical issues or "None"]
+
+### 🟠 Major Issues
+- [List major issues or "None"]
+
+### 🟡 Minor Issues
+- [List minor issues or "None"]
+
+---
+
+## Decision
+
+**Status:** [APPROVED / CONDITIONAL / REJECTED]
+
+**Justification:**
+- [Explain decision based on Phase 3 Quality Gate]
+
+**Next Steps:**
+- [If rejected: What needs to be fixed]
+- [If conditional: What known issues exist]
+- [If approved: Deployment status]
+
+---
+
+## Test Evidence
+
+- Backend: `backend-unit-output.txt`
+- E2E: `e2e-test-output.txt`
+- API: `api-integration-output.txt`
+```
+
+---
+
+## QA-to-Dev Feedback Loop - MANDATORY
+
+**CRITICAL**: When QA tests fail, a mandatory feedback loop must be executed.
+
+### When QA Tests Fail (Phase 2)
+
+**Step 1: QA Team Leader Documents Failures**
+
+QA must create a comprehensive test report in the test cycle folder:
+- Document all failures with reproduction steps
+- Classify bugs by severity (Critical, Major, Minor)
+- Create `TEST_REPORT.md` with all findings
+- Save all test outputs (`*-output.txt` files)
+
+**Step 2: QA Requests Dev Team Review**
+
+QA Team Leader MUST explicitly ask Dev Team to review:
+
+```
+⚠️ QA to Dev Team:
+
+Test cycle FAILED. Please review test results:
+
+Location: docs/test-results/epic-01/user-story-1.1/cycle-1-2026-02-03-14:30:22/
+Report: TEST_REPORT.md
+Outputs: 
+  - backend-unit-output.txt (155/159 passing)
+  - e2e-test-output.txt (2/8 passing)
+
+Critical Issues:
+1. [Issue description]
+2. [Issue description]
+
+Major Issues:
+1. [Issue description]
+
+Please review, fix issues, and notify QA when ready for re-testing.
+```
+
+**Step 3: Dev Team Reviews and Fixes**
+
+Dev team must:
+1. Read the `TEST_REPORT.md`
+2. Review all test outputs
+3. Analyze failures and identify root causes
+4. Fix identified issues (return to Phase 1)
+5. Commit fixes with clear messages
+6. Notify QA team when ready for re-testing
+
+**Step 4: Loop Back to Phase 2**
+
+After dev team fixes:
+1. QA re-runs FULL test suite (Phase 2 again)
+2. QA creates NEW test cycle folder with timestamp
+3. QA compares results with previous cycle
+4. QA makes new Pass/Fail decision
+
+**Step 5: Repeat Until All Tests Pass**
+
+This loop continues until:
+- ✅ All critical bugs resolved
+- ✅ All major bugs resolved or documented
+- ✅ Test pass rate meets requirements
+- ✅ Phase 3 Quality Gate criteria met
+
+### Test Cycle Comparison
+
+Each test cycle should reference previous cycles:
+
+```markdown
+## Comparison with Previous Cycle
+
+**Previous Cycle:** cycle-1-2026-02-03-14:30:22
+**Current Cycle:** cycle-2-2026-02-03-18:01:45
+
+| Test Type | Previous | Current | Change |
+|-----------|----------|---------|--------|
+| Backend Unit | 155/159 | 159/159 | ✅ +4 |
+| E2E | 2/8 | 8/8 | ✅ +6 |
+| API Integration | 12/15 | 15/15 | ✅ +3 |
+
+**Issues Resolved:**
+- ✅ Fixed: Authentication flow
+- ✅ Fixed: Button selectors
+- ✅ Fixed: Form field visibility
+
+**Remaining Issues:**
+- None (all resolved)
+```
+
+---
+
+## Test Results Checklist
+
+Before proceeding from Phase 2 to Phase 3:
+
+### ✅ Test Execution Verification:
+- [ ] Test cycle folder created with timestamp
+- [ ] All test outputs saved (`*-output.txt`)
+- [ ] `TEST_REPORT.md` created with full details
+- [ ] Pass/fail counts documented for each test type
+- [ ] All failures documented with reproduction steps
+- [ ] Bug severity classifications assigned
+
+### ✅ QA-to-Dev Communication (if failures):
+- [ ] Dev team explicitly notified of failures
+- [ ] Test results location shared with dev team
+- [ ] Clear list of issues provided
+- [ ] Dev team acknowledged and reviewing
+
+### ✅ Re-test Loop (if needed):
+- [ ] New test cycle folder created after fixes
+- [ ] Full test suite re-executed
+- [ ] Comparison with previous cycle documented
+- [ ] Resolved issues verified as fixed
+- [ ] New issues (if any) documented
+
+### ✅ Phase 3 Readiness:
+- [ ] All critical bugs resolved
+- [ ] All major bugs resolved or documented
+- [ ] Test pass rate meets requirements
+- [ ] `TEST_REPORT.md` shows PASS or CONDITIONAL status
+- [ ] Phase 3 Quality Gate criteria verified
+
+---
+
+## Test Results Location Enforcement
+
+**MANDATORY Rules:**
+
+1. **Never Store Test Results in:**
+   - ❌ `~/Code/tmp/` (wrong location)
+   - ❌ `docs/` (not for test outputs)
+   - ❌ `apps/backend/test/` (source code location)
+   - ❌ Project root (keep root clean)
+
+2. **Always Store Test Results in:**
+   - ✅ `docs/test-results/epic-XX/user-story-X.X/cycle-<index>-<YYYY-MM-DD-HH:MM:SS>/`
+
+3. **Test Cycle Folder Must Contain:**
+   - ✅ All test execution outputs (`.txt` files)
+   - ✅ `TEST_REPORT.md` with summary and decision
+   - ✅ Evidence files (screenshots, traces)
+
+4. **QA Must:**
+   - ✅ Create new test cycle folder for EACH test run
+   - ✅ Save ALL outputs (don't overwrite)
+   - ✅ Document ALL findings in `TEST_REPORT.md`
+   - ✅ Request dev team review if tests fail
+   - ✅ Loop back to Phase 2 after fixes
+
+---
+
+## Enforcement
+
+### When Creating New Documentation
+
+**MANDATORY**: Before creating any `.md` file in `docs/`:
+
+1. **Determine document type** using decision tree above
+2. **Check location** according to type
+3. **Verify naming convention** matches location
+4. **Create file** in correct location
+
+### When Moving Existing Documentation
+
+**MANDATORY**: Before moving any `.md` file:
+
+1. **Analyze current location** - Is it correct?
+2. **Determine correct location** using decision tree
+3. **Move file** if in wrong location
+4. **Update internal links** if necessary
+
+---
+
+## Auto-Detection Keywords
+
+### 🔍 Indicators for `implementation_summaries/`:
+
+**In filename:**
+- `SUMMARY`, `COMPLETE`, `OVERVIEW`, `STRATEGY`, `ROADMAP`, `GUIDE` (process), `PRESENTATION`
+
+**In content:**
+- "implementation complete"
+- "features implemented"
+- "testing summary"
+- "workflow system"
+- "implementation guide"
+- "status update"
+- "completion report"
+
+### 🔍 Indicators for `project_management/`:
+
+**In filename:**
+- Starts with `EPIC_`
+- `GENERAL_REQUIREMENTS`
+- `TEMPLATE`
+
+**In content:**
+- "### US" (user stories)
+- "Acceptance Criteria"
+- "Epic Overview"
+
+### 🔍 Indicators for `project_management/entities/`:
+
+**In filename:**
+- Starts with number (`01_`, `02_`)
+- Entity names (`Property`, `Owner`, `Mortgage`)
+
+**In content:**
+- "Entity Definition"
+- "Database Schema"
+- "Fields:"
+- "Relationships:"
+
+### 🔍 Indicators for `docs/` (root):
+
+**In filename:**
+- `FEATURE`, `ENHANCEMENT`, `MOCKUPS`, `DESIGN`
+- `GUIDE` (not process guide)
+- `REQUIRMENTS`, `REQUIREMENTS` (not general)
+
+**In content:**
+- "Feature Documentation"
+- "How to Use"
+- "Component Guide"
+- "UI Design"
+
+---
+
+## Related Rules
+
+- **Repository Structure** - Where files go in general
+- **Project Files Only** - All files in project directory
+- **Task File Organization** - Task-related files organization
+- **Test Execution Verification** - Mandatory test execution proof
+- **Feature Development Workflow** - 4-phase workflow with QA gates
+
+---
+
+## Reference
+
+For complete documentation organization guide, see:
+- `@docs/DOCUMENTATION_ORGANIZATION.md`
+- `@docs/implementation_summaries/README.md`
+- `@docs/implementation_summaries/REORGANIZATION_COMPLETE.md`
+
+For test execution requirements, see:
+- `@.cursor/rules/test-execution-verification.mdc`
+- `@.cursor/skills/implement-user-story/SKILL.md` (Phase 2 & 3)
+
+---
+
+## Summary
+
+```
+📊 Summaries/completions → implementation_summaries/
+📋 Epics/requirements → project_management/
+🗂️ Entity models → project_management/entities/
+📖 Features/guides → docs/ (root)
+🧪 Test results → docs/test-results/epic-XX/user-story-X.X/cycle-<index>-<readable-date-time>/
+```
+
+**Every documentation file has a proper place. Use the decision tree to find it!**
+
+**Every test cycle has organized results with QA-to-Dev feedback loop!**
+
+---
+
+**Last Updated:** February 2, 2026  
+**Status:** ✅ MANDATORY - Must be followed for all documentation  
+**Applies To:** All `.md` files in `docs/` folder

@@ -1,0 +1,412 @@
+---
+description: All files created during chat must be placed within the project directory
+alwaysApply: true
+---
+
+# Project Files Only - MANDATORY
+
+**CRITICAL**: All files created as part of a chat session MUST be placed within the project directory structure, not in external locations.
+
+## Golden Rule
+
+```
+📁 ALL files belong in the PROJECT
+🚫 NO files in ~/Code/tmp/ or external locations
+✅ PROPER project directory structure
+```
+
+---
+
+## Core Principle
+
+When creating ANY file during a chat session (code, tests, documentation, scripts, reports, etc.), the file MUST be placed in the appropriate location within the project directory.
+
+**Exception:** Only use external locations (`~/Code/tmp/`, `~/Code/tools/`) for:
+- Global reusable tools that apply across multiple projects
+- Temporary scratch work unrelated to the current project
+
+---
+
+## File Placement Rules
+
+### 1. Source Code Files
+**Location:** `apps/[backend|frontend]/src/`
+
+```bash
+# ✅ Good - In project
+apps/backend/src/modules/owners/owners.service.ts
+apps/frontend/src/components/properties/PropertyCard.tsx
+
+# ❌ Bad - Outside project
+~/Code/tmp/owners-service.ts
+/tmp/property-card.tsx
+```
+
+### 2. Test Files
+**Location:** `apps/[backend|frontend]/test/` or `apps/[backend|frontend]/src/**/*.spec.ts`
+
+```bash
+# ✅ Good - In project
+apps/backend/src/modules/owners/owners.service.spec.ts
+apps/backend/test/e2e/phase4-scenarios.spec.ts
+
+# ❌ Bad - Outside project
+~/Code/tmp/test-owners.spec.ts
+```
+
+### 3. Documentation Files
+**Location:** `docs/`
+
+```bash
+# ✅ Good - In project
+docs/PHASE_4_QA_REPORT.md
+docs/API_REFERENCE.md
+docs/IMPLEMENTATION_GUIDE.md
+
+# ❌ Bad - Outside project
+~/Code/tmp/qa-report.md
+/tmp/implementation-guide.md
+```
+
+### 4. Configuration Files
+**Location:** Project root or `config/`
+
+```bash
+# ✅ Good - In project
+.env.local
+config/database.yaml
+apps/backend/.env.test
+
+# ❌ Bad - Outside project
+~/Code/tmp/config.yaml
+```
+
+### 5. Scripts and Utilities
+**Location:** `scripts/` or `apps/[backend|frontend]/scripts/`
+
+```bash
+# ✅ Good - In project
+scripts/seed-database.ts
+scripts/deploy.sh
+apps/backend/scripts/test-api.sh
+
+# ❌ Bad - Outside project
+~/Code/tmp/seed-script.ts
+/tmp/test-api.sh
+```
+
+### 6. Test Data and Fixtures
+**Location:** `apps/[backend|frontend]/test/fixtures/` or `apps/backend/prisma/`
+
+```bash
+# ✅ Good - In project
+apps/backend/test/fixtures/sample-data.json
+apps/backend/prisma/seed.ts
+
+# ❌ Bad - Outside project
+~/Code/tmp/test-data.json
+```
+
+### 7. Reports and Logs
+**Location:** `reports/` or `logs/` (add to .gitignore)
+
+```bash
+# ✅ Good - In project (gitignored)
+reports/PHASE_4_TEST_RESULTS.md
+logs/api-test-2026-02-02.log
+
+# ❌ Bad - Outside project
+~/Code/tmp/test-results.md
+```
+
+### 8. Generated Code or Artifacts
+**Location:** Appropriate module directory
+
+```bash
+# ✅ Good - In project
+apps/backend/src/generated/prisma-client/
+apps/frontend/src/types/api-types.ts
+
+# ❌ Bad - Outside project
+~/Code/tmp/generated-types.ts
+```
+
+### 9. Temporary Work Files
+**Location:** `.temp/` or `.cache/` (add to .gitignore)
+
+```bash
+# ✅ Good - In project (gitignored)
+.temp/scratch.ts
+.cache/build-output.log
+
+# ❌ Bad - Outside project
+~/Code/tmp/scratch.ts
+/tmp/output.log
+```
+
+### 10. CSV/Excel Import Files
+**Location:** `data/imports/` or `apps/backend/data/`
+
+```bash
+# ✅ Good - In project
+data/imports/properties_import.csv
+apps/backend/data/seed-data.json
+
+# ❌ Bad - Outside project
+~/Code/tmp/properties_import.csv
+```
+
+---
+
+## Suggested Project Structure
+
+```
+project-root/
+├── apps/
+│   ├── backend/
+│   │   ├── src/               # Source code
+│   │   ├── test/              # Tests
+│   │   ├── scripts/           # Backend scripts
+│   │   ├── prisma/            # Database schema & seeds
+│   │   └── data/              # Data files
+│   └── frontend/
+│       ├── src/               # Source code
+│       ├── test/              # Tests
+│       ├── scripts/           # Frontend scripts
+│       └── public/            # Public assets
+├── docs/                      # Documentation
+├── scripts/                   # Project-wide scripts
+├── config/                    # Configuration files
+├── reports/                   # Test/QA reports (gitignored)
+├── logs/                      # Log files (gitignored)
+├── data/                      # Data files
+│   ├── imports/              # Import data (CSV, JSON)
+│   └── exports/              # Export data
+├── .temp/                     # Temporary files (gitignored)
+├── .cursor/                   # Cursor rules & agents
+├── .gitignore
+└── README.md
+```
+
+---
+
+## .gitignore Recommendations
+
+Add these to `.gitignore` to keep the repo clean:
+
+```gitignore
+# Temporary files
+.temp/
+*.tmp
+*.temp
+
+# Logs
+logs/
+*.log
+
+# Reports (usually gitignored, commit important ones)
+reports/
+
+# Data imports (usually gitignored, commit samples)
+data/imports/*.csv
+data/exports/*.xlsx
+
+# Cache
+.cache/
+```
+
+---
+
+## Examples
+
+### ✅ Good: CSV Import File
+
+```bash
+# User asks: "create csv from PDF"
+# AI creates:
+/Users/aviad.natovich/personal/rentApplication/data/imports/properties_import.csv
+
+# Not:
+~/Code/tmp/properties_import.csv
+```
+
+### ✅ Good: Test Script
+
+```bash
+# User asks: "create script to test APIs"
+# AI creates:
+/Users/aviad.natovich/personal/rentApplication/scripts/test-phase4-apis.sh
+
+# Not:
+~/Code/tmp/test-apis.sh
+```
+
+### ✅ Good: QA Report
+
+```bash
+# User asks: "test the app and create report"
+# AI creates:
+/Users/aviad.natovich/personal/rentApplication/reports/PHASE_4_QA_REPORT.md
+
+# Not:
+~/Code/tmp/qa-report.md
+```
+
+### ✅ Good: Seed Data
+
+```bash
+# User asks: "create seed data"
+# AI creates:
+/Users/aviad.natovich/personal/rentApplication/apps/backend/prisma/seed.ts
+
+# Not:
+~/Code/tmp/seed.ts
+```
+
+---
+
+## When External Locations Are OK
+
+**ONLY use external locations for:**
+
+1. **Global Tools** (used across ALL projects):
+   ```bash
+   ~/Code/tools/send_email.py          # ✅ OK - global tool
+   ~/Code/tools/gitlab_helper.sh       # ✅ OK - global tool
+   ```
+
+2. **Temporary Scratch** (unrelated to project):
+   ```bash
+   ~/Code/tmp/experiment.js            # ✅ OK - not project-related
+   ~/Code/tmp/testing-library.py       # ✅ OK - just learning
+   ```
+
+3. **Cross-Project Utilities**:
+   ```bash
+   ~/Code/tools/common-helpers.ts      # ✅ OK - shared across projects
+   ```
+
+**Everything else belongs IN the project!**
+
+---
+
+## Migration Guide
+
+### Moving Existing Files
+
+If files were created in wrong locations, move them:
+
+```bash
+# Move CSV import to project
+mv ~/Code/tmp/properties_import.csv \
+   /Users/aviad.natovich/personal/rentApplication/data/imports/
+
+# Move test script to project
+mv ~/Code/tmp/test-script.sh \
+   /Users/aviad.natovich/personal/rentApplication/scripts/
+
+# Move report to project
+mv ~/Code/tmp/qa-report.md \
+   /Users/aviad.natovich/personal/rentApplication/reports/
+```
+
+### Create Necessary Directories
+
+```bash
+# Create project directories if they don't exist
+mkdir -p data/imports data/exports
+mkdir -p reports logs
+mkdir -p .temp
+mkdir -p scripts
+
+# Add to .gitignore
+echo "reports/" >> .gitignore
+echo "logs/" >> .gitignore
+echo ".temp/" >> .gitignore
+echo "data/imports/*.csv" >> .gitignore
+```
+
+---
+
+## Enforcement
+
+### Before Creating ANY File
+
+Ask yourself:
+1. **Is this file project-related?** → YES → Place in project
+2. **Is this a global tool?** → NO → Place in project
+3. **Where does this file type belong?** → Check rules above
+4. **Does the directory exist?** → Create if needed
+
+### Checklist
+
+- [ ] File is related to current project
+- [ ] File is in correct subdirectory within project
+- [ ] Directory exists (created if needed)
+- [ ] Not using ~/Code/tmp/ for project files
+- [ ] Not using /tmp/ for project files
+- [ ] File added to .gitignore if temporary/sensitive
+
+---
+
+## Benefits
+
+### Why Keep Files in Project
+
+1. **Organization** - All related files together
+2. **Version Control** - Files can be tracked in git
+3. **Collaboration** - Team members can access all files
+4. **Portability** - Project is self-contained
+5. **Cleanup** - Easy to delete entire project folder
+6. **Discovery** - Easy to find files related to project
+7. **Context** - Files have proper project context
+
+### Problems with External Files
+
+1. ❌ **Lost Context** - Files scattered across system
+2. ❌ **Hard to Find** - No clear organization
+3. ❌ **Not Tracked** - Can't version control
+4. ❌ **Not Shared** - Team can't access
+5. ❌ **Cleanup Issues** - Orphaned files remain
+6. ❌ **No Backups** - Files not backed up with project
+
+---
+
+## Quick Reference
+
+| File Type | Project Location | External ❌ |
+|-----------|-----------------|------------|
+| Source code | `apps/*/src/` | ~/Code/tmp/ |
+| Tests | `apps/*/test/` | /tmp/ |
+| Documentation | `docs/` | ~/Code/tmp/ |
+| Scripts | `scripts/` | ~/Code/tmp/ |
+| Data imports | `data/imports/` | ~/Code/tmp/ |
+| Reports | `reports/` | ~/Code/tmp/ |
+| Configs | `config/` or root | ~/Code/tmp/ |
+| Logs | `logs/` | /tmp/ |
+| Temp files | `.temp/` | ~/Code/tmp/ |
+
+---
+
+## Summary
+
+```
+📁 All project files IN the project
+🎯 Use proper directory structure
+🚫 No external ~/Code/tmp/ for project work
+✅ Create directories as needed
+📝 Add temp files to .gitignore
+```
+
+**Keep everything project-related IN the project!**
+
+---
+
+**Rationale:**
+- Better organization
+- Version control
+- Team collaboration
+- Easy cleanup
+- Professional structure
+
+**This rule ensures a clean, organized, self-contained project structure.**

@@ -1,0 +1,737 @@
+
+Running 9 tests using 2 workers
+
+(node:51714) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51713) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51713) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51714) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-001: Search Input Field Available ===
+→ Looking for search input field...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-006: Search with Pagination ===
+→ Creating 15 test properties...
+✓ Search input field is visible
+→ Verifying search input is above DataGrid...
+✓ Search input is positioned above DataGrid
+✓ Test completed successfully
+
+✓ 15 test properties created
+  ✓  1 [chromium] › test/e2e/us1.7-search-properties.spec.ts:48:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-001: Search input field is available above properties list (3.0s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-002: Search by Address ===
+→ Creating test properties...
+✓ Test properties created
+→ Verifying pagination exists...
+✓ Pagination footer visible
+→ Searching for "SEARCH"...
+→ Verifying search results are paginated...
+  ✘  2 [chromium] › test/e2e/us1.7-search-properties.spec.ts:302:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-006: Search works with pagination (7.0s)
+(node:51973) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:51973) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Typing search term "הרצל"...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+→ Waiting for search results (debounce delay)...
+→ Verifying search results...
+✓ Property with "הרצל" in address is visible
+✓ Other properties filtered out correctly
+✓ Test completed successfully
+
+  ✓  3 [chromium] › test/e2e/us1.7-search-properties.spec.ts:69:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-002: Search queries address field (6.5s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-006: Search with Pagination ===
+→ Creating 15 test properties...
+✓ 15 test properties created
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-003: Search by File Number ===
+→ Creating test properties...
+✓ Test properties created
+→ Verifying pagination exists...
+✓ Pagination footer visible
+→ Searching for "SEARCH"...
+→ Verifying search results are paginated...
+  ✘  4 [chromium] › test/e2e/us1.7-search-properties.spec.ts:302:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-006: Search works with pagination (retry #1) (6.4s)
+(node:52175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52175) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Typing search term "ABC"...
+→ Waiting for search results (debounce delay)...
+→ Verifying search results...
+✓ Property with "ABC" in file number is visible
+✓ Test completed successfully
+
+  ✓  5 [chromium] › test/e2e/us1.7-search-properties.spec.ts:137:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-003: Search queries fileNumber field (6.2s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-006: Search with Pagination ===
+→ Creating 15 test properties...
+✓ 15 test properties created
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-004: Search Debouncing ===
+→ Creating test property...
+✓ Test property created
+→ Verifying pagination exists...
+✓ Pagination footer visible
+→ Searching for "SEARCH"...
+→ Verifying search results are paginated...
+  ✘  6 [chromium] › test/e2e/us1.7-search-properties.spec.ts:302:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-006: Search works with pagination (retry #2) (6.3s)
+→ Setting up network request monitoring...
+→ Typing "הרצל" character by character...
+(node:52398) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  → API request: http://localhost:3000/properties?search=%D7%94&_rsc=11lf5
+  → API request: http://localhost:3001/properties?page=1&limit=10&search=%D7%94
+  → API request: http://localhost:3000/properties?search=%D7%94&_rsc=16ics
+  → API request: http://localhost:3000/properties?search=%D7%94%D7%A8&_rsc=vyhml
+  → API request: http://localhost:3001/properties?page=1&limit=10&search=%D7%94%D7%A8
+  → API request: http://localhost:3000/properties?search=%D7%94%D7%A8&_rsc=1d2ox
+  → API request: http://localhost:3000/properties?search=%D7%94%D7%A8%D7%A6&_rsc=36yif
+  → API request: http://localhost:3001/properties?page=1&limit=10&search=%D7%94%D7%A8%D7%A6
+  → API request: http://localhost:3000/properties?search=%D7%94%D7%A8%D7%A6&_rsc=18hy4
+(node:52398) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  → API request: http://localhost:3000/properties?search=%D7%94%D7%A8%D7%A6%D7%9C&_rsc=1tg12
+  → API request: http://localhost:3001/properties?page=1&limit=10&search=%D7%94%D7%A8%D7%A6%D7%9C
+→ Waiting for debounce delay (300ms)...
+  → API request: http://localhost:3000/properties?search=%D7%94%D7%A8%D7%A6%D7%9C&_rsc=7xmpt
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Total API requests with search: 12
+⚠️ Too many API calls - debouncing may not be implemented
+✓ Test completed successfully
+
+  ✓  7 [chromium] › test/e2e/us1.7-search-properties.spec.ts:183:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-004: Search is debounced (waits for user to stop typing) (6.7s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-007: Case-Insensitive Search ===
+→ Creating test property...
+✓ Test property created
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-005: Search Results Update Automatically ===
+→ Creating test properties...
+✓ Test properties created
+→ Testing lowercase search "file-abc"...
+→ Verifying both properties visible initially...
+✓ Lowercase search found uppercase file number
+→ Testing uppercase search "FILE-ABC"...
+  ✘  9 [chromium] › test/e2e/us1.7-search-properties.spec.ts:242:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-005: Search results update automatically (5.8s)
+(node:52625) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Uppercase search found file number
+→ Testing mixed case search "File-Abc"...
+(node:52625) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Mixed case search found file number
+✓ Test completed successfully
+
+  ✓  8 [chromium] › test/e2e/us1.7-search-properties.spec.ts:351:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-007: Search is case-insensitive (7.5s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-005: Search Results Update Automatically ===
+→ Creating test properties...
+✓ Test properties created
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-008: Empty Search Shows All Properties ===
+→ Creating test properties...
+✓ Test properties created
+→ Verifying both properties visible initially...
+  ✘  10 [chromium] › test/e2e/us1.7-search-properties.spec.ts:242:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-005: Search results update automatically (retry #1) (6.1s)
+(node:52824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+→ Verifying both properties visible initially...
+(node:52824) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  11 [chromium] › test/e2e/us1.7-search-properties.spec.ts:400:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-008: Empty search shows all properties (6.4s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+(node:52856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:52856) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-005: Search Results Update Automatically ===
+→ Creating test properties...
+✓ Test properties created
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-008: Empty Search Shows All Properties ===
+→ Creating test properties...
+✓ Test properties created
+→ Verifying both properties visible initially...
+  ✘  12 [chromium] › test/e2e/us1.7-search-properties.spec.ts:242:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-005: Search results update automatically (retry #2) (6.0s)
+→ Verifying both properties visible initially...
+  ✘  13 [chromium] › test/e2e/us1.7-search-properties.spec.ts:400:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-008: Empty search shows all properties (retry #1) (6.1s)
+(node:53076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:53076) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-008: Empty Search Shows All Properties ===
+→ Creating test properties...
+✓ Test properties created
+→ Verifying both properties visible initially...
+  ✘  14 [chromium] › test/e2e/us1.7-search-properties.spec.ts:400:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-008: Empty search shows all properties (retry #2) (5.8s)
+(node:53294) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:53294) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.7-009: Search State Persists ===
+→ Creating test property...
+✓ Test property created
+→ Entering search term "הרצל"...
+→ Checking URL for search parameter...
+✓ Search term in URL
+→ Navigating to home page...
+→ Navigating back to properties page...
+→ Verifying search term persisted...
+⚠️ Search term did not persist - may need URL state management
+✓ Test completed successfully
+
+  ✓  15 [chromium] › test/e2e/us1.7-search-properties.spec.ts:462:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-009: Search state persists during navigation (9.0s)
+
+
+  1) [chromium] › test/e2e/us1.7-search-properties.spec.ts:242:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-005: Search results update automatically 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 123')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 123') resolved to 3 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('row', { name: 'רחוב הרצל 123 FILE-ABC-123 0' }).getByRole('button')
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(2)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 123')[22m
+
+
+      274 |     // Verify both properties visible initially
+      275 |     console.log('→ Verifying both properties visible initially...');
+    > 276 |     await expect(page.locator('text=רחוב הרצל 123')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      277 |     await expect(page.locator('text=רחוב דיזנגוף 45')).toBeVisible({ timeout: 5000 });
+      278 |     console.log('✓ Both properties visible');
+      279 |     
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:276:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 123')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 123') resolved to 5 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(3)
+        5) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(4)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 123')[22m
+
+
+      274 |     // Verify both properties visible initially
+      275 |     console.log('→ Verifying both properties visible initially...');
+    > 276 |     await expect(page.locator('text=רחוב הרצל 123')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      277 |     await expect(page.locator('text=רחוב דיזנגוף 45')).toBeVisible({ timeout: 5000 });
+      278 |     console.log('✓ Both properties visible');
+      279 |     
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:276:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry1/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 123')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 123') resolved to 5 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(3)
+        5) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(4)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 123')[22m
+
+
+      274 |     // Verify both properties visible initially
+      275 |     console.log('→ Verifying both properties visible initially...');
+    > 276 |     await expect(page.locator('text=רחוב הרצל 123')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      277 |     await expect(page.locator('text=רחוב דיזנגוף 45')).toBeVisible({ timeout: 5000 });
+      278 |     console.log('✓ Both properties visible');
+      279 |     
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:276:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry2/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry2/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry2/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-715ea-esults-update-automatically-chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [chromium] › test/e2e/us1.7-search-properties.spec.ts:302:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-006: Search works with pagination 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=FILE-SEARCH-1')
+    Expected: visible
+    Error: strict mode violation: locator('text=FILE-SEARCH-1') resolved to 6 elements:
+        1) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-15</div> aka getByRole('cell', { name: 'FILE-SEARCH-15' })
+        2) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-14</div> aka getByRole('cell', { name: 'FILE-SEARCH-14' })
+        3) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-13</div> aka getByRole('cell', { name: 'FILE-SEARCH-13' })
+        4) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-12</div> aka getByRole('cell', { name: 'FILE-SEARCH-12' })
+        5) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-11</div> aka getByRole('cell', { name: 'FILE-SEARCH-11' })
+        6) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-10</div> aka getByRole('cell', { name: 'FILE-SEARCH-10' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=FILE-SEARCH-1')[22m
+
+
+      337 |     // Verify search results are paginated
+      338 |     console.log('→ Verifying search results are paginated...');
+    > 339 |     await expect(page.locator('text=FILE-SEARCH-1')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      340 |     console.log('✓ Search results displayed');
+      341 |     
+      342 |     // Check if pagination still works with search
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:339:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=FILE-SEARCH-1')
+    Expected: visible
+    Error: strict mode violation: locator('text=FILE-SEARCH-1') resolved to 6 elements:
+        1) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-15</div> aka getByRole('cell', { name: 'FILE-SEARCH-15' })
+        2) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-14</div> aka getByRole('cell', { name: 'FILE-SEARCH-14' })
+        3) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-13</div> aka getByRole('cell', { name: 'FILE-SEARCH-13' })
+        4) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-12</div> aka getByRole('cell', { name: 'FILE-SEARCH-12' })
+        5) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-11</div> aka getByRole('cell', { name: 'FILE-SEARCH-11' })
+        6) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-10</div> aka getByRole('cell', { name: 'FILE-SEARCH-10' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=FILE-SEARCH-1')[22m
+
+
+      337 |     // Verify search results are paginated
+      338 |     console.log('→ Verifying search results are paginated...');
+    > 339 |     await expect(page.locator('text=FILE-SEARCH-1')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      340 |     console.log('✓ Search results displayed');
+      341 |     
+      342 |     // Check if pagination still works with search
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:339:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry1/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=FILE-SEARCH-1')
+    Expected: visible
+    Error: strict mode violation: locator('text=FILE-SEARCH-1') resolved to 6 elements:
+        1) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-15</div> aka getByRole('cell', { name: 'FILE-SEARCH-15' })
+        2) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-14</div> aka getByRole('cell', { name: 'FILE-SEARCH-14' })
+        3) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-13</div> aka getByRole('cell', { name: 'FILE-SEARCH-13' })
+        4) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-12</div> aka getByRole('cell', { name: 'FILE-SEARCH-12' })
+        5) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-11</div> aka getByRole('cell', { name: 'FILE-SEARCH-11' })
+        6) <div role="cell" tabindex="-1" aria-colspan="1" data-colindex="1" aria-colindex="2" data-field="fileNumber" class="MuiDataGrid-cell--withRenderer MuiDataGrid-cell MuiDataGrid-cell--textRight MuiDataGrid-withBorderColor">FILE-SEARCH-10</div> aka getByRole('cell', { name: 'FILE-SEARCH-10' })
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=FILE-SEARCH-1')[22m
+
+
+      337 |     // Verify search results are paginated
+      338 |     console.log('→ Verifying search results are paginated...');
+    > 339 |     await expect(page.locator('text=FILE-SEARCH-1')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      340 |     console.log('✓ Search results displayed');
+      341 |     
+      342 |     // Check if pagination still works with search
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:339:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry2/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry2/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry2/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-dfb49-earch-works-with-pagination-chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [chromium] › test/e2e/us1.7-search-properties.spec.ts:400:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-008: Empty search shows all properties 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 123')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 123') resolved to 5 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(3)
+        5) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(4)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 123')[22m
+
+
+      432 |     // Verify both properties visible initially
+      433 |     console.log('→ Verifying both properties visible initially...');
+    > 434 |     await expect(page.locator('text=רחוב הרצל 123')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      435 |     await expect(page.locator('text=רחוב דיזנגוף 45')).toBeVisible({ timeout: 5000 });
+      436 |     console.log('✓ Both properties visible');
+      437 |     
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:434:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 123')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 123') resolved to 5 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(3)
+        5) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(4)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 123')[22m
+
+
+      432 |     // Verify both properties visible initially
+      433 |     console.log('→ Verifying both properties visible initially...');
+    > 434 |     await expect(page.locator('text=רחוב הרצל 123')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      435 |     await expect(page.locator('text=רחוב דיזנגוף 45')).toBeVisible({ timeout: 5000 });
+      436 |     console.log('✓ Both properties visible');
+      437 |     
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:434:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry1/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: locator('text=רחוב הרצל 123')
+    Expected: visible
+    Error: strict mode violation: locator('text=רחוב הרצל 123') resolved to 5 elements:
+        1) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).first()
+        2) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(1)
+        3) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(2)
+        4) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(3)
+        5) <button class="MuiTypography-root MuiTypography-body2 MuiLink-root MuiLink-underlineAlways MuiLink-button muirtl-1cum2i6-MuiTypography-root-MuiLink-root">רחוב הרצל 123</button> aka getByRole('button', { name: 'רחוב הרצל' }).nth(4)
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('text=רחוב הרצל 123')[22m
+
+
+      432 |     // Verify both properties visible initially
+      433 |     console.log('→ Verifying both properties visible initially...');
+    > 434 |     await expect(page.locator('text=רחוב הרצל 123')).toBeVisible({ timeout: 5000 });
+          |                                                      ^
+      435 |     await expect(page.locator('text=רחוב דיזנגוף 45')).toBeVisible({ timeout: 5000 });
+      436 |     console.log('✓ Both properties visible');
+      437 |     
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.7-search-properties.spec.ts:434:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry2/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry2/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry2/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.7-search-properties-US-0b0ff-search-shows-all-properties-chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3 failed
+    [chromium] › test/e2e/us1.7-search-properties.spec.ts:242:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-005: Search results update automatically 
+    [chromium] › test/e2e/us1.7-search-properties.spec.ts:302:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-006: Search works with pagination 
+    [chromium] › test/e2e/us1.7-search-properties.spec.ts:400:7 › US1.7 - Search Properties (TDD) › TC-E2E-1.7-008: Empty search shows all properties 
+  6 passed (59.8s)

@@ -1,0 +1,418 @@
+# E2E Testing Standards - MANDATORY
+
+**CRITICAL**: All E2E tests must follow these standards for reliability, isolation, and safety.
+
+## Golden Rules
+
+```
+🧹 CLEAN DATABASE before each test
+🔒 TEST ACCOUNT ONLY - Never delete production data
+✅ VERIFY NOTIFICATIONS - Part of user feedback verification
+🎯 ISOLATED TESTS - Each test starts with clean slate
+```
+
+---
+
+## 1. Database Cleanup (MANDATORY)
+
+### Rule: Clean Before Each Test
+
+**EVERY E2E test MUST clean the database before running.**
+
+#### Why?
+- **Isolation**: Tests don't depend on each other
+- **Reliability**: Predictable starting state
+- **Repeatability**: Same results every time
+- **No flakiness**: Avoids leftover data causing failures
+
+#### Implementation:
+
+```typescript
+test.beforeEach(async ({ page: testPage }) => {
+  page = testPage;
+  
+  // ✅ MANDATORY: Clean test data before each test
+  console.log('=== CLEANING TEST DATA ===');
+  try {
+    const response = await fetch(`${BACKEND_URL}/properties/test-data`, {
+      method: 'DELETE',
+    });
+    if (response.ok) {
+      const result = await response.json();
+      console.log(`✓ Cleaned test data: ${result.deletedCount} properties deleted`);
+    } else {
+      console.warn('⚠️ Failed to clean test data:', response.status);
+    }
+  } catch (error) {
+    console.warn('⚠️ Error cleaning test data:', error);
+  }
+  
+  // Then navigate to page
+  await page.goto(`${FRONTEND_URL}/properties`);
+  await page.waitForLoadState('networkidle');
+});
+```
+
+---
+
+## 2. Test Account Safety (CRITICAL)
+
+### Rule: Only Delete Test Account Data
+
+**NEVER delete production data. Only clean test account data.**
+
+#### Backend Safety Mechanism:
+
+```typescript
+// ✅ Service layer validation
+async deleteAllForAccount(accountId: string): Promise<{ deletedCount: number }> {
+  // Safety check: Only allow deletion for test account
+  const TEST_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+  if (accountId !== TEST_ACCOUNT_ID) {
+    throw new ForbiddenException(
+      'Can only delete data for test account. Safety measure to prevent data loss.'
+    );
+  }
+
+  // Delete only for this account
+  const result = await this.prisma.property.deleteMany({
+    where: { accountId },
+  });
+
+  return { deletedCount: result.count };
+}
+```
+
+#### Benefits:
+- ✅ Safe to run tests on production database (but not recommended!)
+- ✅ Only test account data deleted
+- ✅ Protection against accidents
+- ✅ Clear error if trying to delete wrong account
+
+---
+
+## 3. Notification Verification (MANDATORY)
+
+### Rule: Verify Success Notifications Appear
+
+**All E2E tests for CRUD operations MUST verify that success notifications appear.**
+
+#### Why?
+- Confirms UI feedback loop works
+- Part of GENERAL_REQUIREMENTS.md Section 12.5
+- Ensures user sees confirmation
+
+#### Implementation:
+
+```typescript
+test('Create entity', async () => {
+  // ... fill form and submit ...
+  
+  // ✅ MANDATORY: Verify success notification (GENERAL_REQUIREMENTS.md Section 12.5)
+  console.log('=== CHECKING FOR SUCCESS NOTIFICATION ===');
+  await expect(page.locator('[role="alert"]:has-text("הנכס נוסף בהצלחה")')).toBeVisible({ 
+    timeout: 10000 
+  });
+  console.log('✓ Success notification appeared!');
+  
+  // ✅ THEN verify entity in list
+  console.log('=== WAITING FOR ENTITY TO APPEAR IN LIST ===');
+  await expect(page.locator('text=רחוב הרצל 1, תל אביב').first()).toBeVisible({ 
+    timeout: 15000 
+  });
+  console.log('✓ Entity appears in list!');
+});
+```
+
+#### Verification Order:
+1. **First**: Check notification appears (UI feedback)
+2. **Then**: Check entity in list (data persisted)
+
+This ensures both UI feedback AND data persistence work correctly.
+
+---
+
+## 4. Test Structure (MANDATORY)
+
+### Standard E2E Test Pattern:
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+const FRONTEND_URL = 'http://localhost:3000';
+const BACKEND_URL = 'http://localhost:3001';
+
+test.describe('Feature Name', () => {
+  let page: Page;
+  
+  test.beforeEach(async ({ page: testPage }) => {
+    page = testPage;
+    
+    // ✅ 1. CLEAN TEST DATA (MANDATORY)
+    console.log('=== CLEANING TEST DATA ===');
+    const response = await fetch(`${BACKEND_URL}/entity/test-data`, {
+      method: 'DELETE',
+    });
+    const result = await response.json();
+    console.log(`✓ Cleaned: ${result.deletedCount} entities deleted`);
+    
+    // ✅ 2. NAVIGATE TO PAGE
+    await page.goto(`${FRONTEND_URL}/entity`);
+    await page.waitForLoadState('networkidle');
+  });
+  
+  test.afterEach(async () => {
+    await page.close();
+  });
+  
+  test('Happy path - Create entity', async () => {
+    // ✅ 3. FILL FORM
+    await page.click('button:has-text("+ נכס חדש")');
+    await page.fill('input[name="name"]', 'Test Entity');
+    
+    // ✅ 4. SUBMIT
+    await page.click('button[type="submit"]');
+    
+    // ✅ 5. VERIFY NOTIFICATION
+    await expect(page.locator('[role="alert"]:has-text("נוסף בהצלחה")')).toBeVisible();
+    
+    // ✅ 6. VERIFY IN LIST
+    await expect(page.locator('text=Test Entity').first()).toBeVisible();
+  });
+});
+```
+
+---
+
+## 5. Backend Test Data Endpoint (REQUIRED)
+
+### Every Entity Needs Test Data Cleanup Endpoint:
+
+#### Controller:
+```typescript
+@Delete('test-data')
+@ApiOperation({ 
+  summary: 'מחיקת כל נתוני הטסט (TEST ONLY)',
+  description: 'מוחק את כל הישויות של חשבון הטסט. ⚠️ משמש רק לטסטי E2E!'
+})
+async deleteTestData() {
+  const result = await this.service.deleteAllForAccount(HARDCODED_ACCOUNT_ID);
+  return {
+    ...result,
+    message: `Deleted ${result.deletedCount} entities for test account`,
+  };
+}
+```
+
+#### Service:
+```typescript
+async deleteAllForAccount(accountId: string): Promise<{ deletedCount: number }> {
+  // Safety check: Only test account
+  const TEST_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+  if (accountId !== TEST_ACCOUNT_ID) {
+    throw new ForbiddenException('Can only delete test account data');
+  }
+
+  const result = await this.prisma.entity.deleteMany({
+    where: { accountId },
+  });
+
+  return { deletedCount: result.count };
+}
+```
+
+---
+
+## 6. Test Data Cleanup Checklist
+
+Before creating E2E tests for a new entity:
+
+- [ ] Backend has `DELETE /entity/test-data` endpoint
+- [ ] Service has `deleteAllForAccount()` method
+- [ ] Service validates accountId is test account only
+- [ ] Test suite calls cleanup in `beforeEach`
+- [ ] Cleanup logs how many entities deleted
+- [ ] Tests verify notifications appear
+- [ ] Tests verify data in list
+
+---
+
+## 7. Common Mistakes to Avoid
+
+### ❌ Mistake 1: No Database Cleanup
+
+```typescript
+// ❌ BAD - Tests depend on previous runs
+test.beforeEach(async ({ page }) => {
+  await page.goto('/properties');
+});
+```
+
+**Problem**: Second test run has data from first run, causing:
+- "strict mode violation: resolved to 4 elements"
+- Flaky tests
+- Unpredictable results
+
+### ❌ Mistake 2: Deleting All Accounts
+
+```typescript
+// ❌ BAD - Deletes ALL data (dangerous!)
+await this.prisma.property.deleteMany({});
+```
+
+**Problem**: If accidentally run on production, deletes everything!
+
+### ❌ Mistake 3: Not Verifying Notifications
+
+```typescript
+// ❌ BAD - Skips notification verification
+await page.click('button[type="submit"]');
+await expect(page.locator('text=New Property')).toBeVisible(); // Skip notification!
+```
+
+**Problem**: UI feedback could be broken but tests still pass.
+
+---
+
+## 8. Multiple Element Handling
+
+### When Elements Exist Multiple Times:
+
+If database cleanup fails or is skipped, you might see:
+```
+Error: strict mode violation: resolved to 4 elements
+```
+
+**Solution**: Use `.first()` to select first matching element:
+
+```typescript
+// ✅ Good - Handles multiple matches
+await expect(page.locator('text=רחוב הרצל 1, תל אביב').first()).toBeVisible();
+```
+
+**Better**: Always clean database so you have predictable, single results!
+
+---
+
+## 9. Logging Standards
+
+### Required Logging in E2E Tests:
+
+```typescript
+// ✅ Log cleanup
+console.log('=== CLEANING TEST DATA ===');
+console.log(`✓ Cleaned test data: ${result.deletedCount} properties deleted`);
+
+// ✅ Log form fill
+console.log('=== FILLING FORM ===');
+console.log('Field values:', { address, city, type });
+
+// ✅ Log submission
+console.log('=== CLICKING SUBMIT BUTTON ===');
+
+// ✅ Log verification
+console.log('=== CHECKING FOR SUCCESS NOTIFICATION ===');
+console.log('✓ Success notification appeared!');
+
+console.log('=== WAITING FOR ENTITY TO APPEAR IN LIST ===');
+console.log('✓ Entity appears in list!');
+```
+
+**Why?**
+- Easy debugging when tests fail
+- Clear flow visibility
+- Confirms each step executed
+
+---
+
+## 10. Test Account Configuration
+
+### Test Account Details:
+
+```typescript
+// Backend (hardcoded for now)
+const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+
+// Test configuration
+const TEST_ACCOUNT = {
+  id: '00000000-0000-0000-0000-000000000001',
+  name: 'Test Account',
+  status: 'ACTIVE',
+};
+```
+
+**Characteristics:**
+- ✅ Dedicated test account
+- ✅ Not used for production data
+- ✅ Safe to delete all data
+- ✅ Isolated from other accounts
+
+---
+
+## 11. Running Tests Safely
+
+### Development:
+```bash
+# Safe - uses test database
+npm run test:e2e
+```
+
+### Staging:
+```bash
+# Safe - test account only
+BACKEND_URL=https://staging-api.example.com npm run test:e2e
+```
+
+### Production:
+```bash
+# ⚠️ NOT RECOMMENDED but safe if needed
+# Only test account data deleted, but better to avoid
+BACKEND_URL=https://api.example.com npm run test:e2e
+```
+
+**Best Practice**: Always use separate test environment!
+
+---
+
+## 12. Quick Reference
+
+### Mandatory Steps for Every E2E Test:
+
+```typescript
+// 1. Clean database (MANDATORY)
+await fetch(`${BACKEND_URL}/entity/test-data`, { method: 'DELETE' });
+
+// 2. Navigate to page
+await page.goto(`${FRONTEND_URL}/entity`);
+
+// 3. Perform action (fill form, click button)
+await page.fill('input[name="field"]', 'value');
+await page.click('button[type="submit"]');
+
+// 4. Verify notification (MANDATORY)
+await expect(page.locator('[role="alert"]:has-text("הצלחה")')).toBeVisible();
+
+// 5. Verify data in list (MANDATORY)
+await expect(page.locator('text=value').first()).toBeVisible();
+```
+
+---
+
+## Summary
+
+```
+🧹 Clean before each test (DELETE /test-data)
+🔒 Test account only (safety check)
+✅ Verify notifications (UI feedback)
+📋 Verify data in list (persistence)
+📝 Log all steps (debugging)
+🎯 Isolated tests (no dependencies)
+```
+
+**Every E2E test must clean the database and verify notifications!**
+
+---
+
+**Last Updated:** February 3, 2026  
+**Applies To:** All E2E tests  
+**Status:** ✅ MANDATORY - Must be followed for all E2E testing

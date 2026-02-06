@@ -1,0 +1,473 @@
+# Bank Account Management for Mortgages
+
+**Pattern:** Linked entity management with inline creation
+
+---
+
+## Overview
+
+Bank accounts are used to track which bank account is used for mortgage automatic payments (הוראת קבע). This follows the **inline entity creation** pattern established in the codebase.
+
+---
+
+## Database Schema
+
+### BankAccount Table
+
+```prisma
+model BankAccount {
+  id           String   @id @default(uuid())
+  accountId    String   @map("account_id")
+  
+  // Required fields
+  bankName     String   @map("bank_name")
+  accountNumber String  @map("account_number")
+  
+  // Optional fields
+  branchNumber String?  @map("branch_number")
+  accountType  BankAccountType @default(CHECKING)
+  accountHolder String? @map("account_holder")
+  notes        String?
+  isActive     Boolean  @default(true) @map("is_active")
+  
+  // Relations
+  account      Account  @relation(...)
+  mortgages    Mortgage[]
+  
+  @@unique([accountId, bankName, accountNumber])
+}
+
+enum BankAccountType {
+  CHECKING     // חשבון עו"ש
+  SAVINGS      // חשבון חיסכון
+  BUSINESS     // חשבון עסקי
+}
+```
+
+### Mortgage Relation
+
+```prisma
+model Mortgage {
+  // ... existing fields ...
+  bankAccountId String? @map("bank_account_id")
+  
+  // Relations
+  bankAccount BankAccount? @relation(...)
+}
+```
+
+---
+
+## Backend Implementation
+
+### Service Features
+
+**BankAccountsService** provides:
+
+✅ **CRUD Operations**
+- Create, read, update, delete
+- Get all / Get active only
+- Get by ID
+
+✅ **Duplicate Prevention**
+```typescript
+// Unique constraint: [accountId, bankName, accountNumber]
+// Throws ConflictException if duplicate
+```
+
+✅ **Delete Protection**
+```typescript
+async remove(id: string, accountId: string) {
+  const mortgageCount = await this.prisma.mortgage.count({
+    where: { bankAccountId: id },
+  });
+
+  if (mortgageCount > 0) {
+    throw new ConflictException(
+      `לא ניתן למחוק חשבון בנק המשויך ל-${mortgageCount} משכנתאות`
+    );
+  }
+  
+  await this.prisma.bankAccount.delete({ where: { id } });
+}
+```
+
+✅ **Deactivate/Activate**
+- Soft delete alternative
+- Deactivated accounts hidden from dropdowns
+
+✅ **Get Related Mortgages**
+```typescript
+async getMortgagesUsingAccount(id: string, accountId: string) {
+  return this.prisma.mortgage.findMany({
+    where: { accountId, bankAccountId: id },
+    include: { property: true },
+  });
+}
+```
+
+### Controller Endpoints
+
+```typescript
+@Controller('bank-accounts')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
+export class BankAccountsController {
+  @Post()           // Create
+  @Get()            // List all
+  @Get(':id')       // Get one
+  @Patch(':id')     // Update
+  @Delete(':id')    // Delete
+  
+  @Patch(':id/deactivate')  // Deactivate
+  @Patch(':id/activate')    // Activate
+  @Get(':id/mortgages')     // Get related mortgages
+}
+```
+
+---
+
+## Frontend Implementation
+
+### API Service
+
+**File:** `src/lib/api/bank-accounts.ts`
+
+**Key Functions:**
+```typescript
+export const bankAccountsApi = {
+  getBankAccounts: async (activeOnly?: boolean) => {...},
+  createBankAccount: async (data: CreateBankAccountDto) => {...},
+  updateBankAccount: async (id: string, data: UpdateBankAccountDto) => {...},
+  deleteBankAccount: async (id: string) => {...},
+  deactivateBankAccount: async (id: string) => {...},
+  activateBankAccount: async (id: string) => {...},
+};
+
+export const formatBankAccountDisplay = (account: BankAccount): string => {
+  return account.branchNumber
+    ? `${account.bankName} - ${account.branchNumber}/${account.accountNumber}`
+    : `${account.bankName} - ${account.accountNumber}`;
+};
+```
+
+### Inline Creation Pattern
+
+**In Mortgage Form:**
+
+```typescript
+// 1. State for dialog
+const [createBankAccountDialogOpen, setCreateBankAccountDialogOpen] = useState(false);
+
+// 2. Form for bank account
+const bankAccountForm = useForm<BankAccountFormData>({
+  resolver: zodResolver(bankAccountSchema),
+  defaultValues: {...},
+});
+
+// 3. Query for existing accounts
+const { data: bankAccounts = [] } = useQuery({
+  queryKey: ['bankAccounts'],
+  queryFn: () => bankAccountsApi.getBankAccounts(true), // active only
+});
+
+// 4. Mutation for creating account
+const createBankAccountMutation = useMutation({
+  mutationFn: (data: CreateBankAccountDto) => bankAccountsApi.createBankAccount(data),
+  onSuccess: (newBankAccount) => {
+    queryClient.invalidateQueries({ queryKey: ['bankAccounts'] });
+    setCreateBankAccountDialogOpen(false);
+    bankAccountForm.reset();
+    // AUTO-SELECT: Critical step!
+    mortgageForm.setValue('bankAccountId', newBankAccount.id);
+    setSnackbar({ open: true, message: 'חשבון בנק נוסף בהצלחה', severity: 'success' });
+  },
+});
+
+// 5. Select with inline creation
+<Select
+  value={mortgageForm.watch('bankAccountId') || ''}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (value === '__CREATE_NEW__') {
+      handleCreateNewBankAccount();
+    } else {
+      mortgageForm.setValue('bankAccountId', value);
+    }
+  }}
+>
+  <MenuItem value=""><em>ללא חשבון בנק</em></MenuItem>
+  {bankAccounts.map((account) => (
+    <MenuItem key={account.id} value={account.id}>
+      {formatBankAccountDisplay(account)}
+    </MenuItem>
+  ))}
+  <MenuItem value="__CREATE_NEW__" sx={{ color: 'primary.main', fontWeight: 600 }}>
+    + צור חשבון בנק חדש
+  </MenuItem>
+</Select>
+
+// 6. Inline creation dialog
+<Dialog open={createBankAccountDialogOpen} onClose={...}>
+  <form onSubmit={bankAccountForm.handleSubmit(handleBankAccountSubmit)}>
+    {/* Form fields */}
+  </form>
+</Dialog>
+```
+
+---
+
+## Display in Mortgage Card
+
+```typescript
+{mortgage.bankAccount && (
+  <Box sx={{ mt: 2 }}>
+    <Typography variant="caption" color="text.secondary">
+      חשבון בנק להוראת קבע
+    </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+      <BankIcon fontSize="small" color="action" />
+      <Typography variant="body2" fontWeight="500">
+        {mortgage.bankAccount.branchNumber
+          ? `${mortgage.bankAccount.bankName} - ${mortgage.bankAccount.branchNumber}/${mortgage.bankAccount.accountNumber}`
+          : `${mortgage.bankAccount.bankName} - ${mortgage.bankAccount.accountNumber}`}
+      </Typography>
+    </Box>
+  </Box>
+)}
+```
+
+---
+
+## Form Fields
+
+### Bank Account Creation Dialog
+
+**Required Fields:**
+- שם הבנק (Bank name)
+- מספר חשבון (Account number)
+
+**Optional Fields:**
+- מספר סניף (Branch number)
+- סוג חשבון (Account type - dropdown)
+  - חשבון עו"ש (Checking)
+  - חשבון חיסכון (Savings)
+  - חשבון עסקי (Business)
+- שם בעל החשבון (Account holder)
+- הערות (Notes)
+
+**Layout:**
+- Bank name (full width)
+- Branch + Account number (Grid 2 columns)
+- Account type (dropdown, full width)
+- Account holder (full width)
+- Notes (multiline, full width)
+
+---
+
+## Validation Rules
+
+### Backend (DTOs)
+
+```typescript
+export class CreateBankAccountDto {
+  @IsString()
+  @IsNotEmpty()
+  bankName: string;
+
+  @IsString()
+  @IsOptional()
+  branchNumber?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  accountNumber: string;
+
+  @IsEnum(BankAccountType)
+  @IsOptional()
+  accountType?: BankAccountType;
+
+  @IsString()
+  @IsOptional()
+  accountHolder?: string;
+
+  @IsString()
+  @IsOptional()
+  notes?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isActive?: boolean;
+}
+```
+
+### Frontend (Zod)
+
+```typescript
+const bankAccountSchema = z.object({
+  bankName: z.string().min(1, 'שם הבנק הוא שדה חובה'),
+  branchNumber: z.string().optional(),
+  accountNumber: z.string().min(1, 'מספר חשבון הוא שדה חובה'),
+  accountType: z.enum(['CHECKING', 'SAVINGS', 'BUSINESS']).optional(),
+  accountHolder: z.string().optional(),
+  notes: z.string().optional(),
+});
+```
+
+---
+
+## When to Use This Pattern
+
+✅ **Use for:**
+- Creating bank accounts when adding/editing mortgages
+- Managing bank accounts separately (future feature)
+- Linking existing bank accounts to mortgages
+
+❌ **Don't use for:**
+- One-time mortgage entries (bank account not needed)
+- Non-recurring payments (use notes instead)
+
+---
+
+## Extension Points
+
+### Future Features
+
+1. **Default Bank Account**
+   - Mark account as default
+   - Auto-select in new mortgages
+
+2. **Bank Verification**
+   - Validate Israeli bank account formats
+   - Check with bank API
+
+3. **Transaction Import**
+   - Import payments from bank
+   - Auto-reconciliation
+
+4. **Analytics**
+   - Total payments per account
+   - Most-used accounts
+   - Account balance tracking
+
+---
+
+## Testing
+
+### Manual Testing
+
+**Create Bank Account:**
+- [ ] Open mortgage form
+- [ ] Click bank account dropdown
+- [ ] Click "+ צור חשבון בנק חדש"
+- [ ] Fill all fields
+- [ ] Submit
+- [ ] Verify auto-selection
+- [ ] Verify success message
+
+**Use Bank Account:**
+- [ ] Create mortgage with selected account
+- [ ] View mortgage card
+- [ ] Verify bank account displayed
+- [ ] Format correct (with/without branch)
+
+**Delete Protection:**
+- [ ] Try to delete account used by mortgage
+- [ ] Verify error message
+- [ ] Unlink from mortgage
+- [ ] Delete should work now
+
+### API Testing
+
+```bash
+# Create account
+curl -X POST http://localhost:3001/bank-accounts \
+  -H "X-Account-Id: {account-id}" \
+  -d '{...}'
+
+# Create mortgage with account
+curl -X POST http://localhost:3001/mortgages \
+  -H "X-Account-Id: {account-id}" \
+  -d '{
+    "bankAccountId": "{bank-account-id}",
+    ...
+  }'
+
+# Get mortgage - verify bankAccount included
+curl -X GET http://localhost:3001/mortgages/{id} \
+  -H "X-Account-Id: {account-id}"
+```
+
+---
+
+## Common Patterns
+
+### Check if Bank Account Exists
+
+```typescript
+const existing = await prisma.bankAccount.findFirst({
+  where: {
+    accountId,
+    bankName,
+    accountNumber,
+  },
+});
+
+if (existing) {
+  throw new ConflictException('כבר קיים');
+}
+```
+
+### Get Active Accounts Only
+
+```typescript
+const accounts = await prisma.bankAccount.findMany({
+  where: {
+    accountId,
+    isActive: true,
+  },
+  orderBy: [{ bankName: 'asc' }],
+});
+```
+
+### Link to Mortgage
+
+```typescript
+const mortgage = await prisma.mortgage.create({
+  data: {
+    ...mortgageData,
+    bankAccountId: bankAccountId || null,
+  },
+  include: {
+    bankAccount: true, // Include in response
+  },
+});
+```
+
+---
+
+## Summary
+
+✅ **Implemented**
+- BankAccount table and API
+- Inline creation in mortgage form
+- Display in mortgage card
+- Duplicate prevention
+- Delete protection
+
+✅ **Pattern**
+- Same as inline owner creation
+- Reusable across app
+- Consistent UX
+
+✅ **Benefits**
+- Seamless user experience
+- Data organization
+- Type-safe
+- Multi-tenancy secure
+
+---
+
+**Status:** Production Ready  
+**Pattern Documented:** `.cursor/rules/inline-entity-creation.mdc`  
+**Feature Docs:** `docs/BANK_ACCOUNT_MORTGAGE_FEATURE.md`

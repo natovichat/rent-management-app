@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הכנסות - ניהול תיק נדל"ן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item active">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <div class="detail-header">
+        <h1>הכנסות</h1>
+        <a href="income.html" class="btn btn-primary">➕ רשום הכנסה חדשה</a>
+      </div>
+
+      <div class="paper">
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>יחידה/נכס</th>
+                <th>מקור</th>
+                <th>סכום</th>
+                <th>תאריך</th>
+                <th>אמצעי תשלום</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='income-detail.html?id=1'">
+                <td><a href="unit-detail.html?id=1">דירה 5</a> - <a href="property-detail.html?id=1">רח' הרצל 10</a></td>
+                <td>שכירות דירה</td>
+                <td>₪4,500</td>
+                <td>01/02/2025</td>
+                <td><span class="chip chip-success">העברה בנקאית</span></td>
+                <td>
+                  <a href="income-detail.html?id=1" class="action-icon">👁️</a>
+                  <a href="income-detail.html?id=1" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='income-detail.html?id=2'">
+                <td><a href="unit-detail.html?id=2">דירה 12</a> - <a href="property-detail.html?id=1">רח' הרצל 10</a></td>
+                <td>שכירות דירה</td>
+                <td>₪6,200</td>
+                <td>01/02/2025</td>
+                <td><span class="chip chip-success">העברה בנקאית</span></td>
+                <td>
+                  <a href="income-detail.html?id=2" class="action-icon">👁️</a>
+                  <a href="income-detail.html?id=2" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='income-detail.html?id=3'">
+                <td><a href="unit-detail.html?id=3">דירה 3</a> - <a href="property-detail.html?id=2">רח' בן יהודה 22</a></td>
+                <td>שכירות דירה</td>
+                <td>₪3,800</td>
+                <td>01/02/2025</td>
+                <td><span class="chip chip-success">העברה בנקאית</span></td>
+                <td>
+                  <a href="income-detail.html?id=3" class="action-icon">👁️</a>
+                  <a href="income-detail.html?id=3" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='income-detail.html?id=4'">
+                <td><a href="unit-detail.html?id=5">משרד 101</a> - <a href="property-detail.html?id=3">רח' שאול המלך 45</a></td>
+                <td>שכירות משרד</td>
+                <td>₪8,500</td>
+                <td>01/02/2025</td>
+                <td><span class="chip chip-success">העברה בנקאית</span></td>
+                <td>
+                  <a href="income-detail.html?id=4" class="action-icon">👁️</a>
+                  <a href="income-detail.html?id=4" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='income-detail.html?id=5'">
+                <td><a href="property-detail.html?id=4">רח' לוי אשכול 5, חיפה</a></td>
+                <td>הכנסה אחרת</td>
+                <td>₪2,000</td>
+                <td>15/01/2025</td>
+                <td><span class="chip chip-info">מזומן</span></td>
+                <td>
+                  <a href="income-detail.html?id=5" class="action-icon">👁️</a>
+                  <a href="income-detail.html?id=5" class="action-icon">✏️</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

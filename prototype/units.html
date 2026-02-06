@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>יחידות - ניהול תיק נדל"ן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item active">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <div class="detail-header">
+        <h1>יחידות</h1>
+        <a href="units.html" class="btn btn-primary">➕ הוסף יחידה חדשה</a>
+      </div>
+
+      <div class="paper">
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>מספר דירה</th>
+                <th>נכס</th>
+                <th>קומה</th>
+                <th>חדרים</th>
+                <th>שירותים</th>
+                <th>שכירות חודשית</th>
+                <th>סטטוס</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='unit-detail.html?id=1'">
+                <td>5</td>
+                <td><a href="property-detail.html?id=1">רח' הרצל 10, תל אביב</a></td>
+                <td>2</td>
+                <td>3</td>
+                <td>2</td>
+                <td>₪4,500</td>
+                <td><span class="chip chip-success">מושכר</span></td>
+                <td>
+                  <a href="unit-detail.html?id=1" class="action-icon">👁️</a>
+                  <a href="unit-detail.html?id=1" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='unit-detail.html?id=2'">
+                <td>12</td>
+                <td><a href="property-detail.html?id=1">רח' הרצל 10, תל אביב</a></td>
+                <td>4</td>
+                <td>4</td>
+                <td>2.5</td>
+                <td>₪6,200</td>
+                <td><span class="chip chip-success">מושכר</span></td>
+                <td>
+                  <a href="unit-detail.html?id=2" class="action-icon">👁️</a>
+                  <a href="unit-detail.html?id=2" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='unit-detail.html?id=3'">
+                <td>3</td>
+                <td><a href="property-detail.html?id=2">רח' בן יהודה 22, תל אביב</a></td>
+                <td>1</td>
+                <td>2.5</td>
+                <td>1</td>
+                <td>₪3,800</td>
+                <td><span class="chip chip-success">מושכר</span></td>
+                <td>
+                  <a href="unit-detail.html?id=3" class="action-icon">👁️</a>
+                  <a href="unit-detail.html?id=3" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='unit-detail.html?id=4'">
+                <td>7</td>
+                <td><a href="property-detail.html?id=2">רח' בן יהודה 22, תל אביב</a></td>
+                <td>3</td>
+                <td>3</td>
+                <td>2</td>
+                <td>₪4,200</td>
+                <td><span class="chip chip-default">פנוי</span></td>
+                <td>
+                  <a href="unit-detail.html?id=4" class="action-icon">👁️</a>
+                  <a href="unit-detail.html?id=4" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='unit-detail.html?id=5'">
+                <td>משרד 101</td>
+                <td><a href="property-detail.html?id=3">רח' שאול המלך 45, רמת גן</a></td>
+                <td>1</td>
+                <td>משרד</td>
+                <td>1</td>
+                <td>₪8,500</td>
+                <td><span class="chip chip-success">מושכר</span></td>
+                <td>
+                  <a href="unit-detail.html?id=5" class="action-icon">👁️</a>
+                  <a href="unit-detail.html?id=5" class="action-icon">✏️</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

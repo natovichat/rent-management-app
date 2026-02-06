@@ -1,0 +1,519 @@
+# Test Data Management Strategy - MANDATORY
+
+**Context**: Balancing between seed data (static) and dynamic creation for E2E tests.
+
+**Rationale**: Tests need predictable data, but strategy depends on API availability and test requirements.
+
+---
+
+## Golden Rules
+
+```
+🎯 CHOOSE strategy based on API availability
+🌱 SEED data for base entities (when CRUD missing)
+⚡ DYNAMIC creation for variations (when CRUD exists)
+🔄 ALWAYS start with clean state
+```
+
+---
+
+## Decision Matrix
+
+### When to Use Seed Data vs. Dynamic Creation
+
+| Criterion | Use Seed Data | Use Dynamic Creation |
+|---|---|---|
+| **API Availability** | CRUD missing | CRUD exists ✅ |
+| **Test Isolation** | Reset + seed fast | Creation fast ✅ |
+| **Multiple Entities** | Pre-create variants ✅ | Create on-demand |
+| **Test Complexity** | Simple scenarios ✅ | Complex setups |
+| **Maintenance** | Centralized ✅ | Distributed |
+| **Debugging** | Known IDs ✅ | Random IDs |
+
+---
+
+## Strategy Patterns
+
+### Pattern 1: Seed Data (Base Entities)
+
+**Use When**: API endpoints for creation don't exist or aren't needed.
+
+**Example**: Account Management
+
+```typescript
+// prisma/seed.ts
+async function main() {
+  console.log('🌱 Starting seed...');
+  
+  // Create base test accounts
+  const testAccount1 = await prisma.account.create({
+    data: {
+      id: 'test-account-1', // Fixed ID for predictable tests
+      name: 'Test Account',
+      status: 'ACTIVE',
+    },
+  });
+  
+  const testAccount2 = await prisma.account.create({
+    data: {
+      id: 'test-account-2', // Fixed ID for multi-account tests
+      name: 'Test Account 2',
+      status: 'ACTIVE',
+    },
+  });
+  
+  console.log('✅ Created test accounts');
+  
+  // Create base test user
+  const testUser = await prisma.user.create({
+    data: {
+      email: 'test@example.com',
+      accountId: testAccount1.id,
+    },
+  });
+  
+  console.log('✅ Created test user');
+  
+  // Optional: Sample data for testing
+  if (process.env.NODE_ENV === 'development') {
+    await createSampleProperties(testAccount1.id);
+    console.log('✅ Created sample data');
+  }
+  
+  console.log('🎉 Seed completed!');
+}
+```
+
+**Test Usage**:
+```typescript
+// test/e2e/us1.1.2-account-selector.spec.ts
+let TEST_ACCOUNT_1_ID: string;
+let TEST_ACCOUNT_2_ID: string;
+
+test.beforeEach(async () => {
+  // Reset DB (runs seed automatically)
+  execSync('npm run db:reset:force');
+  
+  // Fetch seeded account IDs
+  TEST_ACCOUNT_1_ID = await fetchAccountByName('Test Account');
+  TEST_ACCOUNT_2_ID = await fetchAccountByName('Test Account 2');
+  
+  console.log(`Using accounts: ${TEST_ACCOUNT_1_ID}, ${TEST_ACCOUNT_2_ID}`);
+});
+
+test('switching accounts filters properties', async ({ page }) => {
+  // Use pre-seeded accounts
+  await createProperty(TEST_ACCOUNT_1_ID, 'Account 1 Property');
+  await createProperty(TEST_ACCOUNT_2_ID, 'Account 2 Property');
+  
+  // Test filtering...
+});
+```
+
+**Benefits**:
+- ✅ Predictable IDs (`test-account-1`, `test-account-2`)
+- ✅ Fast setup (no API calls needed)
+- ✅ Works even if POST endpoint missing
+- ✅ Centralized in one file
+
+---
+
+### Pattern 2: Dynamic Creation (Test Variants)
+
+**Use When**: CRUD endpoints exist and you need flexibility.
+
+**Example**: Property Creation
+
+```typescript
+// test/helpers/test-data.ts
+export async function createTestProperty(
+  accountId: string,
+  address: string,
+  type: string = 'מגורים',
+  status: string = 'בבעלות'
+) {
+  const response = await fetch(`${BACKEND_URL}/properties`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      accountId,
+      address,
+      type,
+      status,
+      // Minimal required fields
+    }),
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to create property: ${response.status}`);
+  }
+  
+  const property = await response.json();
+  console.log(`✓ Created property: ${property.id} - ${address}`);
+  return property;
+}
+```
+
+**Test Usage**:
+```typescript
+test('create properties with different types', async ({ page }) => {
+  // Dynamically create test data
+  const residential = await createTestProperty(accountId, 'רחוב הרצל 10', 'מגורים');
+  const commercial = await createTestProperty(accountId, 'רחוב רוטשילד 45', 'מסחרי');
+  const land = await createTestProperty(accountId, 'גוש 123 חלקה 45', 'קרקע');
+  
+  // Verify filtering by type...
+});
+```
+
+**Benefits**:
+- ✅ Flexible (create exactly what you need)
+- ✅ Self-contained tests
+- ✅ Clear test intent (data creation visible in test)
+- ✅ Easy to create variations
+
+---
+
+### Pattern 3: Hybrid Strategy (RECOMMENDED)
+
+**Use When**: Combine both approaches for optimal balance.
+
+```typescript
+/**
+ * Hybrid Test Data Strategy
+ * 
+ * Seed Data (Fixed):
+ * - Test Account 1 (test-account-1)
+ * - Test Account 2 (test-account-2)
+ * - Base test user
+ * 
+ * Dynamic Creation (Variable):
+ * - Properties (created per test)
+ * - Tenants (created per test)
+ * - Leases (created per test)
+ */
+
+// test/e2e/property-management.spec.ts
+test.beforeEach(async () => {
+  // Reset DB → seeds base accounts
+  execSync('npm run db:reset:force');
+  
+  // Fetch seeded account
+  TEST_ACCOUNT_ID = await fetchAccountByName('Test Account');
+});
+
+test('create and list properties', async ({ page }) => {
+  // Dynamically create properties for this test
+  const property1 = await createTestProperty(TEST_ACCOUNT_ID, 'Property 1');
+  const property2 = await createTestProperty(TEST_ACCOUNT_ID, 'Property 2');
+  
+  // Navigate and verify
+  await page.goto('/properties');
+  expect(await page.locator('[data-testid="property-row"]').count()).toBe(2);
+});
+```
+
+**Benefits**:
+- ✅ Base entities seeded (accounts, users)
+- ✅ Test-specific data dynamic (properties, tenants)
+- ✅ Fast (only create what you need)
+- ✅ Flexible (adapt per test)
+
+---
+
+## Adaptive Strategy Helper
+
+```typescript
+// test/helpers/test-data-strategy.ts
+export async function getTestDataStrategy(): Promise<{
+  accounts: {
+    strategy: 'seed' | 'dynamic';
+    getAccounts: () => Promise<{ id: string; name: string }[]>;
+  };
+  properties: {
+    strategy: 'seed' | 'dynamic';
+    create: (accountId: string, data: any) => Promise<any>;
+  };
+}> {
+  // Check POST /accounts availability
+  const canCreateAccounts = await checkEndpointExists('POST', '/accounts');
+  
+  return {
+    accounts: {
+      strategy: canCreateAccounts ? 'dynamic' : 'seed',
+      getAccounts: canCreateAccounts
+        ? async () => {
+            const base = await fetchAccountByName('Test Account');
+            const extra = await createTestAccount('Test Account 2');
+            return [base, extra];
+          }
+        : async () => {
+            const accounts = await fetch(`${BACKEND_URL}/accounts`).then(r => r.json());
+            if (accounts.length < 2) {
+              throw new Error('Seed must provide 2+ test accounts');
+            }
+            return accounts.filter((a: any) => 
+              a.name.startsWith('Test Account')
+            );
+          }
+    },
+    
+    properties: {
+      strategy: 'dynamic', // Properties always dynamic
+      create: async (accountId, data) => {
+        return await createTestProperty(accountId, data);
+      }
+    }
+  };
+}
+```
+
+**Usage**:
+```typescript
+test('multi-account filtering', async ({ page }) => {
+  const strategy = await getTestDataStrategy();
+  
+  const accounts = await strategy.accounts.getAccounts();
+  console.log(`Using ${strategy.accounts.strategy} strategy for accounts`);
+  
+  // Create properties with dynamic strategy
+  await strategy.properties.create(accounts[0].id, { address: 'Property 1' });
+  await strategy.properties.create(accounts[1].id, { address: 'Property 2' });
+  
+  // Test...
+});
+```
+
+---
+
+## Seed Data Standards
+
+### Naming Conventions
+
+```typescript
+// ✅ GOOD - Predictable names
+'Test Account'      // Primary account
+'Test Account 2'    // Secondary account
+'test@example.com'  // Test user
+
+// ✅ GOOD - Predictable IDs
+'test-account-1'    // Primary account ID
+'test-account-2'    // Secondary account ID
+
+// ❌ BAD - Random names
+'Account 1'         // Too generic
+'My Account'        // Not obviously a test account
+```
+
+### Seed File Structure
+
+```typescript
+// prisma/seed.ts
+async function main() {
+  console.log('🌱 Starting seed...');
+  
+  // 1. Core test data (ALWAYS)
+  await seedTestAccounts();
+  await seedTestUsers();
+  
+  // 2. Optional sample data (DEVELOPMENT only)
+  if (process.env.NODE_ENV === 'development') {
+    await seedSampleData();
+  }
+  
+  console.log('🎉 Seed completed!');
+}
+
+async function seedTestAccounts() {
+  const accounts = [
+    { id: 'test-account-1', name: 'Test Account' },
+    { id: 'test-account-2', name: 'Test Account 2' },
+  ];
+  
+  for (const acc of accounts) {
+    await prisma.account.upsert({
+      where: { id: acc.id },
+      update: {},
+      create: acc,
+    });
+  }
+  
+  console.log(`✅ Created ${accounts.length} test accounts`);
+}
+```
+
+---
+
+## Database Reset Strategy
+
+### Script: `db:reset:force`
+
+```json
+{
+  "scripts": {
+    "db:reset:force": "prisma migrate reset --force --skip-seed && npm run prisma:seed"
+  }
+}
+```
+
+**What it does**:
+1. Drops all tables
+2. Recreates schema from migrations
+3. Runs seed script
+4. Creates test accounts
+
+**When to run**:
+- `beforeEach` in E2E tests (full isolation)
+- `beforeAll` if tests don't modify data (faster)
+
+---
+
+## Test Data Helpers
+
+### Helper: Fetch Account by Name
+
+```typescript
+export async function fetchAccountByName(name: string): Promise<string> {
+  const response = await fetch(`${BACKEND_URL}/accounts`);
+  const accounts = await response.json();
+  
+  const account = accounts.find((a: any) => a.name === name);
+  if (!account) {
+    throw new Error(`Account "${name}" not found. Check seed data.`);
+  }
+  
+  return account.id;
+}
+```
+
+### Helper: Create Test Property
+
+```typescript
+export async function createTestProperty(
+  accountId: string,
+  address: string,
+  options: {
+    type?: string;
+    status?: string;
+  } = {}
+) {
+  const { type = 'מגורים', status = 'בבעלות' } = options;
+  
+  const response = await fetch(`${BACKEND_URL}/properties`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      accountId,
+      address,
+      type,
+      status,
+    }),
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to create property: ${response.status}`);
+  }
+  
+  return await response.json();
+}
+```
+
+### Helper: Create Test Account (if endpoint exists)
+
+```typescript
+export async function createTestAccount(
+  name: string,
+  id?: string
+): Promise<{ id: string; name: string }> {
+  const response = await fetch(`${BACKEND_URL}/accounts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id,
+      name,
+      status: 'ACTIVE',
+    }),
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Failed to create account: ${response.status}`);
+  }
+  
+  return await response.json();
+}
+```
+
+---
+
+## Migration Path
+
+### Current Situation (2026-02-04)
+
+**US1.1.2 Tests**:
+- ❌ Try to create accounts dynamically
+- ❌ POST /accounts doesn't exist
+- ❌ Tests fail with 404
+
+**Immediate Fix**:
+```typescript
+// 1. Update seed to create 2 accounts
+// prisma/seed.ts
+await prisma.account.createMany({
+  data: [
+    { id: 'test-account-1', name: 'Test Account', status: 'ACTIVE' },
+    { id: 'test-account-2', name: 'Test Account 2', status: 'ACTIVE' },
+  ],
+});
+
+// 2. Update tests to fetch from seed
+test.beforeEach(async () => {
+  execSync('npm run db:reset:force');
+  TEST_ACCOUNT_1_ID = await fetchAccountByName('Test Account');
+  TEST_ACCOUNT_2_ID = await fetchAccountByName('Test Account 2');
+});
+```
+
+**Long-term**: Implement POST /accounts, then switch to dynamic strategy.
+
+---
+
+## Benefits
+
+1. **Flexibility**: Adapt to API availability
+2. **Speed**: Use seed for base, dynamic for variations
+3. **Clarity**: Test data intent is clear
+4. **Isolation**: Each test starts fresh
+5. **Maintenance**: Centralized seed data
+
+---
+
+## Best Practices
+
+### DO ✅
+
+- Start each test with clean DB (`db:reset:force`)
+- Use seed for base entities (accounts, users)
+- Use dynamic creation for test-specific data
+- Document test data strategy in test file
+- Use predictable names (`Test Account`, `Test Account 2`)
+
+### DON'T ❌
+
+- Reuse data between tests (causes flaky tests)
+- Hardcode IDs without seed (seed creates them)
+- Create accounts dynamically if endpoint missing
+- Leave test data in DB after tests
+- Use production-like data names
+
+---
+
+## Related Rules
+
+- [API-First Testing](mdc:.cursor/rules/api-first-testing.mdc)
+- [E2E Test Infrastructure](mdc:.cursor/rules/e2e-test-infrastructure.mdc)
+
+---
+
+**Last Updated**: 2026-02-04  
+**Origin**: [Retrospective - Test Execution Issues](mdc:docs/retrospectives/RETRO_TEST_EXECUTION_2026_02_04.md)  
+**Real Issue**: US1.1.2 tests needed 2 accounts, POST /accounts missing, had to switch to seed strategy

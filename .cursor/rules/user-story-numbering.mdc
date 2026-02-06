@@ -1,0 +1,604 @@
+# User Story Numbering Convention - MANDATORY
+
+**CRITICAL**: Use decimal numbering (X.X.X) when inserting user stories to avoid renumbering all subsequent stories.
+
+## Golden Rules
+
+```
+📊 USE DECIMAL NUMBERING for inserted stories (e.g., 1.3.1, 1.3.2)
+🚫 DON'T RENUMBER all subsequent stories when inserting
+✅ SAVES TIME and prevents massive file changes
+🎯 CLEAR LOGICAL GROUPING of related stories
+```
+
+---
+
+## Core Principle
+
+**When inserting a new user story between existing stories, use decimal numbering instead of renumbering all subsequent stories.**
+
+### Why This Matters:
+
+**Without this rule (old approach):**
+```
+Original:
+- US1.1: Create Property
+- US1.2: Add Property Details
+- US1.3: Add Land Registry
+- US1.4: Mark Mortgage Status
+... (15 more stories)
+
+Want to add: Account Selector (between 1.1 and 1.2)
+
+❌ BAD: Renumber ALL stories
+- US1.1: Create Property
+- US1.2: Account Selector (NEW)
+- US1.3: Add Property Details (was 1.2)
+- US1.4: Add Land Registry (was 1.3)
+- US1.5: Mark Mortgage Status (was 1.4)
+... (15 more stories all changed!)
+
+Result: Must update:
+- Epic doc: 50+ places
+- Test reports: Multiple files
+- Documentation: Many references
+- Git history: Confusing
+- Time wasted: Hours! ⚠️
+```
+
+**With this rule (new approach):**
+```
+Original:
+- US1.1: Create Property
+- US1.2: Add Property Details
+- US1.3: Add Land Registry
+- US1.4: Mark Mortgage Status
+... (15 more stories)
+
+Want to add: Account Selector (between 1.1 and 1.2)
+
+✅ GOOD: Use decimal numbering
+- US1.1: Create Property
+- US1.1.2: Account Selector (NEW - decimal!)
+- US1.2: Add Property Details (unchanged!)
+- US1.3: Add Land Registry (unchanged!)
+- US1.4: Mark Mortgage Status (unchanged!)
+... (15 more stories unchanged!)
+
+Result:
+- Epic doc: Update 1 place
+- Test reports: Add 1 section
+- Documentation: Add 1 file
+- Git history: Clear
+- Time saved: Hours! ✅
+```
+
+---
+
+## Numbering Scheme
+
+### Standard Format:
+
+```
+Epic.Story[.SubStory]
+
+Examples:
+- US1.1 - Main story
+- US1.2 - Main story
+- US1.2.1 - Inserted between 1.2 and 1.3
+- US1.2.2 - Another insertion in same range
+- US1.3 - Main story
+- US1.3.1 - Inserted between 1.3 and 1.4
+```
+
+---
+
+## When to Use Decimal Numbering
+
+### Use Decimal (.X) When:
+
+1. ✅ **Inserting between existing stories**
+   - Add US1.3.1 between US1.3 and US1.4
+   - Add US1.5.1 between US1.5 and US1.6
+
+2. ✅ **Related sub-feature discovered during implementation**
+   - US1.2: Add Property Details
+   - US1.2.1: Validate Property Coordinates (discovered later)
+
+3. ✅ **Breaking down a story into smaller pieces**
+   - US1.7: Import/Export Properties
+   - US1.7.1: Import from CSV
+   - US1.7.2: Export to CSV
+
+4. ✅ **Adding prerequisite discovered late**
+   - US1.1: Create Property
+   - US1.1.2: Account Selector (prerequisite discovered)
+   - US1.2: Add Property Details
+
+---
+
+### DON'T Use Decimal When:
+
+1. ❌ **Adding at the end of epic**
+   - Just use next number: US1.20, US1.21
+
+2. ❌ **Starting a new epic**
+   - New epic gets new base number: US2.1, US2.2
+
+3. ❌ **Story is truly independent**
+   - If no logical grouping, use next main number
+
+---
+
+## Examples
+
+### Example 1: Inserting Between Stories
+
+**Scenario:** Need to add Account Selector between Create Property and Add Details
+
+```markdown
+# Before
+### US1.1: Create Property
+### US1.2: Add Property Details
+### US1.3: Add Land Registry
+### US1.4: Mark Mortgage Status
+
+# After (✅ GOOD - Decimal numbering)
+### US1.1: Create Property
+### US1.1.2: Account Selector & Multi-Account Filtering
+### US1.2: Add Property Details
+### US1.3: Add Land Registry
+### US1.4: Mark Mortgage Status
+
+# Why good:
+- Only 1 insertion needed
+- No renumbering of 1.2, 1.3, 1.4, etc.
+- Clear that 1.1.2 is related to 1.1 (both about property creation/setup)
+```
+
+---
+
+### Example 2: Multiple Insertions
+
+**Scenario:** Need to add validation features between existing stories
+
+```markdown
+# Original
+### US2.1: Create Unit
+### US2.2: Edit Unit
+### US2.3: Delete Unit
+### US2.4: List Units
+
+# Add validation stories (✅ GOOD)
+### US2.1: Create Unit
+### US2.1.1: Validate Unit Number Uniqueness
+### US2.1.2: Validate Floor Number
+### US2.2: Edit Unit
+### US2.2.1: Validate Edit Permissions
+### US2.3: Delete Unit
+### US2.4: List Units
+
+# Why good:
+- Validations grouped with their parent story
+- No renumbering needed
+- Clear relationship between main story and validation
+```
+
+---
+
+### Example 3: Breaking Down Complex Story
+
+**Scenario:** Story too big, needs to be split
+
+```markdown
+# Original
+### US3.5: Import/Export Data
+
+# Break down (✅ GOOD)
+### US3.5: Import/Export Data (Overview)
+### US3.5.1: Import from CSV
+### US3.5.2: Import from Excel
+### US3.5.3: Export to CSV
+### US3.5.4: Export to Excel
+### US3.5.5: Export to PDF
+### US3.6: Next feature (unchanged!)
+
+# Why good:
+- Clear parent-child relationship
+- All import/export in 3.5.x range
+- US3.6 and beyond unchanged
+```
+
+---
+
+## Numbering Best Practices
+
+### 1. Logical Grouping
+
+Use decimals to show relationship:
+
+```markdown
+# ✅ Good - Shows relationship
+US1.1: Create Property
+US1.1.1: Add Account Context
+US1.1.2: Add Account Selector
+US1.2: Add Property Details
+
+# ❌ Bad - Loses relationship
+US1.1: Create Property
+US1.2: Add Account Context
+US1.3: Add Account Selector
+US1.4: Add Property Details
+```
+
+---
+
+### 2. Dependency Chain
+
+Show dependency with decimals:
+
+```markdown
+# ✅ Good - Shows Auth → Profile → Settings chain
+US4.1: User Authentication
+US4.1.1: Password Reset
+US4.1.2: Email Verification
+US4.2: User Profile
+US4.2.1: Avatar Upload
+US4.2.2: Profile Editing
+US4.3: User Settings
+
+# Clear that 4.1.x relates to 4.1, 4.2.x relates to 4.2
+```
+
+---
+
+### 3. Maximum Depth
+
+**Recommended:** Maximum 2 decimal levels (X.X.X)
+
+```markdown
+# ✅ Good - 2 levels
+US1.2.3: Feature Name
+
+# ⚠️ Avoid - 3+ levels (too complex)
+US1.2.3.4: Feature Name
+
+# If you need 3+ levels, consider:
+# - Breaking into separate stories
+# - Creating a new epic
+# - Restructuring the feature hierarchy
+```
+
+---
+
+## File Naming Convention
+
+### Test Files:
+
+```bash
+# Main story
+test/e2e/us1.1-create-property-e2e.spec.ts
+
+# Decimal story
+test/e2e/us1.1.2-account-selector-e2e.spec.ts
+
+# Sub-story
+test/e2e/us1.3.1-validate-coordinates-e2e.spec.ts
+```
+
+### Documentation Files:
+
+```bash
+# Main story
+docs/user-stories/US1.1_CREATE_PROPERTY.md
+
+# Decimal story
+docs/user-stories/US1.1.2_ACCOUNT_SELECTOR.md
+
+# Sub-story
+docs/user-stories/US1.3.1_VALIDATE_COORDINATES.md
+```
+
+---
+
+## Epic Documentation Updates
+
+### When Adding Decimal Story:
+
+**Only update these sections:**
+
+1. ✅ **Add new story section** (1 place)
+2. ✅ **Update total count** (if shown)
+3. ✅ **Update dependencies** (if new story is a dependency)
+
+**DON'T update:**
+- ❌ All subsequent story numbers
+- ❌ All subsequent story titles
+- ❌ All test file names
+- ❌ All documentation references
+
+---
+
+### Example Epic Update:
+
+```markdown
+# Before adding US1.1.2
+**Total User Stories:** 18
+
+### US1.1: Create Property
+...
+
+### US1.2: Add Property Details
+...
+
+# After adding US1.1.2 (✅ Only 3 changes!)
+**Total User Stories:** 19
+
+### US1.1: Create Property
+...
+
+### US1.1.2: Account Selector & Multi-Account Filtering  ← NEW!
+...                                                        ← NEW!
+...                                                        ← NEW!
+
+### US1.2: Add Property Details  ← UNCHANGED NUMBER!
+...
+```
+
+---
+
+## Git Commit Messages
+
+### For Decimal Stories:
+
+```bash
+# Adding new decimal story
+git commit -m "feat: add US1.1.2 - Account Selector & Multi-Account Filtering"
+
+# Implementing decimal story
+git commit -m "feat(us1.1.2): implement account context provider"
+
+# Tests for decimal story
+git commit -m "test(us1.1.2): add E2E tests for account selector"
+```
+
+---
+
+## Migration from Renumbered Stories
+
+### If Stories Were Already Renumbered:
+
+**Option 1: Leave as-is (Recommended)**
+- If work already done, don't change
+- Apply rule to future insertions only
+
+**Option 2: Add clarification**
+```markdown
+### US1.2: Add Property Details
+**Note:** Was originally US1.1.2, renumbered during Epic planning.
+Future insertions will use decimal numbering (e.g., 1.2.1).
+```
+
+---
+
+## Comparison Table
+
+| Aspect | Old Way (Renumber All) | New Way (Decimal) |
+|--------|------------------------|-------------------|
+| **Insert 1 story** | Change 15+ stories | Change 1 story |
+| **Time to insert** | 1-2 hours | 5-10 minutes |
+| **Files changed** | 20+ files | 2-3 files |
+| **Git diff size** | 500+ lines | 50 lines |
+| **Merge conflicts** | High risk | Low risk |
+| **Clarity** | Lost relationships | Shows relationships |
+| **Maintenance** | Difficult | Easy |
+
+---
+
+## When to Renumber (Exceptions)
+
+### Only renumber if:
+
+1. ✅ **Epic is brand new** (no implementation started)
+2. ✅ **Planning phase only** (no code written)
+3. ✅ **Major epic restructure** (rare, needs team approval)
+4. ✅ **Creating new epic** (US2.1, US2.2, etc.)
+
+### Never renumber if:
+
+1. ❌ Any code is written
+2. ❌ Tests exist
+3. ❌ Documentation created
+4. ❌ Epic is in progress
+5. ❌ Stories are in Phase 2+ (TDD workflow)
+
+---
+
+## Checklist for Adding Story
+
+Before adding a new user story between existing ones:
+
+- [ ] Determine insertion point (between which stories?)
+- [ ] Use decimal numbering (e.g., 1.3.1)
+- [ ] Add story to epic document (1 section)
+- [ ] Update total story count
+- [ ] Update dependencies if applicable
+- [ ] Create story documentation file
+- [ ] DON'T renumber subsequent stories
+- [ ] DON'T change test file names
+- [ ] DON'T update references in other docs
+- [ ] Commit with clear message
+
+---
+
+## Real-World Example
+
+### US1.1.2 Case Study:
+
+**Situation:**
+- Epic 01 has 18 user stories (US1.1 to US1.18)
+- US1.1 (Create Property) implemented, ready for manual test
+- Discovered need for Account Selector before US1.2
+
+**Decision:**
+```
+Option A (Old Way): Renumber all
+- US1.2 → US1.3
+- US1.3 → US1.4
+- ...
+- US1.18 → US1.19
+Result: 50+ file changes, 2 hours work
+
+Option B (New Way): Use decimal
+- Add US1.1.2 (Account Selector)
+- US1.2 stays US1.2
+- US1.3 stays US1.3
+- ...
+- US1.18 stays US1.18
+Result: 3 file changes, 10 minutes work
+```
+
+**We chose Option B!** ✅
+
+**Benefits realized:**
+- ✅ 10 minutes vs 2 hours
+- ✅ 3 files vs 50+ files
+- ✅ Clear that 1.1.2 relates to 1.1 (account setup)
+- ✅ No disruption to existing work
+- ✅ Easy to merge
+- ✅ Git history clear
+
+---
+
+## Team Communication
+
+### When Adding Decimal Story:
+
+**Notify team:**
+```
+📢 New Story Added: US1.1.2 - Account Selector
+
+**Location:** Between US1.1 and US1.2
+**Why decimal:** Foundation for US1.2, saves renumbering time
+**Impact:** None on existing stories
+**Files changed:** 3 (epic doc, test report, story doc)
+**Time saved:** ~2 hours (vs renumbering all)
+
+All existing story numbers unchanged! 🎯
+```
+
+---
+
+## Documentation Standards
+
+### Story Documentation File:
+
+**Name format:**
+```bash
+# Main story
+docs/user-stories/US{Epic}.{Story}_{TITLE}.md
+
+# Decimal story
+docs/user-stories/US{Epic}.{Story}.{SubStory}_{TITLE}.md
+
+Examples:
+- US1.1_CREATE_PROPERTY.md
+- US1.1.2_ACCOUNT_SELECTOR.md
+- US1.3_ADD_PROPERTY_DETAILS.md
+- US1.3.1_VALIDATE_COORDINATES.md
+```
+
+---
+
+## Quality Assurance
+
+### Test Naming:
+
+**E2E Tests:**
+```typescript
+// Main story
+describe('US1.1: Create Property', () => { ... });
+
+// Decimal story
+describe('US1.1.2: Account Selector', () => { ... });
+
+// Sub-story
+describe('US1.3.1: Validate Coordinates', () => { ... });
+```
+
+**Test Files:**
+```
+us1.1-create-property-e2e.spec.ts
+us1.1.2-account-selector-e2e.spec.ts
+us1.3.1-validate-coordinates-e2e.spec.ts
+```
+
+---
+
+## Future Planning
+
+### When Planning Epics:
+
+**Leave gaps for future insertions:**
+
+```markdown
+# ✅ Good - Leaves room
+Epic 2: Unit Management
+- US2.1: Create Unit
+- US2.2: Edit Unit
+- US2.5: List Units (left 2.3, 2.4 for future)
+- US2.6: Filter Units
+
+# Can later add:
+- US2.3: Validate Unit
+- US2.4: Delete Unit
+
+# Without renumbering 2.5, 2.6!
+```
+
+---
+
+## Summary
+
+```
+📊 Use decimal numbering: X.X.X
+🚫 Don't renumber all stories
+✅ Saves time (hours → minutes)
+🎯 Shows logical relationships
+📁 Fewer file changes
+🔀 Fewer merge conflicts
+📝 Clearer git history
+```
+
+**Rule: When inserting user stories, use decimal numbering to save time and maintain clarity!**
+
+---
+
+## Quick Reference
+
+### Adding Story Checklist:
+
+```bash
+# 1. Choose number
+Between 1.3 and 1.4? → Use 1.3.1
+
+# 2. Add to epic
+Add section for US1.3.1 (1 place)
+
+# 3. Update count
+Total: 18 → 19
+
+# 4. Create docs
+docs/user-stories/US1.3.1_TITLE.md
+
+# 5. Commit
+git commit -m "feat: add US1.3.1 - Feature Name"
+
+# Done! No renumbering needed! ✅
+```
+
+---
+
+**Last Updated:** February 3, 2026  
+**Rationale:** US1.1.2 case study showed 10min vs 2hr benefit  
+**Status:** ✅ MANDATORY for all future story insertions

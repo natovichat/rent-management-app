@@ -1,0 +1,419 @@
+
+Running 11 tests using 2 workers
+
+(node:64498) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64497) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64498) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:64497) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-001: Filter UI Component Available ===
+→ Looking for filter panel...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-007: Multiple Filters Simultaneously ===
+→ Creating test properties with various combinations...
+✓ Filter panel is visible
+→ Verifying filter accordion can be expanded...
+✓ Test properties created
+✓ Filter accordion found
+✓ Test completed successfully
+
+  ✓   1 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:48:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-001: Filter UI component is available (2.8s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-002: Filter by Property Type (Single) ===
+→ Creating test properties with different types...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying multiple filters (RESIDENTIAL + OWNED + תל אביב + Mortgaged)...
+→ Opening filter panel...
+→ Selecting RESIDENTIAL type filter...
+  ✘   2 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:422:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-007: Multiple filters can be applied simultaneously (30.4s)
+(node:66468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:66468) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘   3 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:67:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-002: Filter by property type (single selection) (30.4s)
+(node:66651) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-007: Multiple Filters Simultaneously ===
+→ Creating test properties with various combinations...
+✓ Test properties created
+(node:66651) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-002: Filter by Property Type (Single) ===
+→ Creating test properties with different types...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying multiple filters (RESIDENTIAL + OWNED + תל אביב + Mortgaged)...
+→ Opening filter panel...
+→ Selecting RESIDENTIAL type filter...
+  ✘   4 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:422:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-007: Multiple filters can be applied simultaneously (retry #1) (30.4s)
+(node:69121) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69121) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘   5 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:67:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-002: Filter by property type (single selection) (retry #1) (30.4s)
+(node:69202) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:69202) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-007: Multiple Filters Simultaneously ===
+→ Creating test properties with various combinations...
+✓ Test properties created
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-002: Filter by Property Type (Single) ===
+→ Creating test properties with different types...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying multiple filters (RESIDENTIAL + OWNED + תל אביב + Mortgaged)...
+→ Opening filter panel...
+→ Selecting RESIDENTIAL type filter...
+  ✘   6 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:422:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-007: Multiple filters can be applied simultaneously (retry #2) (30.4s)
+(node:70072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:70072) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘   7 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:67:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-002: Filter by property type (single selection) (retry #2) (30.4s)
+(node:70152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-008: Active Filters Displayed as Chips ===
+→ Creating test property...
+✓ Test property created
+(node:70152) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-003: Filter by Property Status ===
+→ Creating test properties with different statuses...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying filters...
+→ Opening filter panel...
+→ Selecting OWNED status filter...
+  ✘   8 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:526:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-008: Active filters are displayed as chips (30.4s)
+(node:71027) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:71027) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘   9 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:148:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-003: Filter by property status (30.5s)
+(node:71128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:71128) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-008: Active Filters Displayed as Chips ===
+→ Creating test property...
+✓ Test property created
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-003: Filter by Property Status ===
+→ Creating test properties with different statuses...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying filters...
+→ Opening filter panel...
+→ Selecting OWNED status filter...
+  ✘  10 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:526:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-008: Active filters are displayed as chips (retry #1) (30.4s)
+(node:71971) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:71971) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘  11 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:148:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-003: Filter by property status (retry #1) (30.4s)
+(node:72052) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72052) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-008: Active Filters Displayed as Chips ===
+→ Creating test property...
+✓ Test property created
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-003: Filter by Property Status ===
+→ Creating test properties with different statuses...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying filters...
+→ Opening filter panel...
+→ Selecting OWNED status filter...
+  ✘  12 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:526:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-008: Active filters are displayed as chips (retry #2) (30.5s)
+(node:72967) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:72967) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+  ✘  13 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:148:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-003: Filter by property status (retry #2) (30.7s)
+(node:73067) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:73067) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-009: Clear Filters Button ===
+→ Creating test properties...
+✓ Test properties created
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-004: Filter by City ===
+→ Creating test properties in different cities...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying filters...
+→ Opening filter panel...
+→ Entering city filter "תל אביב"...
+  ✘  14 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:589:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-009: Clear filters button clears all filters (30.4s)
+(node:73942) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:73942) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘  15 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:219:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-004: Filter by city (30.4s)
+(node:74021) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:74021) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-009: Clear Filters Button ===
+→ Creating test properties...
+✓ Test properties created
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-004: Filter by City ===
+→ Creating test properties in different cities...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying filters...
+→ Opening filter panel...
+→ Entering city filter "תל אביב"...
+  ✘  16 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:589:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-009: Clear filters button clears all filters (retry #1) (30.4s)
+(node:74888) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:74888) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘  17 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:219:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-004: Filter by city (retry #1) (30.4s)
+(node:74975) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:74975) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-009: Clear Filters Button ===
+→ Creating test properties...
+✓ Test properties created
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-004: Filter by City ===
+→ Creating test properties in different cities...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying filters...
+→ Opening filter panel...
+→ Entering city filter "תל אביב"...
+  ✘  18 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:589:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-009: Clear filters button clears all filters (retry #2) (30.4s)
+(node:75826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:75826) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+  ✘  19 [chromium] › test/e2e/us1.8-filter-properties-e2e.spec.ts:219:7 › US1.8 - Filter Properties (TDD) › TC-E2E-1.8-004: Filter by city (retry #2) (30.4s)
+(node:75886) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:75886) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-010: Filter State Persists ===
+→ Creating test property...
+✓ Test property created
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+→ Navigating to properties page...
+✓ Properties page loaded
+
+
+=== TC-E2E-1.8-005: Filter by Country ===
+→ Creating test properties in different countries...
+✓ Test properties created
+→ Opening filter panel...
+→ Applying RESIDENTIAL type filter...
+→ Opening filter panel...
+→ Selecting Israel country filter...

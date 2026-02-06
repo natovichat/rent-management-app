@@ -1,0 +1,397 @@
+# React Hook Usage - MANDATORY
+
+**Context**: Prevents runtime errors from imported but unused React hooks, especially context hooks.
+
+**Rationale**: TypeScript won't catch unused hooks if the variable is referenced in a closure. ESLint must enforce usage.
+
+---
+
+## Golden Rule
+
+```
+✅ IMPORTED hook → MUST be used immediately
+🚫 NEVER import a hook without destructuring it
+⚠️ Unused hook = undefined variable = runtime error
+```
+
+---
+
+## The Problem
+
+### ❌ BAD - Hook imported but not used
+
+```typescript
+import { useAccount } from '@/contexts/AccountContext';
+
+export default function PropertyForm() {
+  // ❌ Missing: const { selectedAccountId } = useAccount();
+  
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      // ❌ selectedAccountId is undefined!
+      return propertiesApi.create(data, selectedAccountId);
+    }
+  });
+}
+```
+
+**Runtime Error**:
+```
+ReferenceError: selectedAccountId is not defined
+```
+
+### ✅ GOOD - Hook imported AND used
+
+```typescript
+import { useAccount } from '@/contexts/AccountContext';
+
+export default function PropertyForm() {
+  // ✅ Hook used immediately after import
+  const { selectedAccountId } = useAccount();
+  
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      // ✅ selectedAccountId is defined
+      return propertiesApi.create(data, selectedAccountId);
+    }
+  });
+}
+```
+
+---
+
+## ESLint Configuration
+
+Update `apps/frontend/.eslintrc.js`:
+
+```javascript
+module.exports = {
+  extends: [
+    'next/core-web-vitals',
+    'plugin:@typescript-eslint/recommended',
+  ],
+  plugins: ['@typescript-eslint', 'react-hooks'],
+  rules: {
+    // ✅ Enforce that imported hooks are used
+    '@typescript-eslint/no-unused-vars': ['error', {
+      'varsIgnorePattern': '^_',
+      'argsIgnorePattern': '^_',
+      'ignoreRestSiblings': true
+    }],
+    
+    // ✅ React hooks rules
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
+    
+    // ✅ Custom: No unused imports
+    'no-unused-vars': 'off', // Use TypeScript version instead
+    '@typescript-eslint/no-unused-vars': ['error', {
+      'argsIgnorePattern': '^_',
+      'varsIgnorePattern': '^_',
+      'caughtErrorsIgnorePattern': '^_',
+    }],
+  },
+};
+```
+
+---
+
+## Pattern: Always Use Imported Hooks
+
+### Context Hooks
+
+```typescript
+// ❌ BAD
+import { useAccount } from '@/contexts/AccountContext';
+
+function MyComponent() {
+  // Missing hook usage
+  return <div>Content</div>;
+}
+
+// ✅ GOOD
+import { useAccount } from '@/contexts/AccountContext';
+
+function MyComponent() {
+  const { selectedAccountId, setSelectedAccountId } = useAccount();
+  return <div>Account: {selectedAccountId}</div>;
+}
+```
+
+### React Query Hooks
+
+```typescript
+// ❌ BAD
+import { useQuery } from '@tanstack/react-query';
+
+function MyComponent() {
+  // Missing hook usage
+  return <div>Content</div>;
+}
+
+// ✅ GOOD
+import { useQuery } from '@tanstack/react-query';
+
+function MyComponent() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['properties'],
+    queryFn: propertiesApi.getAll
+  });
+  
+  if (isLoading) return <div>Loading...</div>;
+  return <div>Properties: {data?.length}</div>;
+}
+```
+
+---
+
+## Pre-Commit Hook
+
+Create `.git/hooks/pre-commit-hook-usage.sh`:
+
+```bash
+#!/bin/bash
+# Check for unused React hooks before commit
+
+echo "🔍 Checking for unused React hooks..."
+
+# Find all .tsx files with hook imports
+ERRORS=0
+
+for file in $(git diff --cached --name-only --diff-filter=ACM | grep '\.tsx$'); do
+  # Check for useAccount import
+  if grep -q "import.*useAccount" "$file"; then
+    if ! grep -q "const.*useAccount()" "$file"; then
+      echo "⚠️ $file: useAccount imported but not used"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+  
+  # Check for useQuery import
+  if grep -q "import.*useQuery" "$file"; then
+    if ! grep -q "useQuery(" "$file"; then
+      echo "⚠️ $file: useQuery imported but not used"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+  
+  # Check for useMutation import
+  if grep -q "import.*useMutation" "$file"; then
+    if ! grep -q "useMutation(" "$file"; then
+      echo "⚠️ $file: useMutation imported but not used"
+      ERRORS=$((ERRORS + 1))
+    fi
+  fi
+done
+
+if [ $ERRORS -gt 0 ]; then
+  echo ""
+  echo "❌ Found $ERRORS file(s) with unused hooks"
+  echo "Fix these issues before committing"
+  exit 1
+fi
+
+echo "✅ All imported hooks are used"
+exit 0
+```
+
+**Install**:
+```bash
+chmod +x .git/hooks/pre-commit-hook-usage.sh
+echo ".git/hooks/pre-commit-hook-usage.sh" >> .git/hooks/pre-commit
+```
+
+---
+
+## Common Patterns
+
+### Pattern 1: Context Hook in Form Component
+
+```typescript
+// ✅ CORRECT Pattern
+import { useAccount } from '@/contexts/AccountContext';
+
+export default function PropertyForm({ property, onSuccess }: Props) {
+  // 1. Use hook immediately after imports
+  const { selectedAccountId } = useAccount();
+  
+  // 2. Use in form submission
+  const mutation = useMutation({
+    mutationFn: async (data) => {
+      return propertiesApi.create(data, selectedAccountId); // ✅ Defined
+    }
+  });
+  
+  // 3. Render form
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+```
+
+### Pattern 2: Multiple Hooks
+
+```typescript
+import { useAccount } from '@/contexts/AccountContext';
+import { useQuery, useMutation } from '@tanstack/react-query';
+
+export default function PropertyList() {
+  // ✅ All hooks used
+  const { selectedAccountId } = useAccount();
+  
+  const { data: properties, isLoading } = useQuery({
+    queryKey: ['properties', selectedAccountId],
+    queryFn: () => propertiesApi.getAll(selectedAccountId),
+  });
+  
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => propertiesApi.delete(id, selectedAccountId),
+  });
+  
+  // Render...
+}
+```
+
+### Pattern 3: Conditional Hook Usage (AVOID!)
+
+```typescript
+// ❌ BAD - Conditional hook
+import { useAccount } from '@/contexts/AccountContext';
+
+export default function MyComponent({ useAccountFilter }: Props) {
+  // ❌ WRONG - Hooks can't be conditional!
+  if (useAccountFilter) {
+    const { selectedAccountId } = useAccount();
+  }
+}
+
+// ✅ GOOD - Always call hook, conditionally use value
+import { useAccount } from '@/contexts/AccountContext';
+
+export default function MyComponent({ useAccountFilter }: Props) {
+  const { selectedAccountId } = useAccount(); // ✅ Always called
+  
+  const accountId = useAccountFilter ? selectedAccountId : undefined;
+  // Use accountId...
+}
+```
+
+---
+
+## IDE Integration
+
+### VS Code Settings
+
+Add to `.vscode/settings.json`:
+
+```json
+{
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.format.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
+}
+```
+
+This will highlight unused hooks in real-time.
+
+---
+
+## Testing
+
+### Unit Tests (Mock Hooks)
+
+```typescript
+// Mock context hook in tests
+jest.mock('@/contexts/AccountContext', () => ({
+  useAccount: () => ({
+    selectedAccountId: 'test-account-1',
+    setSelectedAccountId: jest.fn(),
+  }),
+}));
+```
+
+### E2E Tests (Real Hooks)
+
+E2E tests will catch unused hooks during real execution:
+
+```typescript
+// E2E test catches runtime error
+test('create property with account', async ({ page }) => {
+  await page.goto('/properties/new');
+  await page.fill('[data-testid="address"]', 'Test Address');
+  await page.click('[data-testid="submit"]');
+  
+  // ❌ If useAccount not used, API call fails:
+  // Console error: ReferenceError: selectedAccountId is not defined
+});
+```
+
+---
+
+## Migration Guide
+
+### Step 1: Find Unused Hooks
+
+```bash
+# Find all files with useAccount import
+grep -r "import.*useAccount" apps/frontend/src --include="*.tsx"
+
+# Check each file for usage
+for file in $(grep -l "import.*useAccount" apps/frontend/src -r --include="*.tsx"); do
+  if ! grep -q "const.*useAccount()" "$file"; then
+    echo "⚠️ $file"
+  fi
+done
+```
+
+### Step 2: Fix Each File
+
+```typescript
+// Before:
+import { useAccount } from '@/contexts/AccountContext';
+export default function MyForm() {
+  // Missing hook usage
+}
+
+// After:
+import { useAccount } from '@/contexts/AccountContext';
+export default function MyForm() {
+  const { selectedAccountId } = useAccount(); // ✅ Added
+}
+```
+
+### Step 3: Verify
+
+```bash
+npm run lint
+npm run test
+npx playwright test
+```
+
+---
+
+## Benefits
+
+1. **Prevent Runtime Errors**: Catch undefined variables before production
+2. **Type Safety**: Ensure variables are always defined
+3. **Code Quality**: Enforce best practices automatically
+4. **Early Detection**: Find issues in IDE, not in tests
+5. **Consistent**: All developers follow same patterns
+
+---
+
+## Related Rules
+
+- [E2E Test Infrastructure](mdc:.cursor/rules/e2e-test-infrastructure.mdc)
+- [API-First Test Design](mdc:.cursor/rules/api-first-testing.mdc)
+
+---
+
+**Last Updated**: 2026-02-04  
+**Origin**: [Retrospective - Test Execution Issues](mdc:docs/retrospectives/RETRO_TEST_EXECUTION_2026_02_04.md)  
+**Real Bug Fixed**: PropertyForm missing `useAccount()` call causing `selectedAccountId is not defined`

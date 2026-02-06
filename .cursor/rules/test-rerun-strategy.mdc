@@ -1,0 +1,498 @@
+# Test Re-Run Strategy - MANDATORY
+
+**CRITICAL**: When tests fail, run only the affected user story tests, not the entire e2e test suite.
+
+## Golden Rule
+
+```
+🎯 FAILED TEST → Run only related user story tests
+🚫 NO full e2e suite re-runs for single failures
+✅ TARGETED re-execution for efficiency
+⚡ FAST feedback loops
+```
+
+---
+
+## Core Principle
+
+**When a test fails:**
+- ❌ DON'T re-run all e2e tests
+- ✅ DO re-run only the user story tests related to the failure
+- ✅ DO re-run the specific failed test file
+
+**Benefits:**
+- Faster feedback (seconds vs minutes)
+- Less resource consumption
+- Quicker iteration during debugging
+- More efficient development workflow
+
+---
+
+## Test Execution Patterns
+
+### Pattern 1: Single Test File Failed
+
+When ONE test file fails:
+
+```bash
+# ❌ BAD - Re-running everything
+npm run test:e2e
+
+# ✅ GOOD - Re-run only the failed file
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts
+```
+
+### Pattern 2: Multiple Tests from Same User Story Failed
+
+When multiple tests from the SAME user story fail:
+
+```bash
+# ❌ BAD - Re-running all e2e
+npm run test:e2e
+
+# ✅ GOOD - Re-run all tests for that user story
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+```
+
+**Example:**
+```bash
+# US 1.1 tests failed:
+# - us1.1-create-property.spec.ts
+# - us1.1-create-property-e2e.spec.ts
+# - us1.1.2-account-selector.spec.ts
+
+# Re-run all US 1.1 tests:
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+```
+
+### Pattern 3: Multiple Tests from Different User Stories Failed
+
+When tests from DIFFERENT user stories fail:
+
+```bash
+# ❌ BAD - Re-running all
+npm run test:e2e
+
+# ✅ GOOD - Re-run each user story separately
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+npm run test:e2e apps/frontend/test/e2e/us1.2*.spec.ts
+npm run test:e2e apps/frontend/test/e2e/us1.3*.spec.ts
+```
+
+---
+
+## File Naming Conventions
+
+### Standard Naming Pattern
+
+All e2e test files MUST follow this naming convention:
+
+```
+us{epic}.{story}-{description}.spec.ts
+us{epic}.{story}.{sub}-{description}.spec.ts
+```
+
+**Examples:**
+- `us1.1-create-property.spec.ts` - User Story 1.1
+- `us1.1.2-account-selector.spec.ts` - User Story 1.1, sub-test 2
+- `us1.3-property-details.spec.ts` - User Story 1.3
+- `us2.1-create-unit.spec.ts` - User Story 2.1
+
+**Pattern Recognition:**
+- `us1.1*` matches all US 1.1 tests
+- `us1.*` matches all Epic 1 tests
+- `us*` matches all user story tests
+
+---
+
+## Execution Commands
+
+### Run Specific User Story Tests
+
+```bash
+# Run all tests for User Story 1.1
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+
+# Run all tests for User Story 1.2
+npm run test:e2e apps/frontend/test/e2e/us1.2*.spec.ts
+
+# Run all tests for Epic 1
+npm run test:e2e apps/frontend/test/e2e/us1.*.spec.ts
+```
+
+### Run Single Test File
+
+```bash
+# Run specific test file
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts
+```
+
+### Run Specific Test Within File
+
+```bash
+# Run specific test by name
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts -g "should create property with required fields"
+```
+
+---
+
+## Workflow Examples
+
+### Example 1: US 1.1 Test Failed
+
+```bash
+# 1. Full test suite runs
+npm run test:e2e
+# Result: us1.1-create-property.spec.ts FAILED ❌
+
+# 2. Fix the issue in code
+
+# 3. Re-run ONLY US 1.1 tests (NOT all e2e)
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+# Result: All US 1.1 tests PASS ✅
+
+# 4. (Optional) Run full suite to confirm
+npm run test:e2e
+```
+
+### Example 2: Multiple User Story Tests Failed
+
+```bash
+# 1. Full test suite runs
+npm run test:e2e
+# Result: 
+#   - us1.1-create-property.spec.ts FAILED ❌
+#   - us1.3-property-details.spec.ts FAILED ❌
+
+# 2. Fix US 1.1 issues
+
+# 3. Re-run ONLY US 1.1 tests
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+# Result: US 1.1 PASS ✅
+
+# 4. Fix US 1.3 issues
+
+# 5. Re-run ONLY US 1.3 tests
+npm run test:e2e apps/frontend/test/e2e/us1.3*.spec.ts
+# Result: US 1.3 PASS ✅
+
+# 6. (Optional) Run full suite to confirm
+npm run test:e2e
+```
+
+### Example 3: Debugging Single Test
+
+```bash
+# 1. Test fails
+npm run test:e2e
+# Result: us1.1-create-property.spec.ts > "should validate required fields" FAILED ❌
+
+# 2. Debug: Run only that specific test
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts -g "should validate required fields"
+
+# 3. Make fixes, re-run specific test
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts -g "should validate required fields"
+# Result: PASS ✅
+
+# 4. Run all US 1.1 tests to ensure no regressions
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+# Result: All PASS ✅
+```
+
+---
+
+## CI/CD Strategy
+
+### Development Workflow
+
+**During Development:**
+- ✅ Run only affected user story tests
+- ✅ Fast feedback loop (< 1 minute)
+- ✅ Iterate quickly
+
+**Before Commit:**
+- ✅ Run all user story tests for modified features
+- ✅ Medium feedback loop (< 5 minutes)
+
+**In CI Pipeline:**
+- ✅ Run ALL e2e tests
+- ✅ Full validation (10-15 minutes)
+- ✅ Catches integration issues
+
+### CI Pipeline Configuration
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+ # Quick feedback - run only changed tests
+ quick-test:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v3
+ - name: Get changed test files
+ id: changed-files
+ run: |
+ echo "tests=$(git diff --name-only HEAD~1 HEAD | grep 'test/e2e' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+ - name: Run changed tests
+ if: steps.changed-files.outputs.tests != ''
+ run: npm run test:e2e ${{ steps.changed-files.outputs.tests }}
+ 
+ # Full validation - run all tests
+ full-test:
+ runs-on: ubuntu-latest
+ needs: quick-test
+ steps:
+ - uses: actions/checkout@v3
+ - name: Run all e2e tests
+ run: npm run test:e2e
+```
+
+---
+
+## Time Savings Analysis
+
+### Example Test Suite Timing
+
+**Full e2e Suite:**
+- Total tests: 50 test files
+- Total time: ~15 minutes
+
+**Single User Story (e.g., US 1.1):**
+- Related tests: 3 test files
+- Total time: ~1 minute
+
+**Single Test File:**
+- One file: 1 test file
+- Total time: ~20 seconds
+
+### Development Iteration Comparison
+
+**Scenario: Fixing a bug in US 1.1**
+
+**❌ Bad Approach (re-run all e2e):**
+```
+Fix attempt 1: 15 minutes
+Fix attempt 2: 15 minutes
+Fix attempt 3: 15 minutes
+Total: 45 minutes
+```
+
+**✅ Good Approach (re-run US 1.1 only):**
+```
+Fix attempt 1: 1 minute
+Fix attempt 2: 1 minute
+Fix attempt 3: 1 minute
+Final full run: 15 minutes
+Total: 18 minutes (60% faster!)
+```
+
+---
+
+## Test Organization Best Practices
+
+### File Organization
+
+```
+apps/frontend/test/e2e/
+├── us1.1-create-property.spec.ts          # US 1.1 main test
+├── us1.1-create-property-e2e.spec.ts      # US 1.1 e2e flow
+├── us1.1.2-account-selector.spec.ts       # US 1.1 sub-feature
+├── us1.2-list-properties.spec.ts          # US 1.2 main test
+├── us1.2-filter-properties.spec.ts        # US 1.2 filtering
+├── us1.3-property-details.spec.ts         # US 1.3 main test
+└── ...
+```
+
+**Naming Rules:**
+- ✅ Prefix with `us{epic}.{story}`
+- ✅ Use hyphens for readability
+- ✅ Keep descriptions concise
+- ✅ Group related tests with sub-numbers (us1.1.2, us1.1.3)
+
+### Test Suite Organization
+
+```typescript
+// us1.1-create-property.spec.ts
+describe('US 1.1: Create Property', () => {
+ describe('Happy Path', () => {
+ test('should create property with required fields', async () => {
+ // ...
+ });
+ });
+ 
+ describe('Validation', () => {
+ test('should validate required fields', async () => {
+ // ...
+ });
+ });
+ 
+ describe('Error Handling', () => {
+ test('should handle API errors', async () => {
+ // ...
+ });
+ });
+});
+```
+
+---
+
+## Common Mistakes to Avoid
+
+### ❌ Mistake 1: Re-running All Tests Unnecessarily
+
+```bash
+# Test fails: us1.1-create-property.spec.ts
+
+# ❌ BAD - Wastes time
+npm run test:e2e
+
+# ✅ GOOD - Targeted
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+```
+
+### ❌ Mistake 2: Inconsistent File Naming
+
+```bash
+# ❌ BAD - Can't filter by user story
+create-property-test.spec.ts
+property-creation.spec.ts
+
+# ✅ GOOD - Follows convention
+us1.1-create-property.spec.ts
+us1.1-create-property-e2e.spec.ts
+```
+
+### ❌ Mistake 3: Running Single Test in Isolation
+
+```bash
+# ❌ BAD - Might miss related test failures
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts
+
+# ✅ GOOD - Run all related user story tests
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+```
+
+---
+
+## Integration with Development Workflow
+
+### Git Commit Strategy
+
+```bash
+# 1. Make changes to US 1.1 feature
+git add apps/backend/src/properties/
+git add apps/frontend/src/app/properties/
+
+# 2. Before commit, run US 1.1 tests only
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+
+# 3. If pass, commit
+git commit -m "feat(properties): implement US 1.1 create property"
+
+# 4. CI will run full suite
+git push
+```
+
+### Code Review Process
+
+**Reviewer Checklist:**
+- [ ] Changed code affects which user stories?
+- [ ] Did developer run those specific user story tests?
+- [ ] Are test names following naming convention?
+- [ ] Can tests be run in isolation?
+
+---
+
+## Debugging Failed Tests
+
+### Step-by-Step Debugging Process
+
+```bash
+# 1. Identify failed test
+npm run test:e2e
+# Output: us1.1-create-property.spec.ts > "should validate email" FAILED
+
+# 2. Run ONLY that specific test with UI
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts -g "should validate email" --headed
+
+# 3. Fix issue
+
+# 4. Re-run specific test
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts -g "should validate email"
+
+# 5. Run all US 1.1 tests
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+
+# 6. (Optional) Run full suite
+npm run test:e2e
+```
+
+---
+
+## Quick Reference
+
+### Common Commands
+
+```bash
+# Run specific user story
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts
+
+# Run specific test file
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts
+
+# Run specific test by name
+npm run test:e2e apps/frontend/test/e2e/us1.1-create-property.spec.ts -g "test name"
+
+# Run all tests for an epic
+npm run test:e2e apps/frontend/test/e2e/us1.*.spec.ts
+
+# Run with UI (for debugging)
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts --headed
+
+# Run in debug mode
+npm run test:e2e apps/frontend/test/e2e/us1.1*.spec.ts --debug
+```
+
+---
+
+## Checklist
+
+When a test fails:
+
+- [ ] Identify which user story the test belongs to
+- [ ] Re-run ONLY that user story's tests (us{epic}.{story}*.spec.ts)
+- [ ] Fix the issue
+- [ ] Re-run the specific user story tests again
+- [ ] Verify all user story tests pass
+- [ ] (Optional) Run full e2e suite before committing
+
+When creating new tests:
+
+- [ ] Follow naming convention: `us{epic}.{story}-{description}.spec.ts`
+- [ ] Group related tests with sub-numbers if needed
+- [ ] Ensure tests can run in isolation
+- [ ] Document which user story the test covers
+
+---
+
+## Summary
+
+```
+🎯 Failed test → Run only related user story tests
+⚡ Fast feedback: ~1 minute vs ~15 minutes
+🚫 Never re-run full e2e suite during development
+✅ Always use user story prefix: us{epic}.{story}*
+📝 Consistent naming enables efficient filtering
+```
+
+**Efficient test execution = Faster development + Less frustration**
+
+---
+
+**Last Updated:** February 4, 2026  
+**Status:** ✅ MANDATORY - Follow for all test execution  
+**Applies To:** All e2e test development and debugging

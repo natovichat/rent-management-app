@@ -1,0 +1,466 @@
+
+> @rent-app/frontend@0.1.0 test:e2e
+> playwright test test/e2e/us1.4-land-registry.spec.ts
+
+
+Running 7 tests using 1 worker
+
+(node:50070) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50070) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+=== RESETTING DATABASE (npm run db:reset:force) ===
+
+> rent-application@0.1.0 db:reset:force
+> cd apps/backend && npx ts-node ../../scripts/reset-test-account.ts
+
+(node:50105) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50136) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50136) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/aviad.natovich/personal/rentApplication/scripts/reset-test-account.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/aviad.natovich/personal/rentApplication/package.json.
+🔄 Starting test account reset...
+
+🎯 Target: Account ID "test-account-1"
+
+📊 Existing test account found:
+   - 1 users
+   - 1 properties
+   - 0 tenants
+   - 0 leases
+
+🗑️  Deleting test account data...
+
+   ✓ Deleted 0 notifications
+   ✓ Deleted 0 mortgage payments
+   ✓ Deleted 0 leases
+   ✓ Deleted 0 tenants
+   ✓ Deleted 0 units
+   ✓ Deleted 0 mortgages
+   ✓ Deleted 0 income records
+   ✓ Deleted 0 expenses
+   ✓ Deleted 0 valuations
+   ✓ Deleted 0 property ownerships
+   ✓ Deleted 0 plot info records
+   ✓ Deleted 1 properties
+   ✓ Deleted 0 owners
+   ✓ Deleted 0 bank accounts
+   ✓ Deleted 0 investment companies
+   ✓ Deleted 1 users
+   ✓ Deleted test account
+
+✅ Test account data deleted successfully
+
+🔨 Creating fresh test account...
+
+✅ Test account created:
+   ID: test-account-1
+   Name: Test Account
+   Status: ACTIVE
+   Created: 2026-02-04T21:57:00.788Z
+
+🔨 Creating test user...
+
+✅ Test user created:
+   ID: dd78b5ed-754b-4180-a739-723e37e509a6
+   Email: test@example.com
+   Name: Test User
+   Role: OWNER
+   Account ID: test-account-1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 Test account reset complete!
+
+Test Account Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Account ID:   test-account-1
+Account Name: Test Account
+User Email:   test@example.com
+User ID:      dd78b5ed-754b-4180-a739-723e37e509a6
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Test account is now clean and empty.
+💡 Run "npm run db:reset:with-seed" to populate with sample data.
+💡 Other accounts were not affected.
+
+✅ 1 other account(s) preserved:
+   - Test Account 2 (test-account-2): 0 users, 20 properties
+
+✨ Script completed successfully
+✓ Database reset complete - only Test Account remains
+=== FETCHING TEST ACCOUNT ID FROM DATABASE ===
+✓ Found Test Account with ID: test-account-1
+=== TC-E2E-1.4-001: Verifying Gush field exists in form ===
+[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[BROWSER]: 🔧 DEV MODE: Bypassing authentication
+[BROWSER]: 🔧 DEV MODE: Bypassing authentication
+=== SELECTING TEST ACCOUNT (test-account-1) ===
+✓ Test Account (test-account-1) selected
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+✓ Create property dialog opened
+✓ Address field filled
+→ Looking for Gush (גוש) field...
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+  ✘  1 [chromium] › test/e2e/us1.4-land-registry.spec.ts:63:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-001-gush-field-exists (11.1s)
+  -  2 [chromium] › test/e2e/us1.4-land-registry.spec.ts:105:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-002-helka-field-exists
+  -  3 [chromium] › test/e2e/us1.4-land-registry.spec.ts:142:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-003-create-with-gush-helka
+  -  4 [chromium] › test/e2e/us1.4-land-registry.spec.ts:231:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-004-create-without-gush-helka
+  -  5 [chromium] › test/e2e/us1.4-land-registry.spec.ts:291:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-005-view-displays-gush-helka
+  -  6 [chromium] › test/e2e/us1.4-land-registry.spec.ts:337:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-006-edit-update-gush-helka
+  -  7 [chromium] › test/e2e/us1.4-land-registry.spec.ts:416:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-007-gush-helka-persist-after-save
+(node:50346) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50346) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+=== RESETTING DATABASE (npm run db:reset:force) ===
+
+> rent-application@0.1.0 db:reset:force
+> cd apps/backend && npx ts-node ../../scripts/reset-test-account.ts
+
+(node:50381) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50411) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50411) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/aviad.natovich/personal/rentApplication/scripts/reset-test-account.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/aviad.natovich/personal/rentApplication/package.json.
+🔄 Starting test account reset...
+
+🎯 Target: Account ID "test-account-1"
+
+📊 Existing test account found:
+   - 1 users
+   - 0 properties
+   - 0 tenants
+   - 0 leases
+
+🗑️  Deleting test account data...
+
+   ✓ Deleted 0 notifications
+   ✓ Deleted 0 mortgage payments
+   ✓ Deleted 0 leases
+   ✓ Deleted 0 tenants
+   ✓ Deleted 0 units
+   ✓ Deleted 0 mortgages
+   ✓ Deleted 0 income records
+   ✓ Deleted 0 expenses
+   ✓ Deleted 0 valuations
+   ✓ Deleted 0 property ownerships
+   ✓ Deleted 0 plot info records
+   ✓ Deleted 0 properties
+   ✓ Deleted 0 owners
+   ✓ Deleted 0 bank accounts
+   ✓ Deleted 0 investment companies
+   ✓ Deleted 1 users
+   ✓ Deleted test account
+
+✅ Test account data deleted successfully
+
+🔨 Creating fresh test account...
+
+✅ Test account created:
+   ID: test-account-1
+   Name: Test Account
+   Status: ACTIVE
+   Created: 2026-02-04T21:57:13.082Z
+
+🔨 Creating test user...
+
+✅ Test user created:
+   ID: c4c3a991-9f4e-4ac9-a0ae-1c539ae730c1
+   Email: test@example.com
+   Name: Test User
+   Role: OWNER
+   Account ID: test-account-1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 Test account reset complete!
+
+Test Account Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Account ID:   test-account-1
+Account Name: Test Account
+User Email:   test@example.com
+User ID:      c4c3a991-9f4e-4ac9-a0ae-1c539ae730c1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Test account is now clean and empty.
+💡 Run "npm run db:reset:with-seed" to populate with sample data.
+💡 Other accounts were not affected.
+
+✅ 1 other account(s) preserved:
+   - Test Account 2 (test-account-2): 0 users, 20 properties
+
+✨ Script completed successfully
+✓ Database reset complete - only Test Account remains
+=== FETCHING TEST ACCOUNT ID FROM DATABASE ===
+✓ Found Test Account with ID: test-account-1
+=== TC-E2E-1.4-001: Verifying Gush field exists in form ===
+[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[BROWSER]: 🔧 DEV MODE: Bypassing authentication
+[BROWSER]: 🔧 DEV MODE: Bypassing authentication
+=== SELECTING TEST ACCOUNT (test-account-1) ===
+✓ Test Account (test-account-1) selected
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+✓ Create property dialog opened
+✓ Address field filled
+→ Looking for Gush (גוש) field...
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+  ✘  8 [chromium] › test/e2e/us1.4-land-registry.spec.ts:63:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-001-gush-field-exists (retry #1) (11.4s)
+  -  9 [chromium] › test/e2e/us1.4-land-registry.spec.ts:105:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-002-helka-field-exists (retry #1)
+  -  10 [chromium] › test/e2e/us1.4-land-registry.spec.ts:142:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-003-create-with-gush-helka (retry #1)
+  -  11 [chromium] › test/e2e/us1.4-land-registry.spec.ts:231:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-004-create-without-gush-helka (retry #1)
+  -  12 [chromium] › test/e2e/us1.4-land-registry.spec.ts:291:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-005-view-displays-gush-helka (retry #1)
+  -  13 [chromium] › test/e2e/us1.4-land-registry.spec.ts:337:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-006-edit-update-gush-helka (retry #1)
+  -  14 [chromium] › test/e2e/us1.4-land-registry.spec.ts:416:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-007-gush-helka-persist-after-save (retry #1)
+(node:50700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50700) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+=== RESETTING DATABASE (npm run db:reset:force) ===
+
+> rent-application@0.1.0 db:reset:force
+> cd apps/backend && npx ts-node ../../scripts/reset-test-account.ts
+
+(node:50726) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50767) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50767) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/aviad.natovich/personal/rentApplication/scripts/reset-test-account.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/aviad.natovich/personal/rentApplication/package.json.
+🔄 Starting test account reset...
+
+🎯 Target: Account ID "test-account-1"
+
+📊 Existing test account found:
+   - 1 users
+   - 0 properties
+   - 0 tenants
+   - 0 leases
+
+🗑️  Deleting test account data...
+
+   ✓ Deleted 0 notifications
+   ✓ Deleted 0 mortgage payments
+   ✓ Deleted 0 leases
+   ✓ Deleted 0 tenants
+   ✓ Deleted 0 units
+   ✓ Deleted 0 mortgages
+   ✓ Deleted 0 income records
+   ✓ Deleted 0 expenses
+   ✓ Deleted 0 valuations
+   ✓ Deleted 0 property ownerships
+   ✓ Deleted 0 plot info records
+   ✓ Deleted 0 properties
+   ✓ Deleted 0 owners
+   ✓ Deleted 0 bank accounts
+   ✓ Deleted 0 investment companies
+   ✓ Deleted 1 users
+   ✓ Deleted test account
+
+✅ Test account data deleted successfully
+
+🔨 Creating fresh test account...
+
+✅ Test account created:
+   ID: test-account-1
+   Name: Test Account
+   Status: ACTIVE
+   Created: 2026-02-04T21:57:25.098Z
+
+🔨 Creating test user...
+
+✅ Test user created:
+   ID: 49614f21-ce1e-40b0-8fe2-3c7021764cdc
+   Email: test@example.com
+   Name: Test User
+   Role: OWNER
+   Account ID: test-account-1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 Test account reset complete!
+
+Test Account Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Account ID:   test-account-1
+Account Name: Test Account
+User Email:   test@example.com
+User ID:      49614f21-ce1e-40b0-8fe2-3c7021764cdc
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Test account is now clean and empty.
+💡 Run "npm run db:reset:with-seed" to populate with sample data.
+💡 Other accounts were not affected.
+
+✅ 1 other account(s) preserved:
+   - Test Account 2 (test-account-2): 0 users, 20 properties
+
+✨ Script completed successfully
+✓ Database reset complete - only Test Account remains
+=== FETCHING TEST ACCOUNT ID FROM DATABASE ===
+✓ Found Test Account with ID: test-account-1
+=== TC-E2E-1.4-001: Verifying Gush field exists in form ===
+[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold
+[BROWSER]: 🔧 DEV MODE: Bypassing authentication
+[BROWSER]: 🔧 DEV MODE: Bypassing authentication
+=== SELECTING TEST ACCOUNT (test-account-1) ===
+✓ Test Account (test-account-1) selected
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+✓ Create property dialog opened
+✓ Address field filled
+→ Looking for Gush (גוש) field...
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)
+  ✘  15 [chromium] › test/e2e/us1.4-land-registry.spec.ts:63:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-001-gush-field-exists (retry #2) (11.2s)
+  -  16 [chromium] › test/e2e/us1.4-land-registry.spec.ts:105:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-002-helka-field-exists (retry #2)
+  -  17 [chromium] › test/e2e/us1.4-land-registry.spec.ts:142:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-003-create-with-gush-helka (retry #2)
+  -  18 [chromium] › test/e2e/us1.4-land-registry.spec.ts:231:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-004-create-without-gush-helka (retry #2)
+  -  19 [chromium] › test/e2e/us1.4-land-registry.spec.ts:291:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-005-view-displays-gush-helka (retry #2)
+  -  20 [chromium] › test/e2e/us1.4-land-registry.spec.ts:337:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-006-edit-update-gush-helka (retry #2)
+  -  21 [chromium] › test/e2e/us1.4-land-registry.spec.ts:416:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-007-gush-helka-persist-after-save (retry #2)
+
+
+  1) [chromium] › test/e2e/us1.4-land-registry.spec.ts:63:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-001-gush-field-exists 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  locator('input[name="gush"]')
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('input[name="gush"]')[22m
+    [2m    9 × locator resolved to <input id=":r2d:" type="text" name="gush" aria-invalid="false" placeholder="למשל: 6158" class="MuiInputBase-input MuiOutlinedInput-input muirtl-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"/>[22m
+    [2m      - unexpected value "hidden"[22m
+
+
+      94 |     console.log('→ Looking for Gush (גוש) field...');
+      95 |     const gushField = page.locator('input[name="gush"]');
+    > 96 |     await expect(gushField).toBeVisible({ timeout: 5000 });
+         |                             ^
+      97 |     console.log('✓ Gush field found and visible');
+      98 |
+      99 |     // Verify field has correct label
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.4-land-registry.spec.ts:96:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  locator('input[name="gush"]')
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('input[name="gush"]')[22m
+    [2m    9 × locator resolved to <input id=":r2d:" type="text" name="gush" aria-invalid="false" placeholder="למשל: 6158" class="MuiInputBase-input MuiOutlinedInput-input muirtl-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"/>[22m
+    [2m      - unexpected value "hidden"[22m
+
+
+      94 |     console.log('→ Looking for Gush (גוש) field...');
+      95 |     const gushField = page.locator('input[name="gush"]');
+    > 96 |     await expect(gushField).toBeVisible({ timeout: 5000 });
+         |                             ^
+      97 |     console.log('✓ Gush field found and visible');
+      98 |
+      99 |     // Verify field has correct label
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.4-land-registry.spec.ts:96:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator:  locator('input[name="gush"]')
+    Expected: visible
+    Received: hidden
+    Timeout:  5000ms
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for locator('input[name="gush"]')[22m
+    [2m    9 × locator resolved to <input id=":r2d:" type="text" name="gush" aria-invalid="false" placeholder="למשל: 6158" class="MuiInputBase-input MuiOutlinedInput-input muirtl-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input"/>[22m
+    [2m      - unexpected value "hidden"[22m
+
+
+      94 |     console.log('→ Looking for Gush (גוש) field...');
+      95 |     const gushField = page.locator('input[name="gush"]');
+    > 96 |     await expect(gushField).toBeVisible({ timeout: 5000 });
+         |                             ^
+      97 |     console.log('✓ Gush field found and visible');
+      98 |
+      99 |     // Verify field has correct label
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.4-land-registry.spec.ts:96:29
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › test/e2e/us1.4-land-registry.spec.ts:63:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-001-gush-field-exists 
+  6 did not run
+npm error Lifecycle script `test:e2e` failed with error:
+npm error code 1
+npm error path /Users/aviad.natovich/personal/rentApplication/apps/frontend
+npm error workspace @rent-app/frontend@0.1.0
+npm error location /Users/aviad.natovich/personal/rentApplication/apps/frontend
+npm error command failed
+npm error command sh -c playwright test test/e2e/us1.4-land-registry.spec.ts

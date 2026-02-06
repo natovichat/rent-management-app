@@ -1,0 +1,343 @@
+
+Running 8 tests using 2 workers
+
+(node:19030) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19031) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19030) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19031) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  1 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:127:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields (12.8s)
+  ✘  2 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:283:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address (12.8s)
+(node:19276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19276) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19277) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  4 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:127:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields (retry #1) (12.7s)
+  ✘  3 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:283:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address (retry #1) (12.7s)
+(node:19512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19511) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19512) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19511) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  6 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:283:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address (retry #2) (12.1s)
+  ✘  5 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:127:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields (retry #2) (12.1s)
+(node:19832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19833) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19833) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19832) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  7 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:323:7 › US1.1 - Create Property (TDD) › TC-E2E-006: Navigation - Cancel creation flow (2.7s)
+  ✘  8 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:163:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields (13.4s)
+(node:20090) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20090) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  9 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:363:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation (12.0s)
+(node:20131) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20131) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  11 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:363:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation (retry #1) (12.3s)
+(node:20388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20388) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  10 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:163:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields (retry #1) (14.2s)
+(node:20403) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20403) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  12 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:363:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation (retry #2) (12.0s)
+(node:20611) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20611) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✘  13 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:163:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields (retry #2) (13.2s)
+(node:20641) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:20641) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+  ✓  15 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:215:7 › US1.1 - Create Property (TDD) › TC-E2E-003: Error path - Missing required fields validation (2.3s)
+  ✓  16 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:242:7 › US1.1 - Create Property (TDD) › TC-E2E-004: Error path - Invalid data validation (2.4s)
+  ✓  14 [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:402:7 › US1.1 - Create Property (TDD) › TC-E2E-008: Accordion - All sections expand/collapse correctly (11.8s)
+
+
+  1) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:127:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      149 |     
+      150 |     // Wait for dialog to close (indicates form submission completed)
+    > 151 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      152 |     
+      153 |     // Verify success message displayed
+      154 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:151:16
+
+    Error Context: test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      149 |     
+      150 |     // Wait for dialog to close (indicates form submission completed)
+    > 151 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      152 |     
+      153 |     // Verify success message displayed
+      154 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:151:16
+
+    Error Context: test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      149 |     
+      150 |     // Wait for dialog to close (indicates form submission completed)
+    > 151 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      152 |     
+      153 |     // Verify success message displayed
+      154 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:151:16
+
+    Error Context: test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry2/error-context.md
+
+  2) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:163:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      203 |     
+      204 |     // Wait for success
+    > 205 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      206 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      207 |     
+      208 |     // Verify property in list with all details
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:205:16
+
+    Error Context: test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      203 |     
+      204 |     // Wait for success
+    > 205 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      206 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      207 |     
+      208 |     // Verify property in list with all details
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:205:16
+
+    Error Context: test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      203 |     
+      204 |     // Wait for success
+    > 205 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      206 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      207 |     
+      208 |     // Verify property in list with all details
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:205:16
+
+    Error Context: test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry2/error-context.md
+
+  3) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:283:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      298 |     
+      299 |     // Wait for success
+    > 300 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      301 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      302 |     
+      303 |     // Verify property appears in list with special characters preserved
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:300:16
+
+    Error Context: test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      298 |     
+      299 |     // Wait for success
+    > 300 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      301 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      302 |     
+      303 |     // Verify property appears in list with special characters preserved
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:300:16
+
+    Error Context: test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      298 |     
+      299 |     // Wait for success
+    > 300 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      301 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      302 |     
+      303 |     // Verify property appears in list with special characters preserved
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:300:16
+
+    Error Context: test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry2/error-context.md
+
+  4) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:363:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      381 |     
+      382 |     // Wait for success
+    > 383 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      384 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      385 |     
+      386 |     // Verify property appears in list
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:383:16
+
+    Error Context: test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      381 |     
+      382 |     // Wait for success
+    > 383 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      384 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      385 |     
+      386 |     // Verify property appears in list
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:383:16
+
+    Error Context: test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    TimeoutError: page.waitForSelector: Timeout 10000ms exceeded.
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    25 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      381 |     
+      382 |     // Wait for success
+    > 383 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      384 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      385 |     
+      386 |     // Verify property appears in list
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:383:16
+
+    Error Context: test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry2/error-context.md
+
+  4 failed
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:127:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:163:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:283:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:363:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+  4 passed (1.6m)

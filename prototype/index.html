@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניהול תיק נדל"ן - ראשי</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item active">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <h1>דשבורד - סקירה כללית</h1>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-primary">🏢</div>
+          <div class="stat-value">12</div>
+          <div class="stat-label">סה"כ נכסים</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-success">🚪</div>
+          <div class="stat-value">45</div>
+          <div class="stat-label">סה"כ יחידות</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-info">📄</div>
+          <div class="stat-value">38</div>
+          <div class="stat-label">חוזים פעילים</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon stat-icon-warning">💰</div>
+          <div class="stat-value">₪42.5M</div>
+          <div class="stat-label">שווי תיק</div>
+        </div>
+      </div>
+
+      <!-- Recent Activity -->
+      <div class="paper">
+        <h2>פעילות אחרונה</h2>
+        <div class="divider"></div>
+        
+        <div class="list-item">
+          <div class="list-item-primary">חוזה שכירות חדש - דירה 5, רח' הרצל 10</div>
+          <div class="list-item-secondary">לפני 2 שעות • דייר: יעקב כהן</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">תשלום שכירות התקבל - דירה 12, רח' שאול המלך 45</div>
+          <div class="list-item-secondary">לפני 5 שעות • ₪4,500</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">נכס חדש נוסף - רח' בן יהודה 22, תל אביב</div>
+          <div class="list-item-secondary">אתמול • סוג: מגורים</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">משכנתא חדשה - נכס ברח' לוי אשכול 5</div>
+          <div class="list-item-secondary">לפני 2 ימים • ₪1.2M</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">הוצאה תחזוקה - נכס ברח' הרצל 10</div>
+          <div class="list-item-secondary">לפני 3 ימים • ₪850</div>
+        </div>
+      </div>
+
+      <!-- Properties Overview -->
+      <div class="paper">
+        <h2>נכסים לפי סוג</h2>
+        <div class="divider"></div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">8</div>
+            <div class="stat-label">מגורים</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-value">2</div>
+            <div class="stat-label">מסחרי</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-value">1</div>
+            <div class="stat-label">קרקע</div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-value">1</div>
+            <div class="stat-label">שימוש מעורב</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Summary -->
+      <div class="paper">
+        <h2>סיכום פיננסי - חודש נוכחי</h2>
+        <div class="divider"></div>
+        
+        <div class="detail-grid">
+          <div class="detail-field">
+            <div class="detail-field-label">הכנסות מהשכרה</div>
+            <div class="detail-field-value" style="font-size: 24px; color: var(--success);">₪165,000</div>
+          </div>
+          
+          <div class="detail-field">
+            <div class="detail-field-label">הוצאות תחזוקה</div>
+            <div class="detail-field-value" style="font-size: 24px; color: var(--error);">₪28,500</div>
+          </div>
+          
+          <div class="detail-field">
+            <div class="detail-field-label">תשלומי משכנתא</div>
+            <div class="detail-field-value" style="font-size: 24px; color: var(--warning);">₪45,000</div>
+          </div>
+          
+          <div class="detail-field">
+            <div class="detail-field-label">רווח נקי</div>
+            <div class="detail-field-value" style="font-size: 24px; color: var(--success); font-weight: 500;">₪91,500</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="paper">
+        <h2>פעולות מהירות</h2>
+        <div class="divider"></div>
+        
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <a href="properties.html" class="btn btn-primary">➕ הוסף נכס חדש</a>
+          <a href="units.html" class="btn btn-primary">➕ הוסף יחידה חדשה</a>
+          <a href="leases.html" class="btn btn-primary">📄 צור חוזה שכירות</a>
+          <a href="tenants.html" class="btn btn-secondary">👤 הוסף דייר</a>
+          <a href="expenses.html" class="btn btn-secondary">📤 רשום הוצאה</a>
+          <a href="income.html" class="btn btn-secondary">📥 רשום הכנסה</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

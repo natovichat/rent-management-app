@@ -1,0 +1,539 @@
+// Enhanced Prisma Schema for Property Portfolio Management System
+// This is the complete schema including all MVP features + portfolio management features
+// For migration strategy, see: docs/MIGRATION_STRATEGY.md
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// Account & Users (Authentication)
+// ============================================
+
+model Account {
+  id        String   @id @default(uuid())
+  name      String
+  status    AccountStatus @default(ACTIVE)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations - Existing
+  users       User[]
+  properties  Property[]
+  tenants     Tenant[]
+  leases      Lease[]
+  notifications Notification[]
+  
+  // Relations - New (Portfolio Management)
+  owners      Owner[]
+  investmentCompanies InvestmentCompany[]
+  
+  @@map("accounts")
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  accountId    String   @map("account_id")
+  email        String   @unique
+  name         String
+  googleId     String   @unique @map("google_id")
+  role         UserRole @default(USER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  lastLoginAt  DateTime? @map("last_login_at")
+  
+  // Relations
+  account      Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  @@index([accountId])
+  @@index([email])
+  @@index([googleId])
+  @@map("users")
+}
+
+enum UserRole {
+  OWNER
+  USER
+}
+
+// ============================================
+// Properties & Units (Enhanced)
+// ============================================
+
+model Property {
+  id          String   @id @default(uuid())
+  accountId   String   @map("account_id")
+  address     String
+  fileNumber  String?  @map("file_number")
+  
+  // NEW: Enhanced property fields
+  type        PropertyType?
+  status      PropertyStatus? @default(OWNED)
+  country     String   @default("Israel")
+  city        String?
+  totalArea   Decimal? @map("total_area") @db.Decimal(10, 2)
+  landArea    Decimal? @map("land_area") @db.Decimal(10, 2)
+  estimatedValue Decimal? @map("estimated_value") @db.Decimal(12, 2)
+  lastValuationDate DateTime? @map("last_valuation_date")
+  
+  // NEW: Investment company relation (optional)
+  investmentCompanyId String? @map("investment_company_id")
+  
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations - Existing
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  units       Unit[]
+  
+  // Relations - New (Portfolio Management)
+  plotInfo    PlotInfo?
+  ownerships  PropertyOwnership[]
+  mortgages   Mortgage[]
+  valuations  PropertyValuation[]
+  expenses    PropertyExpense[]
+  income      PropertyIncome[]
+  investmentCompany InvestmentCompany? @relation(fields: [investmentCompanyId], references: [id], onDelete: SetNull)
+  
+  @@index([accountId])
+  @@index([type])
+  @@index([status])
+  @@index([country])
+  @@index([investmentCompanyId])
+  @@map("properties")
+}
+
+enum PropertyType {
+  RESIDENTIAL  // מגורים
+  COMMERCIAL   // מסחרי
+  LAND         // קרקע
+  MIXED_USE    // שימוש מעורב
+}
+
+enum PropertyStatus {
+  OWNED           // בבעלות
+  IN_CONSTRUCTION // בבנייה
+  IN_PURCHASE     // בהליכי רכישה
+  SOLD            // נמכר
+  INVESTMENT      // השקעה
+}
+
+model Unit {
+  id             String   @id @default(uuid())
+  propertyId     String   @map("property_id")
+  accountId      String   @map("account_id")
+  apartmentNumber String  @map("apartment_number")
+  floor          Int?
+  roomCount      Int?     @map("room_count")
+  notes          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  property       Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  leases         Lease[]
+  
+  @@index([propertyId])
+  @@index([accountId])
+  @@unique([propertyId, apartmentNumber])
+  @@map("units")
+}
+
+// ============================================
+// Plot/Parcel Information (Gush/Chelka)
+// ============================================
+
+model PlotInfo {
+  id          String   @id @default(uuid())
+  propertyId  String   @unique @map("property_id")
+  accountId   String   @map("account_id")
+  
+  // Israeli land registry info
+  gush        String?  // גוש
+  chelka      String?  // חלקה  
+  subChelka   String?  @map("sub_chelka") // תת חלקה
+  
+  // Property details
+  registryNumber String? @map("registry_number")
+  registryOffice String? @map("registry_office")
+  notes       String?
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@index([accountId])
+  @@index([gush, chelka])
+  @@map("plot_info")
+}
+
+// ============================================
+// Ownership Structure
+// ============================================
+
+model Owner {
+  id           String   @id @default(uuid())
+  accountId    String   @map("account_id")
+  
+  name         String
+  idNumber     String?  @map("id_number")
+  type         OwnerType
+  email        String?
+  phone        String?
+  address      String?
+  notes        String?
+  
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  account      Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  ownerships   PropertyOwnership[]
+  
+  @@index([accountId])
+  @@index([name])
+  @@map("owners")
+}
+
+enum OwnerType {
+  INDIVIDUAL    // יחיד
+  COMPANY       // חברה
+  PARTNERSHIP   // שותפות
+}
+
+model PropertyOwnership {
+  id            String   @id @default(uuid())
+  propertyId    String   @map("property_id")
+  ownerId       String   @map("owner_id")
+  accountId     String   @map("account_id")
+  
+  ownershipPercentage Decimal @map("ownership_percentage") @db.Decimal(5, 2)
+  ownershipType       OwnershipType @map("ownership_type")
+  startDate     DateTime @map("start_date")
+  endDate       DateTime? @map("end_date")
+  notes         String?
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  property      Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  owner         Owner    @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  
+  @@index([propertyId])
+  @@index([ownerId])
+  @@index([accountId])
+  @@map("property_ownerships")
+}
+
+enum OwnershipType {
+  FULL           // בעלות מלאה
+  PARTIAL        // בעלות חלקית
+  PARTNERSHIP    // שותפות
+  COMPANY        // חברה
+}
+
+// ============================================
+// Mortgage/Loan Management
+// ============================================
+
+model Mortgage {
+  id              String   @id @default(uuid())
+  propertyId      String   @map("property_id")
+  accountId       String   @map("account_id")
+  
+  bank            String
+  loanAmount      Decimal  @map("loan_amount") @db.Decimal(12, 2)
+  interestRate    Decimal? @map("interest_rate") @db.Decimal(5, 2)
+  monthlyPayment  Decimal? @map("monthly_payment") @db.Decimal(10, 2)
+  
+  startDate       DateTime @map("start_date")
+  endDate         DateTime? @map("end_date")
+  status          MortgageStatus
+  
+  // Collateral properties (can secure multiple properties)
+  // Stores array of property IDs that are collateral for this mortgage
+  linkedProperties String[] @map("linked_properties")
+  
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  property        Property @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  payments        MortgagePayment[]
+  
+  @@index([propertyId])
+  @@index([accountId])
+  @@index([status])
+  @@index([bank])
+  @@map("mortgages")
+}
+
+enum MortgageStatus {
+  ACTIVE      // פעיל
+  PAID_OFF    // סולק
+  REFINANCED  // מימון מחדש
+  DEFAULTED   // ברירת מחדל
+}
+
+model MortgagePayment {
+  id          String   @id @default(uuid())
+  mortgageId  String   @map("mortgage_id")
+  accountId   String   @map("account_id")
+  
+  paymentDate DateTime @map("payment_date")
+  amount      Decimal  @db.Decimal(10, 2)
+  principal   Decimal? @db.Decimal(10, 2)
+  interest    Decimal? @db.Decimal(10, 2)
+  
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  mortgage    Mortgage @relation(fields: [mortgageId], references: [id], onDelete: Cascade)
+  
+  @@index([mortgageId])
+  @@index([accountId])
+  @@index([paymentDate])
+  @@map("mortgage_payments")
+}
+
+// ============================================
+// Financial Tracking
+// ============================================
+
+model PropertyValuation {
+  id          String   @id @default(uuid())
+  propertyId  String   @map("property_id")
+  accountId   String   @map("account_id")
+  
+  valuationDate DateTime @map("valuation_date")
+  estimatedValue Decimal @map("estimated_value") @db.Decimal(12, 2)
+  valuationType ValuationType @map("valuation_type")
+  valuatedBy  String?  @map("valuated_by")
+  notes       String?
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@index([propertyId])
+  @@index([accountId])
+  @@index([valuationDate])
+  @@map("property_valuations")
+}
+
+enum ValuationType {
+  MARKET        // שווי שוק
+  PURCHASE      // מחיר רכישה
+  TAX           // שווי מס
+  APPRAISAL     // שמאות
+}
+
+model PropertyExpense {
+  id          String   @id @default(uuid())
+  propertyId  String   @map("property_id")
+  accountId   String   @map("account_id")
+  
+  expenseDate DateTime @map("expense_date")
+  amount      Decimal  @db.Decimal(10, 2)
+  type        ExpenseType
+  category    String
+  description String?
+  paymentMethod String? @map("payment_method")
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@index([propertyId])
+  @@index([accountId])
+  @@index([expenseDate])
+  @@index([type])
+  @@map("property_expenses")
+}
+
+enum ExpenseType {
+  MAINTENANCE    // תחזוקה
+  TAX           // מס
+  INSURANCE     // ביטוח
+  UTILITIES     // חשמל/מים/גז
+  RENOVATION    // שיפוץ
+  LEGAL         // משפטי
+  OTHER         // אחר
+}
+
+model PropertyIncome {
+  id          String   @id @default(uuid())
+  propertyId  String   @map("property_id")
+  accountId   String   @map("account_id")
+  
+  incomeDate  DateTime @map("income_date")
+  amount      Decimal  @db.Decimal(10, 2)
+  type        IncomeType
+  source      String?
+  description String?
+  
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  property    Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  
+  @@index([propertyId])
+  @@index([accountId])
+  @@index([incomeDate])
+  @@index([type])
+  @@map("property_income")
+}
+
+enum IncomeType {
+  RENT          // דמי שכירות
+  SALE          // מכירה
+  CAPITAL_GAIN  // רווח הון
+  OTHER         // אחר
+}
+
+// ============================================
+// Investment Properties (Company Holdings)
+// ============================================
+
+model InvestmentCompany {
+  id           String   @id @default(uuid())
+  accountId    String   @map("account_id")
+  
+  name         String
+  registrationNumber String? @map("registration_number")
+  country      String   @default("Israel")
+  investmentAmount Decimal? @map("investment_amount") @db.Decimal(12, 2)
+  ownershipPercentage Decimal? @map("ownership_percentage") @db.Decimal(5, 2)
+  
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  account      Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  properties   Property[]
+  
+  @@index([accountId])
+  @@index([name])
+  @@map("investment_companies")
+}
+
+// ============================================
+// Tenants (Unchanged)
+// ============================================
+
+model Tenant {
+  id        String   @id @default(uuid())
+  accountId String   @map("account_id")
+  name      String
+  email     String?
+  phone     String?
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  leases    Lease[]
+  
+  @@index([accountId])
+  @@index([email])
+  @@map("tenants")
+}
+
+// ============================================
+// Leases (Contracts) (Unchanged)
+// ============================================
+
+model Lease {
+  id           String      @id @default(uuid())
+  accountId    String      @map("account_id")
+  unitId       String      @map("unit_id")
+  tenantId     String      @map("tenant_id")
+  startDate    DateTime    @map("start_date")
+  endDate      DateTime    @map("end_date")
+  monthlyRent  Decimal     @map("monthly_rent") @db.Decimal(10, 2)
+  paymentTo    String      @map("payment_to")
+  status       LeaseStatus @default(FUTURE)
+  notes        String?
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  account      Account     @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  unit         Unit         @relation(fields: [unitId], references: [id], onDelete: Restrict)
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  notifications Notification[]
+  
+  @@index([accountId])
+  @@index([unitId])
+  @@index([tenantId])
+  @@index([status])
+  @@index([endDate])
+  @@map("leases")
+}
+
+enum LeaseStatus {
+  FUTURE
+  ACTIVE
+  EXPIRED
+  TERMINATED
+}
+
+// ============================================
+// Notifications (Unchanged)
+// ============================================
+
+model Notification {
+  id          String            @id @default(uuid())
+  accountId   String            @map("account_id")
+  leaseId     String            @map("lease_id")
+  type        NotificationType
+  daysBeforeExpiration Int      @map("days_before_expiration")
+  sentAt      DateTime?         @map("sent_at")
+  status      NotificationStatus @default(PENDING)
+  error       String?
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  
+  // Relations
+  account     Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  lease       Lease             @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  
+  @@index([accountId])
+  @@index([leaseId])
+  @@index([status])
+  @@index([sentAt])
+  @@unique([leaseId, daysBeforeExpiration])
+  @@map("notifications")
+}
+
+enum NotificationType {
+  LEASE_EXPIRING
+  LEASE_EXPIRED
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}

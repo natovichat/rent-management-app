@@ -1,0 +1,295 @@
+
+Running 15 tests using 2 workers
+
+(node:24775) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24774) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24775) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 2b0a12c3-7511-4399-9777-bdd36634fb11
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Test property created with ID: bdbea8ac-f4b2-47af-b263-48054ae63c83
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-001: Navigate to Property Details via URL ===
+→ Navigating to /properties/bdbea8ac-f4b2-47af-b263-48054ae63c83...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-009: View Plot Information ===
+→ Verifying page loaded...
+→ Verifying plot information (Gush/Helka) is displayed...
+✓ Property details page loaded
+✓ Test completed successfully
+
+✓ Gush displayed
+✓ Helka displayed
+✓ Test completed successfully
+
+  ✓   2 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:113:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-001: Navigate to property details page via URL (3.1s)
+  ✓   1 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:361:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-009: View plot information (if available) (3.1s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 084428b9-01bb-47b2-890b-fccfd6df2fb6
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Test property created with ID: 55e6bffe-f94a-4ff9-bd76-b41bdb9a0ee0
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-002: View All Property Fields ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-010: View Investment Company ===
+→ Looking for investment company information...
+→ Verifying property fields are displayed...
+✓ Details section accessible (investment company would be shown here if linked)
+✓ Test completed successfully
+
+✓ Address displayed
+✓ File number displayed
+✓ Property type displayed
+✓ Property status displayed
+✓ City displayed
+✓ Country displayed
+✓ Total area displayed
+✓ Land area displayed
+✓ Estimated value displayed
+✓ Gush displayed
+✓ Helka displayed
+✓ Mortgage status displayed
+✓ Notes displayed
+✓ Test completed successfully
+
+  ✓   4 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:381:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-010: View investment company (if linked) (2.6s)
+  ✓   3 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:129:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-002: View all property fields displayed correctly (2.6s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 26f892ab-388a-46e8-b540-b8a9fcb96356
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 024efed9-8b7e-4c99-80a5-09f6e083bdb5
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-011: Edit Button Available ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-003: View Related Units ===
+→ Looking for edit button...
+✓ Edit button found
+→ Clicking edit button...
+→ Looking for units tab or section...
+✓ Units tab/section found
+✓ Units section displayed
+✓ Test completed successfully
+
+  ✓   6 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:205:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-003: View related units count and list (3.5s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: ec569b71-a58c-4f3e-8b3d-1805ca928e8f
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Edit dialog/form opened
+✓ Test completed successfully
+
+  ✓   5 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:399:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-011: Edit button available and functional (4.0s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: ead3112c-b58d-4fd1-82bb-ebb2fb10c846
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-004: View Ownership Information ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-012: Back Button Returns to List ===
+→ Looking for ownership tab or section...
+✓ Ownership tab found
+✓ Ownership section displayed
+✓ Test completed successfully
+
+  ✓   7 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:233:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-004: View ownership information (if available) (2.6s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 024c80c1-3eb9-4342-b400-c578b0d10108
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Looking for back button...
+→ Using browser back button...
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-005: View Mortgage Information ===
+✓ Returned to properties list via browser back
+✓ Test completed successfully
+
+  ✓   8 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:436:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-012: Back button returns to list (3.8s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 1dde46f0-eb23-4430-9d52-51cb77e9f8ae
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Looking for mortgages tab or section...
+✓ Mortgages tab found
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-013: Loading State Displayed ===
+→ Navigating to /properties/1dde46f0-eb23-4430-9d52-51cb77e9f8ae...
+✓ Mortgages section displayed
+✓ Test completed successfully
+
+  ✓   9 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:260:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-005: View mortgage information (if available) (3.0s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: b40104cb-dc06-4b21-a5be-076baad71026
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Checking for loading indicator...
+⚠️ Loading indicator not visible (might be too fast or not implemented)
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-006: View Valuation History ===
+✓ Page content loaded
+✓ Test completed successfully
+
+  ✓  10 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:471:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-013: Shows loading state while fetching (2.4s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: 513e244c-e806-43f1-b76e-2dba77c9daf1
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Looking for financials/valuations tab...
+✓ Financials tab found
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-014: Error State for Not Found ===
+→ Navigating to /properties/00000000-0000-0000-0000-000000000000 (non-existent)...
+✓ Financials/Valuations section accessible
+✓ Test completed successfully
+
+  ✓  11 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:287:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-006: View valuation history (if available) (3.0s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: ddb8192f-9d98-4aac-a847-66fb3338b8b5
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+→ Checking for error message...
+✓ Error message displayed
+✓ Test completed successfully
+
+  ✓  12 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:501:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-014: Shows error if property not found (2.6s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: bfa3f223-4cc4-4264-8de5-da7d3da4366e
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-007: View Expenses ===
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-015: Multi-Tenancy Enforcement ===
+→ Attempting to access property from different account...
+→ Property created with ID: 68e31e32-4cdf-4779-b5eb-9ad0127c7fa8
+→ Accessing property with test account (should succeed)...
+→ Looking for expenses in financials tab...
+✓ Expenses section accessible in financials tab
+✓ Test completed successfully
+
+  ✓  13 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:315:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-007: View expenses (if available) (2.9s)
+
+=== CLEANING TEST DATA ===
+→ Deleting properties for test account...
+✓ Deleted 0 properties
+→ Creating test property...
+✓ Test property created with ID: fc0d319b-da58-4895-b804-40df5d45abb8
+=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===
+✓ Property accessible with correct account
+✓ Multi-tenancy verified (property accessible only with correct account)
+✓ Test completed successfully
+
+  ✓  14 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:520:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-015: Multi-tenancy enforced (cannot view other account's property) (2.4s)
+✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!
+✓ Test account set in localStorage
+
+
+=== TC-E2E-1.9-008: View Income ===
+→ Looking for income in financials tab...
+✓ Income section accessible in financials tab
+✓ Test completed successfully
+
+  ✓  15 [chromium] › test/e2e/us1.9-view-property-details-e2e.spec.ts:338:7 › US1.9 - View Property Details (TDD) › TC-E2E-1.9-008: View income (if available) (2.9s)
+
+  15 passed (24.6s)

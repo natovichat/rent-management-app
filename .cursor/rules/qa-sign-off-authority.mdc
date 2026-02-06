@@ -1,0 +1,714 @@
+# QA Sign-Off Authority - MANDATORY
+
+**CRITICAL**: Only QA Team can mark user stories as complete after active verification of all requirements and test coverage.
+
+## Golden Rule
+
+```
+🚫 NO ONE except QA can mark user stories complete
+✅ QA MUST actively verify ALL requirements
+📋 QA MUST verify test coverage at ALL levels
+🧪 QA MUST verify last test run passed
+🔍 QA MUST compare implementation to requirements line-by-line
+```
+
+---
+
+## Core Principle
+
+**The ONLY person/team authorized to change a user story status from any state to "✅ Complete" or "✅ Verified Complete" is the QA Team.**
+
+### Why This Rule Exists
+
+**Problem Without This Rule:**
+- Developers mark stories "done" without comprehensive testing
+- Product Owners mark stories complete without technical verification
+- Stories marked complete with failing tests
+- Stories marked complete with missing test coverage
+- Requirements checklist unchecked but story marked complete
+- No single source of truth for completion status
+
+**Solution:**
+- QA Team is the ONLY authority for completion sign-off
+- QA must perform active, documented verification
+- Clear checklist must be completed before sign-off
+- Evidence must be provided for verification
+
+---
+
+## QA Sign-Off Checklist
+
+Before QA can mark ANY user story as "✅ Complete" or "✅ Verified Complete", they MUST complete this checklist:
+
+### 1. Requirements Verification (Line-by-Line)
+
+**QA must actively compare:**
+- [ ] Open the user story requirements document
+- [ ] Read EVERY requirement line-by-line
+- [ ] For EACH requirement, verify implementation exists
+- [ ] Check EVERY acceptance criteria checkbox
+- [ ] Verify EVERY acceptance criteria is implemented
+- [ ] Document any missing requirements
+- [ ] Request fixes for missing requirements
+
+**Process:**
+```
+For each requirement in user story:
+  1. Read requirement text
+  2. Navigate to implementation (code, UI, API)
+  3. Verify feature exists and works
+  4. Check acceptance criteria checkbox if verified
+  5. If not verified: Document gap and BLOCK sign-off
+```
+
+**Example:**
+```
+User Story: US1.1 Create Property
+
+Requirement: "Form includes property type dropdown"
+✅ Verified: Dropdown exists with values RESIDENTIAL, COMMERCIAL, LAND, MIXED_USE
+
+Requirement: "Form validates that address is not empty"
+✅ Verified: Empty address shows error message
+
+Requirement: "Form organized into collapsible sections"
+❌ NOT VERIFIED: Form is single flat form, no sections
+→ BLOCK sign-off, request implementation
+```
+
+---
+
+### 2. Test Coverage Verification (All Levels)
+
+**QA must verify tests exist at ALL levels:**
+
+#### A. Unit Tests
+- [ ] Backend unit tests exist for all service methods
+- [ ] Frontend unit tests exist for all components
+- [ ] Unit test coverage meets threshold (≥80% backend, ≥90% frontend)
+- [ ] Coverage report reviewed and verified
+
+**Verification:**
+```bash
+# Backend unit tests
+npm test -- properties
+npm test -- --coverage
+
+# Check coverage report
+open coverage/index.html
+
+# Verify:
+✅ All service methods have tests
+✅ Coverage ≥ 80%
+✅ Edge cases covered
+```
+
+#### B. Integration Tests
+- [ ] API integration tests exist for all endpoints
+- [ ] All endpoints tested with real backend + database
+- [ ] All CRUD operations tested
+- [ ] Error scenarios tested
+- [ ] Integration test execution logs reviewed
+
+**Verification:**
+```bash
+# API integration tests
+npm run test:integration
+
+# Verify:
+✅ All endpoints have tests
+✅ Real API + DB used (not mocked)
+✅ Success and error cases covered
+```
+
+#### C. End-to-End (E2E) Tests
+- [ ] E2E tests exist for all user workflows
+- [ ] All happy path flows tested
+- [ ] All alternative flows tested
+- [ ] All error flows tested
+- [ ] E2E tests executed in real browser
+- [ ] Screenshots/videos captured
+
+**Verification:**
+```bash
+# E2E tests
+npx playwright test
+
+# Check report
+npx playwright show-report
+
+# Verify:
+✅ All user flows have tests
+✅ Real browser execution
+✅ Screenshots/videos captured
+```
+
+#### D. Cross-Level Coverage Matrix
+
+QA must create coverage matrix:
+
+```
+Feature: Create Property
+
+Unit Tests:
+✅ PropertiesService.create() - tested
+✅ PropertyForm component - tested
+✅ Validation logic - tested
+
+Integration Tests:
+✅ POST /api/properties - tested
+✅ Validation errors - tested
+✅ Success response - tested
+
+E2E Tests:
+✅ Complete creation flow - tested
+✅ Form validation - tested
+✅ Success message - tested
+
+Coverage: ✅ Complete at all levels
+```
+
+---
+
+### 3. Test Execution Verification (Last Run Passed)
+
+**QA must verify tests were EXECUTED and PASSED:**
+
+#### Required Evidence (Per Test Type)
+
+**Backend Unit Tests:**
+- [ ] Test execution output file exists
+- [ ] Output shows all tests passed
+- [ ] Coverage report shows ≥80% coverage
+- [ ] Timestamp shows recent execution (within 24 hours)
+
+**Evidence File:** `test-results/backend-unit-output.txt`
+
+**E2E Tests:**
+- [ ] Playwright report exists
+- [ ] Report shows all tests passed
+- [ ] Screenshots captured for key flows
+- [ ] Timestamp shows recent execution
+
+**Evidence File:** `playwright-report/index.html`
+
+**API Integration Tests:**
+- [ ] Test execution output file exists
+- [ ] All endpoints tested
+- [ ] All tests passed
+- [ ] Timestamp shows recent execution
+
+**Evidence File:** `test-results/api-integration-output.txt`
+
+#### Verification Process
+
+```bash
+# 1. Check test execution evidence exists
+ls test-results/
+ls playwright-report/
+
+# 2. Review test output files
+cat test-results/backend-unit-output.txt
+# Must show: "Tests: XX passed, XX total" with no failures
+
+# 3. Review E2E report
+open playwright-report/index.html
+# Must show: "XX passed" with 0 failed
+
+# 4. Check timestamps
+ls -la test-results/
+# Must be within last 24 hours
+
+# 5. Verify test count matches requirements
+# Compare number of tests to number of requirements
+```
+
+---
+
+### 4. Requirements-to-Tests Mapping
+
+**QA must verify EVERY requirement has corresponding test:**
+
+#### Mapping Template
+
+```
+User Story: US1.1 Create Property
+
+Requirement 1: "User can access Create Property button"
+Tests:
+✅ E2E: test/e2e/properties/create-property.spec.ts:12
+✅ Frontend: PropertyList.test.tsx:45
+
+Requirement 2: "Form validates address is required"
+Tests:
+✅ Backend: properties.service.spec.ts:89
+✅ API: test/integration/properties/create.spec.ts:34
+✅ E2E: test/e2e/properties/validation.spec.ts:23
+
+Requirement 3: "Success message displayed after creation"
+Tests:
+✅ E2E: test/e2e/properties/create-property.spec.ts:78
+✅ Frontend: PropertyForm.test.tsx:112
+
+... (all requirements mapped)
+
+Result: ✅ All requirements covered by tests
+```
+
+#### Process
+
+1. **List all requirements** from user story
+2. **For each requirement**, find all tests that verify it
+3. **Document test file paths and line numbers**
+4. **Verify tests actually test the requirement** (not just exist)
+5. **Mark any gaps** where requirements have no tests
+6. **BLOCK sign-off** if any gaps exist
+
+---
+
+### 5. Acceptance Criteria Checkbox Verification
+
+**QA must check EVERY checkbox in acceptance criteria section:**
+
+**Process:**
+1. Open user story document
+2. Navigate to "Acceptance Criteria" section
+3. Read EVERY criterion
+4. For EACH criterion:
+   - Verify implementation exists
+   - Verify tests cover the criterion
+   - Check the checkbox `[ ]` → `[x]`
+5. If ANY checkbox cannot be checked:
+   - Document why
+   - Request implementation/fix
+   - BLOCK sign-off
+
+**Example:**
+
+```markdown
+### Acceptance Criteria
+
+- [x] User can access "Create Property" button  ← QA verified
+- [x] Form validates that address is not empty  ← QA verified
+- [ ] Form organized into collapsible sections  ← NOT IMPLEMENTED
+```
+
+**Result:** Cannot mark story complete until all checkboxes checked.
+
+---
+
+## Who Can Do What
+
+### ✅ QA Team CAN:
+- Mark user stories as "✅ Complete" or "✅ Verified Complete"
+- Check acceptance criteria checkboxes
+- Approve stories for production
+- Block stories that don't meet criteria
+- Request fixes/changes before sign-off
+
+### 🚫 Others CANNOT:
+- **Developers:** Cannot mark stories complete (even if they think it's done)
+- **Product Owners:** Cannot mark stories complete (even if requirements met)
+- **Team Leads:** Cannot mark stories complete (must go through QA)
+- **Anyone Else:** Cannot mark stories complete
+
+### 🔄 Others CAN:
+- **Developers:** Mark stories as "🔧 In Progress" or "🧪 Ready for QA"
+- **Product Owners:** Mark stories as "📋 Ready" or "⏳ Blocked"
+- **Team Leads:** Request QA review, but not mark complete
+
+---
+
+## QA Sign-Off Process
+
+### Step-by-Step Process
+
+#### Step 1: Receive Story for QA Review
+
+**Developer marks:** "🧪 Ready for QA"
+
+**QA action:** Begin verification process
+
+---
+
+#### Step 2: Perform Active Verification
+
+**QA executes checklist:**
+1. ✅ Requirements verification (line-by-line)
+2. ✅ Test coverage verification (all levels)
+3. ✅ Test execution verification (last run passed)
+4. ✅ Requirements-to-tests mapping
+5. ✅ Acceptance criteria checkboxes
+
+**QA documents findings:**
+- Create verification report
+- Note any gaps or issues
+- Capture evidence (screenshots, logs)
+
+---
+
+#### Step 3A: All Verifications Pass
+
+**QA action:**
+1. Check all acceptance criteria checkboxes
+2. Update story status to "✅ Verified Complete"
+3. Add verification comment with:
+   - Date of verification
+   - QA engineer name
+   - Summary of verification
+   - Links to test evidence
+4. Notify team of completion
+
+**Example Comment:**
+```
+✅ QA SIGN-OFF: US1.1 Verified Complete
+
+Verified by: Sarah Chen (QA Team)
+Date: 2026-02-03
+Duration: 3 hours
+
+Verification Results:
+✅ All 24 requirements verified
+✅ All acceptance criteria checked
+✅ Test coverage: Backend 87%, Frontend 94%, E2E 100%
+✅ Test execution: All tests passing (59/59)
+✅ Evidence files: test-results/, playwright-report/
+
+Story approved for production.
+```
+
+---
+
+#### Step 3B: Verification Fails
+
+**QA action:**
+1. Document all gaps and issues
+2. Update story status to "🔴 QA Failed" or "⚠️ Issues Found"
+3. Create detailed issue report
+4. Notify developer/team of failures
+5. BLOCK story from being marked complete
+
+**Example Comment:**
+```
+❌ QA VERIFICATION FAILED: US1.1
+
+Verified by: Sarah Chen (QA Team)
+Date: 2026-02-03
+
+Issues Found:
+
+1. Missing Requirements:
+   ❌ Form not organized into collapsible sections
+   ❌ No field tooltips/help text
+   ❌ Numeric validation not working
+
+2. Test Coverage Gaps:
+   ❌ No E2E test for inline investment company creation
+   ❌ Backend unit test coverage only 65% (need ≥80%)
+   
+3. Test Execution Issues:
+   ❌ 3 E2E tests failing: test/e2e/properties/validation.spec.ts
+   
+Action Required:
+- Fix missing features
+- Add missing tests
+- Fix failing tests
+- Resubmit for QA review
+
+Story BLOCKED from production.
+```
+
+---
+
+#### Step 4: Re-verification After Fixes
+
+**After developer fixes issues:**
+
+**QA action:**
+1. Verify all issues addressed
+2. Re-run full verification checklist
+3. If all pass → Sign off (Step 3A)
+4. If still failing → Document new issues (Step 3B)
+
+---
+
+## Enforcement Mechanisms
+
+### 1. Process Enforcement
+
+**Pull Request / Merge Request:**
+- PR cannot be merged to main without QA approval
+- PR description must include: "QA Verified: [Yes/No]"
+- If "No" → PR blocked
+
+**User Story Status:**
+- Status field is locked to QA Team role
+- Only QA accounts can change to "✅ Complete"
+- System enforces role-based access
+
+---
+
+### 2. Documentation Enforcement
+
+**User Story Document:**
+- Status line can only be updated by QA
+- Acceptance criteria checkboxes can only be checked by QA
+- QA verification comment is MANDATORY before completion
+
+**Git Commit Requirements:**
+- Commit that marks story complete must be made by QA Team member
+- Commit message must reference QA verification
+- Commit must include verification evidence files
+
+---
+
+### 3. Audit Trail
+
+**Required documentation for each sign-off:**
+- [ ] QA verification report
+- [ ] Test evidence files
+- [ ] Requirements verification checklist
+- [ ] Coverage matrix
+- [ ] Acceptance criteria checkboxes (all checked)
+- [ ] QA sign-off comment with name and date
+
+**Stored in:**
+```
+docs/qa/
+├── US1.1-verification-report.md
+├── US1.2-verification-report.md
+└── ...
+
+test-results/
+├── US1.1/
+│   ├── backend-unit-output.txt
+│   ├── api-integration-output.txt
+│   └── playwright-report/
+└── ...
+```
+
+---
+
+## Exception Handling
+
+### When Can This Rule Be Bypassed?
+
+**NEVER.** No exceptions.
+
+**Even if:**
+- ❌ "It's just a small change" - Still requires QA sign-off
+- ❌ "It's urgent" - Still requires QA sign-off
+- ❌ "Developer tested it" - Still requires QA sign-off
+- ❌ "Product Owner approved it" - Still requires QA sign-off
+- ❌ "CTO said it's okay" - Still requires QA sign-off
+
+**QA sign-off is NON-NEGOTIABLE.**
+
+---
+
+## QA Verification Report Template
+
+```markdown
+# QA Verification Report: [User Story ID]
+
+**Story:** [User Story Title]
+**QA Engineer:** [Name]
+**Verification Date:** [Date]
+**Verification Duration:** [Hours]
+**Status:** [✅ Passed | ❌ Failed]
+
+---
+
+## 1. Requirements Verification
+
+Total Requirements: [X]
+Verified: [Y/X]
+
+| Requirement | Status | Notes |
+|---|---|---|
+| [Requirement 1] | ✅ Verified | [Notes] |
+| [Requirement 2] | ❌ Failed | [Issue details] |
+| ... | | |
+
+---
+
+## 2. Test Coverage Verification
+
+### Backend Unit Tests
+- Coverage: [X]%
+- Tests: [Y] passing, [Z] total
+- Evidence: `test-results/backend-unit-output.txt`
+
+### API Integration Tests
+- Tests: [Y] passing, [Z] total
+- Evidence: `test-results/api-integration-output.txt`
+
+### E2E Tests
+- Tests: [Y] passing, [Z] total
+- Evidence: `playwright-report/index.html`
+
+---
+
+## 3. Test Execution Verification
+
+Last Test Run:
+- Date: [Date/Time]
+- All tests passed: [Yes/No]
+- Evidence files committed: [Yes/No]
+
+---
+
+## 4. Requirements-to-Tests Mapping
+
+| Requirement | Unit Tests | Integration Tests | E2E Tests | Complete |
+|---|---|---|---|---|
+| [Req 1] | ✅ | ✅ | ✅ | ✅ |
+| [Req 2] | ✅ | ❌ | ✅ | ❌ |
+
+---
+
+## 5. Acceptance Criteria
+
+Total Criteria: [X]
+Checked: [Y/X]
+
+- [x] Criterion 1
+- [ ] Criterion 2
+- ...
+
+---
+
+## Issues Found
+
+1. [Issue 1 description]
+2. [Issue 2 description]
+...
+
+---
+
+## Decision
+
+[✅ APPROVED for production | ❌ BLOCKED - fixes required]
+
+**Reason:** [Brief explanation]
+
+**QA Sign-Off:** [Name], [Date]
+```
+
+---
+
+## Examples
+
+### Example 1: Complete Sign-Off
+
+```
+User Story: US1.5 View Properties List
+QA Engineer: Sarah Chen
+Date: 2026-02-03
+
+Verification Results:
+✅ All 12 requirements verified
+✅ All 12 acceptance criteria checked
+✅ Backend unit tests: 28/28 passing (89% coverage)
+✅ API integration tests: 5/5 passing
+✅ E2E tests: 4/4 passing
+✅ All evidence files committed
+✅ Requirements-to-tests mapping: 100% coverage
+
+Decision: ✅ APPROVED FOR PRODUCTION
+
+Status Updated: ⏳ In Progress → ✅ Verified Complete
+```
+
+---
+
+### Example 2: Failed Verification
+
+```
+User Story: US1.1 Create Property
+QA Engineer: Sarah Chen
+Date: 2026-02-03
+
+Verification Results:
+❌ 3/24 requirements not implemented
+❌ 15/24 acceptance criteria checked (9 unchecked)
+❌ Backend unit tests: 39/39 passing (87% coverage) ✅
+❌ E2E tests: 5/8 passing (3 failing)
+❌ Missing: Inline investment company creation test
+
+Issues:
+1. Form not organized into collapsible sections
+2. No field tooltips
+3. 3 E2E tests failing (authentication issues)
+
+Decision: ❌ BLOCKED - FIXES REQUIRED
+
+Status Updated: 🧪 Ready for QA → 🔴 QA Failed
+
+Action: Developer must fix issues and resubmit
+```
+
+---
+
+## Integration with Existing Rules
+
+### Works with:
+
+1. **[test-execution-verification.mdc](./test-execution-verification.mdc):**
+   - That rule defines HOW tests must be executed
+   - This rule defines WHO can verify and sign off
+
+2. **[feature-development-workflow.mdc](./feature-development-workflow.mdc):**
+   - That rule defines the phased workflow
+   - This rule defines who approves Phase 3 completion
+
+3. **[requirement-to-user-story.mdc](./requirement-to-user-story.mdc):**
+   - That rule defines how requirements are documented
+   - This rule defines how requirements are verified
+
+---
+
+## Benefits
+
+### For Quality:
+- ✅ Single source of truth for completion
+- ✅ Consistent verification process
+- ✅ No stories slip through without verification
+- ✅ Professional QA standards
+
+### For Team:
+- ✅ Clear roles and responsibilities
+- ✅ Developers know when story is truly "done"
+- ✅ No ambiguity about completion status
+- ✅ Trust in production releases
+
+### For Process:
+- ✅ Prevents premature completion
+- ✅ Enforces quality gates
+- ✅ Maintains audit trail
+- ✅ Protects production quality
+
+---
+
+## Summary
+
+```
+🚫 Only QA can mark stories complete
+✅ QA must actively verify ALL requirements
+📋 QA must verify test coverage at ALL levels
+🧪 QA must verify last test run passed
+🔍 QA must compare implementation line-by-line
+📝 QA must check all acceptance criteria boxes
+📊 QA must provide verification evidence
+```
+
+**This rule ensures that only verified, tested, and complete features reach production!**
+
+---
+
+**Rule Status:** ✅ Active  
+**Applies To:** ALL user stories in ALL epics  
+**Enforcement:** MANDATORY - No exceptions  
+**Authority:** QA Team ONLY  
+**Created:** February 3, 2026  
+**Version:** 1.0

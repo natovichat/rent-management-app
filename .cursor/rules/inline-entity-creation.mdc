@@ -1,0 +1,658 @@
+---
+description: Pattern for inline entity creation within dropdowns and select fields
+alwaysApply: true
+---
+
+# Inline Entity Creation Pattern - MANDATORY
+
+**CRITICAL**: When a form has a dropdown/select for a related entity, ALWAYS provide an option to create that entity inline without navigating away.
+
+## Golden Rule
+
+```
+✨ ENABLE inline creation for ALL entity selects
+🚫 NO forced navigation to create related entities
+✅ AUTO-SELECT newly created entities
+🎯 CONTEXT-PRESERVING workflows
+```
+
+---
+
+## Core Principle
+
+**Users should NEVER have to:**
+- Navigate away to create a related entity
+- Lose form context
+- Remember to come back and select the newly created entity
+- Switch between multiple pages for a single workflow
+
+**Users should ALWAYS be able to:**
+- Create related entities in-place
+- Continue their current workflow
+- See newly created entities auto-selected
+
+---
+
+## Implementation Pattern
+
+### Step 1: Add Dialog State
+
+```typescript
+const [createOwnerDialogOpen, setCreateOwnerDialogOpen] = useState(false);
+```
+
+### Step 2: Add Form Schema and Hook
+
+```typescript
+// Schema
+const ownerSchema = z.object({
+  name: z.string().min(1, 'שם הוא שדה חובה'),
+  email: z.string().email('כתובת אימייל לא תקינה').optional().or(z.literal('')),
+  // ... other fields
+});
+
+type OwnerFormData = z.infer<typeof ownerSchema>;
+
+// Form hook
+const ownerForm = useForm<OwnerFormData>({
+  resolver: zodResolver(ownerSchema),
+  defaultValues: {
+    name: '',
+    email: '',
+    // ... other defaults
+  },
+});
+```
+
+### Step 3: Add Creation Mutation with Auto-Select
+
+```typescript
+const createOwnerMutation = useMutation({
+  mutationFn: (data: OwnerFormData) => ownersApi.createOwner(data),
+  onSuccess: (newOwner) => {
+    queryClient.invalidateQueries({ queryKey: ['owners'] });
+    setCreateOwnerDialogOpen(false);
+    ownerForm.reset();
+    
+    // 🎯 KEY: Automatically select the newly created entity
+    parentForm.setValue('ownerId', newOwner.id);
+    
+    setSnackbar({ 
+      open: true, 
+      message: 'בעלים נוסף בהצלחה', 
+      severity: 'success' 
+    });
+  },
+  onError: () => {
+    setSnackbar({ 
+      open: true, 
+      message: 'שגיאה בהוספת בעלים', 
+      severity: 'error' 
+    });
+  },
+});
+```
+
+### Step 4: Add Handler
+
+```typescript
+const handleOwnerSubmit = (data: OwnerFormData) => {
+  createOwnerMutation.mutate(data);
+};
+
+const handleCreateNewOwner = () => {
+  setCreateOwnerDialogOpen(true);
+};
+```
+
+### Step 5: Enhance Select Component
+
+```typescript
+<Select
+  value={parentForm.watch('ownerId')}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (value === '__CREATE_NEW__') {
+      handleCreateNewOwner();  // Open creation dialog
+    } else {
+      parentForm.setValue('ownerId', value);
+    }
+  }}
+  label="בעלים"
+>
+  {/* Existing entities */}
+  {owners.map((owner) => (
+    <MenuItem key={owner.id} value={owner.id}>
+      {owner.name}
+    </MenuItem>
+  ))}
+  
+  {/* CREATE NEW option - ALWAYS at bottom */}
+  <MenuItem 
+    value="__CREATE_NEW__"
+    sx={{ 
+      color: 'primary.main', 
+      fontWeight: 600,
+      borderTop: owners.length > 0 ? 1 : 0,  // Divider if items exist
+      borderColor: 'divider',
+      '&:hover': {
+        backgroundColor: 'primary.lighter',
+      }
+    }}
+  >
+    + צור בעלים חדש
+  </MenuItem>
+</Select>
+```
+
+### Step 6: Add Creation Dialog
+
+```typescript
+<Dialog 
+  open={createOwnerDialogOpen} 
+  onClose={() => setCreateOwnerDialogOpen(false)} 
+  maxWidth="sm" 
+  fullWidth
+>
+  <Box component="form" onSubmit={ownerForm.handleSubmit(handleOwnerSubmit)}>
+    <DialogTitle>צור בעלים חדש</DialogTitle>
+    <DialogContent>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
+        <TextField
+          label="שם *"
+          {...ownerForm.register('name')}
+          error={!!ownerForm.formState.errors.name}
+          helperText={ownerForm.formState.errors.name?.message}
+          fullWidth
+          autoFocus  // ← Important for UX
+        />
+        {/* Other fields */}
+      </Box>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setCreateOwnerDialogOpen(false)}>ביטול</Button>
+      <Button
+        type="submit"
+        variant="contained"
+        disabled={createOwnerMutation.isPending}
+      >
+        {createOwnerMutation.isPending ? 'יוצר...' : 'צור בעלים'}
+      </Button>
+    </DialogActions>
+  </Box>
+</Dialog>
+```
+
+---
+
+## Where to Apply This Pattern
+
+### MANDATORY for These Relationships
+
+1. **Property → Owner** ✅ (Implemented)
+   - When adding ownership
+   
+2. **Lease → Tenant** ⚠️ (Should implement)
+   - When creating a new lease
+   
+3. **Property → Investment Company** ⚠️ (Should implement)
+   - When marking property as investment
+   
+4. **Expense → Vendor** ⚠️ (Future)
+   - When adding property expenses
+   
+5. **Mortgage → Bank** ⚠️ (Future)
+   - When adding mortgage (if banks are entities)
+
+---
+
+## Implementation Checklist
+
+When adding entity selection to ANY form:
+
+- [ ] Add dialog state for inline creation
+- [ ] Add form schema and validation
+- [ ] Add form hook with defaults
+- [ ] Add creation mutation with **auto-select**
+- [ ] Add "+ Create New" option at bottom of Select
+- [ ] Style create option distinctly (blue, bold, divider)
+- [ ] Add creation dialog with all required fields
+- [ ] Add submit handler
+- [ ] Invalidate related queries on success
+- [ ] Show success/error feedback
+- [ ] Reset form after creation
+- [ ] Handle loading states
+- [ ] Auto-focus first field in creation dialog
+
+---
+
+## Visual Styling Standards
+
+### Create New Option Style
+
+```typescript
+<MenuItem 
+  value="__CREATE_NEW__"
+  sx={{ 
+    color: 'primary.main',      // Blue color
+    fontWeight: 600,            // Bold
+    borderTop: hasItems ? 1 : 0, // Divider if items exist
+    borderColor: 'divider',
+    '&:hover': {
+      backgroundColor: 'primary.lighter',  // Subtle hover
+    }
+  }}
+>
+  + צור {entityName} חדש
+</MenuItem>
+```
+
+### Dialog Styling
+
+- **Max Width:** `sm` (600px)
+- **Full Width:** `true`
+- **Content Gap:** `2` (spacing between fields)
+- **Auto Focus:** First field
+- **RTL Support:** Automatic with Hebrew labels
+
+---
+
+## Common Mistakes to Avoid
+
+### ❌ Mistake 1: Forgetting Auto-Select
+
+```typescript
+// ❌ Bad - User has to manually select after creating
+onSuccess: (newEntity) => {
+  setCreateDialogOpen(false);
+  // Missing: parentForm.setValue('entityId', newEntity.id);
+}
+
+// ✅ Good - Auto-select
+onSuccess: (newEntity) => {
+  parentForm.setValue('entityId', newEntity.id);  // ← Critical!
+  setCreateDialogOpen(false);
+}
+```
+
+### ❌ Mistake 2: No Visual Distinction
+
+```typescript
+// ❌ Bad - Create option looks like regular item
+<MenuItem value="__CREATE_NEW__">
+  צור בעלים חדש
+</MenuItem>
+
+// ✅ Good - Visually distinct
+<MenuItem 
+  value="__CREATE_NEW__"
+  sx={{ 
+    color: 'primary.main',
+    fontWeight: 600,
+    borderTop: 1,
+  }}
+>
+  + צור בעלים חדש
+</MenuItem>
+```
+
+### ❌ Mistake 3: Complex Creation in Dropdown
+
+```typescript
+// ❌ Bad - Trying to fit creation form IN the dropdown
+<Select>
+  <MenuItem>
+    <TextField label="Name" />  {/* Don't do this! */}
+  </MenuItem>
+</Select>
+
+// ✅ Good - Separate dialog
+<Select>
+  <MenuItem value="__CREATE_NEW__" onClick={openDialog}>
+    + Create New
+  </MenuItem>
+</Select>
+<Dialog open={dialogOpen}>
+  <CreateForm />
+</Dialog>
+```
+
+### ❌ Mistake 4: No Query Invalidation
+
+```typescript
+// ❌ Bad - List doesn't refresh
+onSuccess: (newEntity) => {
+  parentForm.setValue('entityId', newEntity.id);
+  // Missing: queryClient.invalidateQueries({ queryKey: ['entities'] });
+}
+
+// ✅ Good - List refreshes
+onSuccess: (newEntity) => {
+  queryClient.invalidateQueries({ queryKey: ['entities'] });
+  parentForm.setValue('entityId', newEntity.id);
+}
+```
+
+---
+
+## Accessibility
+
+### Keyboard Navigation
+
+- ✅ Tab to navigate between fields
+- ✅ Enter to submit form
+- ✅ Escape to close dialog
+- ✅ Auto-focus on first field
+
+### Screen Readers
+
+- ✅ Proper labels on all fields
+- ✅ Error messages announced
+- ✅ Loading states announced
+- ✅ Success feedback announced
+
+---
+
+## Examples
+
+### Complete Implementation: Lease → Tenant
+
+```typescript
+// 1. State
+const [createTenantDialogOpen, setCreateTenantDialogOpen] = useState(false);
+
+// 2. Schema
+const tenantSchema = z.object({
+  name: z.string().min(1, 'שם הוא שדה חובה'),
+  email: z.string().email().optional().or(z.literal('')),
+  phone: z.string().min(1, 'טלפון הוא שדה חובה'),
+});
+
+// 3. Form
+const tenantForm = useForm<TenantFormData>({
+  resolver: zodResolver(tenantSchema),
+  defaultValues: { name: '', email: '', phone: '' },
+});
+
+// 4. Mutation
+const createTenantMutation = useMutation({
+  mutationFn: tenantsApi.createTenant,
+  onSuccess: (newTenant) => {
+    queryClient.invalidateQueries({ queryKey: ['tenants'] });
+    setCreateTenantDialogOpen(false);
+    tenantForm.reset();
+    leaseForm.setValue('tenantId', newTenant.id);  // Auto-select
+    showSuccess('דייר נוסף בהצלחה');
+  },
+});
+
+// 5. Handlers
+const handleTenantSubmit = (data: TenantFormData) => {
+  createTenantMutation.mutate(data);
+};
+
+// 6. Select with create option
+<Select
+  value={leaseForm.watch('tenantId')}
+  onChange={(e) => {
+    if (e.target.value === '__CREATE_NEW__') {
+      setCreateTenantDialogOpen(true);
+    } else {
+      leaseForm.setValue('tenantId', e.target.value);
+    }
+  }}
+>
+  {tenants.map(t => <MenuItem key={t.id} value={t.id}>{t.name}</MenuItem>)}
+  <MenuItem value="__CREATE_NEW__" sx={{ color: 'primary.main', fontWeight: 600 }}>
+    + צור דייר חדש
+  </MenuItem>
+</Select>
+
+// 7. Dialog
+<Dialog open={createTenantDialogOpen} onClose={() => setCreateTenantDialogOpen(false)}>
+  <Box component="form" onSubmit={tenantForm.handleSubmit(handleTenantSubmit)}>
+    <DialogTitle>צור דייר חדש</DialogTitle>
+    <DialogContent>
+      <TextField label="שם *" {...tenantForm.register('name')} autoFocus fullWidth />
+      <TextField label="אימייל" {...tenantForm.register('email')} fullWidth />
+      <TextField label="טלפון *" {...tenantForm.register('phone')} fullWidth />
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={() => setCreateTenantDialogOpen(false)}>ביטול</Button>
+      <Button type="submit" variant="contained">צור דייר</Button>
+    </DialogActions>
+  </Box>
+</Dialog>
+```
+
+---
+
+## Quick Reference Card
+
+```typescript
+// PATTERN TEMPLATE
+// ================
+
+// 1. STATE
+const [createXDialogOpen, setCreateXDialogOpen] = useState(false);
+
+// 2. SCHEMA
+const xSchema = z.object({ ... });
+
+// 3. FORM
+const xForm = useForm({ resolver: zodResolver(xSchema) });
+
+// 4. MUTATION (with auto-select!)
+const createX = useMutation({
+  onSuccess: (newX) => {
+    queryClient.invalidateQueries({ queryKey: ['xs'] });
+    parentForm.setValue('xId', newX.id);  // ← AUTO-SELECT
+    setCreateXDialogOpen(false);
+  }
+});
+
+// 5. HANDLER
+const handleXSubmit = (data) => createX.mutate(data);
+
+// 6. SELECT (with create option)
+<Select onChange={(e) => {
+  if (e.target.value === '__CREATE_NEW__') {
+    setCreateXDialogOpen(true);
+  } else {
+    parentForm.setValue('xId', e.target.value);
+  }
+}}>
+  {xs.map(x => <MenuItem value={x.id}>{x.name}</MenuItem>)}
+  <MenuItem value="__CREATE_NEW__">+ צור חדש</MenuItem>
+</Select>
+
+// 7. DIALOG
+<Dialog open={createXDialogOpen}>
+  <form onSubmit={xForm.handleSubmit(handleXSubmit)}>
+    <DialogTitle>צור {entityName} חדש</DialogTitle>
+    <DialogContent>
+      <TextField autoFocus {...} />
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={close}>ביטול</Button>
+      <Button type="submit">צור</Button>
+    </DialogActions>
+  </form>
+</Dialog>
+```
+
+---
+
+## Benefits
+
+### For Users
+
+1. **Efficiency** - Single workflow, no context switching
+2. **Convenience** - Create when needed, where needed
+3. **Less Cognitive Load** - No need to remember what to do after creating
+4. **Fewer Errors** - Auto-selection prevents forgetting to select
+
+### For Developers
+
+1. **Consistent Pattern** - Same implementation across all forms
+2. **Reusable** - Copy-paste template with minor modifications
+3. **Maintainable** - Clear structure
+4. **Type-Safe** - Full TypeScript support
+
+---
+
+## Testing Checklist
+
+When implementing inline creation:
+
+- [ ] "+ Create New" option visible in dropdown
+- [ ] Click opens creation dialog
+- [ ] Required fields validated
+- [ ] Optional fields work correctly
+- [ ] Cancel closes dialog without creating
+- [ ] Success creates entity
+- [ ] **Newly created entity auto-selected** in parent form
+- [ ] Entity list refreshed after creation
+- [ ] Success message shown
+- [ ] Error message shown on failure
+- [ ] Loading state displayed during creation
+- [ ] Can continue parent form after creation
+- [ ] Multiple creates work (can create multiple in same session)
+
+---
+
+## Real-World Examples
+
+### Already Implemented
+
+1. **Property Ownership → Owner** ✅
+   - File: `apps/frontend/src/app/properties/[id]/page.tsx`
+   - Dialog: "Add Ownership"
+   - Entity: Owner
+
+### Should Be Implemented
+
+2. **Lease → Tenant** ⚠️
+   - File: `apps/frontend/src/components/leases/LeaseForm.tsx`
+   - Dialog: "Create Lease"
+   - Entity: Tenant
+
+3. **Property → Investment Company** ⚠️
+   - File: `apps/frontend/src/app/properties/[id]/page.tsx`
+   - Dialog: "Add Investment Company"
+   - Entity: InvestmentCompany
+
+4. **Unit → Property** ⚠️
+   - File: `apps/frontend/src/components/units/UnitForm.tsx`
+   - Dialog: "Create Unit"
+   - Entity: Property (if creating unit before property)
+
+---
+
+## Variation: Autocomplete with Create Option
+
+For larger entity lists, use Autocomplete instead of Select:
+
+```typescript
+<Autocomplete
+  options={[
+    ...owners,
+    { id: '__CREATE_NEW__', name: '+ צור בעלים חדש', isCreateOption: true }
+  ]}
+  getOptionLabel={(option) => option.name}
+  renderOption={(props, option) => (
+    <li 
+      {...props}
+      style={{
+        color: option.isCreateOption ? 'primary.main' : 'inherit',
+        fontWeight: option.isCreateOption ? 600 : 400,
+        borderTop: option.isCreateOption ? '1px solid divider' : 'none',
+      }}
+    >
+      {option.name}
+    </li>
+  )}
+  onChange={(_, value) => {
+    if (value?.id === '__CREATE_NEW__') {
+      setCreateOwnerDialogOpen(true);
+    } else if (value) {
+      parentForm.setValue('ownerId', value.id);
+    }
+  }}
+/>
+```
+
+---
+
+## Edge Cases
+
+### 1. Empty Entity List
+
+```typescript
+// ✅ Good - Create option still available
+<Select>
+  {owners.length === 0 && (
+    <MenuItem disabled>
+      <em>אין בעלים במערכת</em>
+    </MenuItem>
+  )}
+  {owners.map(...)}
+  <MenuItem value="__CREATE_NEW__">+ צור בעלים חדש</MenuItem>
+</Select>
+```
+
+### 2. Failed Creation
+
+```typescript
+// ✅ Good - Dialog stays open, shows error
+onError: (error) => {
+  // Don't close dialog - let user fix and retry
+  setSnackbar({ 
+    open: true, 
+    message: error.message || 'שגיאה ביצירה', 
+    severity: 'error' 
+  });
+}
+```
+
+### 3. Duplicate Prevention
+
+```typescript
+// Optional: Check for duplicates before creating
+const handleOwnerSubmit = (data: OwnerFormData) => {
+  const duplicate = owners.find(o => 
+    o.name.toLowerCase() === data.name.toLowerCase()
+  );
+  
+  if (duplicate) {
+    if (confirm(`בעלים בשם "${data.name}" כבר קיים. האם להשתמש בקיים?`)) {
+      parentForm.setValue('ownerId', duplicate.id);
+      setCreateOwnerDialogOpen(false);
+      return;
+    }
+  }
+  
+  createOwnerMutation.mutate(data);
+};
+```
+
+---
+
+## Summary
+
+```
+✨ Inline creation: ALWAYS available
+🎯 Auto-select: ALWAYS after creation
+📝 Validation: ALWAYS with clear errors
+🚫 Navigation: NEVER required
+✅ Context: ALWAYS preserved
+```
+
+**Every entity select must allow inline creation!**
+
+---
+
+**Pattern Status:** ✅ Mandatory for all new forms  
+**Current Implementation:** Property → Owner  
+**Next Priority:** Lease → Tenant  
+**Last Updated:** February 2, 2026

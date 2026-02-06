@@ -1,0 +1,559 @@
+---
+description: Standards for MUI DataGrid column configuration and ordering
+alwaysApply: true
+---
+
+# DataGrid Column Standards - MANDATORY
+
+**CRITICAL**: All DataGrid components must follow these column configuration standards for consistency and usability.
+
+## Golden Rules
+
+```
+🔄 ENABLE column reordering on ALL tables
+📋 PRIMARY column first (RTL: right-most)
+✅ CONSISTENT column ordering patterns
+🎯 USER-FRIENDLY default order
+```
+
+---
+
+## Core Principles
+
+### 1. Column Reordering - ALWAYS ENABLED
+
+**MANDATORY**: Every DataGrid must allow users to reorder columns.
+
+```tsx
+// ✅ Good - Column reordering enabled
+<DataGrid
+  rows={data}
+  columns={columns}
+  disableColumnReorder={false}  // Explicitly enable
+  // ... other props
+/>
+
+// ❌ Bad - Disabled or not specified
+<DataGrid
+  rows={data}
+  columns={columns}
+  disableColumnReorder={true}  // Don't disable!
+  // ... other props
+/>
+```
+
+**Why:**
+- Users have different workflows and preferences
+- Some columns may be more important to specific users
+- Improves usability and user satisfaction
+- No performance cost
+
+---
+
+## Column Order Standards
+
+### RTL (Hebrew) Layout
+
+In RTL layouts, columns are displayed **right to left**. The first column in the array appears on the **right** side.
+
+**Default Column Order Pattern:**
+1. **Primary Identifier** (e.g., address, name) - RIGHT-MOST
+2. **Secondary Identifiers** (e.g., file number, ID)
+3. **Descriptive Fields** (e.g., type, status)
+4. **Metrics/Counts** (e.g., unit count, room count)
+5. **Dates** (e.g., created date, start date)
+6. **Actions** - LEFT-MOST (always last)
+
+---
+
+## Entity-Specific Standards
+
+### Properties Table
+
+**File:** `components/properties/PropertyList.tsx`
+
+**Column Order (RTL - right to left):**
+```tsx
+const columns: GridColDef<Property>[] = [
+  // 1. PRIMARY - Address (כתובת) - RIGHT-MOST
+  {
+    field: 'address',
+    headerName: 'כתובת',
+    flex: 1,
+    minWidth: 200,
+  },
+  
+  // 2. SECONDARY - File Number (מספר תיק)
+  {
+    field: 'fileNumber',
+    headerName: 'מספר תיק',
+    width: 150,
+  },
+  
+  // 3. METRICS - Unit Count (מספר יחידות)
+  {
+    field: 'unitCount',
+    headerName: 'מספר יחידות',
+    width: 120,
+  },
+  
+  // 4. DATE - Created Date (תאריך יצירה)
+  {
+    field: 'createdAt',
+    headerName: 'תאריך יצירה',
+    width: 150,
+  },
+  
+  // 5. ACTIONS (פעולות) - LEFT-MOST
+  {
+    field: 'actions',
+    type: 'actions',
+    headerName: 'פעולות',
+    width: 150,
+  },
+];
+```
+
+**Rationale:**
+- Address is most important for property identification
+- File number is useful but secondary
+- Unit count gives quick overview
+- Created date for reference
+- Actions always last (left-most in RTL)
+
+---
+
+### Units Table
+
+**File:** `components/units/UnitList.tsx`
+
+**Column Order:**
+```tsx
+const columns: GridColDef<Unit>[] = [
+  // 1. PRIMARY - Apartment Number (דירה)
+  { field: 'apartmentNumber', headerName: 'דירה', flex: 1 },
+  
+  // 2. DESCRIPTIVE - Floor (קומה)
+  { field: 'floor', headerName: 'קומה', width: 100 },
+  
+  // 3. METRICS - Room Count (חדרים)
+  { field: 'roomCount', headerName: 'חדרים', width: 100 },
+  
+  // 4. DATE - Created Date
+  { field: 'createdAt', headerName: 'תאריך יצירה', width: 150 },
+  
+  // 5. ACTIONS
+  { field: 'actions', type: 'actions', headerName: 'פעולות', width: 150 },
+];
+```
+
+---
+
+### Tenants Table
+
+**File:** `components/tenants/TenantList.tsx`
+
+**Column Order:**
+```tsx
+const columns: GridColDef[] = [
+  // 1. PRIMARY - Name (שם)
+  { field: 'name', headerName: 'שם', flex: 1 },
+  
+  // 2. CONTACT - Email (אימייל)
+  { field: 'email', headerName: 'אימייל', flex: 1 },
+  
+  // 3. CONTACT - Phone (טלפון)
+  { field: 'phone', headerName: 'טלפון', flex: 1 },
+  
+  // 4. METRICS - Active Leases (חוזים פעילים)
+  { field: 'leases', headerName: 'חוזים פעילים', width: 120 },
+  
+  // 5. DATE - Created Date
+  { field: 'createdAt', headerName: 'תאריך יצירה', width: 120 },
+  
+  // 6. ACTIONS
+  { field: 'actions', type: 'actions', headerName: 'פעולות', width: 100 },
+];
+```
+
+---
+
+### Leases Table
+
+**File:** `components/leases/LeaseList.tsx`
+
+**Column Order:**
+```tsx
+const columns: GridColDef[] = [
+  // 1. PRIMARY - Property/Unit (נכס)
+  { field: 'unit', headerName: 'נכס', flex: 1, minWidth: 200 },
+  
+  // 2. SECONDARY - Tenant (דייר)
+  { field: 'tenant', headerName: 'דייר', flex: 1, minWidth: 150 },
+  
+  // 3. DATE - Start Date (תאריך התחלה)
+  { field: 'startDate', headerName: 'תאריך התחלה', width: 120 },
+  
+  // 4. DATE - End Date (תאריך סיום)
+  { field: 'endDate', headerName: 'תאריך סיום', width: 120 },
+  
+  // 5. FINANCIAL - Monthly Rent (שכירות חודשית)
+  { field: 'monthlyRent', headerName: 'שכירות חודשית', width: 130 },
+  
+  // 6. STATUS (סטטוס)
+  { field: 'status', headerName: 'סטטוס', width: 110 },
+  
+  // 7. ACTIONS
+  { field: 'actions', type: 'actions', headerName: 'פעולות', width: 120 },
+];
+```
+
+---
+
+## Column Configuration Best Practices
+
+### 1. Primary Column Features
+
+The first column (right-most in RTL) should be:
+- **Clickable/Interactive** (if navigating to details)
+- **Always Visible** (use `flex` or sufficient `minWidth`)
+- **Descriptive** (users should quickly identify the row)
+
+```tsx
+// ✅ Good - Primary column with link
+{
+  field: 'address',
+  headerName: 'כתובת',
+  flex: 1,  // Takes available space
+  minWidth: 200,  // Ensures visibility
+  renderCell: (params) => (
+    <Link onClick={() => navigate(`/properties/${params.row.id}`)}>
+      {params.value}
+    </Link>
+  ),
+}
+```
+
+### 2. Actions Column
+
+**ALWAYS** the last column (left-most in RTL):
+```tsx
+{
+  field: 'actions',
+  type: 'actions',
+  headerName: 'פעולות',
+  width: 120-150,  // Fixed width
+  getActions: (params) => [
+    <GridActionsCellItem icon={<ViewIcon />} label="צפייה" />,
+    <GridActionsCellItem icon={<EditIcon />} label="עריכה" />,
+    <GridActionsCellItem icon={<DeleteIcon />} label="מחיקה" />,
+  ],
+}
+```
+
+### 3. Column Widths
+
+**Guidelines:**
+- **Primary columns**: `flex: 1` or `minWidth: 200+`
+- **Secondary text**: `flex: 1` or `width: 150`
+- **Numeric values**: `width: 100-120`
+- **Dates**: `width: 120-150`
+- **Status/Chips**: `width: 100-110`
+- **Actions**: `width: 100-150` (depends on number of actions)
+
+```tsx
+// ✅ Good - Appropriate widths
+const columns = [
+  { field: 'name', flex: 1, minWidth: 150 },      // Flexible
+  { field: 'count', width: 100 },                  // Fixed numeric
+  { field: 'date', width: 120 },                   // Fixed date
+  { field: 'status', width: 110 },                 // Fixed status
+  { field: 'actions', width: 150 },                // Fixed actions
+];
+```
+
+---
+
+## RTL-Specific Configuration
+
+### DataGrid RTL Setup
+
+```tsx
+<DataGrid
+  rows={data}
+  columns={columns}
+  disableColumnReorder={false}
+  sx={{
+    direction: 'rtl',  // RTL layout
+    '& .MuiDataGrid-columnHeaders': {
+      backgroundColor: 'rgba(0, 0, 0, 0.05)',  // Header styling
+    },
+    '& .MuiDataGrid-cell': {
+      direction: 'rtl',  // Cell content RTL
+    },
+    '& .MuiDataGrid-columnHeader': {
+      direction: 'rtl',  // Header content RTL
+    },
+  }}
+/>
+```
+
+### Column Alignment in RTL
+
+```tsx
+// Text columns - right-aligned (default in RTL)
+{
+  field: 'name',
+  headerName: 'שם',
+  // No need to specify align for text
+}
+
+// Numeric columns - center-aligned
+{
+  field: 'count',
+  headerName: 'מספר',
+  type: 'number',
+  align: 'center',
+  headerAlign: 'center',
+}
+```
+
+---
+
+## User Experience Guidelines
+
+### 1. Column Visibility
+
+Users should be able to:
+- ✅ Reorder columns by dragging
+- ✅ Resize columns (default DataGrid behavior)
+- ⚠️ Hide/show columns (optional - can add column menu)
+
+### 2. Saved Preferences (Future Enhancement)
+
+**Consider implementing:**
+- Save column order to localStorage
+- Save column widths to localStorage
+- Per-user preferences via API
+
+```tsx
+// Example: Save column state
+const [columnVisibilityModel, setColumnVisibilityModel] = useState({});
+
+<DataGrid
+  columnVisibilityModel={columnVisibilityModel}
+  onColumnVisibilityModelChange={(newModel) => {
+    setColumnVisibilityModel(newModel);
+    localStorage.setItem('columnVisibility', JSON.stringify(newModel));
+  }}
+/>
+```
+
+### 3. Column Pinning (Optional)
+
+For wide tables, consider pinning primary columns:
+```tsx
+<DataGrid
+  initialState={{
+    pinnedColumns: { left: [], right: ['address'] }  // Pin address on right (RTL)
+  }}
+/>
+```
+
+---
+
+## Checklist for New Tables
+
+Before creating a new DataGrid component:
+
+- [ ] Enable column reordering (`disableColumnReorder={false}`)
+- [ ] Order columns: Primary → Secondary → Metrics → Dates → Actions
+- [ ] Primary column is first (right-most in RTL)
+- [ ] Actions column is last (left-most in RTL)
+- [ ] RTL styling applied (`direction: 'rtl'`)
+- [ ] Appropriate column widths set
+- [ ] Primary column is interactive/clickable (if applicable)
+- [ ] Hebrew labels for all columns
+- [ ] Column alignment correct (text: right, numbers: center)
+
+---
+
+## Migration Guide
+
+### Existing Tables Without Reordering
+
+Add to existing DataGrid components:
+```tsx
+// Find this:
+<DataGrid
+  rows={data}
+  columns={columns}
+  // ... other props
+/>
+
+// Add this line:
+<DataGrid
+  rows={data}
+  columns={columns}
+  disableColumnReorder={false}  // ← ADD THIS
+  // ... other props
+/>
+```
+
+### Reordering Existing Columns
+
+If columns are not in the correct order:
+```tsx
+// OLD - Wrong order
+const columns = [
+  { field: 'createdAt', ... },     // ❌ Date first
+  { field: 'address', ... },       // ❌ Primary in middle
+  { field: 'actions', ... },       // ❌ Actions in middle
+];
+
+// NEW - Correct order
+const columns = [
+  { field: 'address', ... },       // ✅ Primary first
+  { field: 'fileNumber', ... },    // ✅ Secondary
+  { field: 'createdAt', ... },     // ✅ Date
+  { field: 'actions', ... },       // ✅ Actions last
+];
+```
+
+---
+
+## Testing
+
+### Manual Testing Checklist
+
+For each DataGrid:
+- [ ] Columns can be reordered by dragging header
+- [ ] Primary column is right-most (RTL)
+- [ ] Actions column is left-most (RTL)
+- [ ] Column order is logical and user-friendly
+- [ ] All Hebrew labels display correctly
+- [ ] Column widths are appropriate
+- [ ] No horizontal scrolling on standard screens (unless necessary)
+- [ ] Reordered columns persist during pagination/filtering
+
+---
+
+## Common Mistakes
+
+### ❌ Mistake 1: Disabling Column Reorder
+```tsx
+<DataGrid disableColumnReorder={true} />  // Don't do this!
+```
+
+### ❌ Mistake 2: Actions Column First
+```tsx
+const columns = [
+  { field: 'actions', type: 'actions', ... },  // Wrong!
+  { field: 'name', ... },
+];
+```
+
+### ❌ Mistake 3: No Flex on Primary Column
+```tsx
+{
+  field: 'address',
+  width: 150,  // ❌ Too narrow, no flex
+}
+```
+
+### ❌ Mistake 4: Missing RTL Direction
+```tsx
+<DataGrid
+  rows={data}
+  columns={columns}
+  // ❌ Missing sx={{ direction: 'rtl' }}
+/>
+```
+
+---
+
+## Examples
+
+### Complete PropertyList Example
+
+```tsx
+export default function PropertyList() {
+  const columns: GridColDef<Property>[] = [
+    {
+      field: 'address',
+      headerName: 'כתובת',
+      flex: 1,
+      minWidth: 200,
+      renderCell: (params) => (
+        <Link onClick={() => navigate(`/properties/${params.row.id}`)}>
+          {params.value}
+        </Link>
+      ),
+    },
+    {
+      field: 'fileNumber',
+      headerName: 'מספר תיק',
+      width: 150,
+    },
+    {
+      field: 'unitCount',
+      headerName: 'מספר יחידות',
+      width: 120,
+      type: 'number',
+      align: 'center',
+      headerAlign: 'center',
+    },
+    {
+      field: 'createdAt',
+      headerName: 'תאריך יצירה',
+      width: 150,
+      valueFormatter: (params) => 
+        new Date(params.value).toLocaleDateString('he-IL'),
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'פעולות',
+      width: 150,
+      getActions: (params) => [
+        <GridActionsCellItem icon={<VisibilityIcon />} label="צפייה" />,
+        <GridActionsCellItem icon={<EditIcon />} label="עריכה" />,
+        <GridActionsCellItem icon={<DeleteIcon />} label="מחיקה" />,
+      ],
+    },
+  ];
+
+  return (
+    <DataGrid
+      rows={data}
+      columns={columns}
+      disableColumnReorder={false}
+      sx={{
+        direction: 'rtl',
+        '& .MuiDataGrid-columnHeaders': {
+          backgroundColor: 'rgba(0, 0, 0, 0.05)',
+        },
+      }}
+    />
+  );
+}
+```
+
+---
+
+## Summary
+
+```
+🔄 Column reordering: ALWAYS enabled
+📋 Column order: Primary → Secondary → Metrics → Dates → Actions
+✅ RTL support: direction: 'rtl'
+🎯 User-friendly: Logical default order
+```
+
+**Every DataGrid must allow users to customize their view by reordering columns!**
+
+---
+
+**Last Updated:** February 2, 2026  
+**Applies To:** All DataGrid components in the application  
+**Status:** ✅ MANDATORY - Must be followed for all tables

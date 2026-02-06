@@ -1,0 +1,1006 @@
+# AI-Friendly Context Maintenance Rule
+
+**MANDATORY**: Maintain rich context throughout the codebase to enable AI agents to understand, modify, and extend code effectively.
+
+## Golden Rule
+
+```
+🤖 CONTEXT = AI SUPERPOWERS
+📝 DOCUMENT THE "WHY", NOT JUST THE "WHAT"
+🎯 MAKE EVERY FILE SELF-EXPLANATORY
+🔗 CONNECT THE DOTS BETWEEN COMPONENTS
+```
+
+## Core Principle
+
+AI agents (including Cursor) work best when they have **complete context** about:
+- **Why** decisions were made
+- **How** components relate to each other
+- **What** the business rules are
+- **Where** to find related information
+
+## Context Layers - ALL Required
+
+### Layer 1: Project-Level Context
+
+#### 1.1 Root README.md (MANDATORY)
+
+```markdown
+# [Project Name]
+
+## What This Project Does
+Clear, one-paragraph description of the project's purpose.
+
+## Architecture Overview
+Brief description of the tech stack and architecture pattern.
+- Frontend: React + TypeScript
+- Backend: Node.js + Express
+- Database: PostgreSQL
+- Architecture: REST API with JWT authentication
+
+## Key Concepts
+- **Users**: People who register and use the system
+- **Properties**: Rental listings managed by users
+- **Applications**: Tenant applications for properties
+
+## Project Structure
+```
+project/
+├── src/
+│   ├── components/     # React components
+│   ├── api/           # API routes
+│   ├── models/        # Database models
+│   └── utils/         # Utility functions
+├── tests/             # Test suites
+└── docs/              # Documentation
+```
+
+## Getting Started
+```bash
+npm install
+npm run dev
+```
+
+## Documentation
+- [Requirements](docs/REQUIREMENTS.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [API Documentation](docs/API.md)
+- [Database Schema](docs/DATABASE_SCHEMA.md)
+
+## Contact
+Team: [team-name]
+Lead: [name]
+```
+
+#### 1.2 ARCHITECTURE.md (MANDATORY)
+
+**Location**: `docs/ARCHITECTURE.md`
+
+```markdown
+# Architecture Documentation
+
+## System Overview
+High-level description of how the system works.
+
+## Architecture Diagram
+[Include or link to diagram]
+
+## Tech Stack
+- **Frontend**: React 18 + TypeScript
+  - Why: Type safety and modern React features
+- **Backend**: Node.js 20 + Express
+  - Why: JavaScript full-stack, good ecosystem
+- **Database**: PostgreSQL 15
+  - Why: ACID compliance, JSON support, mature
+
+## Design Patterns
+- **Repository Pattern**: Data access abstraction
+- **Service Layer**: Business logic separation
+- **DTO Pattern**: Data transfer objects for API
+
+## Key Architectural Decisions
+See [docs/decisions/](docs/decisions/) for detailed ADRs.
+
+## Component Relationships
+```
+Frontend (React)
+    ↓ HTTP/REST
+Backend (Express)
+    ↓ SQL
+Database (PostgreSQL)
+```
+
+## Security Model
+- JWT tokens for authentication
+- Role-based access control (RBAC)
+- Input validation at API layer
+
+## Scalability Considerations
+- Stateless API design
+- Database connection pooling
+- Caching strategy: [TBD/Redis/etc]
+```
+
+### Layer 2: Decision Context (Architecture Decision Records)
+
+#### 2.1 ADR Template (USE FOR EVERY MAJOR DECISION)
+
+**Location**: `docs/decisions/ADR-NNN-title.md`
+
+```markdown
+# ADR-NNN: [Decision Title]
+
+## Status
+[Proposed | Accepted | Deprecated | Superseded by ADR-XXX]
+
+## Date
+YYYY-MM-DD
+
+## Context
+What is the issue that we're seeing that is motivating this decision or change?
+
+## Decision
+What is the change that we're proposing and/or doing?
+
+## Consequences
+What becomes easier or more difficult to do because of this change?
+
+### Positive Consequences
+- Benefit 1
+- Benefit 2
+
+### Negative Consequences
+- Drawback 1
+- Drawback 2
+
+## Alternatives Considered
+1. **Alternative 1**: Description and why rejected
+2. **Alternative 2**: Description and why rejected
+
+## Related Decisions
+- ADR-001: Related decision
+- ADR-005: Another related decision
+
+## Implementation Notes
+Any specific implementation details or code patterns to follow.
+```
+
+#### 2.2 Example ADR
+
+```markdown
+# ADR-001: Use JWT for Authentication
+
+## Status
+Accepted
+
+## Date
+2026-02-01
+
+## Context
+We need to authenticate users across multiple devices and allow for stateless
+API design. Session-based auth would require server-side session storage and
+complicate horizontal scaling.
+
+## Decision
+Use JWT (JSON Web Tokens) for authentication with the following:
+- Access tokens: 15-minute expiry
+- Refresh tokens: 7-day expiry
+- Tokens stored in httpOnly cookies (not localStorage)
+
+## Consequences
+
+### Positive
+- Stateless API design - easy horizontal scaling
+- No session storage needed
+- Works across multiple domains if needed
+- Industry-standard approach
+
+### Negative
+- Cannot invalidate tokens before expiry
+- Token size larger than session ID
+- Need refresh token rotation logic
+
+## Alternatives Considered
+1. **Session-based auth**: Rejected due to scaling concerns
+2. **OAuth2 only**: Rejected as overkill for MVP
+3. **Tokens in localStorage**: Rejected due to XSS vulnerability
+
+## Implementation Notes
+See `src/middleware/auth.ts` for implementation.
+Token refresh logic in `src/api/auth/refresh.ts`.
+```
+
+### Layer 3: Directory-Level Context
+
+#### 3.1 Directory README.md (MANDATORY FOR EVERY MAJOR DIRECTORY)
+
+**Location**: `src/[directory]/README.md`
+
+```markdown
+# [Directory Name]
+
+## Purpose
+What this directory contains and why it exists.
+
+## Structure
+```
+directory/
+├── file1.ts         # What file1 does
+├── file2.ts         # What file2 does
+└── subdirectory/    # What subdirectory contains
+```
+
+## Key Files
+- **file1.ts**: Primary responsibility
+- **file2.ts**: Primary responsibility
+
+## Dependencies
+- Depends on: `../other-directory`
+- Used by: `../consumer-directory`
+
+## Patterns Used
+- Pattern 1: Why and where
+- Pattern 2: Why and where
+
+## Common Operations
+### Adding a New [Component Type]
+1. Create file in [location]
+2. Follow pattern from [example]
+3. Register in [registry file]
+
+## Testing
+Tests located in: `tests/[directory]/`
+Run with: `npm test src/[directory]`
+
+## Related Documentation
+- [Link to relevant docs]
+```
+
+#### 3.2 Example: src/models/README.md
+
+```markdown
+# Database Models
+
+## Purpose
+Contains Prisma database models and related type definitions.
+Each file represents one database table/model.
+
+## Structure
+```
+models/
+├── User.ts          # User model and types
+├── Property.ts      # Property model and types
+├── Application.ts   # Application model and types
+└── index.ts         # Re-exports all models
+```
+
+## Key Concepts
+- All models use Prisma ORM
+- Each model file exports:
+  - Prisma model type
+  - Zod validation schema
+  - TypeScript interfaces for DTOs
+
+## Model Relationships
+```
+User
+  ├── Properties (1:many) - User owns multiple properties
+  └── Applications (1:many) - User submits multiple applications
+
+Property
+  ├── Owner (many:1) - Property owned by User
+  └── Applications (1:many) - Property has multiple applications
+
+Application
+  ├── Applicant (many:1) - Application by User
+  └── Property (many:1) - Application for Property
+```
+
+## Adding a New Model
+1. Define in `prisma/schema.prisma`
+2. Run `npx prisma generate`
+3. Create `[ModelName].ts` in this directory
+4. Export from `index.ts`
+5. Add tests in `tests/models/test_[ModelName].ts`
+
+## Validation
+All models use Zod for runtime validation.
+Pattern: `[ModelName]Schema` for validation.
+
+## Related Documentation
+- [Database Schema](../../docs/DATABASE_SCHEMA.md)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+```
+
+### Layer 4: File-Level Context
+
+#### 4.1 File Header Comment (MANDATORY)
+
+```typescript
+/**
+ * User Authentication Service
+ *
+ * PURPOSE:
+ * Handles user authentication including registration, login, and token management.
+ *
+ * BUSINESS CONTEXT:
+ * - Users must verify email before accessing full features
+ * - Failed login attempts are rate-limited (5 attempts per hour)
+ * - Passwords must meet complexity requirements (8+ chars, mixed case, numbers)
+ *
+ * DEPENDENCIES:
+ * - User model (src/models/User.ts)
+ * - JWT utility (src/utils/jwt.ts)
+ * - Email service (src/services/email.ts)
+ *
+ * RELATED FILES:
+ * - API routes: src/api/auth/
+ * - Middleware: src/middleware/auth.ts
+ * - Tests: tests/services/test_auth.ts
+ *
+ * ARCHITECTURAL DECISIONS:
+ * - Uses bcrypt for password hashing (see ADR-002)
+ * - JWT tokens in httpOnly cookies (see ADR-001)
+ *
+ * LAST MODIFIED: 2026-02-01
+ * AUTHOR: [team-name]
+ */
+
+import bcrypt from 'bcrypt';
+import { User } from '../models/User';
+// ... rest of imports
+```
+
+#### 4.2 Function/Method Context (MANDATORY FOR COMPLEX LOGIC)
+
+```typescript
+/**
+ * Validate and process rental application
+ *
+ * BUSINESS RULES:
+ * - Monthly income must be >= 3x monthly rent
+ * - Credit score must be >= 600
+ * - Must have valid government ID
+ * - No more than 2 evictions in past 7 years
+ *
+ * WORKFLOW:
+ * 1. Validate required documents are uploaded
+ * 2. Check income-to-rent ratio
+ * 3. Verify credit score via external API
+ * 4. Check eviction history
+ * 5. Calculate risk score
+ * 6. Auto-approve if score > 80, else flag for manual review
+ *
+ * EDGE CASES:
+ * - Co-applicants: Combined income is considered
+ * - Self-employed: Requires 2 years tax returns
+ * - International applicants: Credit score requirement waived
+ *
+ * RELATED:
+ * - Credit check: src/services/creditCheck.ts
+ * - Document validation: src/utils/documentValidator.ts
+ * - Risk scoring: src/utils/riskScore.ts
+ *
+ * @param applicationId - Application to process
+ * @returns ProcessedApplication with approval status and risk score
+ */
+async function processApplication(applicationId: string): Promise<ProcessedApplication> {
+  // Implementation...
+  
+  // WHY: We check income first because it's the fastest validation
+  // and fails most often, avoiding unnecessary API calls
+  const incomeCheck = await validateIncome(application);
+  if (!incomeCheck.passed) {
+    return reject(application, 'INSUFFICIENT_INCOME');
+  }
+  
+  // WHY: Credit check costs money, so we do it after free validations
+  const creditScore = await checkCreditScore(application.applicantId);
+  
+  // ... rest of implementation
+}
+```
+
+### Layer 5: Inline Context (Strategic Comments)
+
+#### 5.1 Business Logic Context
+
+```typescript
+// BUSINESS RULE: Landlords must wait 30 days after posting
+// before accepting applications. This cooling-off period
+// prevents discrimination by allowing diverse applicant pool.
+// See: Fair Housing Act compliance (docs/legal/fair-housing.md)
+const MIN_POSTING_DAYS = 30;
+
+if (daysSincePosted < MIN_POSTING_DAYS) {
+  throw new Error('Property must be posted for 30 days before accepting applications');
+}
+```
+
+#### 5.2 Non-Obvious "Why" Comments
+
+```typescript
+// WHY: We use soft delete instead of hard delete because:
+// 1. Legal requirement to retain application data for 7 years
+// 2. Analytics team needs historical data
+// 3. Prevents accidental data loss
+// See: ADR-007 (Data Retention Policy)
+async function deleteApplication(id: string) {
+  return prisma.application.update({
+    where: { id },
+    data: { 
+      deletedAt: new Date(),
+      status: 'DELETED'
+    }
+  });
+}
+```
+
+#### 5.3 Workaround Context
+
+```typescript
+// WORKAROUND: Prisma doesn't support full-text search on PostgreSQL
+// directly, so we use raw SQL here. This should be replaced when
+// Prisma adds full-text search support (expected in v6.0).
+// Tracking: https://github.com/prisma/prisma/issues/XXXX
+// Alternative considered: ElasticSearch (rejected as too complex for MVP)
+const results = await prisma.$queryRaw`
+  SELECT * FROM properties 
+  WHERE to_tsvector('english', description) @@ to_tsquery('english', ${searchTerm})
+`;
+```
+
+### Layer 6: Relationship Context (CONTEXT.md Files)
+
+#### 6.1 Module Context File
+
+**Location**: `src/api/auth/CONTEXT.md`
+
+```markdown
+# Authentication API Context
+
+## Module Purpose
+Handles all authentication-related API endpoints including registration,
+login, logout, password reset, and token refresh.
+
+## How This Fits in the System
+```
+User → Frontend → Auth API → Auth Service → Database
+                    ↓
+                JWT Middleware ← Protected Routes
+```
+
+## Key Files and Their Roles
+- **register.ts**: New user registration
+- **login.ts**: User login and token generation
+- **logout.ts**: Token invalidation
+- **refresh.ts**: Access token refresh
+- **reset-password.ts**: Password reset flow
+
+## Request/Response Patterns
+
+### Successful Login Response
+```json
+{
+  "success": true,
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "role": "TENANT"
+  },
+  "accessToken": "jwt-token",
+  "refreshToken": "jwt-refresh-token"
+}
+```
+
+### Error Response Pattern
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Email or password is incorrect",
+    "field": "password"
+  }
+}
+```
+
+## Security Considerations
+- Rate limiting: 5 attempts per hour per IP (see src/middleware/rateLimit.ts)
+- Password hashing: bcrypt with cost factor 12
+- Tokens: httpOnly cookies (XSS protection)
+- CSRF: Tokens required for state-changing operations
+
+## Common Operations
+
+### Adding a New Auth Endpoint
+1. Create route file following pattern of existing files
+2. Add validation using Zod schema
+3. Implement service layer logic in src/services/auth.ts
+4. Add tests in tests/api/auth/
+5. Update this CONTEXT.md with new endpoint info
+6. Update API documentation in docs/API.md
+
+## Testing
+- Unit tests: tests/api/auth/
+- Integration tests: tests/integration/auth/
+- Run: `npm test src/api/auth`
+
+## Error Codes
+- `INVALID_CREDENTIALS`: Wrong email/password
+- `EMAIL_ALREADY_EXISTS`: Registration with existing email
+- `EMAIL_NOT_VERIFIED`: Login attempt without email verification
+- `ACCOUNT_LOCKED`: Too many failed login attempts
+- `INVALID_TOKEN`: Expired or malformed JWT
+
+## Related Documentation
+- [Authentication Flow](../../docs/auth/FLOW.md)
+- [ADR-001: JWT Authentication](../../docs/decisions/ADR-001-jwt-auth.md)
+- [Security Guidelines](../../docs/SECURITY.md)
+
+## Known Issues
+- Token refresh race condition (Issue #123) - workaround in place
+- Email verification link expires in 24h - consider extending to 48h
+
+## Future Improvements
+- [ ] Add OAuth2 social login (Google, GitHub)
+- [ ] Implement 2FA (two-factor authentication)
+- [ ] Add biometric authentication for mobile app
+```
+
+### Layer 7: Change Context (CHANGELOG + Why)
+
+#### 7.1 Enhanced CHANGELOG.md
+
+**Location**: Root `CHANGELOG.md`
+
+```markdown
+# Changelog
+
+## [Unreleased]
+
+## [1.2.0] - 2026-02-01
+
+### Added
+- **Email verification flow** (Issue #45)
+  - WHY: Prevent fake accounts and ensure valid contact info
+  - IMPACT: All new users must verify email before full access
+  - BREAKING: Existing users will be prompted to verify on next login
+  - FILES: src/api/auth/verify-email.ts, src/services/email.ts
+
+- **Advanced property search** (Issue #52)
+  - WHY: Users requested ability to filter by multiple criteria
+  - WHAT: Added filters for price range, bedrooms, location radius
+  - TECHNICAL: Uses PostgreSQL full-text search + PostGIS for radius
+  - FILES: src/api/properties/search.ts, src/utils/searchBuilder.ts
+
+### Changed
+- **Increased password complexity requirements** (Security audit finding)
+  - WHY: Previous requirements too weak (found in security audit)
+  - OLD: 6 characters minimum
+  - NEW: 8 characters, mixed case, numbers, special chars
+  - MIGRATION: Existing users will be prompted to update password
+  - FILES: src/services/auth.ts, src/utils/passwordValidator.ts
+
+### Fixed
+- **Race condition in token refresh** (Issue #78)
+  - SYMPTOM: Occasional "invalid token" errors during refresh
+  - ROOT CAUSE: Multiple tabs refreshing simultaneously
+  - SOLUTION: Added distributed lock using Redis
+  - FILES: src/api/auth/refresh.ts
+  - ADR: docs/decisions/ADR-012-token-refresh-locking.md
+
+### Deprecated
+- **Legacy /api/v1/search endpoint** (Will be removed in v2.0)
+  - WHY: New search API is more flexible
+  - MIGRATION: Use /api/v2/properties/search instead
+  - GUIDE: docs/migration/search-api-v2.md
+
+## [1.1.0] - 2026-01-15
+...
+```
+
+### Layer 8: Testing Context
+
+#### 8.1 Test File Context
+
+```typescript
+/**
+ * Application Processing Tests
+ *
+ * WHAT WE'RE TESTING:
+ * - Application validation rules
+ * - Income-to-rent ratio calculations
+ * - Credit score thresholds
+ * - Auto-approval logic
+ *
+ * BUSINESS RULES BEING VERIFIED:
+ * - Income must be 3x rent
+ * - Credit score >= 600
+ * - No more than 2 evictions in 7 years
+ *
+ * EDGE CASES COVERED:
+ * - Co-applicants with combined income
+ * - Self-employed applicants
+ * - International applicants (no credit score)
+ * - Edge of threshold values (599 vs 600 credit)
+ *
+ * RELATED FILES:
+ * - Implementation: src/services/applicationProcessor.ts
+ * - Models: src/models/Application.ts
+ * - Business rules: docs/business-rules/application-approval.md
+ */
+
+describe('Application Processing', () => {
+  describe('Income Validation', () => {
+    it('should approve when monthly income is exactly 3x rent', async () => {
+      // GIVEN: Monthly rent of $1000
+      const rent = 1000;
+      // AND: Monthly income of exactly $3000 (3x rent)
+      const income = 3000;
+      
+      // WHEN: Application is processed
+      const result = await processApplication({
+        rent,
+        monthlyIncome: income
+      });
+      
+      // THEN: Should be approved (meets minimum requirement)
+      expect(result.approved).toBe(true);
+      expect(result.reason).toBe('INCOME_SUFFICIENT');
+    });
+    
+    it('should reject when monthly income is less than 3x rent', async () => {
+      // GIVEN: Edge case - income is $1 below threshold
+      const rent = 1000;
+      const income = 2999; // Just $1 below 3x rent
+      
+      // WHEN: Application is processed
+      const result = await processApplication({
+        rent,
+        monthlyIncome: income
+      });
+      
+      // THEN: Should be rejected
+      expect(result.approved).toBe(false);
+      expect(result.reason).toBe('INSUFFICIENT_INCOME');
+      
+      // AND: Should provide helpful message for applicant
+      expect(result.message).toContain('minimum income requirement');
+    });
+  });
+});
+```
+
+### Layer 9: API Context (OpenAPI + Context)
+
+#### 9.1 Enhanced API Documentation
+
+**Location**: `docs/API.md`
+
+```markdown
+# API Documentation
+
+## Authentication Endpoints
+
+### POST /api/auth/login
+
+**Purpose**: Authenticate user and receive access tokens
+
+**Business Context**: 
+- Users can log in with email/password
+- Account is locked after 5 failed attempts (resets after 1 hour)
+- Email must be verified to log in (see /api/auth/verify-email)
+
+**Request**:
+```json
+{
+  "email": "user@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+**Response (Success)**:
+```json
+{
+  "success": true,
+  "user": {
+    "id": "uuid",
+    "email": "user@example.com",
+    "role": "TENANT",
+    "emailVerified": true
+  },
+  "accessToken": "eyJhbGc...",  // 15 min expiry
+  "refreshToken": "eyJhbGc..."   // 7 day expiry
+}
+```
+
+**Response (Error - Invalid Credentials)**:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_CREDENTIALS",
+    "message": "Email or password is incorrect",
+    "attemptsRemaining": 4
+  }
+}
+```
+
+**Response (Error - Account Locked)**:
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ACCOUNT_LOCKED",
+    "message": "Account locked due to too many failed attempts",
+    "unlockAt": "2026-02-01T15:30:00Z"
+  }
+}
+```
+
+**Implementation**: `src/api/auth/login.ts`
+
+**Related**:
+- Token refresh: `POST /api/auth/refresh`
+- Logout: `POST /api/auth/logout`
+- ADR: [ADR-001: JWT Authentication](decisions/ADR-001-jwt-auth.md)
+
+**Rate Limiting**: 5 requests per minute per IP
+
+**Security Notes**:
+- Passwords are never logged or returned in responses
+- Tokens are set as httpOnly cookies (also returned in body for mobile apps)
+- Failed login attempts are rate-limited and logged for security monitoring
+```
+
+### Layer 10: Cross-Reference Context
+
+#### 10.1 Related Files Comments
+
+```typescript
+// src/services/applicationProcessor.ts
+
+/**
+ * RELATED FILES:
+ * 
+ * CALLED BY:
+ * - src/api/applications/submit.ts (application submission)
+ * - src/api/applications/reprocess.ts (manual reprocessing)
+ * - src/jobs/dailyApplicationReview.ts (batch processing)
+ * 
+ * CALLS:
+ * - src/services/creditCheck.ts (external credit API)
+ * - src/services/incomeVerification.ts (income validation)
+ * - src/utils/riskScoreCalculator.ts (risk scoring)
+ * 
+ * MODELS:
+ * - src/models/Application.ts (primary model)
+ * - src/models/User.ts (applicant data)
+ * - src/models/Property.ts (property data)
+ * 
+ * TESTS:
+ * - tests/services/test_applicationProcessor.ts (unit tests)
+ * - tests/integration/test_applicationWorkflow.ts (integration)
+ * 
+ * DOCUMENTATION:
+ * - docs/business-rules/application-approval.md
+ * - docs/decisions/ADR-008-risk-scoring.md
+ * 
+ * CONFIGURATION:
+ * - config/applicationRules.json (business rule thresholds)
+ */
+```
+
+## Context Collection Checklist
+
+### When Creating a New Feature
+
+- [ ] **Project Documentation Updated**
+  - [ ] README.md mentions new feature
+  - [ ] ARCHITECTURE.md includes new components
+  - [ ] API.md documents new endpoints
+
+- [ ] **Decision Recorded**
+  - [ ] ADR created for architectural decisions
+  - [ ] Alternatives documented
+  - [ ] Rationale explained
+
+- [ ] **Directory Context**
+  - [ ] Directory README.md exists or updated
+  - [ ] New files documented in directory README
+
+- [ ] **File Context**
+  - [ ] File header comment with purpose and context
+  - [ ] Business rules documented
+  - [ ] Related files referenced
+
+- [ ] **Code Context**
+  - [ ] Complex functions have "why" comments
+  - [ ] Business logic explained
+  - [ ] Edge cases documented
+
+- [ ] **Test Context**
+  - [ ] Test file has context header
+  - [ ] Business rules being tested are explained
+  - [ ] Edge cases are documented
+
+- [ ] **Changelog Updated**
+  - [ ] Change documented with "why"
+  - [ ] Impact described
+  - [ ] Breaking changes noted
+
+### When Modifying Existing Code
+
+- [ ] **Updated Context**
+  - [ ] File header "LAST MODIFIED" updated
+  - [ ] Related documentation updated
+  - [ ] Tests updated with new context
+
+- [ ] **Preserved Context**
+  - [ ] Old context not deleted (if still relevant)
+  - [ ] Workarounds explained
+  - [ ] Migration notes added
+
+- [ ] **Added Missing Context**
+  - [ ] If context was missing, add it now
+  - [ ] Document "why" if not obvious
+
+## AI Agent Benefits
+
+### What Good Context Enables
+
+✅ **Better Code Generation**
+- AI understands business rules
+- Generates code that fits patterns
+- Follows architectural decisions
+
+✅ **Accurate Modifications**
+- AI knows what can and cannot change
+- Understands dependencies
+- Preserves business logic
+
+✅ **Intelligent Debugging**
+- AI can trace relationships
+- Understands expected behavior
+- Knows where to look for issues
+
+✅ **Proactive Suggestions**
+- AI can suggest improvements
+- Warns about violations
+- Recommends patterns
+
+### Example: AI with Good Context
+
+```typescript
+// AI sees this file context:
+/**
+ * User Registration Service
+ * 
+ * BUSINESS RULES:
+ * - Email must be unique
+ * - Password must be 8+ chars
+ * - Must verify email within 24h
+ * 
+ * RELATED: src/services/emailVerification.ts
+ */
+
+// When asked to "add phone number to registration"
+// AI can intelligently:
+// 1. Add phone validation similar to email
+// 2. Follow existing patterns
+// 3. Update related files (email service)
+// 4. Add tests following existing patterns
+// 5. Update documentation
+```
+
+## Tools for Context Maintenance
+
+### Automated Context Checks
+
+```bash
+# Check for missing README files
+find src -type d -not -path "*/node_modules/*" -exec sh -c '
+  if [ ! -f "$1/README.md" ]; then
+    echo "Missing README: $1"
+  fi
+' sh {} \;
+
+# Check for files without header comments
+grep -rL "PURPOSE:" src/ --include="*.ts" --include="*.tsx"
+```
+
+### Context Quality Score
+
+Create `scripts/check-context-quality.sh`:
+
+```bash
+#!/bin/bash
+# Check context quality score
+
+score=0
+max_score=100
+
+# Check for project documentation (30 points)
+[ -f "README.md" ] && score=$((score + 5))
+[ -f "docs/ARCHITECTURE.md" ] && score=$((score + 5))
+[ -f "docs/API.md" ] && score=$((score + 5))
+[ -f "CHANGELOG.md" ] && score=$((score + 5))
+[ -d "docs/decisions" ] && score=$((score + 10))
+
+# Check directory READMEs (20 points)
+readme_count=$(find src -name "README.md" | wc -l)
+score=$((score + readme_count * 2))
+
+# Check for file headers (20 points)
+files_with_headers=$(grep -rl "PURPOSE:" src | wc -l)
+total_files=$(find src -name "*.ts" -o -name "*.tsx" | wc -l)
+header_ratio=$((files_with_headers * 100 / total_files))
+score=$((score + header_ratio / 5))
+
+# Check for ADRs (15 points)
+adr_count=$(find docs/decisions -name "ADR-*.md" 2>/dev/null | wc -l)
+score=$((score + adr_count))
+
+# Check for CONTEXT.md files (15 points)
+context_count=$(find . -name "CONTEXT.md" | wc -l)
+score=$((score + context_count * 3))
+
+echo "Context Quality Score: $score / $max_score"
+
+if [ $score -lt 50 ]; then
+  echo "⚠️  Context quality is LOW - AI agents will struggle"
+elif [ $score -lt 75 ]; then
+  echo "👌 Context quality is MODERATE - AI agents can work"
+else
+  echo "🎯 Context quality is HIGH - AI agents will excel"
+fi
+```
+
+## Enforcement
+
+### Pre-Commit Checks
+
+```bash
+# Ensure new files have context
+# Add to .git/hooks/pre-commit
+for file in $(git diff --cached --name-only --diff-filter=A | grep "\.ts$\|\.tsx$"); do
+  if ! grep -q "PURPOSE:" "$file"; then
+    echo "❌ Missing file context in: $file"
+    echo "   Add a file header comment with PURPOSE, DEPENDENCIES, and RELATED FILES"
+    exit 1
+  fi
+done
+```
+
+### Code Review Checklist
+
+- [ ] File header comment present with context
+- [ ] Business rules documented
+- [ ] Related files referenced
+- [ ] Complex logic has "why" comments
+- [ ] Tests have context headers
+- [ ] Directory README updated
+- [ ] Changelog updated
+- [ ] ADR created (if architectural decision)
+
+## Summary
+
+```
+📝 Document at EVERY level (project, directory, file, function)
+🎯 Always explain "WHY", not just "WHAT"
+🔗 Cross-reference related files
+📊 Track decisions in ADRs
+🧪 Document business rules in tests
+🔄 Keep context up to date
+🤖 Good context = AI superpowers
+```
+
+**Context is not overhead - it's an investment in maintainability!**
+
+---
+
+**Related Rules**:
+- [documentation-standards.mdc](mdc:.cursor/rules/documentation-standards.mdc) - Documentation quality
+- [phase-documentation.mdc](mdc:.cursor/rules/phase-documentation.mdc) - Phase-based documentation
+- [repository-structure.mdc](mdc:.cursor/rules/repository-structure.mdc) - File organization

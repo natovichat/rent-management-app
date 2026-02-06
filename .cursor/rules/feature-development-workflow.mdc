@@ -1,0 +1,485 @@
+---
+description: Mandatory phased workflow for all feature development and user story implementation. Ensures API contract agreement before implementation and proper integration testing.
+alwaysApply: true
+---
+
+# Feature Development Workflow - MANDATORY
+
+All feature development and user story implementation MUST follow this standardized phased workflow to ensure quality, coordination, and proper integration between teams.
+
+## Golden Rules
+
+```
+🎯 PHASE 0 FIRST - Design API contract before any implementation
+🚫 NO PARALLEL WORK - Until API contract is approved by all teams
+✅ INTEGRATION TESTING - After both frontend and backend complete
+📋 FINAL REVIEW - All teams validate before marking complete
+```
+
+## Mandatory Phases
+
+### Phase 0: API Contract Design (Sequential - MUST COMPLETE FIRST)
+
+**Purpose**: Agree on API contract before any implementation to avoid integration issues.
+
+**Required Tasks:**
+
+1. **Backend Team Leader**: Design API specification
+   - Define all endpoints (method, path, parameters)
+   - Define request DTOs with validation rules
+   - Define response DTOs with data structures
+   - Define error responses with status codes
+   - Document in OpenAPI/Swagger format
+   - **Output**: API specification document
+
+2. **Web Team Leader**: Review and approve API contract
+   - Verify API meets all UI requirements
+   - Confirm response format works for UI components
+   - Validate pagination and filtering parameters
+   - Request changes if needed
+   - **Output**: Approval or change requests
+
+3. **QA Team Leader**: Review and create test plan
+   - Identify test scenarios from contract
+   - Define edge cases to test
+   - Plan test data requirements
+   - **Output**: Test plan document
+
+**Exit Criteria**: All three team leaders have approved the API contract.
+
+**DO NOT PROCEED** to Phase 1 until Phase 0 is complete and approved.
+
+---
+
+### Phase 1: Parallel Implementation (After Phase 0 Approval)
+
+**Purpose**: Implement backend and frontend in parallel using the agreed API contract.
+
+**Backend Team (4 Engineers)**:
+- Engineer 1: Database schema/migrations (if needed)
+- Engineer 2: API endpoints (controllers + DTOs)
+- Engineer 3: Business logic and validation
+- Engineer 4: API integration tests (real API + real DB)
+
+**Frontend Team (4 Engineers)**:
+- Engineer 1: UI components (forms, lists, cards)
+- Engineer 2: API integration (React Query hooks)
+- Engineer 3: State management and data flow
+- Engineer 4: Component integration tests (with mocked API)
+
+**Requirements**:
+- ✅ Use the exact API contract from Phase 0
+- ✅ Each engineer commits after completing their component
+- ✅ Teams work in parallel (independent tasks)
+- ✅ Regular status updates
+
+**Exit Criteria**: Both backend and frontend implementations complete with tests passing.
+
+---
+
+### Phase 2: Full Stack Integration Testing (After Phase 1)
+
+**Purpose**: Verify frontend and backend work together correctly with real integration.
+
+**QA Team (4 Engineers)**:
+- Engineer 1: API integration tests (real API + real database)
+- Engineer 2: E2E user flow tests (real UI + real API)
+- Engineer 3: Edge case integration testing
+- Engineer 4: Performance integration testing
+
+**Focus Areas**:
+- Complete user flows work end-to-end
+- Error handling works across stack
+- Performance meets requirements
+- Edge cases handled properly
+
+**Exit Criteria**: All integration tests pass, no blocking issues found.
+
+**If Issues Found**: Return to Phase 1 for fixes, then retest.
+
+---
+
+### Phase 3: Review & Validation (After Phase 2)
+
+**Purpose**: Final quality check before marking feature complete.
+
+**All Team Leaders Review**:
+- **Backend Team Leader**: API performance, security, scalability
+- **Web Team Leader**: UX/UI quality, accessibility, responsiveness
+- **QA Team Leader**: Test coverage, acceptance criteria, quality gates
+
+**Exit Criteria**: All team leaders approve feature as production-ready.
+
+---
+
+## Implementation Template
+
+### Standard Workflow Template
+
+Use this template for EVERY user story:
+
+```typescript
+// ════════════════════════════════════════════
+// PHASE 0: API CONTRACT DESIGN (Sequential)
+// ════════════════════════════════════════════
+
+Task({
+  description: "Backend - Design API Contract",
+  prompt: `
+  As Backend Team Leader, design the API contract for [FEATURE_NAME]:
+  
+  Define:
+  1. Endpoints: [LIST ENDPOINTS]
+  2. Request parameters/body
+  3. Response format
+  4. Error responses
+  5. Validation rules
+  
+  Create API specification document.
+  `,
+  subagent_type: "explore",
+  model: "fast",
+  readonly: true
+});
+
+Task({
+  description: "Web - Review API Contract",
+  prompt: `
+  As Web Team Leader, review the backend API contract:
+  
+  Verify:
+  - API meets all UI requirements
+  - Response format optimal for components
+  - Parameters sufficient
+  - Error handling clear
+  
+  Approve or request changes.
+  `,
+  subagent_type: "explore",
+  model: "fast",
+  readonly: true
+});
+
+Task({
+  description: "QA - Create Test Plan",
+  prompt: `
+  As QA Team Leader, review API contract and create test plan:
+  
+  Define:
+  - Test scenarios
+  - Edge cases
+  - Test data requirements
+  - Acceptance criteria verification
+  `,
+  subagent_type: "explore",
+  model: "fast",
+  readonly: true
+});
+
+// ════════════════════════════════════════════
+// PHASE 1: PARALLEL IMPLEMENTATION
+// ════════════════════════════════════════════
+
+Task({
+  description: "Backend - Implement Feature",
+  prompt: `
+  As Backend Team Leader, implement [FEATURE_NAME] (4 engineers):
+  
+  Engineer 1: [Database/Schema work]
+  Engineer 2: [API endpoints]
+  Engineer 3: [Business logic]
+  Engineer 4: [Integration tests]
+  
+  Follow the API contract from Phase 0.
+  Commit after each component.
+  `,
+  subagent_type: "generalPurpose"
+});
+
+Task({
+  description: "Frontend - Implement Feature",
+  prompt: `
+  As Web Team Leader, implement [FEATURE_NAME] (4 engineers):
+  
+  Engineer 1: [UI components]
+  Engineer 2: [API integration]
+  Engineer 3: [State management]
+  Engineer 4: [Component tests]
+  
+  Use the API contract from Phase 0.
+  Commit after each component.
+  `,
+  subagent_type: "generalPurpose"
+});
+
+// ════════════════════════════════════════════
+// PHASE 2: FULL STACK INTEGRATION
+// ════════════════════════════════════════════
+
+Task({
+  description: "QA - Integration Testing",
+  prompt: `
+  As QA Team Leader, perform full stack integration testing:
+  
+  Engineer 1: API integration tests (real API + DB)
+  Engineer 2: E2E tests (real UI + API)
+  Engineer 3: Edge case testing
+  Engineer 4: Performance testing
+  
+  Report any integration issues.
+  `,
+  subagent_type: "generalPurpose"
+});
+
+// ════════════════════════════════════════════
+// PHASE 3: REVIEW & VALIDATION
+// ════════════════════════════════════════════
+
+Task({
+  description: "Final Review",
+  prompt: `
+  Each team leader review:
+  
+  Backend: Performance, security, scalability
+  Frontend: UX, accessibility, responsiveness
+  QA: Test coverage, acceptance criteria
+  
+  Approve for production or request fixes.
+  `,
+  subagent_type: "explore",
+  model: "fast",
+  readonly: true
+});
+```
+
+---
+
+## Common Scenarios
+
+### Scenario 1: Simple CRUD Feature
+
+**Phase 0**: Design endpoint (POST/GET/PUT/DELETE), DTOs, validation
+**Phase 1**: Backend implements endpoints, Frontend implements forms/lists
+**Phase 2**: QA tests complete CRUD flow
+**Phase 3**: Review and approve
+
+### Scenario 2: Complex Feature with Multiple Endpoints
+
+**Phase 0**: Design all endpoints as a group, review together
+**Phase 1**: Split implementation across engineers by endpoint
+**Phase 2**: Test all endpoints integration
+**Phase 3**: Review complete feature
+
+### Scenario 3: UI-Only Feature (No Backend Changes)
+
+**Phase 0**: Document any API assumptions, review data needs
+**Phase 1**: Frontend implements (Backend team on standby)
+**Phase 2**: QA tests UI flows
+**Phase 3**: Review UI quality
+
+### Scenario 4: Backend-Only Feature (No UI Changes)
+
+**Phase 0**: Design API endpoints, document for future UI use
+**Phase 1**: Backend implements (Frontend team reviews contract)
+**Phase 2**: QA tests API thoroughly
+**Phase 3**: Review API quality
+
+---
+
+## Why This Workflow?
+
+### Benefits
+
+**Prevents Integration Issues**:
+- ✅ API contract agreed before implementation
+- ✅ No surprises when connecting frontend and backend
+- ✅ Reduces rework and debugging time
+
+**Improves Quality**:
+- ✅ Dedicated integration testing phase
+- ✅ All teams review before completion
+- ✅ Edge cases identified early
+
+**Better Coordination**:
+- ✅ Clear phases with defined inputs/outputs
+- ✅ Teams know when to start their work
+- ✅ Dependencies are explicit
+
+**Professional Development**:
+- ✅ Documentation created as part of workflow
+- ✅ Test coverage built in
+- ✅ Quality gates enforced
+
+---
+
+## Anti-Patterns to Avoid
+
+### ❌ DON'T: Skip Phase 0
+
+```
+// BAD - Starting implementation without API contract
+Task({ description: "Backend - Build filtering" })
+Task({ description: "Frontend - Build filtering UI" })
+// Result: Backend and Frontend have different assumptions
+```
+
+**CORRECT**: Always start with Phase 0 API contract design.
+
+---
+
+### ❌ DON'T: Skip Integration Testing
+
+```
+// BAD - Marking feature complete without integration tests
+// Backend tests pass ✓
+// Frontend tests pass ✓
+// Merge to main → Integration breaks in production ✗
+```
+
+**CORRECT**: Always run Phase 2 integration tests before Phase 3 review.
+
+---
+
+### ❌ DON'T: Run Phases in Wrong Order
+
+```
+// BAD - Starting frontend before backend API is designed
+Task({ description: "Frontend - Build UI" }) // Started first
+Task({ description: "Backend - Design API" }) // Started second
+// Result: Frontend built on assumptions, backend different
+```
+
+**CORRECT**: Phases must run in order: 0 → 1 → 2 → 3.
+
+---
+
+### ❌ DON'T: Skip Team Reviews
+
+```
+// BAD - Only backend reviews API contract
+Backend designs API → implements → done
+Frontend sees API for first time in integration
+// Result: API doesn't meet frontend needs
+```
+
+**CORRECT**: All teams (Backend, Frontend, QA) review API contract in Phase 0.
+
+---
+
+## Enforcement Mechanisms
+
+### 1. This Rule (Mandatory)
+- Applies to ALL feature development
+- Agents are aware of this workflow
+- Will follow phases automatically
+
+### 2. Prompt Templates
+- Use provided templates for consistency
+- Templates enforce phase structure
+- Easy to customize per feature
+
+### 3. Team Skills
+- Managers know to follow this workflow
+- Engineers know their phase responsibilities
+- QA knows integration testing requirements
+
+### 4. Documentation
+- Workflow documented in team guides
+- Examples provided for reference
+- Best practices captured
+
+---
+
+## Workflow Checklist
+
+Before starting any user story:
+
+**Phase 0: API Contract**
+- [ ] Backend team designs API specification
+- [ ] Frontend team reviews and approves
+- [ ] QA team reviews and creates test plan
+- [ ] All teams agree on contract
+
+**Phase 1: Implementation**
+- [ ] Backend implements per contract
+- [ ] Frontend implements per contract
+- [ ] Both teams write tests
+- [ ] Both teams commit regularly
+
+**Phase 2: Integration**
+- [ ] QA runs full stack integration tests
+- [ ] All integration tests pass
+- [ ] Issues fixed and retested
+
+**Phase 3: Review**
+- [ ] Backend team leader approves
+- [ ] Frontend team leader approves
+- [ ] QA team leader approves
+- [ ] Feature marked production-ready
+
+---
+
+## Customization Guidelines
+
+### When to Simplify
+- **Small bug fixes**: May skip Phase 0 if no API changes
+- **UI-only changes**: Abbreviated Phase 0 (just review data needs)
+- **Urgent hotfixes**: Phase 2 can be accelerated (but not skipped)
+
+### When to Expand
+- **Complex features**: Add sub-phases within Phase 1
+- **High-risk changes**: Add additional review checkpoints
+- **Multiple teams**: Add coordination phases
+
+### Always Required
+- ✅ Phase 0 for any API changes (new or modified endpoints)
+- ✅ Phase 2 integration testing (never skip)
+- ✅ Phase 3 final review (quality gate)
+
+---
+
+## Success Metrics
+
+Track these metrics to measure workflow effectiveness:
+
+- **Integration Bug Rate**: Bugs found during integration testing
+  - Target: Decrease over time (better Phase 0 contracts)
+  
+- **Rework Rate**: How often Phase 1 needs changes after Phase 2
+  - Target: < 20% (good API contracts reduce rework)
+  
+- **Time to Production**: Total time from start to production
+  - Track: Baseline and improve (but not at cost of quality)
+  
+- **API Contract Changes**: Changes to contract during Phase 1
+  - Target: < 10% (contracts should be stable)
+
+---
+
+## Summary
+
+**Mandatory Workflow for ALL Features:**
+
+```
+Phase 0: API Contract Design (Sequential)
+    ↓ (All teams approve)
+Phase 1: Parallel Implementation (Backend + Frontend)
+    ↓ (Both teams complete)
+Phase 2: Full Stack Integration Testing (QA)
+    ↓ (All tests pass)
+Phase 3: Final Review & Validation (All team leaders)
+    ↓ (All approve)
+✅ Production Ready
+```
+
+**Key Principles:**
+1. 🎯 Always start with API contract agreement
+2. 🚫 Never skip integration testing
+3. ✅ All teams review before completion
+4. 📋 Document and test throughout
+
+**This workflow is MANDATORY for professional, high-quality feature development.**
+
+---
+
+**Remember**: The time spent in Phase 0 (API contract design) saves multiples of that time in Phase 2 (integration debugging). Plan first, implement once, integrate smoothly.

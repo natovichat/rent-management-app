@@ -1,0 +1,1230 @@
+
+> @rent-app/frontend@0.1.0 test:e2e
+> playwright test test/e2e/us1.5-mortgage-status.spec.ts --reporter=json
+
+{
+  "config": {
+    "configFile": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/playwright.config.ts",
+    "rootDir": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e",
+    "forbidOnly": true,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results",
+        "repeatEach": 1,
+        "retries": 2,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "json"
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "runAgents": "none",
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.58.1",
+    "workers": 2,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "us1.5-mortgage-status.spec.ts",
+      "file": "us1.5-mortgage-status.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "US1.5 - Mark Property Mortgage Status (TDD)",
+          "file": "us1.5-mortgage-status.spec.ts",
+          "line": 40,
+          "column": 6,
+          "specs": [
+            {
+              "title": "TC-E2E-1.5-001-mortgage-checkbox-exists",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9253,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n    at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts:107:44",
+                        "location": {
+                          "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                          "column": 44,
+                          "line": 107
+                        },
+                        "snippet": "  105 |     console.log('→ Looking for mortgage checkbox (משועבד)...');\n  106 |     const mortgageCheckbox = page.locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))');\n> 107 |     await expect(mortgageCheckbox.first()).toBeVisible({ timeout: 5000 });\n      |                                            ^\n  108 |     console.log('✓ Mortgage checkbox found and visible');\n  109 |\n  110 |     // Verify checkbox has correct label"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                            "column": 44,
+                            "line": 107
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n\n  105 |     console.log('→ Looking for mortgage checkbox (משועבד)...');\n  106 |     const mortgageCheckbox = page.locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))');\n> 107 |     await expect(mortgageCheckbox.first()).toBeVisible({ timeout: 5000 });\n      |                                            ^\n  108 |     console.log('✓ Mortgage checkbox found and visible');\n  109 |\n  110 |     // Verify checkbox has correct label\n    at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts:107:44"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "=== RESETTING DATABASE (npm run db:reset:force) ===\n"
+                        },
+                        {
+                          "buffer": "Cj4gcmVudC1hcHBsaWNhdGlvbkAwLjEuMCBkYjpyZXNldDpmb3JjZQo+IGNkIGFwcHMvYmFja2VuZCAmJiBucHggdHMtbm9kZSAuLi8uLi9zY3JpcHRzL3Jlc2V0LXRlc3QtYWNjb3VudC50cwoK"
+                        },
+                        {
+                          "buffer": "8J+UhCBTdGFydGluZyB0ZXN0IGFjY291bnQgcmVzZXQuLi4KCg=="
+                        },
+                        {
+                          "buffer": "8J+OryBUYXJnZXQ6IEFjY291bnQgSUQgInRlc3QtYWNjb3VudC0xIgoK"
+                        },
+                        {
+                          "buffer": "8J+TiiBFeGlzdGluZyB0ZXN0IGFjY291bnQgZm91bmQ6Cg=="
+                        },
+                        {
+                          "buffer": "ICAgLSAxIHVzZXJzCiAgIC0gMCBwcm9wZXJ0aWVzCiAgIC0gMCB0ZW5hbnRzCiAgIC0gMCBsZWFzZXMKCvCfl5HvuI8gIERlbGV0aW5nIHRlc3QgYWNjb3VudCBkYXRhLi4uCgo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBub3RpZmljYXRpb25zCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBtb3J0Z2FnZSBwYXltZW50cwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBsZWFzZXMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCB0ZW5hbnRzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCB1bml0cwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBtb3J0Z2FnZXMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBpbmNvbWUgcmVjb3Jkcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBleHBlbnNlcwogICDinJMgRGVsZXRlZCAwIHZhbHVhdGlvbnMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwcm9wZXJ0eSBvd25lcnNoaXBzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwbG90IGluZm8gcmVjb3Jkcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwcm9wZXJ0aWVzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBvd25lcnMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBiYW5rIGFjY291bnRzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBpbnZlc3RtZW50IGNvbXBhbmllcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMSB1c2Vycwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgdGVzdCBhY2NvdW50Cg=="
+                        },
+                        {
+                          "buffer": "CuKchSBUZXN0IGFjY291bnQgZGF0YSBkZWxldGVkIHN1Y2Nlc3NmdWxseQoK"
+                        },
+                        {
+                          "buffer": "8J+UqCBDcmVhdGluZyBmcmVzaCB0ZXN0IGFjY291bnQuLi4KCg=="
+                        },
+                        {
+                          "buffer": "4pyFIFRlc3QgYWNjb3VudCBjcmVhdGVkOgo="
+                        },
+                        {
+                          "buffer": "ICAgSUQ6IHRlc3QtYWNjb3VudC0xCiAgIE5hbWU6IFRlc3QgQWNjb3VudAogICBTdGF0dXM6IEFDVElWRQo="
+                        },
+                        {
+                          "buffer": "ICAgQ3JlYXRlZDogMjAyNi0wMi0wNVQwNToxMjoyMy40NjJaCgrwn5SoIENyZWF0aW5nIHRlc3QgdXNlci4uLgoK"
+                        },
+                        {
+                          "buffer": "4pyFIFRlc3QgdXNlciBjcmVhdGVkOgo="
+                        },
+                        {
+                          "buffer": "ICAgSUQ6IGIyMDUzMDZjLTNkNDYtNDE2Zi05ZjBmLTMxOGZkNzAyZTYyYgogICBFbWFpbDogdGVzdEBleGFtcGxlLmNvbQogICBOYW1lOiBUZXN0IFVzZXIKICAgUm9sZTogT1dORVIKICAgQWNjb3VudCBJRDogdGVzdC1hY2NvdW50LTEKCuKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgQrwn46JIFRlc3QgYWNjb3VudCByZXNldCBjb21wbGV0ZSEKClRlc3QgQWNjb3VudCBEZXRhaWxzOgo="
+                        },
+                        {
+                          "buffer": "4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSBCkFjY291bnQgSUQ6ICAgdGVzdC1hY2NvdW50LTEKQWNjb3VudCBOYW1lOiBUZXN0IEFjY291bnQKVXNlciBFbWFpbDogICB0ZXN0QGV4YW1wbGUuY29tClVzZXIgSUQ6ICAgICAgYjIwNTMwNmMtM2Q0Ni00MTZmLTlmMGYtMzE4ZmQ3MDJlNjJiCuKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgQoK"
+                        },
+                        {
+                          "buffer": "8J+SoSBUZXN0IGFjY291bnQgaXMgbm93IGNsZWFuIGFuZCBlbXB0eS4K8J+SoSBSdW4gIm5wbSBydW4gZGI6cmVzZXQ6d2l0aC1zZWVkIiB0byBwb3B1bGF0ZSB3aXRoIHNhbXBsZSBkYXRhLgrwn5KhIE90aGVyIGFjY291bnRzIHdlcmUgbm90IGFmZmVjdGVkLgoK"
+                        },
+                        {
+                          "buffer": "4pyFIDEgb3RoZXIgYWNjb3VudChzKSBwcmVzZXJ2ZWQ6Cg=="
+                        },
+                        {
+                          "buffer": "ICAgLSBUZXN0IEFjY291bnQgMiAodGVzdC1hY2NvdW50LTIpOiAwIHVzZXJzLCAyMCBwcm9wZXJ0aWVzCgo="
+                        },
+                        {
+                          "buffer": "4pyoIFNjcmlwdCBjb21wbGV0ZWQgc3VjY2Vzc2Z1bGx5Cg=="
+                        },
+                        {
+                          "text": "✓ Database reset complete - only Test Account remains\n"
+                        },
+                        {
+                          "text": "=== FETCHING TEST ACCOUNT ID FROM DATABASE ===\n"
+                        },
+                        {
+                          "text": "✓ Found Test Account with ID: test-account-1\n"
+                        },
+                        {
+                          "text": "=== TC-E2E-1.5-001: Verify mortgage checkbox exists in form ===\n"
+                        },
+                        {
+                          "text": "=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===\n"
+                        },
+                        {
+                          "text": "[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!\n"
+                        },
+                        {
+                          "text": "[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "[BROWSER]: 🔧 DEV MODE: Bypassing authentication\n"
+                        },
+                        {
+                          "text": "[BROWSER]: 🔧 DEV MODE: Bypassing authentication\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        },
+                        {
+                          "text": "✓ Create property dialog opened\n"
+                        },
+                        {
+                          "text": "✓ Address field filled\n"
+                        },
+                        {
+                          "text": "→ Expanding Legal & Registry accordion...\n"
+                        },
+                        {
+                          "text": "✓ Legal & Registry accordion expanded\n"
+                        },
+                        {
+                          "text": "→ Looking for mortgage checkbox (משועבד)...\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "buffer": "KG5vZGU6OTg5MjgpIFdhcm5pbmc6IFRoZSAnTk9fQ09MT1InIGVudiBpcyBpZ25vcmVkIGR1ZSB0byB0aGUgJ0ZPUkNFX0NPTE9SJyBlbnYgYmVpbmcgc2V0LgooVXNlIGBub2RlIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKQo="
+                        },
+                        {
+                          "buffer": "KG5vZGU6OTg5NjkpIFdhcm5pbmc6IFRoZSAnTk9fQ09MT1InIGVudiBpcyBpZ25vcmVkIGR1ZSB0byB0aGUgJ0ZPUkNFX0NPTE9SJyBlbnYgYmVpbmcgc2V0LgooVXNlIGBub2RlIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKQo="
+                        },
+                        {
+                          "buffer": "KG5vZGU6OTg5NjkpIFtNT0RVTEVfVFlQRUxFU1NfUEFDS0FHRV9KU09OXSBXYXJuaW5nOiBNb2R1bGUgdHlwZSBvZiBmaWxlOi8vL1VzZXJzL2F2aWFkLm5hdG92aWNoL3BlcnNvbmFsL3JlbnRBcHBsaWNhdGlvbi9zY3JpcHRzL3Jlc2V0LXRlc3QtYWNjb3VudC50cyBpcyBub3Qgc3BlY2lmaWVkIGFuZCBpdCBkb2Vzbid0IHBhcnNlIGFzIENvbW1vbkpTLgpSZXBhcnNpbmcgYXMgRVMgbW9kdWxlIGJlY2F1c2UgbW9kdWxlIHN5bnRheCB3YXMgZGV0ZWN0ZWQuIFRoaXMgaW5jdXJzIGEgcGVyZm9ybWFuY2Ugb3ZlcmhlYWQuClRvIGVsaW1pbmF0ZSB0aGlzIHdhcm5pbmcsIGFkZCAidHlwZSI6ICJtb2R1bGUiIHRvIC9Vc2Vycy9hdmlhZC5uYXRvdmljaC9wZXJzb25hbC9yZW50QXBwbGljYXRpb24vcGFja2FnZS5qc29uLgo="
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:22.612Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                        "column": 44,
+                        "line": 107
+                      }
+                    },
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9875,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n    at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts:107:44",
+                        "location": {
+                          "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                          "column": 44,
+                          "line": 107
+                        },
+                        "snippet": "  105 |     console.log('→ Looking for mortgage checkbox (משועבד)...');\n  106 |     const mortgageCheckbox = page.locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))');\n> 107 |     await expect(mortgageCheckbox.first()).toBeVisible({ timeout: 5000 });\n      |                                            ^\n  108 |     console.log('✓ Mortgage checkbox found and visible');\n  109 |\n  110 |     // Verify checkbox has correct label"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                            "column": 44,
+                            "line": 107
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n\n  105 |     console.log('→ Looking for mortgage checkbox (משועבד)...');\n  106 |     const mortgageCheckbox = page.locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))');\n> 107 |     await expect(mortgageCheckbox.first()).toBeVisible({ timeout: 5000 });\n      |                                            ^\n  108 |     console.log('✓ Mortgage checkbox found and visible');\n  109 |\n  110 |     // Verify checkbox has correct label\n    at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts:107:44"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "=== RESETTING DATABASE (npm run db:reset:force) ===\n"
+                        },
+                        {
+                          "buffer": "Cj4gcmVudC1hcHBsaWNhdGlvbkAwLjEuMCBkYjpyZXNldDpmb3JjZQo+IGNkIGFwcHMvYmFja2VuZCAmJiBucHggdHMtbm9kZSAuLi8uLi9zY3JpcHRzL3Jlc2V0LXRlc3QtYWNjb3VudC50cwoK"
+                        },
+                        {
+                          "buffer": "8J+UhCBTdGFydGluZyB0ZXN0IGFjY291bnQgcmVzZXQuLi4KCg=="
+                        },
+                        {
+                          "buffer": "8J+OryBUYXJnZXQ6IEFjY291bnQgSUQgInRlc3QtYWNjb3VudC0xIgoK"
+                        },
+                        {
+                          "buffer": "8J+TiiBFeGlzdGluZyB0ZXN0IGFjY291bnQgZm91bmQ6Cg=="
+                        },
+                        {
+                          "buffer": "ICAgLSAxIHVzZXJzCg=="
+                        },
+                        {
+                          "buffer": "ICAgLSAwIHByb3BlcnRpZXMKICAgLSAwIHRlbmFudHMK"
+                        },
+                        {
+                          "buffer": "ICAgLSAwIGxlYXNlcwoK"
+                        },
+                        {
+                          "buffer": "8J+Xke+4jyAgRGVsZXRpbmcgdGVzdCBhY2NvdW50IGRhdGEuLi4KCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBub3RpZmljYXRpb25zCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBtb3J0Z2FnZSBwYXltZW50cwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBsZWFzZXMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCB0ZW5hbnRzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCB1bml0cwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBtb3J0Z2FnZXMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBpbmNvbWUgcmVjb3Jkcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBleHBlbnNlcwogICDinJMgRGVsZXRlZCAwIHZhbHVhdGlvbnMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwcm9wZXJ0eSBvd25lcnNoaXBzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwbG90IGluZm8gcmVjb3Jkcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwcm9wZXJ0aWVzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBvd25lcnMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBiYW5rIGFjY291bnRzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBpbnZlc3RtZW50IGNvbXBhbmllcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMSB1c2Vycwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgdGVzdCBhY2NvdW50Cg=="
+                        },
+                        {
+                          "buffer": "CuKchSBUZXN0IGFjY291bnQgZGF0YSBkZWxldGVkIHN1Y2Nlc3NmdWxseQoK"
+                        },
+                        {
+                          "buffer": "8J+UqCBDcmVhdGluZyBmcmVzaCB0ZXN0IGFjY291bnQuLi4KCg=="
+                        },
+                        {
+                          "buffer": "4pyFIFRlc3QgYWNjb3VudCBjcmVhdGVkOgo="
+                        },
+                        {
+                          "buffer": "ICAgSUQ6IHRlc3QtYWNjb3VudC0xCiAgIE5hbWU6IFRlc3QgQWNjb3VudAogICBTdGF0dXM6IEFDVElWRQo="
+                        },
+                        {
+                          "buffer": "ICAgQ3JlYXRlZDogMjAyNi0wMi0wNVQwNToxMjozMy42NzJaCgo="
+                        },
+                        {
+                          "buffer": "8J+UqCBDcmVhdGluZyB0ZXN0IHVzZXIuLi4KCg=="
+                        },
+                        {
+                          "buffer": "4pyFIFRlc3QgdXNlciBjcmVhdGVkOgo="
+                        },
+                        {
+                          "buffer": "ICAgSUQ6IDQxN2UxMWI2LWFlMjItNDMyNC04YzMxLTc5ZTkwOWZlZjk5NwogICBFbWFpbDogdGVzdEBleGFtcGxlLmNvbQogICBOYW1lOiBUZXN0IFVzZXIKICAgUm9sZTogT1dORVIKICAgQWNjb3VudCBJRDogdGVzdC1hY2NvdW50LTEKCuKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgQrwn46JIFRlc3QgYWNjb3VudCByZXNldCBjb21wbGV0ZSEKClRlc3QgQWNjb3VudCBEZXRhaWxzOgrilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIEK"
+                        },
+                        {
+                          "buffer": "QWNjb3VudCBJRDogICB0ZXN0LWFjY291bnQtMQpBY2NvdW50IE5hbWU6IFRlc3QgQWNjb3VudApVc2VyIEVtYWlsOiAgIHRlc3RAZXhhbXBsZS5jb20KVXNlciBJRDogICAgICA0MTdlMTFiNi1hZTIyLTQzMjQtOGMzMS03OWU5MDlmZWY5OTcK4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSB4pSBCgrwn5KhIFRlc3QgYWNjb3VudCBpcyBub3cgY2xlYW4gYW5kIGVtcHR5Lgo="
+                        },
+                        {
+                          "buffer": "8J+SoSBSdW4gIm5wbSBydW4gZGI6cmVzZXQ6d2l0aC1zZWVkIiB0byBwb3B1bGF0ZSB3aXRoIHNhbXBsZSBkYXRhLgrwn5KhIE90aGVyIGFjY291bnRzIHdlcmUgbm90IGFmZmVjdGVkLgoK"
+                        },
+                        {
+                          "buffer": "4pyFIDEgb3RoZXIgYWNjb3VudChzKSBwcmVzZXJ2ZWQ6Cg=="
+                        },
+                        {
+                          "buffer": "ICAgLSBUZXN0IEFjY291bnQgMiAodGVzdC1hY2NvdW50LTIpOiAwIHVzZXJzLCAyMCBwcm9wZXJ0aWVzCgo="
+                        },
+                        {
+                          "buffer": "4pyoIFNjcmlwdCBjb21wbGV0ZWQgc3VjY2Vzc2Z1bGx5Cg=="
+                        },
+                        {
+                          "text": "✓ Database reset complete - only Test Account remains\n"
+                        },
+                        {
+                          "text": "=== FETCHING TEST ACCOUNT ID FROM DATABASE ===\n"
+                        },
+                        {
+                          "text": "✓ Found Test Account with ID: test-account-1\n"
+                        },
+                        {
+                          "text": "=== TC-E2E-1.5-001: Verify mortgage checkbox exists in form ===\n"
+                        },
+                        {
+                          "text": "=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===\n"
+                        },
+                        {
+                          "text": "[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!\n"
+                        },
+                        {
+                          "text": "[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "[BROWSER]: 🔧 DEV MODE: Bypassing authentication\n"
+                        },
+                        {
+                          "text": "[BROWSER]: 🔧 DEV MODE: Bypassing authentication\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        },
+                        {
+                          "text": "✓ Create property dialog opened\n"
+                        },
+                        {
+                          "text": "✓ Address field filled\n"
+                        },
+                        {
+                          "text": "→ Expanding Legal & Registry accordion...\n"
+                        },
+                        {
+                          "text": "✓ Legal & Registry accordion expanded\n"
+                        },
+                        {
+                          "text": "→ Looking for mortgage checkbox (משועבד)...\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "buffer": "KG5vZGU6OTkxNzMpIFdhcm5pbmc6IFRoZSAnTk9fQ09MT1InIGVudiBpcyBpZ25vcmVkIGR1ZSB0byB0aGUgJ0ZPUkNFX0NPTE9SJyBlbnYgYmVpbmcgc2V0LgooVXNlIGBub2RlIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKQo="
+                        },
+                        {
+                          "buffer": "KG5vZGU6OTkyMDUpIFdhcm5pbmc6IFRoZSAnTk9fQ09MT1InIGVudiBpcyBpZ25vcmVkIGR1ZSB0byB0aGUgJ0ZPUkNFX0NPTE9SJyBlbnYgYmVpbmcgc2V0LgooVXNlIGBub2RlIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKQo="
+                        },
+                        {
+                          "buffer": "KG5vZGU6OTkyMDUpIFtNT0RVTEVfVFlQRUxFU1NfUEFDS0FHRV9KU09OXSBXYXJuaW5nOiBNb2R1bGUgdHlwZSBvZiBmaWxlOi8vL1VzZXJzL2F2aWFkLm5hdG92aWNoL3BlcnNvbmFsL3JlbnRBcHBsaWNhdGlvbi9zY3JpcHRzL3Jlc2V0LXRlc3QtYWNjb3VudC50cyBpcyBub3Qgc3BlY2lmaWVkIGFuZCBpdCBkb2Vzbid0IHBhcnNlIGFzIENvbW1vbkpTLgpSZXBhcnNpbmcgYXMgRVMgbW9kdWxlIGJlY2F1c2UgbW9kdWxlIHN5bnRheCB3YXMgZGV0ZWN0ZWQuIFRoaXMgaW5jdXJzIGEgcGVyZm9ybWFuY2Ugb3ZlcmhlYWQuClRvIGVsaW1pbmF0ZSB0aGlzIHdhcm5pbmcsIGFkZCAidHlwZSI6ICJtb2R1bGUiIHRvIC9Vc2Vycy9hdmlhZC5uYXRvdmljaC9wZXJzb25hbC9yZW50QXBwbGljYXRpb24vcGFja2FnZS5qc29uLgo="
+                        }
+                      ],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:32.729Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry1/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry1/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry1/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry1/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                        "column": 44,
+                        "line": 107
+                      }
+                    },
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 9304,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n    at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts:107:44",
+                        "location": {
+                          "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                          "column": 44,
+                          "line": 107
+                        },
+                        "snippet": "  105 |     console.log('→ Looking for mortgage checkbox (משועבד)...');\n  106 |     const mortgageCheckbox = page.locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))');\n> 107 |     await expect(mortgageCheckbox.first()).toBeVisible({ timeout: 5000 });\n      |                                            ^\n  108 |     console.log('✓ Mortgage checkbox found and visible');\n  109 |\n  110 |     // Verify checkbox has correct label"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                            "column": 44,
+                            "line": 107
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator:  locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\nExpected: visible\nReceived: hidden\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))').first()\u001b[22m\n\u001b[2m    9 × locator resolved to <input type=\"checkbox\" data-indeterminate=\"false\" class=\"PrivateSwitchBase-input muirtl-1p3z7et-MuiSwitchBase-root\"/>\u001b[22m\n\u001b[2m      - unexpected value \"hidden\"\u001b[22m\n\n\n  105 |     console.log('→ Looking for mortgage checkbox (משועבד)...');\n  106 |     const mortgageCheckbox = page.locator('input[name=\"isMortgaged\"], input[type=\"checkbox\"][name*=\"mortgage\"], input[type=\"checkbox\"]:near(label:has-text(\"משועבד\"))');\n> 107 |     await expect(mortgageCheckbox.first()).toBeVisible({ timeout: 5000 });\n      |                                            ^\n  108 |     console.log('✓ Mortgage checkbox found and visible');\n  109 |\n  110 |     // Verify checkbox has correct label\n    at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts:107:44"
+                        }
+                      ],
+                      "stdout": [
+                        {
+                          "text": "=== RESETTING DATABASE (npm run db:reset:force) ===\n"
+                        },
+                        {
+                          "buffer": "Cj4gcmVudC1hcHBsaWNhdGlvbkAwLjEuMCBkYjpyZXNldDpmb3JjZQo+IGNkIGFwcHMvYmFja2VuZCAmJiBucHggdHMtbm9kZSAuLi8uLi9zY3JpcHRzL3Jlc2V0LXRlc3QtYWNjb3VudC50cwoK"
+                        },
+                        {
+                          "buffer": "8J+UhCBTdGFydGluZyB0ZXN0IGFjY291bnQgcmVzZXQuLi4KCg=="
+                        },
+                        {
+                          "buffer": "8J+OryBUYXJnZXQ6IEFjY291bnQgSUQgInRlc3QtYWNjb3VudC0xIgoK"
+                        },
+                        {
+                          "buffer": "8J+TiiBFeGlzdGluZyB0ZXN0IGFjY291bnQgZm91bmQ6Cg=="
+                        },
+                        {
+                          "buffer": "ICAgLSAxIHVzZXJzCg=="
+                        },
+                        {
+                          "buffer": "ICAgLSAwIHByb3BlcnRpZXMKICAgLSAwIHRlbmFudHMKICAgLSAwIGxlYXNlcwoK"
+                        },
+                        {
+                          "buffer": "8J+Xke+4jyAgRGVsZXRpbmcgdGVzdCBhY2NvdW50IGRhdGEuLi4KCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBub3RpZmljYXRpb25zCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBtb3J0Z2FnZSBwYXltZW50cwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBsZWFzZXMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCB0ZW5hbnRzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCB1bml0cwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBtb3J0Z2FnZXMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBpbmNvbWUgcmVjb3Jkcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBleHBlbnNlcwogICDinJMgRGVsZXRlZCAwIHZhbHVhdGlvbnMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwcm9wZXJ0eSBvd25lcnNoaXBzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwbG90IGluZm8gcmVjb3Jkcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBwcm9wZXJ0aWVzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBvd25lcnMK"
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBiYW5rIGFjY291bnRzCg=="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMCBpbnZlc3RtZW50IGNvbXBhbmllcwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgMSB1c2Vycwo="
+                        },
+                        {
+                          "buffer": "ICAg4pyTIERlbGV0ZWQgdGVzdCBhY2NvdW50Cg=="
+                        },
+                        {
+                          "buffer": "CuKchSBUZXN0IGFjY291bnQgZGF0YSBkZWxldGVkIHN1Y2Nlc3NmdWxseQoK"
+                        },
+                        {
+                          "buffer": "8J+UqCBDcmVhdGluZyBmcmVzaCB0ZXN0IGFjY291bnQuLi4KCg=="
+                        },
+                        {
+                          "buffer": "4pyFIFRlc3QgYWNjb3VudCBjcmVhdGVkOgo="
+                        },
+                        {
+                          "buffer": "ICAgSUQ6IHRlc3QtYWNjb3VudC0xCiAgIE5hbWU6IFRlc3QgQWNjb3VudAogICBTdGF0dXM6IEFDVElWRQo="
+                        },
+                        {
+                          "buffer": "ICAgQ3JlYXRlZDogMjAyNi0wMi0wNVQwNToxMjo0NC4xNTNaCgrwn5SoIENyZWF0aW5nIHRlc3QgdXNlci4uLgoK"
+                        },
+                        {
+                          "buffer": "4pyFIFRlc3QgdXNlciBjcmVhdGVkOgo="
+                        },
+                        {
+                          "buffer": "ICAgSUQ6IGYwMjdlYmRhLWVkNjMtNDg1Yy1iOWUzLTk3MjQ5OTU5MWFlNQogICBFbWFpbDogdGVzdEBleGFtcGxlLmNvbQogICBOYW1lOiBUZXN0IFVzZXIKICAgUm9sZTogT1dORVIKICAgQWNjb3VudCBJRDogdGVzdC1hY2NvdW50LTEKCuKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgQrwn46JIFRlc3QgYWNjb3VudCByZXNldCBjb21wbGV0ZSEKClRlc3QgQWNjb3VudCBEZXRhaWxzOgrilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIHilIEKQWNjb3VudCBJRDogICB0ZXN0LWFjY291bnQtMQo="
+                        },
+                        {
+                          "buffer": "QWNjb3VudCBOYW1lOiBUZXN0IEFjY291bnQKVXNlciBFbWFpbDogICB0ZXN0QGV4YW1wbGUuY29tClVzZXIgSUQ6ICAgICAgZjAyN2ViZGEtZWQ2My00ODVjLWI5ZTMtOTcyNDk5NTkxYWU1CuKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgeKUgQoK8J+SoSBUZXN0IGFjY291bnQgaXMgbm93IGNsZWFuIGFuZCBlbXB0eS4K8J+SoSBSdW4gIm5wbSBydW4gZGI6cmVzZXQ6d2l0aC1zZWVkIiB0byBwb3B1bGF0ZSB3aXRoIHNhbXBsZSBkYXRhLgo="
+                        },
+                        {
+                          "buffer": "8J+SoSBPdGhlciBhY2NvdW50cyB3ZXJlIG5vdCBhZmZlY3RlZC4KCg=="
+                        },
+                        {
+                          "buffer": "4pyFIDEgb3RoZXIgYWNjb3VudChzKSBwcmVzZXJ2ZWQ6Cg=="
+                        },
+                        {
+                          "buffer": "ICAgLSBUZXN0IEFjY291bnQgMiAodGVzdC1hY2NvdW50LTIpOiAwIHVzZXJzLCAyMCBwcm9wZXJ0aWVzCg=="
+                        },
+                        {
+                          "buffer": "Cg=="
+                        },
+                        {
+                          "buffer": "4pyoIFNjcmlwdCBjb21wbGV0ZWQgc3VjY2Vzc2Z1bGx5Cg=="
+                        },
+                        {
+                          "text": "✓ Database reset complete - only Test Account remains\n"
+                        },
+                        {
+                          "text": "=== FETCHING TEST ACCOUNT ID FROM DATABASE ===\n"
+                        },
+                        {
+                          "text": "✓ Found Test Account with ID: test-account-1\n"
+                        },
+                        {
+                          "text": "=== TC-E2E-1.5-001: Verify mortgage checkbox exists in form ===\n"
+                        },
+                        {
+                          "text": "=== SETTING TEST ACCOUNT IN LOCALSTORAGE (test-account-1) ===\n"
+                        },
+                        {
+                          "text": "[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "✓ Account test-account-1 set in localStorage - all API calls will use this account automatically!\n"
+                        },
+                        {
+                          "text": "[BROWSER]: %cDownload the React DevTools for a better development experience: https://reactjs.org/link/react-devtools font-weight:bold\n"
+                        },
+                        {
+                          "text": "[BROWSER]: 🔧 DEV MODE: Bypassing authentication\n"
+                        },
+                        {
+                          "text": "[BROWSER]: 🔧 DEV MODE: Bypassing authentication\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        },
+                        {
+                          "text": "✓ Create property dialog opened\n"
+                        },
+                        {
+                          "text": "✓ Address field filled\n"
+                        },
+                        {
+                          "text": "→ Expanding Legal & Registry accordion...\n"
+                        },
+                        {
+                          "text": "✓ Legal & Registry accordion expanded\n"
+                        },
+                        {
+                          "text": "→ Looking for mortgage checkbox (משועבד)...\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        },
+                        {
+                          "text": "[BROWSER]: Failed to load resource: the server responded with a status of 404 (Not Found)\n"
+                        }
+                      ],
+                      "stderr": [
+                        {
+                          "buffer": "KG5vZGU6OTk0MDIpIFdhcm5pbmc6IFRoZSAnTk9fQ09MT1InIGVudiBpcyBpZ25vcmVkIGR1ZSB0byB0aGUgJ0ZPUkNFX0NPTE9SJyBlbnYgYmVpbmcgc2V0LgooVXNlIGBub2RlIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKQo="
+                        },
+                        {
+                          "buffer": "KG5vZGU6OTk0MzIpIFdhcm5pbmc6IFRoZSAnTk9fQ09MT1InIGVudiBpcyBpZ25vcmVkIGR1ZSB0byB0aGUgJ0ZPUkNFX0NPTE9SJyBlbnYgYmVpbmcgc2V0LgooVXNlIGBub2RlIC0tdHJhY2Utd2FybmluZ3MgLi4uYCB0byBzaG93IHdoZXJlIHRoZSB3YXJuaW5nIHdhcyBjcmVhdGVkKQo="
+                        },
+                        {
+                          "buffer": "KG5vZGU6OTk0MzIpIFtNT0RVTEVfVFlQRUxFU1NfUEFDS0FHRV9KU09OXSBXYXJuaW5nOiBNb2R1bGUgdHlwZSBvZiBmaWxlOi8vL1VzZXJzL2F2aWFkLm5hdG92aWNoL3BlcnNvbmFsL3JlbnRBcHBsaWNhdGlvbi9zY3JpcHRzL3Jlc2V0LXRlc3QtYWNjb3VudC50cyBpcyBub3Qgc3BlY2lmaWVkIGFuZCBpdCBkb2Vzbid0IHBhcnNlIGFzIENvbW1vbkpTLgpSZXBhcnNpbmcgYXMgRVMgbW9kdWxlIGJlY2F1c2UgbW9kdWxlIHN5bnRheCB3YXMgZGV0ZWN0ZWQuIFRoaXMgaW5jdXJzIGEgcGVyZm9ybWFuY2Ugb3ZlcmhlYWQuClRvIGVsaW1pbmF0ZSB0aGlzIHdhcm5pbmcsIGFkZCAidHlwZSI6ICJtb2R1bGUiIHRvIC9Vc2Vycy9hdmlhZC5uYXRvdmljaC9wZXJzb25hbC9yZW50QXBwbGljYXRpb24vcGFja2FnZS5qc29uLgo="
+                        }
+                      ],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:43.283Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry2/test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry2/video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry2/error-context.md"
+                        },
+                        {
+                          "name": "trace",
+                          "contentType": "application/zip",
+                          "path": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test-results/us1.5-mortgage-status-US1--4ed85-01-mortgage-checkbox-exists-chromium-retry2/trace.zip"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.5-mortgage-status.spec.ts",
+                        "column": 44,
+                        "line": 107
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-785ec83ac6fad10c7c06",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 63,
+              "column": 7
+            },
+            {
+              "title": "TC-E2E-1.5-002-checkbox-defaults-unchecked",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:32.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:42.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:52.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-07a0f91ffe35cc14a65a",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 116,
+              "column": 7
+            },
+            {
+              "title": "TC-E2E-1.5-003-create-mortgaged-property",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:32.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:42.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:52.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-34e5cedb9805af73d3a1",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 173,
+              "column": 7
+            },
+            {
+              "title": "TC-E2E-1.5-004-create-unmortgaged-property",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:32.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:42.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:52.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-1c6a642a7abead3f4358",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 275,
+              "column": 7
+            },
+            {
+              "title": "TC-E2E-1.5-005-list-displays-mortgage-indicator",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:32.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:42.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:52.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-0c08c0d3e59177cc9676",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 337,
+              "column": 7
+            },
+            {
+              "title": "TC-E2E-1.5-006-details-shows-mortgage-status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:32.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:42.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:52.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-4a090cfaae4768fb31da",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 417,
+              "column": 7
+            },
+            {
+              "title": "TC-E2E-1.5-007-edit-mortgage-status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:32.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:42.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:52.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-6258ce7a5f0c9589d105",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 465,
+              "column": 7
+            },
+            {
+              "title": "TC-E2E-1.5-008-toggle-mortgage-status",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-02-05T05:12:32.067Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-02-05T05:12:42.772Z",
+                      "annotations": [],
+                      "attachments": []
+                    },
+                    {
+                      "workerIndex": -1,
+                      "parallelIndex": -1,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 2,
+                      "startTime": "2026-02-05T05:12:52.753Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "00db57800aaeddd65a5f-8f8fcbd70c2735cc7b0b",
+              "file": "us1.5-mortgage-status.spec.ts",
+              "line": 556,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-02-05T05:12:22.151Z",
+    "duration": 30625.515,
+    "expected": 0,
+    "skipped": 7,
+    "unexpected": 1,
+    "flaky": 0
+  }
+}
+npm error Lifecycle script `test:e2e` failed with error:
+npm error code 1
+npm error path /Users/aviad.natovich/personal/rentApplication/apps/frontend
+npm error workspace @rent-app/frontend@0.1.0
+npm error location /Users/aviad.natovich/personal/rentApplication/apps/frontend
+npm error command failed
+npm error command sh -c playwright test test/e2e/us1.5-mortgage-status.spec.ts --reporter=json

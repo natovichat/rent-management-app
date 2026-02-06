@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>פרטי נכס - ניהול תיק נדל"ן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item active">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Breadcrumbs -->
+      <div class="breadcrumbs">
+        <a href="index.html">דשבורד</a>
+        <span class="breadcrumbs-separator">/</span>
+        <a href="properties.html">נכסים</a>
+        <span class="breadcrumbs-separator">/</span>
+        <span>פרטי נכס</span>
+      </div>
+
+      <div class="detail-header">
+        <h1>רח' הרצל 10, תל אביב</h1>
+        <div>
+          <a href="properties.html" class="btn btn-secondary">← חזרה לרשימה</a>
+          <a href="property-detail.html" class="btn btn-primary">✏️ ערוך</a>
+        </div>
+      </div>
+
+      <!-- Basic Information -->
+      <div class="paper">
+        <h2>פרטים בסיסיים</h2>
+        <div class="divider"></div>
+        <div class="detail-grid">
+          <div class="detail-field">
+            <div class="detail-field-label">כתובת</div>
+            <div class="detail-field-value">רח' הרצל 10, תל אביב</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">מספר תיק</div>
+            <div class="detail-field-value">TA-2024-001</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">סוג נכס</div>
+            <div class="detail-field-value"><span class="chip chip-info">מגורים</span></div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">סטטוס</div>
+            <div class="detail-field-value"><span class="chip chip-success">פעיל</span></div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">עיר</div>
+            <div class="detail-field-value">תל אביב</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">שטח כולל (מ"ר)</div>
+            <div class="detail-field-value">450</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">שווי משוער</div>
+            <div class="detail-field-value" style="font-size: 18px; font-weight: 500; color: var(--success);">₪4,500,000</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">גוש</div>
+            <div class="detail-field-value">12345</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">חלקה</div>
+            <div class="detail-field-value">67</div>
+          </div>
+          <div class="detail-field">
+            <div class="detail-field-label">משכנתא</div>
+            <div class="detail-field-value"><span class="chip chip-warning">כן</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Related Units -->
+      <div class="paper">
+        <h2>יחידות בנכס</h2>
+        <div class="divider"></div>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>מספר דירה</th>
+                <th>קומה</th>
+                <th>חדרים</th>
+                <th>מחיר שכירות חודשי</th>
+                <th>סטטוס</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='unit-detail.html?id=1'">
+                <td>5</td>
+                <td>2</td>
+                <td>3</td>
+                <td>₪4,500</td>
+                <td><span class="chip chip-success">מושכר</span></td>
+                <td><a href="unit-detail.html?id=1" class="action-icon">👁️</a></td>
+              </tr>
+              <tr onclick="window.location.href='unit-detail.html?id=2'">
+                <td>12</td>
+                <td>4</td>
+                <td>4</td>
+                <td>₪6,200</td>
+                <td><span class="chip chip-success">מושכר</span></td>
+                <td><a href="unit-detail.html?id=2" class="action-icon">👁️</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 16px;">
+          <a href="units.html?propertyId=1" class="btn btn-secondary">צפה בכל היחידות</a>
+        </div>
+      </div>
+
+      <!-- Related Mortgages -->
+      <div class="paper">
+        <h2>משכנתאות</h2>
+        <div class="divider"></div>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>בנק</th>
+                <th>סכום הלוואה</th>
+                <th>תשלום חודשי</th>
+                <th>תאריך התחלה</th>
+                <th>ריבית</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='mortgage-detail.html?id=1'">
+                <td>בנק לאומי</td>
+                <td>₪2,500,000</td>
+                <td>₪12,500</td>
+                <td>01/01/2020</td>
+                <td>3.2%</td>
+                <td><a href="mortgage-detail.html?id=1" class="action-icon">👁️</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 16px;">
+          <a href="mortgages.html?propertyId=1" class="btn btn-secondary">צפה בכל המשכנתאות</a>
+        </div>
+      </div>
+
+      <!-- Related Expenses -->
+      <div class="paper">
+        <h2>הוצאות אחרונות</h2>
+        <div class="divider"></div>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>קטגוריה</th>
+                <th>סכום</th>
+                <th>תאריך</th>
+                <th>ספק</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='expense-detail.html?id=1'">
+                <td>תחזוקה</td>
+                <td>₪850</td>
+                <td>15/01/2025</td>
+                <td>שירותי תחזוקה כהן</td>
+                <td><a href="expense-detail.html?id=1" class="action-icon">👁️</a></td>
+              </tr>
+              <tr onclick="window.location.href='expense-detail.html?id=2'">
+                <td>ביטוח</td>
+                <td>₪1,200</td>
+                <td>01/01/2025</td>
+                <td>מגדל ביטוח</td>
+                <td><a href="expense-detail.html?id=2" class="action-icon">👁️</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 16px;">
+          <a href="expenses.html?propertyId=1" class="btn btn-secondary">צפה בכל ההוצאות</a>
+        </div>
+      </div>
+
+      <!-- Related Income -->
+      <div class="paper">
+        <h2>הכנסות אחרונות</h2>
+        <div class="divider"></div>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>מקור</th>
+                <th>סכום</th>
+                <th>תאריך</th>
+                <th>אמצעי תשלום</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='income-detail.html?id=1'">
+                <td>שכירות דירה 5</td>
+                <td>₪4,500</td>
+                <td>01/02/2025</td>
+                <td>העברה בנקאית</td>
+                <td><a href="income-detail.html?id=1" class="action-icon">👁️</a></td>
+              </tr>
+              <tr onclick="window.location.href='income-detail.html?id=2'">
+                <td>שכירות דירה 12</td>
+                <td>₪6,200</td>
+                <td>01/02/2025</td>
+                <td>העברה בנקאית</td>
+                <td><a href="income-detail.html?id=2" class="action-icon">👁️</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 16px;">
+          <a href="income.html?propertyId=1" class="btn btn-secondary">צפה בכל ההכנסות</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

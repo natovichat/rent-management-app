@@ -1,0 +1,506 @@
+# E2E Wait Strategies - MANDATORY
+
+**Context**: Prevents flaky E2E tests caused by hard-coded timeouts and race conditions.
+
+**Rationale**: Explicit wait conditions eliminate timing issues and make tests deterministic.
+
+---
+
+## Golden Rules
+
+```
+🚫 NEVER use waitForTimeout() with hard-coded duration
+✅ ALWAYS wait for specific conditions (API, element, state)
+⏱️ WAIT for what you need, not arbitrary time periods
+```
+
+---
+
+## The Problem
+
+### ❌ BAD - Hard-coded timeouts
+
+```typescript
+// Hope that 2 seconds is enough!
+await page.click('[data-testid="submit-button"]');
+await page.waitForTimeout(2000); // ❌ Arbitrary wait
+expect(await page.locator('[role="alert"]').isVisible()).toBe(true);
+```
+
+**Issues**:
+- ✗ Too short → Test fails (flaky)
+- ✗ Too long → Test slow (unnecessary wait)
+- ✗ No guarantee data is ready
+- ✗ Race conditions between DB → API → UI
+
+### ✅ GOOD - Explicit wait conditions
+
+```typescript
+// Wait for specific API response
+await page.click('[data-testid="submit-button"]');
+const response = await page.waitForResponse(
+  resp => resp.url().includes('/properties') && resp.status() === 201,
+  { timeout: 10000 }
+);
+
+// Wait for notification to appear
+await page.waitForSelector('[role="alert"]:has-text("הנכס נוסף בהצלחה")', {
+  state: 'visible',
+  timeout: 5000
+});
+```
+
+---
+
+## Wait Strategy Patterns
+
+### Pattern 1: Wait for API Response
+
+```typescript
+// ✅ BEST PRACTICE
+async function submitFormAndWaitForAPI(page: Page) {
+  // Setup listener before clicking
+  const responsePromise = page.waitForResponse(
+    resp => resp.url().includes('/properties') && resp.status() === 201,
+    { timeout: 10000 }
+  );
+  
+  // Trigger action
+  await page.click('[data-testid="submit-button"]');
+  
+  // Wait for API
+  const response = await responsePromise;
+  console.log(`✓ API responded: ${response.status()}`);
+  
+  return response;
+}
+```
+
+**Why this works**:
+- Sets up listener **before** clicking
+- Waits for **specific** API call
+- Returns response for further assertions
+- Clear logging for debugging
+
+---
+
+### Pattern 2: Wait for UI Update After API
+
+```typescript
+// ❌ BAD - Assume UI updates immediately
+await page.click('[data-testid="submit-button"]');
+await page.waitForResponse(resp => resp.url().includes('/properties'));
+const count = await page.locator('[data-testid="property-row"]').count();
+expect(count).toBeGreaterThan(0); // ❌ Might be old data!
+
+// ✅ GOOD - Wait for React Query invalidation + re-render
+await page.click('[data-testid="submit-button"]');
+
+// 1. Wait for API
+const response = await page.waitForResponse(
+  resp => resp.url().includes('/properties') && resp.status() === 201
+);
+
+// 2. Wait for success notification (proves mutation completed)
+await page.waitForSelector('[role="alert"]:has-text("הנכס נוסף בהצלחה")', {
+  state: 'visible',
+  timeout: 5000
+});
+
+// 3. Wait for notification to disappear (proves user saw it)
+await page.waitForSelector('[role="alert"]', {
+  state: 'hidden',
+  timeout: 8000
+});
+
+// 4. Wait for specific item in list (proves query invalidation)
+await page.waitForSelector('[data-testid="property-row"]:has-text("Test Property")', {
+  state: 'visible',
+  timeout: 10000
+});
+
+// NOW we can verify count
+const count = await page.locator('[data-testid="property-row"]').count();
+expect(count).toBeGreaterThan(0); // ✅ Guaranteed fresh data
+```
+
+**Flow**: Submit → API → Notification → Dismiss → List refresh → Verify
+
+---
+
+### Pattern 3: Wait for Element State Change
+
+```typescript
+// ❌ BAD - Click button immediately
+await page.fill('[data-testid="address"]', 'רחוב הרצל 10');
+await page.click('[data-testid="submit-button"]'); // Might be disabled!
+
+// ✅ GOOD - Wait for validation to complete
+await page.fill('[data-testid="address"]', 'רחוב הרצל 10');
+
+// Wait for button to be enabled (validation passed)
+await page.waitForSelector('[data-testid="submit-button"]:not([disabled])', {
+  state: 'visible',
+  timeout: 5000
+});
+
+await page.click('[data-testid="submit-button"]');
+```
+
+**Why this works**:
+- Waits for Zod validation
+- Ensures button is clickable
+- Prevents clicking disabled button
+
+---
+
+### Pattern 4: Wait for List to Update
+
+```typescript
+// ❌ BAD - Count immediately
+await createProperty('Test Property');
+const count = await page.locator('[data-testid="property-row"]').count();
+expect(count).toBe(1); // ❌ Race condition!
+
+// ✅ GOOD - Wait for specific item
+await createProperty('Test Property');
+
+// Wait for item to appear
+await page.waitForSelector('[data-testid="property-row"]:has-text("Test Property")', {
+  state: 'visible',
+  timeout: 10000
+});
+
+// Verify count
+const count = await page.locator('[data-testid="property-row"]').count();
+expect(count).toBeGreaterThanOrEqual(1); // ✅ Item definitely present
+```
+
+---
+
+### Pattern 5: Wait with Custom Condition
+
+```typescript
+// Wait for complex condition
+await page.waitForFunction(
+  (expectedAddress) => {
+    const rows = document.querySelectorAll('[data-testid="property-row"]');
+    return Array.from(rows).some(row => 
+      row.textContent?.includes(expectedAddress)
+    );
+  },
+  'רחוב הרצל 10', // Pass parameter to function
+  { timeout: 10000 }
+);
+```
+
+**When to use**:
+- Complex DOM queries
+- Multiple conditions
+- Dynamic content
+
+---
+
+## Comprehensive Create-and-Verify Pattern
+
+```typescript
+/**
+ * Creates property and verifies complete flow
+ * 
+ * Flow: Form → API → Notification → List → Verify
+ */
+async function createPropertyAndVerify(
+  page: Page,
+  propertyData: {
+    address: string;
+    type: string;
+    status: string;
+  }
+) {
+  console.log(`=== CREATING PROPERTY: ${propertyData.address} ===`);
+  
+  // STEP 1: Navigate to form
+  await page.goto('/properties/new');
+  await page.waitForLoadState('networkidle');
+  
+  // STEP 2: Fill form
+  await page.fill('[data-testid="address"]', propertyData.address);
+  await page.selectOption('[data-testid="type"]', propertyData.type);
+  await page.selectOption('[data-testid="status"]', propertyData.status);
+  console.log('✓ Form filled');
+  
+  // STEP 3: Wait for validation
+  await page.waitForSelector('[data-testid="submit-button"]:not([disabled])', {
+    timeout: 5000
+  });
+  console.log('✓ Validation passed');
+  
+  // STEP 4: Submit and wait for API
+  const [response] = await Promise.all([
+    page.waitForResponse(
+      resp => resp.url().includes('/properties') && resp.status() === 201,
+      { timeout: 10000 }
+    ),
+    page.click('[data-testid="submit-button"]')
+  ]);
+  console.log(`✓ API responded: ${response.status()}`);
+  
+  // STEP 5: Wait for success notification
+  await page.waitForSelector('[role="alert"]:has-text("הנכס נוסף בהצלחה")', {
+    state: 'visible',
+    timeout: 5000
+  });
+  console.log('✓ Success notification appeared');
+  
+  // STEP 6: Wait for notification to disappear
+  await page.waitForSelector('[role="alert"]', {
+    state: 'hidden',
+    timeout: 8000
+  });
+  console.log('✓ Notification dismissed');
+  
+  // STEP 7: Navigate back to list
+  await page.goto('/properties');
+  await page.waitForLoadState('networkidle');
+  
+  // STEP 8: Wait for property to appear in list
+  await page.waitForSelector(
+    `[data-testid="property-row"]:has-text("${propertyData.address}")`,
+    { state: 'visible', timeout: 10000 }
+  );
+  console.log(`✓ Property "${propertyData.address}" appears in list`);
+  
+  // STEP 9: Return response for further assertions
+  return {
+    response,
+    propertyId: (await response.json()).id
+  };
+}
+
+// Usage:
+test('create property successfully', async ({ page }) => {
+  const { propertyId } = await createPropertyAndVerify(page, {
+    address: 'רחוב הרצל 10, תל אביב',
+    type: 'מגורים',
+    status: 'בבעלות'
+  });
+  
+  expect(propertyId).toBeDefined();
+});
+```
+
+---
+
+## Timeout Configuration
+
+### Playwright Config
+
+```typescript
+// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  // Global test timeout
+  timeout: 30000, // 30 seconds per test
+  
+  // Expect timeout
+  expect: {
+    timeout: 10000, // 10 seconds for assertions
+  },
+  
+  use: {
+    // Action timeout (click, fill, etc.)
+    actionTimeout: 5000, // 5 seconds
+    
+    // Navigation timeout
+    navigationTimeout: 10000, // 10 seconds
+    
+    // Wait for load state
+    waitForLoadState: 'networkidle',
+  },
+});
+```
+
+### Timeout Best Practices
+
+| Operation | Recommended Timeout | Rationale |
+|---|---|---|
+| **API Call** | 10s | Network + processing |
+| **Notification** | 5s | Should appear quickly |
+| **List Update** | 10s | Query invalidation + render |
+| **Form Validation** | 5s | Zod validation is fast |
+| **Page Navigation** | 10s | Load + hydration |
+| **Element Visibility** | 5s | Should be immediate |
+
+---
+
+## Debugging Wait Issues
+
+### Add Logging
+
+```typescript
+async function waitForPropertyInList(page: Page, address: string) {
+  console.log(`⏳ Waiting for property: ${address}`);
+  
+  try {
+    await page.waitForSelector(
+      `[data-testid="property-row"]:has-text("${address}")`,
+      { state: 'visible', timeout: 10000 }
+    );
+    console.log(`✓ Found property: ${address}`);
+  } catch (error) {
+    console.error(`✗ Property not found: ${address}`);
+    
+    // Debug: Log current list
+    const currentRows = await page.locator('[data-testid="property-row"]').count();
+    console.error(`  Current rows in list: ${currentRows}`);
+    
+    if (currentRows > 0) {
+      const addresses = await page.locator('[data-testid="property-row"]').allTextContents();
+      console.error(`  Current addresses:`, addresses);
+    }
+    
+    throw error;
+  }
+}
+```
+
+### Screenshot on Failure
+
+```typescript
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status !== 'passed') {
+    // Capture state at failure
+    await page.screenshot({
+      path: `test-results/failure-${testInfo.title}-${Date.now()}.png`,
+      fullPage: true
+    });
+    
+    // Log console errors
+    console.error('Console logs at failure:', testInfo.errors);
+  }
+});
+```
+
+### Trace on Failure
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  use: {
+    trace: 'retain-on-failure', // Keep trace only on failure
+    video: 'retain-on-failure',
+    screenshot: 'only-on-failure',
+  },
+});
+```
+
+**View trace**:
+```bash
+npx playwright show-trace test-results/path/to/trace.zip
+```
+
+---
+
+## Common Mistakes
+
+### Mistake 1: Waiting for wrong thing
+
+```typescript
+// ❌ BAD - Wait for button, not API
+await page.click('[data-testid="submit-button"]');
+await page.waitForSelector('[data-testid="submit-button"]:not([disabled])');
+// Button re-enabled, but API might not be done!
+
+// ✅ GOOD - Wait for API
+await page.click('[data-testid="submit-button"]');
+await page.waitForResponse(resp => resp.url().includes('/properties'));
+```
+
+### Mistake 2: Not waiting for notification to disappear
+
+```typescript
+// ❌ BAD - Check list immediately after notification appears
+await page.waitForSelector('[role="alert"]');
+const count = await page.locator('[data-testid="property-row"]').count();
+
+// ✅ GOOD - Wait for notification lifecycle
+await page.waitForSelector('[role="alert"]', { state: 'visible' });
+await page.waitForSelector('[role="alert"]', { state: 'hidden' });
+const count = await page.locator('[data-testid="property-row"]').count();
+```
+
+### Mistake 3: Race condition between multiple operations
+
+```typescript
+// ❌ BAD - Not coordinating waits
+await page.click('[data-testid="submit-button"]');
+await page.waitForResponse(resp => resp.url().includes('/properties'));
+await page.goto('/properties'); // Might navigate before mutation completes!
+
+// ✅ GOOD - Chain operations properly
+await page.click('[data-testid="submit-button"]');
+await page.waitForResponse(resp => resp.url().includes('/properties'));
+await page.waitForSelector('[role="alert"]', { state: 'hidden' }); // Wait for notification
+await page.goto('/properties'); // Now safe to navigate
+```
+
+---
+
+## Migration Guide
+
+### Step 1: Find Hard-coded Timeouts
+
+```bash
+# Find all waitForTimeout calls
+grep -r "waitForTimeout" apps/frontend/test --include="*.spec.ts"
+```
+
+### Step 2: Replace Each Timeout
+
+**Before**:
+```typescript
+await page.click('[data-testid="submit"]');
+await page.waitForTimeout(2000);
+```
+
+**After**:
+```typescript
+await page.click('[data-testid="submit"]');
+await page.waitForResponse(resp => resp.status() === 201);
+await page.waitForSelector('[role="alert"]', { state: 'visible' });
+```
+
+### Step 3: Test Reliability
+
+```bash
+# Run tests multiple times to verify stability
+for i in {1..10}; do
+  npx playwright test test/e2e/us1.1-create-property-e2e.spec.ts
+done
+
+# Should pass 10/10 times
+```
+
+---
+
+## Benefits
+
+1. **No Flaky Tests**: Explicit waits eliminate race conditions
+2. **Faster Tests**: No unnecessary waiting
+3. **Clear Intent**: Code shows what we're waiting for
+4. **Easy Debugging**: Logs show exact wait failures
+5. **Maintainable**: Changes to timing don't break tests
+
+---
+
+## Related Rules
+
+- [E2E Test Infrastructure](mdc:.cursor/rules/e2e-test-infrastructure.mdc)
+- [API-First Testing](mdc:.cursor/rules/api-first-testing.mdc)
+
+---
+
+**Last Updated**: 2026-02-04  
+**Origin**: [Retrospective - Test Execution Issues](mdc:docs/retrospectives/RETRO_TEST_EXECUTION_2026_02_04.md)  
+**Real Issue**: US1.1 timing failures (TC-E2E-002, TC-E2E-006, TC-E2E-007)

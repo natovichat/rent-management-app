@@ -1,0 +1,360 @@
+---
+description: Git commit best practices for all development work. Ensures regular, descriptive commits with proper formatting.
+alwaysApply: true
+---
+
+# Git Commit Strategy - MANDATORY
+
+All development work must follow these git commit practices to maintain code quality, traceability, and collaboration.
+
+## Golden Rules
+
+```
+✅ COMMIT FREQUENTLY - Don't wait until feature is complete
+✅ DESCRIPTIVE MESSAGES - Explain what and why
+✅ SMALL COMMITS - One logical change per commit
+✅ TEST BEFORE COMMIT - Ensure code works
+```
+
+## When to Commit
+
+### Mandatory Commit Points
+- After completing a logical unit of work (one component, one endpoint, one service)
+- After adding a new file or module
+- After writing tests for a feature
+- Before switching to a different task or area
+- Before taking a break or ending work session
+- After refactoring that maintains functionality
+
+### Frequency Guidelines
+- Aim for commits every 30-60 minutes of active work
+- Minimum: Commit after each major component/function
+- Maximum: Don't go more than 2 hours without committing
+
+### DO NOT Wait Until
+- ❌ Entire feature is complete
+- ❌ All tests pass (commit working code, mark WIP if needed)
+- ❌ Everything is perfect (iterate with commits)
+- ❌ You've implemented multiple components
+
+## Commit Message Format
+
+### Standard Format
+```
+<type>(<scope>): <short description>
+
+[optional detailed body]
+
+[optional footer]
+```
+
+### Type Categories
+
+| Type | When to Use | Examples |
+|------|-------------|----------|
+| `feat` | New feature or functionality | feat(properties): add filtering capability |
+| `fix` | Bug fix | fix(auth): correct token expiration logic |
+| `refactor` | Code restructuring without behavior change | refactor(users): extract validation to service |
+| `test` | Adding or updating tests | test(properties): add filter integration tests |
+| `docs` | Documentation only | docs(api): update property endpoint docs |
+| `style` | Code formatting, whitespace | style(properties): fix indentation |
+| `perf` | Performance improvement | perf(queries): add index for property filters |
+| `chore` | Maintenance, dependencies | chore(deps): update react-query to 5.0 |
+
+### Scope Guidelines
+- Use feature/module name: `properties`, `users`, `auth`, `leases`
+- Keep it short and consistent
+- Use kebab-case: `property-filters`, `user-auth`
+
+### Description Guidelines
+- Use imperative mood: "add" not "added" or "adds"
+- Start with lowercase
+- No period at the end
+- Max 50 characters for subject line
+- Be specific: "add type filter" not "update code"
+
+## Commit Examples
+
+### Good Examples ✅
+
+```bash
+# Feature implementation
+git commit -m "feat(properties): add type filter to query builder"
+git commit -m "feat(properties): implement filter validation in controller"
+
+# Bug fixes
+git commit -m "fix(properties): correct pagination offset calculation"
+git commit -m "fix(auth): handle expired token edge case"
+
+# Tests
+git commit -m "test(properties): add unit tests for filter validation"
+git commit -m "test(properties): add integration tests for filtering API"
+
+# Refactoring
+git commit -m "refactor(properties): extract filter logic to separate service"
+git commit -m "refactor(users): simplify validation helper functions"
+
+# Documentation
+git commit -m "docs(properties): add JSDoc comments to filter functions"
+git commit -m "docs(api): document new filter query parameters"
+
+# With detailed body
+git commit -m "feat(properties): add city and country filters
+
+Add filtering capability for:
+- City name (partial match, case-insensitive)
+- Country (exact match, defaults to Israel)
+
+Updates PropertyRepository with new query methods."
+```
+
+### Bad Examples ❌
+
+```bash
+# Too vague
+git commit -m "update code"
+git commit -m "fix bug"
+git commit -m "changes"
+
+# Wrong tense
+git commit -m "added filter"
+git commit -m "fixing bug"
+
+# Too long subject
+git commit -m "feat(properties): add comprehensive filtering capability with support for type, status, city, country, and mortgage status"
+
+# Missing scope
+git commit -m "feat: add filter"
+
+# Wrong type
+git commit -m "update(properties): add new feature"  # Should be "feat"
+```
+
+## Git Workflow
+
+### Basic Workflow
+```bash
+# 1. Check status
+git status
+
+# 2. Stage specific files (prefer specific over 'git add .')
+git add src/properties/properties.service.ts
+git add src/properties/properties.controller.ts
+
+# 3. Commit with descriptive message
+git commit -m "feat(properties): add filtering logic to service"
+
+# 4. Continue working
+# ... implement next component ...
+
+# 5. Commit again
+git add src/properties/dto/filter-properties.dto.ts
+git commit -m "feat(properties): add filter DTO with validation"
+
+# 6. Push at logical points (after several commits)
+git push origin feature/property-filters
+```
+
+### Staging Best Practices
+- Stage related changes together
+- Use `git add -p` for partial staging if needed
+- Review changes before committing: `git diff --staged`
+- Don't use `git add .` unless all changes are related
+
+## Work-in-Progress Commits
+
+When committing incomplete work:
+
+```bash
+# Prefix with WIP
+git commit -m "WIP: feat(properties): add filter UI (incomplete)"
+
+# Later, when complete, amend or create new commit
+git commit -m "feat(properties): complete filter UI implementation"
+```
+
+## Multiple Engineer Scenario
+
+When coordinating multiple engineers on same feature:
+
+### Engineer 1 - Query Builder
+```bash
+git add apps/backend/src/properties/repositories/
+git commit -m "feat(properties): add filtering to property repository"
+```
+
+### Engineer 2 - Controller
+```bash
+git add apps/backend/src/properties/controllers/
+git commit -m "feat(properties): add filter endpoints to controller"
+```
+
+### Engineer 3 - Validation
+```bash
+git add apps/backend/src/properties/dto/
+git commit -m "feat(properties): add filter validation DTOs"
+```
+
+### Engineer 4 - Tests
+```bash
+git add apps/backend/test/properties/
+git commit -m "test(properties): add integration tests for filtering"
+```
+
+## Pre-Commit Checklist
+
+Before committing, verify:
+- [ ] Code compiles/runs without errors
+- [ ] Relevant tests pass (if applicable)
+- [ ] No debug code (console.logs, debugger statements)
+- [ ] No commented-out code (unless intentional with explanation)
+- [ ] Imports are clean (no unused imports)
+- [ ] Commit message follows format
+- [ ] Files staged are related to commit message
+
+## Branch Strategy
+
+### Branch Naming
+```bash
+# Feature branches
+feature/property-filters
+feature/user-authentication
+
+# Bug fix branches
+fix/pagination-bug
+fix/auth-token-expiration
+
+# Refactor branches
+refactor/property-service
+refactor/validation-logic
+```
+
+### Commit to Correct Branch
+- Feature work → feature branches
+- Bug fixes → fix branches
+- Never commit directly to main/master
+- Create PR/MR when feature is complete
+
+## Integration with Team Coordination
+
+### When Working as Team
+1. **Individual commits**: Each engineer commits their component
+2. **Clear scopes**: Use engineer assignments as commit scopes
+3. **Regular pushes**: Push commits to remote regularly
+4. **Status updates**: Mention commits in progress reports
+
+### Example Team Session
+```bash
+# Backend Team working on property filtering
+
+# Engineer 1 commits
+git commit -m "feat(properties): add query builder for filters"
+
+# Engineer 2 commits
+git commit -m "feat(properties): add controller endpoints for filtering"
+
+# Engineer 3 commits
+git commit -m "feat(properties): add business logic for filter combinations"
+
+# Engineer 4 commits
+git commit -m "test(properties): add integration tests for filter API"
+
+# Team Lead reviews
+# All engineers push
+git push origin feature/property-filters
+```
+
+## Troubleshooting
+
+### Forgot to Commit
+```bash
+# Realize you did too much work without committing
+# Stage and commit logical chunks separately
+
+git add src/component1.ts
+git commit -m "feat(scope): add component1"
+
+git add src/component2.ts
+git commit -m "feat(scope): add component2"
+```
+
+### Need to Split Large Commit
+```bash
+# Use interactive staging
+git add -p src/large-file.ts
+
+# Stage hunks separately and commit each
+```
+
+### Wrong Commit Message
+```bash
+# If not pushed yet, amend last commit
+git commit --amend -m "feat(properties): correct message"
+```
+
+## Tools and Automation
+
+### Recommended Tools
+- **Commitizen**: Interactive commit message helper
+- **Husky**: Git hooks for pre-commit checks
+- **Commitlint**: Validate commit messages
+- **Conventional Commits**: Standardized format
+
+### Pre-commit Hook Example
+```bash
+# .git/hooks/pre-commit
+#!/bin/bash
+
+# Run linter
+npm run lint
+
+# Run tests
+npm run test
+
+# If either fails, prevent commit
+if [ $? -ne 0 ]; then
+  echo "❌ Pre-commit checks failed. Fix issues before committing."
+  exit 1
+fi
+```
+
+## Benefits of This Strategy
+
+### For Individuals
+- ✅ Better code history and traceability
+- ✅ Easier to revert specific changes
+- ✅ Clear progress tracking
+- ✅ Better collaboration with team
+
+### For Teams
+- ✅ Parallel work without conflicts
+- ✅ Clear responsibility per commit
+- ✅ Better code review process
+- ✅ Easier debugging (git bisect)
+
+### For Project
+- ✅ Professional commit history
+- ✅ Automated changelog generation
+- ✅ Better CI/CD integration
+- ✅ Easier project management
+
+## Summary Checklist
+
+Before starting work:
+- [ ] Create feature branch
+- [ ] Understand commit format
+
+During work:
+- [ ] Commit after each logical unit
+- [ ] Use descriptive messages
+- [ ] Follow naming conventions
+- [ ] Test before committing
+
+After work session:
+- [ ] Review commit history
+- [ ] Push commits to remote
+- [ ] Update team on progress
+
+---
+
+**Remember**: Commits are documentation of your work. Make them clear, frequent, and descriptive. Future you (and your team) will thank you!

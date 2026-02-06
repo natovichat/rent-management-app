@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ניתוחים - ניהול תיק נדל"ן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item active">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <!-- Breadcrumbs -->
+      <div class="breadcrumbs">
+        <a href="index.html">דשבורד</a>
+        <span class="breadcrumbs-separator">›</span>
+        <span>ניתוחים</span>
+      </div>
+
+      <h1>ניתוחים וסטטיסטיקות</h1>
+
+      <!-- Portfolio Performance -->
+      <div class="paper">
+        <h2>ביצועי תיק - 12 חודשים אחרונים</h2>
+        <div class="divider"></div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-success">📈</div>
+            <div class="stat-value">+8.2%</div>
+            <div class="stat-label">תשואה שנתית</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-info">💰</div>
+            <div class="stat-value">₪1.2M</div>
+            <div class="stat-label">הכנסה שנתית</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-warning">📊</div>
+            <div class="stat-value">84.4%</div>
+            <div class="stat-label">אחוז תפוסה ממוצע</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon stat-icon-primary">🎯</div>
+            <div class="stat-value">5.2%</div>
+            <div class="stat-label">תשואה חודשית</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 32px; padding: 20px; background: #f5f5f5; border-radius: 4px; text-align: center;">
+          <div style="height: 300px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+            📈 גרף ביצועים היסטורי (דמו - בייצור יוצג גרף אמיתי)
+          </div>
+        </div>
+      </div>
+
+      <!-- Property Distribution -->
+      <div class="paper">
+        <h2>התפלגות נכסים</h2>
+        <div class="divider"></div>
+
+        <div class="detail-grid">
+          <div>
+            <h4>לפי סוג נכס</h4>
+            <div class="data-grid">
+              <table>
+                <thead>
+                  <tr>
+                    <th>סוג</th>
+                    <th>מספר</th>
+                    <th>אחוז</th>
+                    <th>שווי</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>מגורים</td>
+                    <td>8</td>
+                    <td>66.7%</td>
+                    <td>₪28.5M</td>
+                  </tr>
+                  <tr>
+                    <td>מסחרי</td>
+                    <td>2</td>
+                    <td>16.7%</td>
+                    <td>₪9.2M</td>
+                  </tr>
+                  <tr>
+                    <td>קרקע</td>
+                    <td>1</td>
+                    <td>8.3%</td>
+                    <td>₪3.5M</td>
+                  </tr>
+                  <tr>
+                    <td>שימוש מעורב</td>
+                    <td>1</td>
+                    <td>8.3%</td>
+                    <td>₪1.3M</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <h4>לפי עיר</h4>
+            <div class="data-grid">
+              <table>
+                <thead>
+                  <tr>
+                    <th>עיר</th>
+                    <th>מספר נכסים</th>
+                    <th>שווי</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>תל אביב</td>
+                    <td>4</td>
+                    <td>₪18.5M</td>
+                  </tr>
+                  <tr>
+                    <td>רמת גן</td>
+                    <td>3</td>
+                    <td>₪12.2M</td>
+                  </tr>
+                  <tr>
+                    <td>ירושלים</td>
+                    <td>2</td>
+                    <td>₪6.8M</td>
+                  </tr>
+                  <tr>
+                    <td>חיפה</td>
+                    <td>2</td>
+                    <td>₪3.5M</td>
+                  </tr>
+                  <tr>
+                    <td>אחר</td>
+                    <td>1</td>
+                    <td>₪1.5M</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Financial Analysis -->
+      <div class="paper">
+        <h2>ניתוח פיננסי</h2>
+        <div class="divider"></div>
+
+        <div class="tabs">
+          <div class="tab active">מדדים עיקריים</div>
+          <div class="tab">תזרים מזומנים</div>
+          <div class="tab">רווחיות</div>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 24px;">
+          <div class="stat-card">
+            <div class="stat-value">5.8%</div>
+            <div class="stat-label">CAP Rate (תשואת הון)</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">4.2%</div>
+            <div class="stat-label">תשואה נקייה</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">3.8</div>
+            <div class="stat-label">יחס הון עצמי</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">12.5 שנים</div>
+            <div class="stat-label">זמן החזר השקעה</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 32px;">הכנסות vs הוצאות - מגמה</h3>
+        <div style="padding: 20px; background: #f5f5f5; border-radius: 4px; text-align: center; margin-top: 16px;">
+          <div style="height: 250px; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+            📊 גרף השוואת הכנסות והוצאות (דמו - בייצור יוצג גרף אמיתי)
+          </div>
+        </div>
+      </div>
+
+      <!-- Occupancy Analysis -->
+      <div class="paper">
+        <h2>ניתוח תפוסה</h2>
+        <div class="divider"></div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">38/45</div>
+            <div class="stat-label">יחידות מושכרות</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">84.4%</div>
+            <div class="stat-label">אחוז תפוסה כללי</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">7</div>
+            <div class="stat-label">יחידות פנויות</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">18 ימים</div>
+            <div class="stat-label">ממוצע זמן השכרה</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 32px;">תפוסה לפי נכס</h3>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>נכס</th>
+                <th>יחידות מושכרות</th>
+                <th>סה"כ יחידות</th>
+                <th>אחוז תפוסה</th>
+                <th>סטטוס</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>רח' הרצל 10, תל אביב</td>
+                <td>8/8</td>
+                <td>8</td>
+                <td>100%</td>
+                <td><span class="chip chip-success">מלא</span></td>
+              </tr>
+              <tr>
+                <td>רח' שאול המלך 45, רמת גן</td>
+                <td>6/8</td>
+                <td>8</td>
+                <td>75%</td>
+                <td><span class="chip chip-warning">חלקי</span></td>
+              </tr>
+              <tr>
+                <td>רח' בן יהודה 22, תל אביב</td>
+                <td>10/12</td>
+                <td>12</td>
+                <td>83.3%</td>
+                <td><span class="chip chip-info">טוב</span></td>
+              </tr>
+              <tr>
+                <td>רח' לוי אשכול 5, ירושלים</td>
+                <td>4/6</td>
+                <td>6</td>
+                <td>66.7%</td>
+                <td><span class="chip chip-warning">חלקי</span></td>
+              </tr>
+              <tr>
+                <td>רח' הנשיא 8, חיפה</td>
+                <td>10/11</td>
+                <td>11</td>
+                <td>90.9%</td>
+                <td><span class="chip chip-success">מצוין</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tenant Analysis -->
+      <div class="paper">
+        <h2>ניתוח דיירים</h2>
+        <div class="divider"></div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value">38</div>
+            <div class="stat-label">דיירים פעילים</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">96.5%</div>
+            <div class="stat-label">אחוז תשלום בזמן</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">2.8 שנים</div>
+            <div class="stat-label">ממוצע משך שכירות</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">8.5%</div>
+            <div class="stat-label">אחוז תחלופה שנתי</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top: 32px;">חוזים מסתיימים ב-90 ימים הקרובים</h3>
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>דייר</th>
+                <th>נכס</th>
+                <th>תאריך סיום</th>
+                <th>ימים נותרים</th>
+                <th>פעולה נדרשת</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>שרה לוי</td>
+                <td>רח' הרצל 10, דירה 5</td>
+                <td>15/03/2026</td>
+                <td>42</td>
+                <td><span class="chip chip-warning">דרוש חידוש</span></td>
+              </tr>
+              <tr>
+                <td>דוד כהן</td>
+                <td>רח' בן יהודה 22, דירה 8</td>
+                <td>28/03/2026</td>
+                <td>55</td>
+                <td><span class="chip chip-warning">דרוש חידוש</span></td>
+              </tr>
+              <tr>
+                <td>רחל אברהם</td>
+                <td>רח' שאול המלך 45, דירה 3</td>
+                <td>10/04/2026</td>
+                <td>68</td>
+                <td><span class="chip chip-info">תכנון מראש</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Risk Analysis -->
+      <div class="paper">
+        <h2>ניתוח סיכונים</h2>
+        <div class="divider"></div>
+
+        <div class="list-item">
+          <div class="list-item-primary">
+            <span class="status-indicator status-error"></span>
+            סיכון גבוה - 3 דיירים עם פיגור בתשלום
+          </div>
+          <div class="list-item-secondary">סה"כ חוב: ₪13,500 • נדרשת טיפול דחוף</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">
+            <span class="status-indicator status-warning"></span>
+            סיכון בינוני - 7 יחידות פנויות מעל 30 יום
+          </div>
+          <div class="list-item-secondary">הפסד הכנסה חודשי משוער: ₪24,500</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">
+            <span class="status-indicator status-warning"></span>
+            סיכון בינוני - 2 משכנתאות עם ריבית משתנה
+          </div>
+          <div class="list-item-secondary">חשיפה לעליית ריבית: ₪1.8M</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">
+            <span class="status-indicator status-active"></span>
+            סיכון נמוך - אחוז תפוסה גבוה (84.4%)
+          </div>
+          <div class="list-item-secondary">מעל יעד 80%</div>
+        </div>
+
+        <div class="list-item">
+          <div class="list-item-primary">
+            <span class="status-indicator status-active"></span>
+            סיכון נמוך - פיזור גיאוגרפי טוב
+          </div>
+          <div class="list-item-secondary">נכסים ב-5 ערים שונות</div>
+        </div>
+      </div>
+
+      <!-- Projections -->
+      <div class="paper">
+        <h2>תחזיות</h2>
+        <div class="divider"></div>
+
+        <div class="detail-grid">
+          <div class="stat-card">
+            <div class="stat-value">₪1.45M</div>
+            <div class="stat-label">הכנסה צפויה - 2026</div>
+            <div class="text-secondary text-small" style="margin-top: 4px;">+8.5% מ-2025</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">₪52.8M</div>
+            <div class="stat-label">שווי תיק צפוי - סוף 2026</div>
+            <div class="text-secondary text-small" style="margin-top: 4px;">+6.2% מהיום</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">₪385K</div>
+            <div class="stat-label">רווח נטו צפוי - Q1 2026</div>
+            <div class="text-secondary text-small" style="margin-top: 4px;">+12% מ-Q4 2025</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-value">90%</div>
+            <div class="stat-label">אחוז תפוסה יעד - 2026</div>
+            <div class="text-secondary text-small" style="margin-top: 4px;">+5.6% מהיום</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

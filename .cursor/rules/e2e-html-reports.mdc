@@ -1,0 +1,1000 @@
+# E2E HTML Test Reports - MANDATORY
+
+**CRITICAL**: Every Epic must have a single HTML report showing E2E test results for all user stories. Additionally, EVERY E2E test execution MUST generate an HTML report for manual review.
+
+## Golden Rules
+
+```
+📊 ONE HTML REPORT per Epic (summary)
+🧪 ONE HTML REPORT per E2E test execution (detailed)
+📁 Location: docs/test-results/epic-XX/E2E_TEST_REPORT.html (Epic)
+📁 Location: playwright-report/index.html (per execution)
+🔄 AUTO-UPDATE after Phase 4 completion
+✅ INTERACTIVE and VISUAL
+🔍 MANDATORY for manual review
+```
+
+---
+
+## 1. Report Structure (MANDATORY)
+
+### Location Standard:
+
+```
+docs/test-results/
+├── epic-01/
+│   ├── E2E_TEST_REPORT.html       ← Single HTML for all US in Epic 01
+│   ├── README.md                   ← How to view/use report
+│   ├── user-story-1.1/
+│   │   ├── cycle-1-timestamp/
+│   │   └── FINAL_STATUS.md
+│   ├── user-story-1.2/
+│   └── ...
+├── epic-02/
+│   ├── E2E_TEST_REPORT.html       ← Single HTML for all US in Epic 02
+│   └── ...
+└── epic-03/
+    └── ...
+```
+
+**Rule:** ONE HTML file per Epic, not one per user story!
+
+---
+
+## 1.5. Per-Execution HTML Reports (NEW - MANDATORY)
+
+**CRITICAL**: In addition to the Epic-level HTML report, EVERY E2E test execution MUST generate a detailed HTML report for manual review.
+
+### Why This Matters:
+
+- 🔍 **Manual Review** - QA can visually review test execution
+- 📸 **Screenshots** - Visual proof of what happened
+- 🎥 **Videos** - Record of full test execution (optional)
+- 🐛 **Debugging** - Detailed error traces and screenshots
+- ✅ **Verification** - Stakeholders can see actual test results
+- 📋 **Documentation** - Proof that tests were actually run
+
+### Location Standard:
+
+```
+playwright-report/               ← Playwright generated HTML report
+├── index.html                   ← Main report (open this!)
+├── data/
+│   ├── screenshots/             ← Test screenshots
+│   ├── traces/                  ← Test traces
+│   └── videos/                  ← Test videos (if enabled)
+└── assets/
+    └── *.css, *.js              ← Report assets
+
+apps/frontend/test-results/      ← Alternative location
+├── junit.xml                    ← JUnit format results
+└── results.json                 ← JSON format results
+```
+
+### How to Generate:
+
+#### Playwright Configuration:
+
+**File:** `apps/frontend/playwright.config.ts`
+
+```typescript
+import { defineConfig } from '@playwright/test';
+
+export default defineConfig({
+  // ... other config
+
+  // ✅ MANDATORY: HTML Reporter
+  reporter: [
+    ['html', { 
+      outputFolder: 'playwright-report',
+      open: 'never' // Don't auto-open during CI
+    }],
+    ['list'], // Console output
+    ['junit', { outputFile: 'test-results/junit.xml' }]
+  ],
+
+  // ✅ MANDATORY: Screenshots on failure
+  use: {
+    screenshot: 'only-on-failure',
+    video: 'retain-on-failure', // Optional: capture video
+    trace: 'retain-on-failure', // Optional: capture trace
+  },
+});
+```
+
+### Running Tests with HTML Report:
+
+```bash
+# Run E2E tests (generates HTML report automatically)
+cd apps/frontend
+npm run test:e2e
+
+# Report generated at: playwright-report/index.html
+
+# Open report for manual review
+npx playwright show-report
+# OR
+open playwright-report/index.html
+```
+
+### What the HTML Report Includes:
+
+**Playwright HTML Report Features:**
+- ✅ **Test Results Summary** - Pass/fail counts, duration
+- ✅ **Test Case Details** - Each test with status
+- ✅ **Screenshots** - On failure (or on every step if configured)
+- ✅ **Error Messages** - Full stack traces
+- ✅ **Test Duration** - How long each test took
+- ✅ **Retry Information** - If tests were retried
+- ✅ **Browser Info** - Which browser was used
+- ✅ **Video Playback** - Watch test execution (if enabled)
+- ✅ **Trace Viewer** - Interactive debugging (if enabled)
+- ✅ **Filterable** - Filter by status, browser, project
+- ✅ **Searchable** - Find specific tests
+
+### After Every Test Execution:
+
+**QA Engineer MUST:**
+1. ✅ Run E2E tests: `npm run test:e2e`
+2. ✅ Open HTML report: `npx playwright show-report`
+3. ✅ **Manually review** ALL test results
+4. ✅ Check screenshots for failures
+5. ✅ Verify test behavior matches expectations
+6. ✅ Document any issues found
+7. ✅ Archive report for reference
+
+### Archiving Reports (MANDATORY):
+
+```bash
+# After reviewing, archive the report
+mv playwright-report docs/test-results/epic-01/user-story-1.1/cycle-X-YYYYMMDD-HHMMSS/playwright-report
+
+# OR compress and save
+tar -czf playwright-report-cycle-X.tar.gz playwright-report
+mv playwright-report-cycle-X.tar.gz docs/test-results/epic-01/user-story-1.1/
+```
+
+### Directory Structure with Per-Execution Reports:
+
+```
+docs/test-results/epic-01/
+├── E2E_TEST_REPORT.html                    ← Epic-level summary
+├── README.md
+├── user-story-1.1/
+│   ├── cycle-1-20260203-143022/
+│   │   ├── playwright-report/              ← Execution 1 HTML report
+│   │   │   ├── index.html                  ← OPEN THIS for manual review
+│   │   │   ├── data/
+│   │   │   │   └── screenshots/
+│   │   │   └── assets/
+│   │   ├── test-output.log
+│   │   └── CYCLE_NOTES.md
+│   ├── cycle-2-20260203-150145/
+│   │   ├── playwright-report/              ← Execution 2 HTML report
+│   │   │   └── index.html
+│   │   └── ...
+│   └── FINAL_STATUS.md
+└── ...
+```
+
+### Manual Review Checklist:
+
+After EVERY E2E test execution:
+
+- [ ] HTML report generated successfully
+- [ ] Report opened in browser for review
+- [ ] All test results visible and clear
+- [ ] Screenshots captured for failures
+- [ ] Error messages are readable
+- [ ] Test duration is reasonable
+- [ ] No unexpected warnings/errors
+- [ ] Visual verification matches expectations
+- [ ] Report archived for future reference
+
+### CI/CD Integration:
+
+**GitHub Actions Example:**
+
+```yaml
+name: E2E Tests
+
+on: [push, pull_request]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm ci
+      - name: Run E2E tests
+        run: npm run test:e2e
+      
+      # ✅ MANDATORY: Upload HTML report as artifact
+      - name: Upload Playwright Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+      
+      # ✅ MANDATORY: Archive to test results folder
+      - name: Archive Test Results
+        if: always()
+        run: |
+          mkdir -p docs/test-results/epic-01/user-story-1.1/cycle-${{ github.run_number }}
+          cp -r playwright-report docs/test-results/epic-01/user-story-1.1/cycle-${{ github.run_number }}/
+```
+
+### Benefits:
+
+**Why per-execution HTML reports matter:**
+
+1. **Visual Verification** - See actual UI, not just test logs
+2. **Screenshots** - Visual proof of what happened
+3. **Debugging** - Much easier to debug with visual report
+4. **Stakeholder Communication** - Show management actual test results
+5. **Historical Record** - Archive shows test evolution over time
+6. **Quality Gates** - Can't approve PR without reviewing HTML report
+7. **Compliance** - Proof tests were executed thoroughly
+
+### Rules:
+
+1. ✅ **Generate HTML report** on EVERY E2E test execution
+2. ✅ **Manually review** HTML report before marking tests as passed
+3. ✅ **Archive HTML report** in cycle folder after review
+4. ✅ **Include screenshots** on failure (minimum)
+5. ✅ **Document issues** found during manual review
+6. ✅ **Never skip** HTML report review (even if tests pass)
+7. ✅ **Keep reports** for at least last 3 cycles per user story
+
+---
+
+## 2. HTML Report Requirements (Epic-Level)
+
+### Must Include:
+
+#### Header Section:
+- ✅ Epic title and number
+- ✅ Generation date
+- ✅ Framework used (Playwright/Cypress)
+- ✅ Total test time
+- ✅ Environment (dev/staging/prod)
+
+#### Summary Statistics:
+- ✅ Total tests count
+- ✅ Passed tests (with %)
+- ✅ Failed tests (with %)
+- ✅ Pending user stories
+- ✅ Visual progress bar
+
+#### Per User Story Card:
+- ✅ Story number and title
+- ✅ Story description
+- ✅ Status badge (Ready/In Progress/Pending/Failed)
+- ✅ Test results summary
+- ✅ Individual test cases (passed/failed/warning)
+- ✅ Key achievements
+- ✅ Known issues
+- ✅ Next steps
+
+#### Visual Design:
+- ✅ Color-coded status (green/yellow/red/blue)
+- ✅ RTL support for Hebrew
+- ✅ Responsive (mobile/tablet/desktop)
+- ✅ Print-friendly CSS
+- ✅ Interactive hover effects
+- ✅ Progress bars
+- ✅ Icons for visual clarity
+
+---
+
+## 3. When to Update Report
+
+### Auto-Update Triggers:
+
+1. **After Phase 4 completion** for any user story
+   - E2E tests executed
+   - Results verified
+   - Add/update user story card
+
+2. **After manual testing** (if E2E passed)
+   - Mark story as "Ready for Production"
+   - Update status badge
+
+3. **After bug fixes**
+   - Re-run E2E tests
+   - Update test results
+   - Update known issues section
+
+---
+
+## 4. HTML Template Structure
+
+### Basic Template:
+
+```html
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic XX: [Name] - E2E Test Report</title>
+    <style>
+        /* Modern, responsive CSS */
+        /* RTL support */
+        /* Color-coded status */
+        /* Print-friendly */
+    </style>
+</head>
+<body>
+    <!-- Header with Epic info -->
+    <div class="header">
+        <h1>Epic XX: [Name]</h1>
+        <div class="meta">Date, Framework, etc.</div>
+    </div>
+
+    <!-- Summary Statistics -->
+    <div class="summary-stats">
+        <!-- Total, Passed, Failed, Pending cards -->
+    </div>
+
+    <!-- User Story Cards -->
+    <div class="user-stories">
+        <!-- One card per user story -->
+        <div class="story-card">
+            <div class="story-header">
+                <div class="story-status">Status Badge</div>
+                <div class="story-title">US X.X: Title</div>
+            </div>
+            <div class="story-body">
+                <!-- Test results -->
+                <!-- Achievements -->
+                <!-- Issues -->
+                <!-- Next steps -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        Last updated, Framework info
+    </div>
+</body>
+</html>
+```
+
+---
+
+## 5. Status Badge Colors
+
+### Standard Color Scheme:
+
+| Status | Color | When to Use |
+|--------|-------|-------------|
+| ✅ Ready | Green (#48bb78) | E2E passed, ready for manual test |
+| 🟡 In Progress | Yellow (#ecc94b) | Currently implementing/testing |
+| ⏳ Pending | Gray (#cbd5e0) | Not started yet |
+| ❌ Failed | Red (#f56565) | Critical bugs, E2E failed |
+
+**CSS Classes:**
+```css
+.status-ready { background: #48bb78; }
+.status-in-progress { background: #ecc94b; }
+.status-pending { background: #cbd5e0; }
+.status-failed { background: #f56565; }
+```
+
+---
+
+## 6. Test Case Display
+
+### Three States:
+
+#### Passed Test (Green):
+```html
+<div class="test-case passed">
+    <div class="test-icon">✅</div>
+    <div class="test-content">
+        <div class="test-name">TC-E2E-001: Test name</div>
+        <ul class="test-details">
+            <li>✓ Detail 1</li>
+            <li>✓ Detail 2</li>
+        </ul>
+    </div>
+</div>
+```
+
+#### Failed Test (Red):
+```html
+<div class="test-case failed">
+    <div class="test-icon">❌</div>
+    <!-- Error details -->
+</div>
+```
+
+#### Warning/Timing Issue (Yellow):
+```html
+<div class="test-case warning">
+    <div class="test-icon">⚠️</div>
+    <!-- Note about timing/non-critical issue -->
+</div>
+```
+
+---
+
+## 7. Adding New User Story to Report
+
+### Step-by-Step:
+
+1. **Copy template** from existing story card
+2. **Update story info:**
+   - Number (US X.X)
+   - Title
+   - Description
+   - Status badge
+3. **Add test results:**
+   - Summary stats (X/Y passing)
+   - Progress bar width
+   - Individual test cases
+4. **Update Epic summary:**
+   - Recalculate total tests
+   - Update passed/failed counts
+   - Adjust progress percentage
+5. **Test HTML:**
+   - Open in browser
+   - Check responsive design
+   - Verify links work
+   - Test print view
+
+---
+
+## 8. README File (MANDATORY)
+
+Every `epic-XX/` folder must have a `README.md`:
+
+**Required Sections:**
+- 📖 About This Report
+- 🎯 How to View the Report
+- 📊 Current Status
+- 🔄 Auto-Update Process
+- 📁 Directory Structure
+- 🧪 Test Coverage
+- 🎨 Report Features
+- 🔍 Finding Specific Information
+- 📝 Report Updates
+- 🎯 Next Steps
+
+**See:** `docs/test-results/epic-01/README.md` for template
+
+---
+
+## 9. Responsive Design Requirements
+
+### Must Work On:
+
+- ✅ **Desktop** (1920x1080+)
+- ✅ **Laptop** (1366x768)
+- ✅ **Tablet** (768x1024)
+- ✅ **Mobile** (375x667)
+
+### CSS Media Queries:
+
+```css
+@media (max-width: 768px) {
+    .header h1 { font-size: 2em; }
+    .summary-stats { grid-template-columns: 1fr 1fr; }
+}
+
+@media print {
+    body { background: white; }
+    .story-card { page-break-inside: avoid; }
+}
+```
+
+---
+
+## 10. RTL Support
+
+### Hebrew Text Handling:
+
+```css
+html {
+    direction: rtl;
+}
+
+body {
+    text-align: right;
+}
+
+.meta-item {
+    /* Flex items align correctly for RTL */
+}
+```
+
+**Test with:** Mixed English/Hebrew content to ensure proper alignment
+
+---
+
+## 11. Accessibility
+
+### Must Have:
+
+- ✅ **Semantic HTML** (header, nav, main, article, footer)
+- ✅ **Alt text** for icons/images
+- ✅ **ARIA labels** where needed
+- ✅ **Keyboard navigation** works
+- ✅ **Color contrast** meets WCAG AA
+- ✅ **Screen reader** compatible
+
+---
+
+## 12. Performance
+
+### Optimization:
+
+- ✅ **Single HTML file** (no external dependencies)
+- ✅ **Inline CSS** (no external stylesheets)
+- ✅ **No JavaScript** (static HTML/CSS only)
+- ✅ **Lightweight** (< 500KB)
+- ✅ **Fast load** (< 1 second)
+
+**Benefits:**
+- Works offline
+- Easy to email/share
+- No server needed
+- Version control friendly
+
+---
+
+## 13. Version Control
+
+### Git Best Practices:
+
+```bash
+# Commit HTML report after Phase 4
+git add docs/test-results/epic-01/E2E_TEST_REPORT.html
+git commit -m "docs: update Epic 01 E2E report - US1.1 complete (6/8 passing)"
+
+# Commit README if updated
+git add docs/test-results/epic-01/README.md
+git commit -m "docs: update Epic 01 README with US1.1 status"
+```
+
+**Commit Message Format:**
+```
+docs: update Epic XX E2E report - US X.X [status] (pass rate)
+```
+
+---
+
+## 14. Sharing Reports
+
+### How to Share:
+
+**Option 1: Open Directly**
+```bash
+open docs/test-results/epic-01/E2E_TEST_REPORT.html
+```
+
+**Option 2: Serve via HTTP**
+```bash
+cd docs/test-results/epic-01
+python -m http.server 8080
+# Open: http://localhost:8080/E2E_TEST_REPORT.html
+```
+
+**Option 3: Export to PDF**
+- Open in browser
+- Print → Save as PDF
+- Share PDF with stakeholders
+
+**Option 4: Git/GitHub**
+- Commit to repository
+- Share GitHub link
+- View in GitHub Pages (if enabled)
+
+---
+
+## 15. Maintenance
+
+### Regular Tasks:
+
+**After each user story completion:**
+- [ ] Add/update user story card
+- [ ] Update summary statistics
+- [ ] Recalculate pass rates
+- [ ] Update progress bars
+- [ ] Test HTML in browser
+- [ ] Commit changes to Git
+
+**Monthly review:**
+- [ ] Archive old test cycles (keep last 3)
+- [ ] Clean up outdated screenshots
+- [ ] Update README if needed
+- [ ] Check for broken links
+
+---
+
+## 16. Common Mistakes
+
+### ❌ Mistake 1: Multiple HTML Files per Epic
+
+```
+# WRONG
+docs/test-results/epic-01/
+├── US1.1_report.html
+├── US1.2_report.html
+└── US1.3_report.html
+```
+
+**Correct:** ONE `E2E_TEST_REPORT.html` for entire Epic
+
+---
+
+### ❌ Mistake 2: No Status Badge
+
+```html
+<!-- WRONG - Missing status indicator -->
+<div class="story-header">
+    <div class="story-title">US1.1: Create Property</div>
+</div>
+```
+
+**Correct:** Always include status badge
+
+---
+
+### ❌ Mistake 3: Not Updating Summary Stats
+
+After adding US1.2 results, forgot to update:
+- Total tests count
+- Passed/failed percentages
+- Progress bar width
+
+**Always:** Recalculate Epic-level statistics
+
+---
+
+### ❌ Mistake 4: External Dependencies
+
+```html
+<!-- WRONG - External CSS -->
+<link rel="stylesheet" href="styles.css">
+
+<!-- WRONG - External JS -->
+<script src="chart.js"></script>
+```
+
+**Correct:** Everything inline (single file)
+
+---
+
+## 17. Quality Checklist
+
+### Epic-Level HTML Report (E2E_TEST_REPORT.html):
+
+Before committing Epic HTML report:
+
+- [ ] Opens correctly in Chrome/Firefox/Safari
+- [ ] Responsive on mobile/tablet
+- [ ] RTL layout correct for Hebrew
+- [ ] All status badges color-coded
+- [ ] Progress bars show correct percentage
+- [ ] Test cases clearly marked (pass/fail/warning)
+- [ ] Print view looks good
+- [ ] No JavaScript errors in console
+- [ ] File size < 500KB
+- [ ] Git diff looks clean
+
+### Per-Execution HTML Report (playwright-report/index.html):
+
+After EVERY E2E test execution:
+
+- [ ] HTML report generated successfully
+- [ ] Report opened and manually reviewed
+- [ ] All screenshots visible (if any failures)
+- [ ] Videos captured (if configured)
+- [ ] Error traces readable
+- [ ] Test duration reasonable
+- [ ] No unexpected browser errors
+- [ ] Report archived in cycle folder
+- [ ] Issues documented in CYCLE_NOTES.md
+- [ ] Ready for stakeholder review (if needed)
+
+---
+
+## 18. Example Report Structure
+
+### Epic 01 Example:
+
+```
+Epic 01: Property Management
+├── 10 User Stories total
+├── 1 Completed (US1.1)
+├── 9 Pending
+└── Overall: 6/8 tests passing (75%)
+
+US1.1: Create Property ✅
+├── Status: Ready for Manual Test
+├── Tests: 6/8 passing
+├── Achievements: 6 items
+├── Issues: 2 timing-related
+└── Next: Manual testing (5 min)
+
+US1.2-1.10: Pending ⏳
+└── Will be added after Phase 4
+```
+
+---
+
+## 19. Future Enhancements (Optional)
+
+**Nice to have (but not required):**
+- Interactive charts (Chart.js inline)
+- Collapsible sections
+- Dark mode toggle
+- Export to Markdown
+- Search/filter functionality
+
+**Keep it simple:** Focus on clear, static HTML first!
+
+---
+
+## 20. Quick Reference
+
+### Creating New Report:
+
+```bash
+# 1. Create HTML from template
+cp docs/test-results/epic-01/E2E_TEST_REPORT.html \
+   docs/test-results/epic-02/E2E_TEST_REPORT.html
+
+# 2. Update Epic info
+# - Change title
+# - Reset statistics
+# - Remove US cards
+
+# 3. Create README
+cp docs/test-results/epic-01/README.md \
+   docs/test-results/epic-02/README.md
+
+# 4. Update README with Epic 02 info
+```
+
+### Updating Existing Report:
+
+```bash
+# 1. Open HTML in editor
+# 2. Find <!-- User Stories --> section
+# 3. Copy existing story card
+# 4. Update with new US info
+# 5. Update summary statistics
+# 6. Test in browser
+# 7. Commit
+```
+
+---
+
+## 21. Two Types of HTML Reports - Understanding the Difference
+
+### Epic-Level Report vs Per-Execution Report
+
+**BOTH are MANDATORY but serve different purposes:**
+
+| Aspect | Epic-Level Report | Per-Execution Report |
+|--------|-------------------|----------------------|
+| **Purpose** | High-level summary | Detailed execution results |
+| **Scope** | All user stories in Epic | Single test execution |
+| **Audience** | Management, stakeholders | QA engineers, developers |
+| **Update Frequency** | After each US Phase 4 | After EVERY E2E run |
+| **File Location** | `docs/test-results/epic-01/E2E_TEST_REPORT.html` | `playwright-report/index.html` |
+| **Archive Location** | Single file, updated | `cycle-X-timestamp/playwright-report/` |
+| **Content** | Pass/fail summary, achievements, next steps | Detailed traces, screenshots, videos |
+| **Creation** | Manual (update existing) | Automatic (Playwright generates) |
+| **Review** | Quick overview | Deep dive debugging |
+| **Screenshots** | None | Yes (failures, optional all steps) |
+| **Videos** | None | Optional |
+| **Interactivity** | Static HTML/CSS | Interactive (click traces, watch videos) |
+
+---
+
+### When to Use Which Report:
+
+#### Use Epic-Level Report When:
+- ✅ Presenting to management
+- ✅ Quick status check on Epic progress
+- ✅ Understanding overall quality
+- ✅ Planning next user stories
+- ✅ Sharing with stakeholders
+- ✅ Tracking Epic completion
+
+#### Use Per-Execution Report When:
+- ✅ Debugging test failures
+- ✅ Manual QA review
+- ✅ Verifying test behavior
+- ✅ Investigating timing issues
+- ✅ Analyzing screenshots
+- ✅ Understanding what actually happened in tests
+
+---
+
+## 22. Complete Workflow Example
+
+### Scenario: Implementing US1.1 - Create Property
+
+#### Step 1: Write E2E Tests (Phase 2)
+```bash
+# Write tests in apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts
+```
+
+#### Step 2: Run E2E Tests (Phase 4)
+```bash
+cd apps/frontend
+npm run test:e2e
+
+# ✅ Playwright automatically generates: playwright-report/index.html
+```
+
+#### Step 3: Manual Review (MANDATORY)
+```bash
+# Open per-execution HTML report
+npx playwright show-report
+
+# OR
+open playwright-report/index.html
+
+# QA Engineer reviews:
+# - All test results
+# - Screenshots (if any failures)
+# - Error messages
+# - Test duration
+# - Unexpected issues
+```
+
+#### Step 4: Archive Execution Report
+```bash
+# Create cycle folder with timestamp
+mkdir -p docs/test-results/epic-01/user-story-1.1/cycle-1-20260203-143022
+
+# Copy Playwright report
+cp -r playwright-report docs/test-results/epic-01/user-story-1.1/cycle-1-20260203-143022/
+
+# Add cycle notes
+cat > docs/test-results/epic-01/user-story-1.1/cycle-1-20260203-143022/CYCLE_NOTES.md << EOF
+# Cycle 1 - US1.1 E2E Tests
+
+**Date:** February 3, 2026 14:30:22
+**Tests Run:** 8
+**Passed:** 6
+**Failed:** 2
+**Duration:** 45 seconds
+
+## Results:
+- TC-E2E-001: ✅ Passed
+- TC-E2E-002: ⚠️ Failed (timing issue)
+...
+
+## Manual Review:
+✅ HTML report reviewed
+✅ Screenshots verified
+✅ Core functionality works
+⚠️ 2 timing-related failures (not bugs)
+
+## Next Steps:
+- Fix timing issues OR
+- Proceed to manual testing (recommended)
+EOF
+```
+
+#### Step 5: Update Epic-Level Report
+```bash
+# Edit docs/test-results/epic-01/E2E_TEST_REPORT.html
+
+# Add/Update US1.1 card:
+# - Status: Ready for Manual Test
+# - Tests: 6/8 passing (75%)
+# - Link to cycle: cycle-1-20260203-143022/playwright-report/index.html
+# - Key achievements
+# - Known issues
+
+# Update Epic summary:
+# - Total tests: 8
+# - Passed: 6 (75%)
+# - Failed: 2
+# - Progress bar: 75%
+```
+
+#### Step 6: Commit Both Reports
+```bash
+# Commit per-execution report (archived)
+git add docs/test-results/epic-01/user-story-1.1/cycle-1-20260203-143022/
+git commit -m "test: add US1.1 E2E test execution report - cycle 1 (6/8 passing)"
+
+# Commit Epic-level report (updated)
+git add docs/test-results/epic-01/E2E_TEST_REPORT.html
+git commit -m "docs: update Epic 01 E2E report - US1.1 ready for manual test"
+```
+
+#### Step 7: Share for Review
+```bash
+# For detailed debugging (developers/QA):
+open docs/test-results/epic-01/user-story-1.1/cycle-1-20260203-143022/playwright-report/index.html
+
+# For management/overview (stakeholders):
+open docs/test-results/epic-01/E2E_TEST_REPORT.html
+```
+
+---
+
+## 23. Quick Reference Commands
+
+### Generate & Review Per-Execution Report:
+```bash
+# Run E2E tests (generates HTML report)
+npm run test:e2e
+
+# Open report for manual review
+npx playwright show-report
+
+# Archive report
+timestamp=$(date +%Y%m%d-%H%M%S)
+mkdir -p docs/test-results/epic-01/user-story-1.1/cycle-X-$timestamp
+cp -r playwright-report docs/test-results/epic-01/user-story-1.1/cycle-X-$timestamp/
+```
+
+### Update Epic-Level Report:
+```bash
+# Edit report
+code docs/test-results/epic-01/E2E_TEST_REPORT.html
+
+# Open in browser to verify
+open docs/test-results/epic-01/E2E_TEST_REPORT.html
+
+# Commit
+git add docs/test-results/epic-01/E2E_TEST_REPORT.html
+git commit -m "docs: update Epic 01 E2E report - US1.X complete"
+```
+
+---
+
+## Summary
+
+### Two-Level Reporting Strategy:
+
+```
+📊 Epic-Level HTML Report (E2E_TEST_REPORT.html)
+├── Purpose: High-level summary for stakeholders
+├── Scope: Entire Epic (all user stories)
+├── Location: docs/test-results/epic-XX/E2E_TEST_REPORT.html
+├── Update: After each US Phase 4
+└── Content: Pass/fail summary, achievements, issues, next steps
+
+🧪 Per-Execution HTML Report (playwright-report/index.html)
+├── Purpose: Detailed results for debugging/review
+├── Scope: Single test execution
+├── Location: playwright-report/ (then archived)
+├── Update: EVERY E2E test run
+└── Content: Full traces, screenshots, videos, detailed errors
+```
+
+### Golden Rules:
+
+```
+✅ Generate per-execution HTML on EVERY E2E run
+✅ Manually review per-execution HTML before approval
+✅ Archive per-execution HTML in cycle folder
+✅ Update Epic-level HTML after Phase 4
+✅ Never skip HTML report review
+✅ Keep both types of reports
+```
+
+**Every E2E test execution must be documented in HTML for manual review!**
+
+---
+
+**Last Updated:** February 3, 2026  
+**Epic Template:** `docs/test-results/epic-01/E2E_TEST_REPORT.html`  
+**Per-Execution:** Playwright auto-generates `playwright-report/index.html`  
+**Status:** ✅ MANDATORY for all E2E tests

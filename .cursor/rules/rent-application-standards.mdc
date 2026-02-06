@@ -1,0 +1,458 @@
+# Rent Application Development Standards
+
+**MANDATORY**: All code for the rent management SaaS application must follow these standards.
+
+## Project Overview
+
+This is a multi-tenant SaaS application for managing rental properties, leases, and notifications. The system supports Hebrew RTL interface and focuses on property owners/managers.
+
+## Tech Stack
+
+### Frontend
+- **Framework**: Next.js 14+ with App Router
+- **Language**: TypeScript (strict mode)
+- **UI Library**: MUI (Material-UI) with RTL support
+- **State Management**: React Query for server state, Zustand for client state
+- **Forms**: React Hook Form + Zod validation
+- **Styling**: Emotion (MUI default) + Tailwind for utilities
+
+### Backend
+- **Framework**: NestJS
+- **Language**: TypeScript
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: Google OAuth 2.0 + JWT
+- **API**: REST with OpenAPI documentation
+
+## Architecture Principles
+
+### 1. Multi-Tenancy (CRITICAL)
+
+**Every query MUST filter by account_id:**
+
+```typescript
+// ✅ Good - Account filtering
+async findAllLeases(accountId: string) {
+  return this.prisma.lease.findMany({
+    where: { account_id: accountId }
+  });
+}
+
+// ❌ Bad - No account filtering
+async findAllLeases() {
+  return this.prisma.lease.findMany();
+}
+```
+
+**Middleware/Guard for account isolation:**
+
+```typescript
+// Extract account from JWT
+@Injectable()
+export class AccountGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    const user = request.user; // From JWT
+    request.accountId = user.accountId; // Attach to request
+    return true;
+  }
+}
+```
+
+### 2. Database Schema Conventions
+
+**All tables MUST include:**
+
+```prisma
+model Property {
+  id         String   @id @default(uuid())
+  accountId  String   @map("account_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  account    Account  @relation(fields: [accountId], references: [id])
+  
+  @@index([accountId])
+  @@map("properties")
+}
+```
+
+**Key conventions:**
+- Use UUID for IDs
+- Snake_case for database columns (@map)
+- CamelCase for Prisma models
+- Always index accountId
+- Include createdAt/updatedAt
+
+### 3. API Response Format
+
+**Standard response wrapper:**
+
+```typescript
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+    details?: any;
+  };
+}
+
+// ✅ Good
+@Get()
+async findAll(@AccountId() accountId: string): Promise<ApiResponse<Lease[]>> {
+  const leases = await this.leasesService.findAll(accountId);
+  return {
+    success: true,
+    data: leases
+  };
+}
+```
+
+### 4. Hebrew RTL Support
+
+**Frontend components must support RTL:**
+
+```typescript
+// ✅ Good - RTL-aware theme
+import { createTheme } from '@mui/material/styles';
+import { heIL } from '@mui/material/locale';
+
+const theme = createTheme(
+  {
+    direction: 'rtl',
+    typography: {
+      fontFamily: 'Heebo, Roboto, sans-serif'
+    }
+  },
+  heIL
+);
+
+// Wrap app with RTL provider
+import { CacheProvider } from '@emotion/react';
+import createCache from '@emotion/cache';
+import rtlPlugin from 'stylis-plugin-rtl';
+
+const cacheRtl = createCache({
+  key: 'muirtl',
+  stylisPlugins: [rtlPlugin]
+});
+
+<CacheProvider value={cacheRtl}>
+  <ThemeProvider theme={theme}>
+    <App />
+  </ThemeProvider>
+</CacheProvider>
+```
+
+### 5. Authentication Flow
+
+**Protected routes:**
+
+```typescript
+// ✅ Good - Use Google OAuth
+@Injectable()
+export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+  constructor(
+    private configService: ConfigService,
+    private authService: AuthService
+  ) {
+    super({
+      clientID: configService.get('GOOGLE_CLIENT_ID'),
+      clientSecret: configService.get('GOOGLE_CLIENT_SECRET'),
+      callbackURL: configService.get('GOOGLE_CALLBACK_URL'),
+      scope: ['email', 'profile']
+    });
+  }
+
+  async validate(accessToken: string, refreshToken: string, profile: any) {
+    // Create or get user
+    const user = await this.authService.validateOAuthLogin(profile);
+    return user;
+  }
+}
+```
+
+### 6. Notification System
+
+**Lease expiration notifications:**
+
+```typescript
+// ✅ Good - Scheduled notification check
+@Injectable()
+export class NotificationService {
+  constructor(
+    private prisma: PrismaService,
+    private emailService: EmailService
+  ) {}
+
+  @Cron('0 9 * * *') // Daily at 9 AM
+  async checkLeaseExpirations() {
+    const now = new Date();
+    const thresholds = [30, 60, 90]; // Days before expiration
+
+    for (const days of thresholds) {
+      const targetDate = addDays(now, days);
+      
+      const expiringLeases = await this.prisma.lease.findMany({
+        where: {
+          endDate: {
+            gte: startOfDay(targetDate),
+            lte: endOfDay(targetDate)
+          },
+          status: 'ACTIVE'
+        },
+        include: {
+          unit: { include: { property: true } },
+          tenant: true,
+          account: { include: { users: true } }
+        }
+      });
+
+      for (const lease of expiringLeases) {
+        await this.sendExpirationNotification(lease, days);
+      }
+    }
+  }
+}
+```
+
+## Code Quality Standards
+
+### 1. Type Safety
+
+```typescript
+// ✅ Good - Full type definitions
+interface CreateLeaseDto {
+  unitId: string;
+  tenantId: string;
+  startDate: Date;
+  endDate: Date;
+  monthlyRent: number;
+  paymentTo: string;
+  notes?: string;
+}
+
+// ❌ Bad - Using any
+function createLease(data: any) {}
+```
+
+### 2. Validation
+
+```typescript
+// ✅ Good - Zod validation
+import { z } from 'zod';
+
+const createLeaseSchema = z.object({
+  unitId: z.string().uuid(),
+  tenantId: z.string().uuid(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
+  monthlyRent: z.number().positive(),
+  paymentTo: z.string().min(1),
+  notes: z.string().optional()
+}).refine(data => data.endDate > data.startDate, {
+  message: 'End date must be after start date'
+});
+```
+
+### 3. Error Handling
+
+```typescript
+// ✅ Good - Specific error types
+export class LeaseNotFoundError extends Error {
+  constructor(leaseId: string) {
+    super(`Lease with id ${leaseId} not found`);
+    this.name = 'LeaseNotFoundError';
+  }
+}
+
+// Use in controller
+@Get(':id')
+async findOne(@Param('id') id: string, @AccountId() accountId: string) {
+  try {
+    return await this.leasesService.findOne(id, accountId);
+  } catch (error) {
+    if (error instanceof LeaseNotFoundError) {
+      throw new NotFoundException(error.message);
+    }
+    throw error;
+  }
+}
+```
+
+## Testing Requirements
+
+### Backend Tests
+
+```typescript
+// ✅ Good - Test with account isolation
+describe('LeasesService', () => {
+  it('should only return leases for the account', async () => {
+    const accountId = 'account-123';
+    const leases = await service.findAll(accountId);
+    
+    expect(leases.every(l => l.accountId === accountId)).toBe(true);
+  });
+
+  it('should throw error when accessing lease from different account', async () => {
+    const lease = await createLease({ accountId: 'account-1' });
+    
+    await expect(
+      service.findOne(lease.id, 'account-2')
+    ).rejects.toThrow(ForbiddenException);
+  });
+});
+```
+
+### Frontend Tests
+
+```typescript
+// ✅ Good - Test RTL rendering
+describe('LeaseTable', () => {
+  it('should render in RTL mode', () => {
+    const { container } = render(<LeaseTable />, {
+      wrapper: RtlThemeProvider
+    });
+    
+    expect(container.firstChild).toHaveAttribute('dir', 'rtl');
+  });
+});
+```
+
+## Security Requirements
+
+### 1. JWT Configuration
+
+```typescript
+// ✅ Good - Secure JWT settings
+JwtModule.register({
+  secret: configService.get('JWT_SECRET'),
+  signOptions: {
+    expiresIn: '1d',
+    issuer: 'rent-app',
+    audience: 'rent-app-users'
+  }
+})
+```
+
+### 2. Input Sanitization
+
+```typescript
+// ✅ Good - Sanitize inputs
+import DOMPurify from 'isomorphic-dompurify';
+
+class CreatePropertyDto {
+  @Transform(({ value }) => DOMPurify.sanitize(value))
+  @IsString()
+  address: string;
+}
+```
+
+## Performance Guidelines
+
+### 1. Database Queries
+
+```typescript
+// ✅ Good - Efficient queries with relations
+async findLeaseWithDetails(id: string, accountId: string) {
+  return this.prisma.lease.findFirst({
+    where: { id, accountId },
+    include: {
+      unit: {
+        include: { property: true }
+      },
+      tenant: true
+    }
+  });
+}
+
+// ❌ Bad - N+1 queries
+const leases = await this.prisma.lease.findMany({ where: { accountId } });
+for (const lease of leases) {
+  lease.unit = await this.prisma.unit.findUnique({ where: { id: lease.unitId } });
+}
+```
+
+### 2. Frontend Optimization
+
+```typescript
+// ✅ Good - Use React Query for caching
+const { data: leases } = useQuery({
+  queryKey: ['leases', accountId],
+  queryFn: () => leasesApi.getAll(),
+  staleTime: 5 * 60 * 1000 // 5 minutes
+});
+```
+
+## File Organization
+
+```
+rent-application/
+├── apps/
+│   ├── backend/
+│   │   ├── src/
+│   │   │   ├── modules/
+│   │   │   │   ├── auth/
+│   │   │   │   ├── leases/
+│   │   │   │   ├── properties/
+│   │   │   │   ├── tenants/
+│   │   │   │   └── notifications/
+│   │   │   ├── common/
+│   │   │   │   ├── guards/
+│   │   │   │   ├── decorators/
+│   │   │   │   └── filters/
+│   │   │   └── database/
+│   │   │       └── prisma/
+│   │   └── test/
+│   └── frontend/
+│       ├── src/
+│       │   ├── app/
+│       │   ├── components/
+│       │   │   ├── leases/
+│       │   │   ├── properties/
+│       │   │   └── common/
+│       │   ├── hooks/
+│       │   ├── services/
+│       │   ├── types/
+│       │   └── utils/
+│       └── __tests__/
+├── packages/
+│   └── shared/
+│       └── types/
+└── docs/
+```
+
+## Commit Standards
+
+```bash
+# Format: type(scope): message
+
+feat(leases): add lease expiration notifications
+fix(auth): correct account isolation in queries
+docs(api): update OpenAPI documentation
+test(leases): add account filtering tests
+refactor(properties): extract property validation logic
+```
+
+## Checklist Before Commit
+
+- [ ] All queries filter by accountId
+- [ ] Type safety maintained (no `any`)
+- [ ] Tests include account isolation
+- [ ] RTL support verified for UI components
+- [ ] API responses use standard format
+- [ ] Error handling is specific
+- [ ] Input validation in place
+- [ ] Hebrew translations added
+- [ ] Database migrations created
+- [ ] OpenAPI docs updated
+
+## References
+
+- [NestJS Documentation](https://docs.nestjs.com)
+- [Prisma Best Practices](https://www.prisma.io/docs/guides)
+- [MUI RTL Support](https://mui.com/material-ui/guides/right-to-left/)
+- [Next.js App Router](https://nextjs.org/docs/app)

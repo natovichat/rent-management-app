@@ -1,0 +1,406 @@
+# Phase-Based Implementation Documentation Rule
+
+**MANDATORY**: When implementing features or projects in phases, create dedicated documentation folders for each phase.
+
+## Golden Rule
+
+```
+📁 EVERY PHASE = DEDICATED DOC FOLDER
+📝 DOCUMENT BEFORE, DURING, AND AFTER
+🚫 NO PHASE WITHOUT DOCUMENTATION
+```
+
+## Core Principle
+
+When breaking work into phases (Phase 0, Phase 1, etc.), each phase MUST have its own documentation folder to track planning, progress, and completion.
+
+## Required Structure
+
+### For Project-Wide Phases
+
+```
+project/
+├── docs/
+│   ├── phases/
+│   │   ├── phase-0/
+│   │   │   ├── README.md           # Phase overview
+│   │   │   ├── planning.md         # Initial planning
+│   │   │   ├── implementation.md   # Implementation notes
+│   │   │   ├── testing.md          # Test results
+│   │   │   └── completion.md       # Final status
+│   │   ├── phase-1/
+│   │   │   ├── README.md
+│   │   │   ├── planning.md
+│   │   │   ├── implementation.md
+│   │   │   ├── testing.md
+│   │   │   └── completion.md
+│   │   └── phase-2/
+│   │       └── ...
+│   └── PHASE_STATUS.md            # Overall phase tracking
+```
+
+### For Task-Specific Phases
+
+```
+~/Code/Tasks/DT-XXXX/
+├── Task.md
+├── phases/
+│   ├── phase-0/
+│   │   ├── README.md
+│   │   ├── analysis.md
+│   │   ├── implementation.md
+│   │   └── results.md
+│   ├── phase-1/
+│   │   └── ...
+│   └── phase-2/
+│       └── ...
+└── summary/
+    └── PHASE_SUMMARY.md
+```
+
+## Required Files Per Phase
+
+### 1. README.md (Phase Overview)
+
+```markdown
+# Phase X: [Phase Name]
+
+## Objective
+Brief description of what this phase aims to accomplish.
+
+## Scope
+- Item 1
+- Item 2
+- Item 3
+
+## Prerequisites
+- Phase X-1 completed
+- Required resources available
+
+## Success Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+## Timeline
+- Start: YYYY-MM-DD
+- Target Completion: YYYY-MM-DD
+- Actual Completion: YYYY-MM-DD (when done)
+
+## Status
+Current status: [Planning | In Progress | Testing | Complete | Blocked]
+```
+
+### 2. planning.md (Initial Planning)
+
+```markdown
+# Phase X Planning
+
+## Goals
+What we want to achieve.
+
+## Approach
+How we'll accomplish it.
+
+## Tasks
+- [ ] Task 1
+- [ ] Task 2
+- [ ] Task 3
+
+## Resources Needed
+- Resource 1
+- Resource 2
+
+## Risks
+- Risk 1: Description and mitigation
+- Risk 2: Description and mitigation
+
+## Dependencies
+- Dependency 1
+- Dependency 2
+```
+
+### 3. implementation.md (Implementation Notes)
+
+```markdown
+# Phase X Implementation
+
+## Work Log
+
+### YYYY-MM-DD
+- Work done today
+- Decisions made
+- Issues encountered
+
+### YYYY-MM-DD
+- Continued work
+- Solutions implemented
+
+## Key Decisions
+- Decision 1: Why we chose this approach
+- Decision 2: Tradeoffs considered
+
+## Code Changes
+- File 1: What was changed
+- File 2: What was added
+
+## Blockers Encountered
+- Blocker 1: How it was resolved
+- Blocker 2: Current status
+```
+
+### 4. testing.md (Testing & Verification)
+
+```markdown
+# Phase X Testing
+
+## Test Plan
+- Test 1: Description
+- Test 2: Description
+
+## Test Results
+
+### Test 1
+- Status: Pass/Fail
+- Output: [results]
+- Issues: [any problems]
+
+### Test 2
+- Status: Pass/Fail
+- Output: [results]
+
+## Verification
+- [ ] All tests pass
+- [ ] Code review complete
+- [ ] Documentation updated
+- [ ] Ready for next phase
+```
+
+### 5. completion.md (Final Summary)
+
+```markdown
+# Phase X Completion Summary
+
+## Accomplishments
+What was achieved in this phase.
+
+## Deliverables
+- Deliverable 1: [link/location]
+- Deliverable 2: [link/location]
+
+## Lessons Learned
+- Lesson 1
+- Lesson 2
+
+## Known Issues
+- Issue 1: Impact and workaround
+- Issue 2: Planned resolution
+
+## Next Steps
+What needs to happen in the next phase.
+
+## Sign-off
+- Completed: YYYY-MM-DD
+- Verified by: [name]
+- Ready for Phase X+1: Yes/No
+```
+
+## Phase Status Tracking
+
+### PHASE_STATUS.md (Root Level)
+
+```markdown
+# Phase Status Overview
+
+## Current Phase
+Phase X: [Name] - [Status]
+
+## Phase History
+
+### Phase 0: Foundation ✅
+- Status: Complete
+- Completed: YYYY-MM-DD
+- Documentation: [docs/phases/phase-0/](docs/phases/phase-0/)
+
+### Phase 1: Core Features 🔄
+- Status: In Progress
+- Started: YYYY-MM-DD
+- Documentation: [docs/phases/phase-1/](docs/phases/phase-1/)
+
+### Phase 2: Testing ⏸️
+- Status: Planned
+- Target Start: YYYY-MM-DD
+- Documentation: [docs/phases/phase-2/](docs/phases/phase-2/)
+
+## Legend
+- ✅ Complete
+- 🔄 In Progress
+- ⏸️ Planned
+- 🚫 Blocked
+```
+
+## Workflow
+
+### When Starting a New Phase
+
+1. **Create phase folder**:
+   ```bash
+   mkdir -p docs/phases/phase-N
+   cd docs/phases/phase-N
+   ```
+
+2. **Create required files**:
+   ```bash
+   touch README.md planning.md implementation.md testing.md completion.md
+   ```
+
+3. **Fill in planning documentation**:
+   - Write README.md with phase objectives
+   - Document approach in planning.md
+   - List all tasks and dependencies
+
+4. **Update PHASE_STATUS.md**:
+   - Add new phase entry
+   - Update current phase indicator
+
+### During Phase Implementation
+
+1. **Update implementation.md daily**:
+   - Log work completed
+   - Document decisions made
+   - Note any blockers
+
+2. **Track progress in README.md**:
+   - Update task checklist
+   - Mark completed items
+   - Update status
+
+### When Completing a Phase
+
+1. **Document testing in testing.md**:
+   - All test results
+   - Verification checklist
+
+2. **Create completion.md**:
+   - Summary of accomplishments
+   - Lessons learned
+   - Next steps
+
+3. **Update PHASE_STATUS.md**:
+   - Mark phase as complete
+   - Move to next phase
+   - Add completion date
+
+## Examples
+
+### ✅ Good: Proper Phase Documentation
+
+```
+docs/phases/phase-1-authentication/
+├── README.md               ✅ Clear objectives
+├── planning.md            ✅ Detailed approach
+├── implementation.md      ✅ Daily logs
+├── testing.md            ✅ Test results
+└── completion.md         ✅ Final summary
+```
+
+### ❌ Bad: Missing Documentation
+
+```
+docs/
+└── some-notes.md          ❌ No phase structure
+```
+
+### ✅ Good: Phase Documentation Content
+
+```markdown
+# Phase 1: User Authentication
+
+## Objective
+Implement secure user authentication with JWT tokens.
+
+## Success Criteria
+- [x] User registration endpoint
+- [x] Login/logout functionality
+- [x] JWT token generation
+- [x] Protected routes middleware
+- [x] 100% test coverage
+
+## Status
+Complete - 2026-01-15
+
+See [completion.md](./completion.md) for details.
+```
+
+## Benefits
+
+1. **Clear Progress Tracking**: Know exactly where you are in the project
+2. **Knowledge Preservation**: All decisions and context documented
+3. **Easy Onboarding**: New team members can understand project evolution
+4. **Better Planning**: Learn from previous phases
+5. **Audit Trail**: Complete history of implementation
+
+## Integration with Other Rules
+
+This rule works with:
+- **[task-file-organization.mdc](mdc:.cursor/rules/task-file-organization.mdc)** - Task folder structure
+- **[documentation-standards.mdc](mdc:.cursor/rules/documentation-standards.mdc)** - Documentation quality
+- **[repository-structure.mdc](mdc:.cursor/rules/repository-structure.mdc)** - File organization
+
+## Enforcement
+
+**Before starting ANY phase:**
+
+- [ ] Phase folder created in `docs/phases/` or `phases/`
+- [ ] README.md with objectives and success criteria
+- [ ] planning.md with approach and tasks
+- [ ] PHASE_STATUS.md updated
+
+**During phase implementation:**
+
+- [ ] implementation.md updated regularly
+- [ ] Progress tracked in README.md
+- [ ] Decisions documented
+
+**Before marking phase complete:**
+
+- [ ] testing.md with all test results
+- [ ] completion.md with summary
+- [ ] PHASE_STATUS.md shows completion
+- [ ] All success criteria met
+
+## Quick Reference
+
+```bash
+# Create new phase documentation
+mkdir -p docs/phases/phase-N
+cd docs/phases/phase-N
+cat > README.md << 'EOF'
+# Phase N: [Name]
+
+## Objective
+[What this phase accomplishes]
+
+## Success Criteria
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+## Status
+Planning
+EOF
+
+# Create all required files
+touch planning.md implementation.md testing.md completion.md
+```
+
+## Summary
+
+```
+📁 Each phase = Own doc folder
+📝 5 required files per phase
+🔄 Update during implementation
+✅ Complete before moving on
+📊 Track in PHASE_STATUS.md
+```
+
+**Organized phases lead to successful projects!**

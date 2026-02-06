@@ -1,0 +1,831 @@
+# Requirement to User Story Workflow - MANDATORY
+
+**CRITICAL**: Before implementing ANY new requirement, it MUST be added as a user story to an existing epic or a new epic must be created.
+
+## Golden Rule
+
+```
+🚫 NO IMPLEMENTATION WITHOUT USER STORY
+📋 EVERY requirement → User Story → Epic
+✅ ORGANIZE FIRST, IMPLEMENT SECOND
+```
+
+---
+
+## Core Principle
+
+**All work must be tracked in the epic/user story system.**
+
+When a user asks to implement a new requirement:
+1. ✅ **STOP** - Don't implement immediately
+2. ✅ **ANALYZE** - Which epic does this belong to?
+3. ✅ **CREATE/UPDATE** - Add user story to epic
+4. ✅ **THEN IMPLEMENT** - Use `/implement-user-story` command
+
+---
+
+## Workflow
+
+### When User Requests New Feature/Requirement
+
+```
+User: "Implement X feature"
+         ↓
+    ⚠️ STOP! ⚠️
+         ↓
+Step 1: Analyze Requirement
+         ↓
+Step 2: Find or Create Epic
+         ↓
+Step 3: Create User Story
+         ↓
+Step 4: Update Epic File
+         ↓
+Step 5: Implement Using Command
+         ↓
+     ✅ Done!
+```
+
+---
+
+## Step-by-Step Process
+
+### Step 1: Analyze the Requirement
+
+**Ask these questions:**
+
+1. **What is being requested?**
+   - New feature?
+   - Enhancement to existing feature?
+   - Bug fix?
+   - Improvement?
+
+2. **Which domain does it belong to?**
+   - Property Management?
+   - Unit Management?
+   - Tenant Management?
+   - Lease Management?
+   - Financial Tracking?
+   - Authentication?
+   - Notifications?
+   - Data Import/Export?
+   - New domain?
+
+3. **What is the user goal?**
+   - As a [user type]
+   - I can [action]
+   - So that [benefit]
+
+---
+
+### Step 2: Find or Create Epic
+
+#### Option A: Find Existing Epic
+
+**Check if requirement fits into existing epic:**
+
+```bash
+# List of existing epics
+docs/project_management/
+├── EPIC_01_PROPERTY_MANAGEMENT.md
+├── EPIC_02_UNIT_MANAGEMENT.md
+├── EPIC_03_TENANT_MANAGEMENT.md
+├── EPIC_04_LEASE_MANAGEMENT.md
+├── EPIC_05_OWNERSHIP_MANAGEMENT.md
+├── EPIC_06_MORTGAGE_MANAGEMENT.md
+├── EPIC_07_BANK_ACCOUNT_MANAGEMENT.md
+├── EPIC_08_FINANCIAL_TRACKING.md
+├── EPIC_09_INVESTMENT_COMPANIES.md
+├── EPIC_10_DASHBOARD_ANALYTICS.md
+├── EPIC_11_AUTHENTICATION.md
+├── EPIC_12_NOTIFICATIONS.md
+└── EPIC_13_DATA_IMPORT_EXPORT.md
+```
+
+**Decision criteria:**
+- Does the requirement relate to an existing epic's domain?
+- Would it logically fit with other user stories in that epic?
+- Does it share the same entity/resource?
+
+**Example:**
+```
+Requirement: "Add property valuation history tracking"
+Analysis: Properties + Financial tracking
+Match: EPIC_01_PROPERTY_MANAGEMENT ✅
+Action: Add user story to Epic 01
+```
+
+---
+
+#### Option B: Create New Epic
+
+**If no existing epic fits, create a new one.**
+
+**When to create new epic:**
+- ❌ Requirement doesn't fit existing domains
+- ❌ Would be out of place in any current epic
+- ❌ Introduces entirely new domain/entity
+- ✅ Large enough to warrant its own epic (3+ user stories)
+
+**New Epic Template:**
+
+```markdown
+# EPIC {NUMBER}: {EPIC_NAME}
+
+**Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low  
+**Status:** ⏳ Not Started  
+**Target:** MVP / Phase 2 / Phase 3  
+**Owner:** Development Team
+
+---
+
+## Epic Overview
+
+**As a** {user type},  
+**I want** {high-level goal},  
+**So that** {business value}.
+
+---
+
+## Goals
+
+- Goal 1
+- Goal 2
+- Goal 3
+
+---
+
+## User Stories
+
+### US{EPIC_NUM}.1: {First User Story Title}
+
+**As a** {user type},  
+**I can** {action},  
+**So that** {benefit}.
+
+**Priority:** 🔴 Critical  
+**Status:** ⏳ Pending  
+**Type:** Feature
+
+---
+
+**Acceptance Criteria:**
+
+**Backend:**
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+**Frontend:**
+- [ ] Criterion 1
+- [ ] Criterion 2
+
+**QA:**
+- [ ] Test criterion 1
+- [ ] Test criterion 2
+
+---
+
+**Technical Details:**
+
+**Backend:**
+- API endpoints needed
+- Database changes
+- Services/repositories
+
+**Frontend:**
+- Components needed
+- API integration
+- UI/UX requirements
+
+**Testing:**
+- Unit tests
+- API tests
+- E2E tests
+
+---
+
+**Dependencies:** None
+
+---
+
+## Acceptance Criteria
+
+Epic is complete when:
+- [ ] All user stories implemented
+- [ ] All tests passing
+- [ ] Documentation updated
+- [ ] Quality gates passed
+
+---
+
+## Testing Strategy
+
+- Backend unit tests: ≥80% coverage
+- API integration tests: 100% endpoints
+- Frontend component tests: ≥90% coverage
+- E2E tests: All user flows
+
+---
+
+**Created:** {date}  
+**Last Updated:** {date}
+```
+
+---
+
+### Step 3: Create User Story
+
+**User Story Template:**
+
+```markdown
+### US{EPIC_NUM}.{STORY_NUM}: {User Story Title}
+
+**As a** {user type},  
+**I can** {action},  
+**So that** {benefit}.
+
+**Priority:** 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low  
+**Status:** ⏳ Pending / 🟡 In Progress / ✅ Implemented  
+**Type:** Feature / Enhancement / Bug Fix
+
+---
+
+**Acceptance Criteria:**
+
+**Backend:**
+- [ ] {Specific backend requirement}
+- [ ] {API endpoint specification}
+- [ ] {Database/schema change}
+- [ ] {Validation rule}
+- [ ] {Error handling}
+
+**Frontend:**
+- [ ] {Component requirement}
+- [ ] {Form/UI element}
+- [ ] {Validation display}
+- [ ] {Error message}
+- [ ] {Loading state}
+
+**QA:**
+- [ ] {Test scenario 1}
+- [ ] {Test scenario 2}
+- [ ] {Edge case test}
+- [ ] {Error case test}
+
+---
+
+**Technical Details:**
+
+**Backend:**
+```typescript
+// API Endpoints
+POST   /api/{resource}
+GET    /api/{resource}
+PUT    /api/{resource}/:id
+DELETE /api/{resource}/:id
+
+// DTOs
+CreateDto, UpdateDto, FilterDto
+
+// Services
+{Resource}Service methods needed
+```
+
+**Frontend:**
+```typescript
+// Components
+{Resource}List.tsx
+{Resource}Form.tsx
+{Resource}Details.tsx
+
+// API Integration
+{resource}Api.ts methods
+```
+
+**Database:**
+```prisma
+// Schema changes (if any)
+model {Resource} {
+  // fields
+}
+```
+
+**Testing:**
+- Unit tests: {list key test cases}
+- API tests: {list endpoint tests}
+- E2E tests: {list user flows}
+
+---
+
+**Dependencies:** {US_X.Y if dependent on other stories, or "None"}
+
+---
+```
+
+---
+
+### Step 4: Update Epic File
+
+**Add the new user story to the appropriate epic file:**
+
+1. Open epic file: `docs/project_management/EPIC_{NUM}_{NAME}.md`
+2. Find the "User Stories" section
+3. Determine the next user story number (e.g., if last is US1.17, next is US1.18)
+4. Insert new user story using template above
+5. Update epic's "Last Updated" date
+6. Save file
+
+**Example:**
+
+```markdown
+# EPIC 01: PROPERTY MANAGEMENT
+
+...existing content...
+
+## User Stories
+
+...existing user stories...
+
+### US1.18: Track Property Valuation History
+
+**As a** property owner,  
+**I can** view historical valuations of my properties,  
+**So that** I can track value changes over time.
+
+**Priority:** 🟠 High  
+**Status:** ⏳ Pending  
+**Type:** Feature
+
+...acceptance criteria...
+
+---
+
+**Last Updated:** February 3, 2026
+```
+
+---
+
+### Step 5: Implement Using Command
+
+**Now that the user story is documented, implement it:**
+
+```bash
+/implement-user-story epic {NUM} user story {NUM}.{STORY_NUM}
+```
+
+**Example:**
+```bash
+/implement-user-story epic 01 user story 1.18
+```
+
+This will:
+1. ✅ Read the user story from the epic file
+2. ✅ Verify general requirements
+3. ✅ Generate and execute 4-phase workflow
+4. ✅ Implement the feature properly organized
+
+---
+
+## Decision Matrix
+
+### Finding the Right Epic
+
+| Requirement Type | Likely Epic | Alternative |
+|------------------|-------------|-------------|
+| Property CRUD/management | Epic 01 | - |
+| Property fields/data | Epic 01 | Epic 13 (if import) |
+| Unit CRUD/management | Epic 02 | - |
+| Tenant CRUD/management | Epic 03 | - |
+| Lease operations | Epic 04 | - |
+| Ownership tracking | Epic 05 | - |
+| Mortgage management | Epic 06 | Epic 07 (if bank-related) |
+| Bank accounts | Epic 07 | Epic 06 (if mortgage-related) |
+| Financial tracking | Epic 08 | Epic 01/02 (if property/unit specific) |
+| Investment companies | Epic 09 | Epic 05 (if ownership-related) |
+| Dashboard/analytics | Epic 10 | - |
+| Login/auth/accounts | Epic 11 | - |
+| Notifications/emails | Epic 12 | - |
+| Import/export | Epic 13 | Related epic (if specific to entity) |
+| New domain | Create new epic | - |
+
+---
+
+## Examples
+
+### Example 1: Add to Existing Epic
+
+**User Request:**
+```
+"Implement property valuation history tracking"
+```
+
+**AI Response:**
+```
+🔍 Analyzing requirement...
+
+Requirement: Property valuation history tracking
+Domain: Property Management + Financial Tracking
+Analysis: Properties entity with historical data
+
+📋 Found matching epic: EPIC_01_PROPERTY_MANAGEMENT
+
+Creating new user story:
+  Epic: 01 (Property Management)
+  User Story Number: 1.19 (next available)
+  Title: Track Property Valuation History
+
+📝 User Story Details:
+  As a: Property owner
+  I can: View historical valuations
+  So that: I can track value changes over time
+
+  Priority: 🟠 High
+  Status: ⏳ Pending
+  Type: Feature
+
+✅ User story added to EPIC_01_PROPERTY_MANAGEMENT.md
+
+Next step: Implementing user story...
+  Command: /implement-user-story epic 01 user story 1.19
+
+🚀 Starting implementation...
+```
+
+---
+
+### Example 2: Create New Epic
+
+**User Request:**
+```
+"Implement maintenance request tracking system"
+```
+
+**AI Response:**
+```
+🔍 Analyzing requirement...
+
+Requirement: Maintenance request tracking
+Domain: New domain (Maintenance Management)
+Analysis: Doesn't fit existing epics well
+
+⚠️  No matching epic found
+✨ Creating new epic...
+
+📋 New Epic Created:
+  Number: 14
+  Name: MAINTENANCE_MANAGEMENT
+  File: docs/project_management/EPIC_14_MAINTENANCE_MANAGEMENT.md
+
+Epic Overview:
+  As a: Property manager
+  I want: Track and manage maintenance requests
+  So that: Properties are maintained efficiently
+
+📝 First User Story Created:
+  US14.1: Create Maintenance Request
+
+✅ Epic file created
+✅ User story added
+
+Next step: Implementing user story...
+  Command: /implement-user-story epic 14 user story 14.1
+
+🚀 Starting implementation...
+```
+
+---
+
+### Example 3: Enhancement to Existing Feature
+
+**User Request:**
+```
+"Add bulk delete for properties"
+```
+
+**AI Response:**
+```
+🔍 Analyzing requirement...
+
+Requirement: Bulk delete properties
+Domain: Property Management
+Analysis: Enhancement to existing property management
+
+📋 Found matching epic: EPIC_01_PROPERTY_MANAGEMENT
+
+Reviewing existing user stories:
+  ✅ US1.1: Create Property (exists)
+  ✅ US1.12: Delete Property (exists)
+  
+This is an enhancement to US1.12
+
+Creating new user story:
+  Epic: 01 (Property Management)
+  User Story Number: 1.20 (next available)
+  Title: Bulk Delete Properties
+
+📝 User Story Details:
+  As a: Property manager
+  I can: Delete multiple properties at once
+  So that: I can efficiently manage property data
+
+  Priority: 🟡 Medium
+  Status: ⏳ Pending
+  Type: Enhancement
+  Dependencies: US1.12 (Delete Property)
+
+✅ User story added to EPIC_01_PROPERTY_MANAGEMENT.md
+
+Next step: Implementing user story...
+  Command: /implement-user-story epic 01 user story 1.20
+
+🚀 Starting implementation...
+```
+
+---
+
+## Validation Checklist
+
+Before implementing ANY new requirement:
+
+- [ ] Requirement analyzed and understood
+- [ ] User story format determined (As a/I can/So that)
+- [ ] Matching epic found OR new epic created
+- [ ] User story number assigned (next available in epic)
+- [ ] Acceptance criteria defined (Backend/Frontend/QA)
+- [ ] Technical details specified
+- [ ] Dependencies identified
+- [ ] Epic file updated with new user story
+- [ ] Ready to run `/implement-user-story` command
+
+---
+
+## Common Scenarios
+
+### Scenario 1: Clear Feature Addition
+```
+Request: "Add export to Excel for properties"
+Epic: 13 (Data Import/Export) ✅
+Story: Create new US13.X
+Action: Add story, then implement
+```
+
+### Scenario 2: Enhancement Request
+```
+Request: "Improve property search with filters"
+Epic: 01 (Property Management) ✅
+Story: Create new US1.X (enhancement)
+Dependencies: Check existing search story
+Action: Add story, then implement
+```
+
+### Scenario 3: Bug Fix
+```
+Request: "Fix property validation error"
+Epic: 01 (Property Management) ✅
+Story: Create new US1.X (bug fix)
+Type: Bug Fix (not Feature)
+Action: Add story, then implement
+```
+
+### Scenario 4: Cross-Epic Feature
+```
+Request: "Add tenant payment history to lease view"
+Epic: 04 (Lease Management) ✅ (primary)
+Note: May involve Epic 03 (Tenant) data
+Dependencies: Related tenant stories
+Action: Add story to Epic 04, then implement
+```
+
+### Scenario 5: Entirely New Domain
+```
+Request: "Implement maintenance tracking"
+Epic: None match ❌
+Action: Create Epic 14, add first story, then implement
+```
+
+---
+
+## Epic Selection Guidelines
+
+### Primary Rules:
+
+1. **Entity-based:** If requirement primarily deals with one entity, use that entity's epic
+   - Properties → Epic 01
+   - Units → Epic 02
+   - Tenants → Epic 03
+   - Leases → Epic 04
+
+2. **Feature-based:** If cross-entity, use the feature domain epic
+   - Financial tracking → Epic 08
+   - Import/Export → Epic 13
+   - Dashboard → Epic 10
+
+3. **System-based:** If system-level, use system epic
+   - Authentication → Epic 11
+   - Notifications → Epic 12
+
+4. **New domain:** If doesn't fit anywhere, create new epic
+   - Must be substantial (3+ stories)
+   - Must be distinct domain
+
+---
+
+## User Story Numbering
+
+### Format: `US{EPIC_NUM}.{STORY_NUM}`
+
+**Examples:**
+- `US1.1` - Epic 1, Story 1
+- `US1.18` - Epic 1, Story 18
+- `US14.1` - Epic 14, Story 1
+
+**Rules:**
+1. Find the last user story number in the epic
+2. Increment by 1
+3. Use that number for new story
+4. Don't reuse numbers
+5. Don't skip numbers
+
+**Example:**
+```
+Last story in Epic 01: US1.17
+Next story number: US1.18 ✅
+```
+
+---
+
+## Integration with Existing System
+
+### This Rule Works With:
+
+1. **`/implement-user-story` command**
+   - This rule creates the user story first
+   - Then calls the implementation command
+
+2. **`/implement-epic` command**
+   - This rule adds stories to epics
+   - Epic command can implement them all
+
+3. **General Requirements**
+   - User stories must follow general requirements
+   - Hebrew, RTL, account isolation, etc.
+
+4. **Testing Stories**
+   - Each epic has a testing story
+   - New stories added before testing story
+
+---
+
+## Enforcement
+
+### When User Asks to Implement:
+
+**MANDATORY checks:**
+
+1. ✅ Is there a user story for this requirement?
+   - YES → Proceed to implementation
+   - NO → Create user story FIRST
+
+2. ✅ Is the requirement in an epic?
+   - YES → Add user story to that epic
+   - NO → Find matching epic OR create new epic
+
+3. ✅ Are acceptance criteria defined?
+   - YES → Proceed
+   - NO → Define them in user story
+
+4. ✅ Are technical details specified?
+   - YES → Proceed
+   - NO → Add them to user story
+
+**Only after ALL checks pass → Implement**
+
+---
+
+## Response Template
+
+When user requests implementation, respond:
+
+```markdown
+🔍 **Analyzing Requirement**
+
+**Requirement:** {summary}
+**Domain:** {domain}
+**Type:** Feature / Enhancement / Bug Fix
+
+---
+
+📋 **Epic Selection**
+
+**Matching Epic:** EPIC_{NUM}_{NAME}
+**Rationale:** {why this epic}
+
+OR
+
+**No matching epic found**
+**Action:** Creating new Epic {NUM}: {NAME}
+
+---
+
+📝 **User Story Creation**
+
+**User Story Number:** US{EPIC}.{NUM}
+**Title:** {title}
+
+**User Story:**
+As a {user type}
+I can {action}
+So that {benefit}
+
+**Priority:** {priority}
+**Status:** ⏳ Pending
+**Type:** {type}
+
+---
+
+✅ **Acceptance Criteria**
+
+**Backend:**
+- {criterion 1}
+- {criterion 2}
+
+**Frontend:**
+- {criterion 1}
+- {criterion 2}
+
+**QA:**
+- {criterion 1}
+- {criterion 2}
+
+---
+
+🔧 **Technical Details**
+
+**Backend:**
+{endpoints, services, DTOs}
+
+**Frontend:**
+{components, API integration}
+
+**Database:**
+{schema changes if any}
+
+---
+
+📄 **Epic Updated**
+
+✅ User story added to: `docs/project_management/EPIC_{NUM}_{NAME}.md`
+✅ Story number: US{EPIC}.{NUM}
+✅ Ready for implementation
+
+---
+
+🚀 **Next Step: Implementation**
+
+Command: `/implement-user-story epic {NUM} user story {EPIC}.{NUM}`
+
+Proceeding with implementation...
+```
+
+---
+
+## Quick Reference
+
+```
+Request → Analyze → Find/Create Epic → Create User Story → Update File → Implement
+
+Keywords to trigger this rule:
+- "implement X"
+- "add X feature"
+- "create X functionality"
+- "build X"
+- "I need X"
+
+Actions:
+1. Determine epic (find or create)
+2. Create user story
+3. Update epic file
+4. Call /implement-user-story
+```
+
+---
+
+## Summary
+
+```
+🚫 No direct implementation
+📋 Every requirement → User story first
+✅ Organized workflow
+🎯 All work tracked in epics
+
+Workflow:
+  Requirement → User Story → Epic → Implementation
+```
+
+**All work must be organized before implementation!** 📋✨
+
+---
+
+**Last Updated:** February 3, 2026  
+**Status:** ✅ MANDATORY - Must be followed for ALL new requirements  
+**Applies To:** Any request to implement new functionality, features, or enhancements

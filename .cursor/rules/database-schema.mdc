@@ -1,0 +1,436 @@
+# Database Schema Standards
+
+**MANDATORY**: All database schema changes must follow these conventions for the rent management application.
+
+## Prisma Schema Structure
+
+### Base Model Template
+
+```prisma
+model ModelName {
+  // Primary Key
+  id         String   @id @default(uuid())
+  
+  // Multi-tenancy (REQUIRED on all models except Account and User)
+  accountId  String   @map("account_id")
+  
+  // Timestamps (REQUIRED on all models)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  
+  // Model-specific fields
+  // ...
+  
+  // Relations
+  account    Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  // Indexes (REQUIRED: accountId must be indexed)
+  @@index([accountId])
+  @@map("table_name")
+}
+```
+
+## Complete Schema Definition
+
+```prisma
+// schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================
+// Account & Users (Authentication)
+// ============================================
+
+model Account {
+  id        String   @id @default(uuid())
+  name      String
+  status    AccountStatus @default(ACTIVE)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  users       User[]
+  properties  Property[]
+  tenants     Tenant[]
+  leases      Lease[]
+  notifications Notification[]
+  
+  @@map("accounts")
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+model User {
+  id           String   @id @default(uuid())
+  accountId    String   @map("account_id")
+  email        String   @unique
+  name         String
+  googleId     String   @unique @map("google_id")
+  role         UserRole @default(USER)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  lastLoginAt  DateTime? @map("last_login_at")
+  
+  // Relations
+  account      Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  
+  @@index([accountId])
+  @@index([email])
+  @@index([googleId])
+  @@map("users")
+}
+
+enum UserRole {
+  OWNER
+  USER
+}
+
+// ============================================
+// Properties & Units
+// ============================================
+
+model Property {
+  id          String   @id @default(uuid())
+  accountId   String   @map("account_id")
+  address     String
+  fileNumber  String?  @map("file_number")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  account     Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  units       Unit[]
+  
+  @@index([accountId])
+  @@map("properties")
+}
+
+model Unit {
+  id             String   @id @default(uuid())
+  propertyId     String   @map("property_id")
+  accountId      String   @map("account_id") // Denormalized for faster queries
+  apartmentNumber String  @map("apartment_number")
+  floor          Int?
+  roomCount      Int?     @map("room_count")
+  notes          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  property       Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  leases         Lease[]
+  
+  @@index([propertyId])
+  @@index([accountId])
+  @@unique([propertyId, apartmentNumber])
+  @@map("units")
+}
+
+// ============================================
+// Tenants
+// ============================================
+
+model Tenant {
+  id        String   @id @default(uuid())
+  accountId String   @map("account_id")
+  name      String
+  email     String?
+  phone     String?
+  notes     String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  leases    Lease[]
+  
+  @@index([accountId])
+  @@index([email])
+  @@map("tenants")
+}
+
+// ============================================
+// Leases (Contracts)
+// ============================================
+
+model Lease {
+  id           String      @id @default(uuid())
+  accountId    String      @map("account_id")
+  unitId       String      @map("unit_id")
+  tenantId     String      @map("tenant_id")
+  startDate    DateTime    @map("start_date")
+  endDate      DateTime    @map("end_date")
+  monthlyRent  Decimal     @map("monthly_rent") @db.Decimal(10, 2)
+  paymentTo    String      @map("payment_to")
+  status       LeaseStatus @default(FUTURE)
+  notes        String?
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  unit         Unit         @relation(fields: [unitId], references: [id], onDelete: Restrict)
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+  notifications Notification[]
+  
+  @@index([accountId])
+  @@index([unitId])
+  @@index([tenantId])
+  @@index([status])
+  @@index([endDate]) // Important for expiration notifications
+  @@map("leases")
+}
+
+enum LeaseStatus {
+  FUTURE    // Not started yet
+  ACTIVE    // Currently active
+  EXPIRED   // Past end date
+  TERMINATED // Manually ended early
+}
+
+// ============================================
+// Notifications
+// ============================================
+
+model Notification {
+  id          String            @id @default(uuid())
+  accountId   String            @map("account_id")
+  leaseId     String            @map("lease_id")
+  type        NotificationType
+  daysBeforeExpiration Int      @map("days_before_expiration")
+  sentAt      DateTime?         @map("sent_at")
+  status      NotificationStatus @default(PENDING)
+  error       String?
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt @map("updated_at")
+  
+  // Relations
+  account     Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  lease       Lease             @relation(fields: [leaseId], references: [id], onDelete: Cascade)
+  
+  @@index([accountId])
+  @@index([leaseId])
+  @@index([status])
+  @@index([sentAt])
+  @@unique([leaseId, daysBeforeExpiration]) // Prevent duplicate notifications
+  @@map("notifications")
+}
+
+enum NotificationType {
+  LEASE_EXPIRING
+  LEASE_EXPIRED
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+}
+```
+
+## Migration Best Practices
+
+### 1. Always Use Migrations
+
+```bash
+# Create migration
+npx prisma migrate dev --name add_lease_status
+
+# Apply to production
+npx prisma migrate deploy
+
+# Generate Prisma Client
+npx prisma generate
+```
+
+### 2. Seed Data for Development
+
+```typescript
+// prisma/seed.ts
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  // Create test account
+  const account = await prisma.account.create({
+    data: {
+      name: 'Test Account',
+      status: 'ACTIVE'
+    }
+  });
+
+  // Create test user
+  await prisma.user.create({
+    data: {
+      accountId: account.id,
+      email: 'test@example.com',
+      name: 'Test User',
+      googleId: 'google-test-id',
+      role: 'OWNER'
+    }
+  });
+
+  // Create test property
+  const property = await prisma.property.create({
+    data: {
+      accountId: account.id,
+      address: 'רחוב הרצל 10, תל אביב',
+      fileNumber: '12345'
+    }
+  });
+
+  // Create test unit
+  const unit = await prisma.unit.create({
+    data: {
+      propertyId: property.id,
+      accountId: account.id,
+      apartmentNumber: '5',
+      floor: 2,
+      roomCount: 3
+    }
+  });
+
+  console.log('Seed data created');
+}
+
+main()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());
+```
+
+### 3. Common Queries
+
+```typescript
+// Find active leases for account
+const activeLeases = await prisma.lease.findMany({
+  where: {
+    accountId: 'account-id',
+    status: 'ACTIVE'
+  },
+  include: {
+    unit: {
+      include: { property: true }
+    },
+    tenant: true
+  },
+  orderBy: { endDate: 'asc' }
+});
+
+// Find leases expiring soon
+const expiringLeases = await prisma.lease.findMany({
+  where: {
+    accountId: 'account-id',
+    status: 'ACTIVE',
+    endDate: {
+      gte: new Date(),
+      lte: addDays(new Date(), 90)
+    }
+  }
+});
+
+// Create lease with transaction
+const lease = await prisma.$transaction(async (tx) => {
+  // Create lease
+  const newLease = await tx.lease.create({
+    data: {
+      accountId: 'account-id',
+      unitId: 'unit-id',
+      tenantId: 'tenant-id',
+      startDate: new Date(),
+      endDate: addYears(new Date(), 1),
+      monthlyRent: 3000,
+      paymentTo: 'Bank Account',
+      status: 'ACTIVE'
+    }
+  });
+
+  // Create notification records
+  for (const days of [30, 60, 90]) {
+    await tx.notification.create({
+      data: {
+        accountId: 'account-id',
+        leaseId: newLease.id,
+        type: 'LEASE_EXPIRING',
+        daysBeforeExpiration: days,
+        status: 'PENDING'
+      }
+    });
+  }
+
+  return newLease;
+});
+```
+
+## Data Integrity Rules
+
+### 1. Foreign Key Constraints
+
+```prisma
+// ✅ Good - Proper cascade behavior
+model Lease {
+  unit   Unit   @relation(fields: [unitId], references: [id], onDelete: Restrict)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
+}
+
+// Cascade delete for account (if account deleted, all data deleted)
+model Property {
+  account Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+```
+
+### 2. Unique Constraints
+
+```prisma
+// Prevent duplicate apartment numbers in same property
+model Unit {
+  @@unique([propertyId, apartmentNumber])
+}
+
+// Prevent duplicate notifications
+model Notification {
+  @@unique([leaseId, daysBeforeExpiration])
+}
+```
+
+### 3. Indexes for Performance
+
+```prisma
+// ✅ Good - Index frequently queried fields
+model Lease {
+  @@index([accountId]) // Multi-tenancy filter
+  @@index([status]) // Status filtering
+  @@index([endDate]) // Expiration queries
+  @@index([unitId, status]) // Composite index for unit's active lease
+}
+```
+
+## Checklist
+
+- [ ] All models have `id`, `createdAt`, `updatedAt`
+- [ ] All models (except Account/User) have `accountId`
+- [ ] Foreign keys have proper `onDelete` behavior
+- [ ] Unique constraints where needed
+- [ ] Indexes on frequently queried fields
+- [ ] Snake_case for database columns
+- [ ] CamelCase for Prisma models
+- [ ] Enums for status fields
+- [ ] Decimal type for money
+- [ ] DateTime for dates
+- [ ] Migration created and tested
+
+## References
+
+- [Prisma Schema Reference](https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference)
+- [Multi-Tenancy with Prisma](https://www.prisma.io/docs/guides/database/multi-tenant-apps)

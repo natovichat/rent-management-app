@@ -1,0 +1,703 @@
+
+Running 8 tests using 2 workers
+(node:22094) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22093) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22094) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22093) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+Property type selected: מגוריםסוג נכס
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+Property status selected: בבעלותסטטוס
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+Form submit event: form-submitted
+<< 500 http://localhost:3001/properties
+Console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+Console error: [PropertyForm] API call failed: AxiosError: Request failed with status code 500
+    at settle (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/settle.js:21:16)
+    at XMLHttpRequest.onloadend (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/adapters/xhr.js:57:72)
+    at Axios.request (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/Axios.js:40:49)
+    at async Object.create (webpack-internal:///(app-pages-browser)/./src/services/properties.ts:52:26)
+    at async Object.mutationFn (webpack-internal:///(app-pages-browser)/./src/components/properties/PropertyForm.tsx:626:145)
+Console error: Form submission error: AxiosError: Request failed with status code 500
+    at settle (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/settle.js:21:16)
+    at XMLHttpRequest.onloadend (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/adapters/xhr.js:57:72)
+    at Axios.request (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/Axios.js:40:49)
+    at async Object.create (webpack-internal:///(app-pages-browser)/./src/services/properties.ts:52:26)
+    at async Object.mutationFn (webpack-internal:///(app-pages-browser)/./src/components/properties/PropertyForm.tsx:626:145)
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+Mutation pending: false
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+Console error: Failed to load resource: the server responded with a status of 404 (Not Found)
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+⚠️ No POST request detected - checking for errors...
+⚠️ No POST request to /properties detected - form may not have submitted
+🔍 Testing direct API call...
+Direct API call response: 201
+✅ Direct API call succeeded - backend is working
+❌ But form submission is not triggering API call
+××(node:23084) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23085) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23085) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23084) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+Property type selected: מגוריםסוג נכס
+Property status selected: בבעלותסטטוס
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+Form submit event: form-submitted
+<< 500 http://localhost:3001/properties
+Console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+Console error: [PropertyForm] API call failed: AxiosError: Request failed with status code 500
+    at settle (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/settle.js:21:16)
+    at XMLHttpRequest.onloadend (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/adapters/xhr.js:57:72)
+    at Axios.request (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/Axios.js:40:49)
+    at async Object.create (webpack-internal:///(app-pages-browser)/./src/services/properties.ts:52:26)
+    at async Object.mutationFn (webpack-internal:///(app-pages-browser)/./src/components/properties/PropertyForm.tsx:626:145)
+Console error: Form submission error: AxiosError: Request failed with status code 500
+    at settle (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/settle.js:21:16)
+    at XMLHttpRequest.onloadend (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/adapters/xhr.js:57:72)
+    at Axios.request (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/Axios.js:40:49)
+    at async Object.create (webpack-internal:///(app-pages-browser)/./src/services/properties.ts:52:26)
+    at async Object.mutationFn (webpack-internal:///(app-pages-browser)/./src/components/properties/PropertyForm.tsx:626:145)
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+Mutation pending: false
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+<< 404 http://localhost:3001/investment-companies
+Console error: Failed to load resource: the server responded with a status of 404 (Not Found)
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+⚠️ No POST request detected - checking for errors...
+⚠️ No POST request to /properties detected - form may not have submitted
+🔍 Testing direct API call...
+Direct API call response: 201
+✅ Direct API call succeeded - backend is working
+❌ But form submission is not triggering API call
+×(node:24031) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+×(node:24044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24031) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24044) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+Property type selected: מגוריםסוג נכס
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+Property status selected: בבעלותסטטוס
+Field values: totalArea=120, landArea=100, floors=5, totalUnits=10, parkingSpaces=2
+Submit button enabled: true
+Validation errors found: 1
+Form validity check: true
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+Form submit event: form-submitted
+<< 404 http://localhost:3001/investment-companies
+Console error: Failed to load resource: the server responded with a status of 404 (Not Found)
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+<< 500 http://localhost:3001/properties
+Console error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+Console error: [PropertyForm] API call failed: AxiosError: Request failed with status code 500
+    at settle (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/settle.js:21:16)
+    at XMLHttpRequest.onloadend (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/adapters/xhr.js:57:72)
+    at Axios.request (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/Axios.js:40:49)
+    at async Object.create (webpack-internal:///(app-pages-browser)/./src/services/properties.ts:52:26)
+    at async Object.mutationFn (webpack-internal:///(app-pages-browser)/./src/components/properties/PropertyForm.tsx:626:145)
+Console error: Form submission error: AxiosError: Request failed with status code 500
+    at settle (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/settle.js:21:16)
+    at XMLHttpRequest.onloadend (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/adapters/xhr.js:57:72)
+    at Axios.request (webpack-internal:///(app-pages-browser)/../../node_modules/axios/lib/core/Axios.js:40:49)
+    at async Object.create (webpack-internal:///(app-pages-browser)/./src/services/properties.ts:52:26)
+    at async Object.mutationFn (webpack-internal:///(app-pages-browser)/./src/components/properties/PropertyForm.tsx:626:145)
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+Mutation pending: false
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+Console error: Failed to load resource: the server responded with a status of 404 (Not Found)
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+⚠️ No POST request detected - checking for errors...
+⚠️ No POST request to /properties detected - form may not have submitted
+🔍 Testing direct API call...
+Direct API call response: 201
+✅ Direct API call succeeded - backend is working
+❌ But form submission is not triggering API call
+TT(node:24977) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24978) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24977) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24978) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+··>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+·>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 500 http://localhost:3001/properties
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+×(node:25222) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25222) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 500 http://localhost:3001/properties
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+×(node:25335) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25335) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 500 http://localhost:3001/properties
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+×(node:25413) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25413) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 500 http://localhost:3001/properties
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+×(node:25515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25515) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 500 http://localhost:3001/properties
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+F(node:25569) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25569) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/properties?page=1&limit=10
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 200 http://localhost:3001/properties?page=1&limit=10
+>> POST http://localhost:3001/properties
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 500 http://localhost:3001/properties
+   ERROR: 500 Internal Server Error
+   Body: {"statusCode":500,"message":"Internal server error"}
+F>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+>> GET http://localhost:3001/investment-companies
+   Auth Header: Bearer eyJhbGciOiJIUzI1NiIs...
+<< 404 http://localhost:3001/investment-companies
+   ERROR: 404 Not Found
+   Body: {"message":"Cannot GET /investment-companies","error":"Not Found","statusCode":404}
+·
+
+  1) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:196:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    20 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      376 |     
+      377 |     // Wait for dialog to close (indicates form submission completed)
+    > 378 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      379 |     
+      380 |     // Verify success message displayed
+      381 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:378:16
+
+    Error Context: test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    20 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      376 |     
+      377 |     // Wait for dialog to close (indicates form submission completed)
+    > 378 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      379 |     
+      380 |     // Verify success message displayed
+      381 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:378:16
+
+    Error Context: test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    22 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      376 |     
+      377 |     // Wait for dialog to close (indicates form submission completed)
+    > 378 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      379 |     
+      380 |     // Verify success message displayed
+      381 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:378:16
+
+    Error Context: test-results/us1.1-create-property-e2e--48ba1-ty-with-all-required-fields-chromium-retry2/error-context.md
+
+  2) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:390:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    24 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      466 |     
+      467 |     // Wait for success
+    > 468 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      469 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      470 |     
+      471 |     // Verify property in list with all details
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:468:16
+
+    Error Context: test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    24 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      466 |     
+      467 |     // Wait for success
+    > 468 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      469 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      470 |     
+      471 |     // Verify property in list with all details
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:468:16
+
+    Error Context: test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: page.waitForSelector: Target page, context or browser has been closed
+    Call log:
+    [2m  - waiting for locator('[role="dialog"]') to be hidden[22m
+    [2m    24 × locator resolved to visible <div role="dialog" aria-labelledby=":r6:" class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation24 MuiDialog-paper MuiDialog-paperScrollPaper MuiDialog-paperWidthSm MuiDialog-paperFullWidth muirtl-tlc64q-MuiPaper-root-MuiDialog-paper">…</div>[22m
+
+
+      466 |     
+      467 |     // Wait for success
+    > 468 |     await page.waitForSelector('[role="dialog"]', { state: 'hidden', timeout: 10000 });
+          |                ^
+      469 |     await expect(page.locator('text=הנכס נוסף בהצלחה')).toBeVisible({ timeout: 10000 });
+      470 |     
+      471 |     // Verify property in list with all details
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:468:16
+
+    Error Context: test-results/us1.1-create-property-e2e--93e14-operty-with-optional-fields-chromium-retry2/error-context.md
+
+  3) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:546:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+
+    Error: Property creation failed: 500 {"statusCode":500,"message":"Internal server error"}
+
+      593 |     if (response && response.status() >= 400) {
+      594 |       const errorBody = await response.text().catch(() => '');
+    > 595 |       throw new Error(`Property creation failed: ${response.status()} ${errorBody}`);
+          |             ^
+      596 |     }
+      597 |     
+      598 |     // Wait for success
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:595:13
+
+    Error Context: test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: Property creation failed: 500 {"statusCode":500,"message":"Internal server error"}
+
+      593 |     if (response && response.status() >= 400) {
+      594 |       const errorBody = await response.text().catch(() => '');
+    > 595 |       throw new Error(`Property creation failed: ${response.status()} ${errorBody}`);
+          |             ^
+      596 |     }
+      597 |     
+      598 |     // Wait for success
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:595:13
+
+    Error Context: test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: Property creation failed: 500 {"statusCode":500,"message":"Internal server error"}
+
+      593 |     if (response && response.status() >= 400) {
+      594 |       const errorBody = await response.text().catch(() => '');
+    > 595 |       throw new Error(`Property creation failed: ${response.status()} ${errorBody}`);
+          |             ^
+      596 |     }
+      597 |     
+      598 |     // Wait for success
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:595:13
+
+    Error Context: test-results/us1.1-create-property-e2e--ed8f3-ecial-characters-in-address-chromium-retry2/error-context.md
+
+  4) [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:701:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+
+    Error: Property creation failed: 500 {"statusCode":500,"message":"Internal server error"}
+
+      752 |     if (response && response.status() >= 400) {
+      753 |       const errorBody = await response.text().catch(() => '');
+    > 754 |       throw new Error(`Property creation failed: ${response.status()} ${errorBody}`);
+          |             ^
+      755 |     }
+      756 |     
+      757 |     // Wait for success
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:754:13
+
+    Error Context: test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium/error-context.md
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: Property creation failed: 500 {"statusCode":500,"message":"Internal server error"}
+
+      752 |     if (response && response.status() >= 400) {
+      753 |       const errorBody = await response.text().catch(() => '');
+    > 754 |       throw new Error(`Property creation failed: ${response.status()} ${errorBody}`);
+          |             ^
+      755 |     }
+      756 |     
+      757 |     // Wait for success
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:754:13
+
+    Error Context: test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/error-context.md
+
+    attachment #2: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: Property creation failed: 500 {"statusCode":500,"message":"Internal server error"}
+
+      752 |     if (response && response.status() >= 400) {
+      753 |       const errorBody = await response.text().catch(() => '');
+    > 754 |       throw new Error(`Property creation failed: ${response.status()} ${errorBody}`);
+          |             ^
+      755 |     }
+      756 |     
+      757 |     // Wait for success
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.1-create-property-e2e.spec.ts:754:13
+
+    Error Context: test-results/us1.1-create-property-e2e--b30a4-ears-in-list-after-creation-chromium-retry2/error-context.md
+
+  4 failed
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:196:7 › US1.1 - Create Property (TDD) › TC-E2E-001: Happy path - Create property with all required fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:390:7 › US1.1 - Create Property (TDD) › TC-E2E-002: Happy path - Create property with optional fields 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:546:7 › US1.1 - Create Property (TDD) › TC-E2E-005: Edge case - Special characters in address 
+    [chromium] › test/e2e/us1.1-create-property-e2e.spec.ts:701:7 › US1.1 - Create Property (TDD) › TC-E2E-007: Success - Property appears in list after creation 
+  4 passed (2.1m)

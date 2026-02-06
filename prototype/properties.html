@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>נכסים - ניהול תיק נדל"ן</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="app-bar">
+    <h1>🏢 ניהול תיק נדל"ן</h1>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <nav class="drawer">
+    <ul class="drawer-list">
+      <li><div class="drawer-section">תפריט ראשי</div></li>
+      <li><a href="index.html" class="drawer-item">🏠 דשבורד</a></li>
+      
+      <li><div class="drawer-section">ניהול נכסים</div></li>
+      <li><a href="properties.html" class="drawer-item active">🏢 נכסים</a></li>
+      <li><a href="units.html" class="drawer-item">🚪 יחידות</a></li>
+      
+      <li><div class="drawer-section">ניהול דיירים וחוזים</div></li>
+      <li><a href="tenants.html" class="drawer-item">👤 דיירים</a></li>
+      <li><a href="leases.html" class="drawer-item">📄 חוזי שכירות</a></li>
+      
+      <li><div class="drawer-section">ניהול בעלות ומימון</div></li>
+      <li><a href="owners.html" class="drawer-item">👥 בעלים</a></li>
+      <li><a href="mortgages.html" class="drawer-item">🏦 משכנתאות</a></li>
+      <li><a href="bank-accounts.html" class="drawer-item">💳 חשבונות בנק</a></li>
+      <li><a href="investment-companies.html" class="drawer-item">🏛️ חברות השקעה</a></li>
+      
+      <li><div class="drawer-section">מעקב פיננסי</div></li>
+      <li><a href="expenses.html" class="drawer-item">📤 הוצאות</a></li>
+      <li><a href="income.html" class="drawer-item">📥 הכנסות</a></li>
+      
+      <li><div class="drawer-section">דוחות וניתוחים</div></li>
+      <li><a href="reports.html" class="drawer-item">📊 דוחות</a></li>
+      <li><a href="analytics.html" class="drawer-item">📈 ניתוחים</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <div class="container">
+      <div class="detail-header">
+        <h1>נכסים</h1>
+        <a href="properties.html" class="btn btn-primary">➕ הוסף נכס חדש</a>
+      </div>
+
+      <div class="paper">
+        <div class="data-grid">
+          <table>
+            <thead>
+              <tr>
+                <th>כתובת</th>
+                <th>מספר תיק</th>
+                <th>סוג</th>
+                <th>סטטוס</th>
+                <th>עיר</th>
+                <th>שטח (מ"ר)</th>
+                <th>שווי משוער</th>
+                <th>גוש/חלקה</th>
+                <th>משכנתא</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="window.location.href='property-detail.html?id=1'">
+                <td>רח' הרצל 10, תל אביב</td>
+                <td>TA-2024-001</td>
+                <td><span class="chip chip-info">מגורים</span></td>
+                <td><span class="chip chip-success">פעיל</span></td>
+                <td>תל אביב</td>
+                <td>450</td>
+                <td>₪4,500,000</td>
+                <td>גוש 12345, חלקה 67</td>
+                <td><span class="chip chip-warning">כן</span></td>
+                <td>
+                  <a href="property-detail.html?id=1" class="action-icon">👁️</a>
+                  <a href="property-detail.html?id=1" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='property-detail.html?id=2'">
+                <td>רח' בן יהודה 22, תל אביב</td>
+                <td>TA-2024-002</td>
+                <td><span class="chip chip-info">מגורים</span></td>
+                <td><span class="chip chip-success">פעיל</span></td>
+                <td>תל אביב</td>
+                <td>320</td>
+                <td>₪3,200,000</td>
+                <td>גוש 12346, חלקה 12</td>
+                <td><span class="chip chip-default">לא</span></td>
+                <td>
+                  <a href="property-detail.html?id=2" class="action-icon">👁️</a>
+                  <a href="property-detail.html?id=2" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='property-detail.html?id=3'">
+                <td>רח' שאול המלך 45, רמת גן</td>
+                <td>RG-2024-001</td>
+                <td><span class="chip chip-warning">מסחרי</span></td>
+                <td><span class="chip chip-success">פעיל</span></td>
+                <td>רמת גן</td>
+                <td>280</td>
+                <td>₪5,600,000</td>
+                <td>גוש 23456, חלקה 89</td>
+                <td><span class="chip chip-warning">כן</span></td>
+                <td>
+                  <a href="property-detail.html?id=3" class="action-icon">👁️</a>
+                  <a href="property-detail.html?id=3" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='property-detail.html?id=4'">
+                <td>רח' לוי אשכול 5, חיפה</td>
+                <td>HA-2024-001</td>
+                <td><span class="chip chip-info">מגורים</span></td>
+                <td><span class="chip chip-success">פעיל</span></td>
+                <td>חיפה</td>
+                <td>180</td>
+                <td>₪1,800,000</td>
+                <td>גוש 34567, חלקה 34</td>
+                <td><span class="chip chip-warning">כן</span></td>
+                <td>
+                  <a href="property-detail.html?id=4" class="action-icon">👁️</a>
+                  <a href="property-detail.html?id=4" class="action-icon">✏️</a>
+                </td>
+              </tr>
+              <tr onclick="window.location.href='property-detail.html?id=5'">
+                <td>רח' ויצמן 88, ירושלים</td>
+                <td>JM-2024-001</td>
+                <td><span class="chip chip-default">שימוש מעורב</span></td>
+                <td><span class="chip chip-success">פעיל</span></td>
+                <td>ירושלים</td>
+                <td>550</td>
+                <td>₪6,500,000</td>
+                <td>גוש 45678, חלקה 56</td>
+                <td><span class="chip chip-warning">כן</span></td>
+                <td>
+                  <a href="property-detail.html?id=5" class="action-icon">👁️</a>
+                  <a href="property-detail.html?id=5" class="action-icon">✏️</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
