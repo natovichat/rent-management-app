@@ -293,6 +293,29 @@ export default function PropertyList() {
 
   const columns: GridColDef<Property>[] = [
     {
+      field: 'fileNumber',
+      headerName: 'מספר תיק',
+      width: 150,
+      align: 'right',
+      headerAlign: 'right',
+      renderHeader: () => (
+        <Box sx={{ 
+          width: '100% !important', 
+          textAlign: 'right !important', 
+          direction: 'rtl !important',
+          display: 'flex !important',
+          justifyContent: 'flex-end !important',
+        }}>
+          מספר תיק
+        </Box>
+      ),
+      renderCell: (params) => (
+        <Box sx={{ textAlign: 'right', width: '100%' }}>
+          {params.value || '-'}
+        </Box>
+      ),
+    },
+    {
       field: 'address',
       headerName: 'כתובת',
       flex: 1,
@@ -301,6 +324,17 @@ export default function PropertyList() {
       headerAlign: 'right',
       hideable: false,
       disableColumnMenu: true,
+      renderHeader: () => (
+        <Box sx={{ 
+          width: '100% !important', 
+          textAlign: 'right !important', 
+          direction: 'rtl !important',
+          display: 'flex !important',
+          justifyContent: 'flex-end !important',
+        }}>
+          כתובת
+        </Box>
+      ),
       renderCell: (params) => (
         <Link
           component="button"
@@ -323,20 +357,28 @@ export default function PropertyList() {
       ),
     },
     {
-      field: 'fileNumber',
-      headerName: 'מספר תיק',
-      width: 150,
-      align: 'right',
-      headerAlign: 'right',
-      renderCell: (params) => params.value || '-',
-    },
-    {
       field: 'unitCount',
       headerName: 'מספר יחידות',
       width: 120,
       type: 'number',
       align: 'center',
       headerAlign: 'center',
+      renderHeader: () => (
+        <Box sx={{ 
+          width: '100% !important', 
+          textAlign: 'center !important', 
+          direction: 'rtl !important',
+          display: 'flex !important',
+          justifyContent: 'center !important',
+        }}>
+          מספר יחידות
+        </Box>
+      ),
+      renderCell: (params) => (
+        <Box sx={{ textAlign: 'center', width: '100%' }}>
+          {params.value}
+        </Box>
+      ),
     },
     {
       field: 'isMortgaged',
@@ -344,16 +386,29 @@ export default function PropertyList() {
       width: 120,
       align: 'center',
       headerAlign: 'center',
+      renderHeader: () => (
+        <Box sx={{ 
+          width: '100% !important', 
+          textAlign: 'center !important', 
+          direction: 'rtl !important',
+          display: 'flex !important',
+          justifyContent: 'center !important',
+        }}>
+          סטטוס משכון
+        </Box>
+      ),
       renderCell: (params) => (
-        params.value ? (
-          <Chip
-            label="משועבד"
-            size="small"
-            color="warning"
-            icon={<AccountBalanceIcon />}
-            data-testid="mortgage-indicator"
-          />
-        ) : null
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+          {params.value ? (
+            <Chip
+              label="משועבד"
+              size="small"
+              color="warning"
+              icon={<AccountBalanceIcon />}
+              data-testid="mortgage-indicator"
+            />
+          ) : null}
+        </Box>
       ),
     },
     {
@@ -363,11 +418,27 @@ export default function PropertyList() {
       type: 'date',
       align: 'right',
       headerAlign: 'right',
+      renderHeader: () => (
+        <Box sx={{ 
+          width: '100% !important', 
+          textAlign: 'right !important', 
+          direction: 'rtl !important',
+          display: 'flex !important',
+          justifyContent: 'flex-end !important',
+        }}>
+          תאריך יצירה
+        </Box>
+      ),
       valueGetter: (params) => new Date(params.value),
       valueFormatter: (params) => {
         if (!params.value) return '';
         return new Date(params.value).toLocaleDateString('he-IL');
       },
+      renderCell: (params) => (
+        <Box sx={{ textAlign: 'right', width: '100%' }}>
+          {params.formattedValue}
+        </Box>
+      ),
     },
     {
       field: 'actions',
@@ -521,7 +592,7 @@ export default function PropertyList() {
       )}
 
       {/* Data Grid */}
-      <Box sx={{ height: 600, width: '100%', direction: 'ltr' }}>
+      <Box sx={{ height: 600, width: '100%', direction: 'rtl' }}>
         <DataGrid
           key={`properties-grid-${selectedAccountId}-${page}-${data?.meta.total || 0}-${data?.data?.length || 0}-${deletedPropertyIds.size}`}
           rows={useMemo(() => {
@@ -540,24 +611,43 @@ export default function PropertyList() {
           }}
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
+          disableColumnReorder={false}
+          slotProps={{
+            columnHeader: {
+              style: {
+                textAlign: 'right',
+                justifyContent: 'flex-end',
+                display: 'flex',
+              },
+            },
+          }}
           sx={{
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              direction: 'rtl',
+              direction: 'rtl !important',
             },
             '& .MuiDataGrid-columnHeader': {
-              direction: 'rtl',
-              '& .MuiDataGrid-columnHeaderTitle': {
-                textAlign: 'right',
-                width: '100%',
-                paddingRight: '8px',
-              },
+              direction: 'rtl !important',
+            },
+            '& .MuiDataGrid-columnHeaderDraggableContainer': {
+              direction: 'rtl !important',
+              justifyContent: 'flex-end !important',
+            },
+            '& .MuiDataGrid-columnHeaderTitleContainer': {
+              direction: 'rtl !important',
+              justifyContent: 'flex-end !important',
+              flexDirection: 'row !important',
+            },
+            '& .MuiDataGrid-columnHeaderTitle': {
+              textAlign: 'right !important',
+              direction: 'rtl !important',
+              width: '100%',
             },
             '& .MuiDataGrid-cell': {
-              direction: 'rtl',
-              textAlign: 'right',
-              paddingRight: '16px',
+              direction: 'rtl !important',
+              textAlign: 'right !important',
+              justifyContent: 'flex-end !important',
             },
           }}
         />

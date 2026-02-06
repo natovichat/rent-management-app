@@ -24,3 +24,5 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* No global DataGrid RTL overrides - using component-level sx props instead */
