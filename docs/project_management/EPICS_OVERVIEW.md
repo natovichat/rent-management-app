@@ -170,17 +170,35 @@ This document provides an overview of all major feature epics in the Rent Applic
 
 ---
 
+### Epic 14: UX Enhancements & Feature Improvements
+**Goal:** Enhance user experience with better data visibility, intuitive layouts, and workflow improvements.
+
+**Priority:** 🟡 Medium  
+**Status:** ✅ Complete (100%)  
+**User Stories:** 5  
+**Tests:** Manual testing complete, builds successful
+
+**Key Enhancements:**
+- Mortgage status indicators (list + details)
+- Property lease overview tab
+- Quick navigation system (all pages)
+- Enhanced table layouts (RTL optimized)
+
+[View Epic Details →](./EPIC_14_UX_ENHANCEMENTS.md)
+
+---
+
 ## 📊 Epic Status Summary
 
 | Status | Count | Epics |
 |--------|-------|-------|
-| ✅ Complete (100%) | 9 | Epics 3, 5, 6, 7, 8, 9, 10, 12, 13 |
+| ✅ Complete (100%) | 10 | Epics 3, 5, 6, 7, 8, 9, 10, 12, 13, 14 |
 | ✅ Complete (90%+) | 3 | Epics 1, 2, 4 |
 | 🔄 In Progress | 1 | Epic 11 (Ownership - 80%) |
 
-**Total Epics:** 13  
-**Total User Stories:** ~120+  
-**Overall Completion:** ~95% (Backend: 100%, Frontend: ~95%, Tests: ~90%)
+**Total Epics:** 14  
+**Total User Stories:** ~125  
+**Overall Completion:** ~96% (Backend: 100%, Frontend: ~96%, Tests: ~90%)
 
 ---
 
