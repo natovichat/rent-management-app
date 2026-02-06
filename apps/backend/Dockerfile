@@ -21,6 +21,7 @@ COPY . .
 
 # Build backend
 WORKDIR /app/apps/backend
+RUN npx prisma generate
 RUN npm run build
 
 # Production image

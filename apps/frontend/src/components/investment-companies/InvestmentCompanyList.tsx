@@ -266,10 +266,16 @@ export default function InvestmentCompanyList() {
             },
             '& .MuiDataGrid-columnHeader': {
               direction: 'rtl',
+              '& .MuiDataGrid-columnHeaderTitle': {
+                textAlign: 'right',
+                width: '100%',
+                paddingRight: '8px',
+              },
             },
             '& .MuiDataGrid-cell': {
               direction: 'rtl',
               textAlign: 'right',
+              paddingRight: '16px',
             },
           }}
           paginationMode="server"

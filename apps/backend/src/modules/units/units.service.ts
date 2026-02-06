@@ -228,7 +228,7 @@ export class UnitsService {
     ]);
 
     // Sort by property address, then apartment number
-    const sortedUnits = allUnits.sort((a, b) => {
+    const sortedUnits = allUnits.sort((a: any, b: any) => {
       // First sort by property address
       const addressCompare = (a.property.address || '').localeCompare(b.property.address || '');
       if (addressCompare !== 0) {
@@ -247,7 +247,7 @@ export class UnitsService {
     const paginatedUnits = sortedUnits.slice(skip, skip + limit);
 
     return {
-      data: paginatedUnits.map((unit) => ({
+      data: paginatedUnits.map((unit: any) => ({
         ...unit,
         activeLease: unit.leases[0] || null,
       })),
@@ -300,7 +300,7 @@ export class UnitsService {
     }
 
     // Find active lease (if exists)
-    const activeLease = unit.leases.find((lease) => lease.status === 'ACTIVE') || null;
+    const activeLease = unit.leases.find((lease: any) => lease.status === 'ACTIVE') || null;
 
     return {
       ...unit,

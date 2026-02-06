@@ -1,0 +1,310 @@
+[
+  {
+    "lease": {
+      "row": 5,
+      "sequential": "1",
+      "file_number": "2642/7",
+      "address": "הפלמח 50 ירושלים",
+      "apartment_number": "1",
+      "floor": "1",
+      "room_count": "3",
+      "tenant_name": "מלכין בלה ואיתם טובול",
+      "tenant_email": "belina241@gmail.co.il",
+      "tenant_phone": "054-5454918",
+      "monthly_rent_total": 5700,
+      "our_share": 2850,
+      "start_date": "2020-11-10",
+      "end_date": "2023-11-09",
+      "notes": "חידוש ספטמבר 2023",
+      "insurance": "ביטוח ישיר",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "12",
+      "address": "הפלמ\"ח 50, ירושלים"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 6,
+      "sequential": "2",
+      "file_number": "2642/6",
+      "address": "הרא\"ה ,295 רמת גן",
+      "apartment_number": "2",
+      "floor": "3",
+      "room_count": "1",
+      "tenant_name": "עדי ויהודה בן שמואל",
+      "tenant_email": "ybsklasa@gmail.com",
+      "tenant_phone": "050-682265",
+      "monthly_rent_total": 5950,
+      "our_share": 5950,
+      "start_date": "2020-11-10",
+      "end_date": "2024-01-09",
+      "notes": "חידוש דצמבר 2023",
+      "insurance": "ביטוח ישיר",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "7",
+      "address": "הרוא\"ה 295, רמת גן"
+    },
+    "score": 50
+  },
+  {
+    "lease": {
+      "row": 7,
+      "sequential": "3",
+      "file_number": "1672/41",
+      "address": "מנדלי 7 תל אביב",
+      "apartment_number": "16",
+      "floor": "2",
+      "room_count": "1",
+      "tenant_name": "אולטי יהונתן אליהו",
+      "tenant_email": "oltiyoni@gmail.com",
+      "tenant_phone": "050-657228",
+      "monthly_rent_total": 3400,
+      "our_share": 3400,
+      "start_date": "2020-11-02",
+      "end_date": "2023-11-01",
+      "notes": "חידוש ספטמבר 2023",
+      "insurance": "ביטוח ישיר",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "8",
+      "address": "מנדלי 7, תל אביב"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 8,
+      "sequential": "4",
+      "file_number": "1672/36",
+      "address": "מנדלי ,7 תל אביב",
+      "apartment_number": "17",
+      "floor": "1",
+      "room_count": "1",
+      "tenant_name": "אלכסיי פינרוב",
+      "tenant_email": "apinarov@gmail.com",
+      "tenant_phone": "050-607694",
+      "monthly_rent_total": 3600,
+      "our_share": 3600,
+      "start_date": "2020-04-01",
+      "end_date": "2024-03-31",
+      "notes": "",
+      "insurance": "ביטוח ישיר",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "8",
+      "address": "מנדלי 7, תל אביב"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 9,
+      "sequential": "5",
+      "file_number": "933/6",
+      "address": "לביא ,6 גבעתיים",
+      "apartment_number": "4",
+      "floor": "2",
+      "room_count": "2",
+      "tenant_name": "לויכטר ענבל",
+      "tenant_email": "",
+      "tenant_phone": "",
+      "monthly_rent_total": 4400,
+      "our_share": 2200,
+      "start_date": "2020-04-16",
+      "end_date": "2024-07-16",
+      "notes": "שוכרת בטיפול לאובר יעקב",
+      "insurance": "ביטוח ישיר",
+      "arnona_number": "219202000",
+      "electric_meter": "346546474",
+      "handled_by": "יעקב לאובר"
+    },
+    "property": {
+      "fileNumber": "1",
+      "address": "לביא 6, רמת גן"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 10,
+      "sequential": "6",
+      "file_number": "933/12",
+      "address": "שלום עליכם ,6 רמת גן",
+      "apartment_number": "3",
+      "floor": "6",
+      "room_count": "3.5",
+      "tenant_name": "זדה רינה",
+      "tenant_email": "rinazzaadd@gmail.co.il",
+      "tenant_phone": "054-456641",
+      "monthly_rent_total": 5000,
+      "our_share": 5000,
+      "start_date": "2020-06-30",
+      "end_date": "2023-07-14",
+      "notes": "חידוש מאי 2023",
+      "insurance": "",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "22",
+      "address": "שלום עליכם 6, רמת גן"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 11,
+      "sequential": "7",
+      "file_number": "2642/2",
+      "address": "פטרסון ,3 תל אביב",
+      "apartment_number": "אין",
+      "floor": "2",
+      "room_count": "2",
+      "tenant_name": "יבגני ליבוביץ'",
+      "tenant_email": "eakaehoo.corp@gmail.com",
+      "tenant_phone": "054-348754",
+      "monthly_rent_total": 4400,
+      "our_share": 4400,
+      "start_date": "2020-09-01",
+      "end_date": "2023-08-31",
+      "notes": "חידוש יוני 2023",
+      "insurance": "",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "23",
+      "address": "פטרסון 3, יד אליהו, תל אביב"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 12,
+      "sequential": "8",
+      "file_number": "157/318",
+      "address": "טבנקין 22 גבעתיים",
+      "apartment_number": "21",
+      "floor": "5+6",
+      "room_count": "9",
+      "tenant_name": "סיון ויניב סימן טוב",
+      "tenant_email": "sivansimantovm@gmail.com",
+      "tenant_phone": "054-44775",
+      "monthly_rent_total": 15300,
+      "our_share": 15300,
+      "start_date": "2020-08-01",
+      "end_date": "2023-08-31",
+      "notes": "חידוש יוני 2023",
+      "insurance": "31/7/23 ישיר",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "11",
+      "address": "טבנקין 22, גבעתיים"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 13,
+      "sequential": "9",
+      "file_number": "157/342",
+      "address": "דרך המלך 11 גני תקוו",
+      "apartment_number": "15",
+      "floor": "5",
+      "room_count": "3",
+      "tenant_name": "רחל דראש / יונתן דניאל",
+      "tenant_email": "yonid79@gmail.com",
+      "tenant_phone": "052-48319",
+      "monthly_rent_total": 6600,
+      "our_share": 6600,
+      "start_date": "2020-02-01",
+      "end_date": "2024-01-31",
+      "notes": "חידוש ינואר 2024",
+      "insurance": "31/7/23 ישיר",
+      "arnona_number": "404011015",
+      "electric_meter": "347280769",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "2",
+      "address": "דרך המלך 11, גני תקווה"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 15,
+      "sequential": "11",
+      "file_number": "157/345.1",
+      "address": "אלנבי 85 ת\"א",
+      "apartment_number": "",
+      "floor": "",
+      "room_count": "",
+      "tenant_name": "רדפורד הלוחש לסייחים",
+      "tenant_email": "",
+      "tenant_phone": "",
+      "monthly_rent_total": 1000,
+      "our_share": 1000,
+      "start_date": null,
+      "end_date": "2024-03-31",
+      "notes": "משלם בחודשו",
+      "insurance": "",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "25",
+      "address": "אלנבי 85, תל אביב - מחסן"
+    },
+    "score": 100
+  },
+  {
+    "lease": {
+      "row": 17,
+      "sequential": "12",
+      "file_number": "108/740",
+      "address": "הרברט סמואל ,71 חד",
+      "apartment_number": "דירה/מחסן",
+      "floor": "קרקע",
+      "room_count": "",
+      "tenant_name": "יבולים דרום, עמוס שמור, יצחק נטוביץ",
+      "tenant_email": "",
+      "tenant_phone": "",
+      "monthly_rent_total": 1000,
+      "our_share": 1000,
+      "start_date": null,
+      "end_date": "2023-11-30",
+      "notes": "",
+      "insurance": "",
+      "arnona_number": "",
+      "electric_meter": "",
+      "handled_by": ""
+    },
+    "property": {
+      "fileNumber": "3",
+      "address": "הרברט סמואל, חדרה"
+    },
+    "score": 50
+  }
+]

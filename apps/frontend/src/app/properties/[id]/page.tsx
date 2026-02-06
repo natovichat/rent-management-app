@@ -56,7 +56,9 @@ import { financialsApi, Expense, Income } from '@/lib/api/financials';
 import { unitsApi, Unit } from '@/lib/api/units';
 import { ownersApi, Owner, CreateOwnerDto, OwnerType } from '@/lib/api/owners';
 import { bankAccountsApi, BankAccount, CreateBankAccountDto, formatBankAccountDisplay } from '@/lib/api/bank-accounts';
+import { leasesApi, Lease } from '@/lib/api/leases';
 import PropertyForm from '@/components/properties/PropertyForm';
+import LeasesPanel from '@/components/leases/LeasesPanel';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -65,12 +67,13 @@ import { z } from 'zod';
  * Property Details Page - Comprehensive property management
  * 
  * Features:
- * - Tabbed interface (Details, Ownership, Mortgages, Financials, Units)
+ * - Tabbed interface (Details, Ownership, Mortgages, Financials, Units, Leases)
  * - PropertyCard component for header
  * - OwnershipPanel in Ownership tab
  * - MortgageCard components in Mortgages tab
  * - PropertyValueChart and IncomeExpenseChart in Financials tab
  * - Units display
+ * - LeasesPanel in Leases tab with lease details
  * - Add owner, mortgage, valuation actions
  * - Edit property action
  * - RTL support
@@ -271,6 +274,17 @@ export default function PropertyDetailsPage() {
       const response = await unitsApi.getAll();
       // Filter units by propertyId on client side
       return response.data.filter((unit: Unit) => unit.propertyId === propertyId);
+    },
+    enabled: !!propertyId && !loading,
+  });
+
+  // Fetch leases for this property
+  const { data: leasesData = [], isLoading: leasesLoading } = useQuery({
+    queryKey: ['leases', propertyId],
+    queryFn: async () => {
+      // Use API filter to get leases for this property
+      const response = await leasesApi.getAll(1, 1000, { propertyId });
+      return response.data;
     },
     enabled: !!propertyId && !loading,
   });
@@ -614,6 +628,7 @@ export default function PropertyDetailsPage() {
           <Tab label="משכנתאות" />
           <Tab label="כספים" />
           <Tab label="יחידות דיור" />
+          <Tab label="שכירויות" />
         </Tabs>
       </Box>
 
@@ -1019,6 +1034,11 @@ export default function PropertyDetailsPage() {
             ))}
           </Grid>
         )}
+      </TabPanel>
+
+      {/* Leases Tab */}
+      <TabPanel value={tabValue} index={5}>
+        <LeasesPanel leases={leasesData} isLoading={leasesLoading} />
       </TabPanel>
 
       {/* Edit Property Dialog */}

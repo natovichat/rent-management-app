@@ -13,6 +13,7 @@
 - ✅ Current values for all properties
 - ✅ Mortgage information where available
 - ✅ Unit details (apartments, floors, room counts) where specified
+- ✅ **11 lease agreements with tenant and rental information** (added 2026-02-06)
 
 ### Placeholder Data Used
 
@@ -141,10 +142,81 @@ Properties with multiple units (apartments):
 
 ---
 
+## Lease Agreements Import (Added: 2026-02-06)
+
+### Source
+**File:** רשימת נכסים - איציק נטוביץ 5.2023 2.xlsx  
+**Tab:** שכירות (Leases tab)
+
+### Import Results
+
+**Total Leases Processed:** 12  
+**Successfully Imported:** 11  
+**Manual Entry Required:** 1
+
+#### Imported Leases
+
+| # | Property | Tenant | Unit | Monthly Rent (Our Share) | Status |
+|---|----------|--------|------|--------------------------|--------|
+| 1 | הפלמ"ח 50, ירושלים | מלכין בלה ואיתם טובול | דירה 1, קומה 1 | ₪2,850 (50%) | ENDED |
+| 2 | הרוא"ה 295, רמת גן | עדי ויהודה בן שמואל | דירה 2, קומה 3 | ₪5,950 (100%) | ENDED |
+| 3 | מנדלי 7, תל אביב | אולטי יהונתן אליהו | דירה 16, קומה 2 | ₪3,400 (100%) | ENDED |
+| 4 | מנדלי 7, תל אביב | אלכסיי פינרוב | דירה 17, קומה 1 | ₪3,600 (100%) | ENDED |
+| 5 | לביא 6, רמת גן | לויכטר ענבל | דירה 4, קומה 2 | ₪2,200 (50%) | ENDED |
+| 6 | שלום עליכם 6, רמת גן | זדה רינה | דירה 3, קומה 6 | ₪5,000 (100%) | ENDED |
+| 7 | פטרסון 3, יד אליהו, תל אביב | יבגני ליבוביץ' | אין, קומה 2 | ₪4,400 (100%) | ENDED |
+| 8 | טבנקין 22, גבעתיים | סיון ויניב סימן טוב | דירה 21, קומה 5 | ₪15,300 (100%) | ENDED |
+| 9 | דרך המלך 11, גני תקווה | רחל דראש / יונתן דניאל | דירה 15, קומה 5 | ₪6,600 (100%) | ENDED |
+| 10 | אלנבי 85, תל אביב - מחסן | רדפורד הלוחש לסייחים | N/A | ₪1,000 (100%) | ACTIVE |
+| 11 | הרברט סמואל, חדרה | יבולים דרום, עמוס שמור, יצחק נטוביץ | דירה/מחסן, קרקע | ₪1,000 (100%) | ACTIVE |
+
+**Total Monthly Income (Our Share):** ₪51,300
+
+**Note:** Most leases have ended (9 out of 11). Only 2 are currently active.
+
+#### Lease Requiring Manual Entry
+
+**Property:** בר-כוכבא 34, רמת גן  
+**Tenant:** אורי ויינשטיין בר אנקונינה  
+**Unit:** דירה 16, קומה 8  
+**Monthly Rent:** ₪6,900  
+**Dates:** 23.12.2019 → 31.01.2024  
+**Reason:** Address matching algorithm didn't find sufficient match  
+**Action Required:** Create lease manually in the system
+
+See detailed instructions in: `שכירויות-לבדיקה.md`
+
+### What Was Created
+
+- **11 Tenants:** New tenant records with contact information
+- **9 Units:** New unit records (2 units already existed for מנדלי 7)
+- **11 Lease Agreements:** Complete rental contracts linked to properties, units, and tenants
+
+### Lease Data Notes
+
+- **Partial Ownership:** Two properties have 50% ownership split
+- **Missing Start Dates:** Two leases had no start date (used default)
+- **Unit Numbers:** Some units had unclear numbering ("אין", "N/A") - need review
+- **Ended Leases:** Most leases have ended - consider updating or removing
+
+### Related Files
+
+- **leases-data.json** - Raw lease data extracted from Excel
+- **lease-property-mapping.json** - Address matching results
+- **import-netobitz-leases.ts** - TypeScript seed script for lease import
+- **LEASES_IMPORT_SUMMARY.md** - Detailed import summary with all lease details
+- **שכירויות-לבדיקה.md** - Instructions for manual lease entry
+
+---
+
 ## Next Steps
 
-1. Run the seed script to import all data
-2. Verify in the application that all relationships are correct
-3. Manually update placeholder contact information
-4. Review properties marked for verification
-5. Add any missing cadastral or unit details
+1. ✅ Run the property seed script to import all data (COMPLETED: 2026-02-04)
+2. ✅ Run the lease seed script to import lease agreements (COMPLETED: 2026-02-06)
+3. Verify in the application that all relationships are correct
+4. Manually update placeholder contact information
+5. Review properties marked for verification
+6. Add any missing cadastral or unit details
+7. **NEW:** Manually create the missing lease for בר-כוכבא 34
+8. **NEW:** Update lease statuses (renew ended leases or mark as inactive)
+9. **NEW:** Review unit numbers for leases with "אין" or "N/A"
