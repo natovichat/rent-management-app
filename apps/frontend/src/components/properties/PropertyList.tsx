@@ -612,16 +612,12 @@ export default function PropertyList() {
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
           disableColumnReorder={false}
-          slotProps={{
-            columnHeader: {
-              style: {
-                textAlign: 'right',
-                justifyContent: 'flex-end',
-                display: 'flex',
-              },
-            },
-          }}
           sx={{
+            '& .MuiDataGrid-columnHeader': {
+              textAlign: 'right',
+              justifyContent: 'flex-end',
+              display: 'flex',
+            },
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',

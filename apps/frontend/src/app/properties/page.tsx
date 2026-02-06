@@ -9,7 +9,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { isAuthenticated } from '@/lib/auth';
-import PropertyList from '@/components/properties/PropertyList';
+import PropertyListMRT from '@/components/properties/PropertyListMRT';
 import { AccountSelector } from '@/components/layout/AccountSelector';
 import QuickNavigator from '@/components/navigation/QuickNavigator';
 
@@ -69,7 +69,7 @@ export default function PropertiesPage() {
         </Box>
       </Box>
 
-      <PropertyList />
+      <PropertyListMRT />
     </Container>
   );
 }
