@@ -361,12 +361,43 @@ npm install
 npm install --workspaces
 ```
 
+## 🚀 Deployment to Production (GCP)
+
+This project includes automatic CI/CD deployment to Google Cloud Platform using GitHub Actions.
+
+### Quick Deploy (5 minutes!)
+
+```bash
+# 1. Run setup script
+./scripts/setup-gcp.sh
+
+# 2. Add GitHub Secrets (from script output)
+# Go to: https://github.com/natovichat/rent-management-app/settings/secrets/actions
+# Add: GCP_SA_KEY, DATABASE_URL, JWT_SECRET
+
+# 3. Push to GitHub (triggers automatic deployment)
+git push origin main
+```
+
+**📖 Detailed Guides:**
+- [Quick Deploy Guide](docs/QUICK_DEPLOY.md) - 5 minute setup ⚡
+- [Full Deployment Guide](docs/DEPLOYMENT_GUIDE.md) - Complete documentation 📚
+
+**🎯 Deployment Features:**
+- ✅ Automatic deployment on push to `main`
+- ✅ Backend deployed to Cloud Run
+- ✅ Frontend deployed to Cloud Run
+- ✅ Database migrations run automatically
+- ✅ Zero-downtime deployments
+
 ## 📚 Documentation
 
 - [MVP Implementation Guide](docs/MVP_IMPLEMENTATION_GUIDE.md)
 - [Requirements](docs/REQUIRMENTS)
 - [Database Schema](docs/database-schema.mdc)
 - [Rent Application Standards](.cursor/rules/rent-application-standards.mdc)
+- [Deployment Guide](docs/DEPLOYMENT_GUIDE.md) 🆕
+- [Quick Deploy](docs/QUICK_DEPLOY.md) 🆕
 
 ## 🔗 Useful Links
 

@@ -70,3 +70,8 @@ apps/backend/prisma/migrations/
 # Misc
 .eslintcache
 .stylelintcache
+
+# GCP Credentials
+*gcp*.json
+gcp-key.json
+service-account*.json
