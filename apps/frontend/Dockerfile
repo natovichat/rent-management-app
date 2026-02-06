@@ -10,8 +10,8 @@ COPY package.json package-lock.json* ./
 COPY apps/frontend/package.json ./apps/frontend/
 COPY packages/shared/package.json ./packages/shared/
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (root and all workspaces)
+RUN npm ci --include-workspace-root --workspaces
 
 # Rebuild the source code only when needed
 FROM base AS builder
