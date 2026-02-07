@@ -1,4 +1,4 @@
-import api from '../api';
+import { api } from '../api';
 import { TableConfiguration, UpdateTableConfigDto, EntityType } from '@/types/table-config';
 
 /**
