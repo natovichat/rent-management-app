@@ -73,7 +73,7 @@ export default function PropertyFilterPanel({
   onFiltersChange,
   onClear,
 }: PropertyFilterPanelProps) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false); // Changed to false - closed by default
   const [cityInput, setCityInput] = useState(filters.city || '');
 
   // Debounce city input (300ms)
