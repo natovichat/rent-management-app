@@ -47,11 +47,13 @@ export class FinancialsController {
     description: 'List of expenses',
   })
   findAllExpenses(
+    @Request() req: any,
     @Query('propertyId') propertyId?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    return this.financialsService.findAllExpenses(HARDCODED_ACCOUNT_ID, {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.findAllExpenses(accountId, {
       propertyId,
       startDate,
       endDate,
@@ -68,8 +70,9 @@ export class FinancialsController {
     status: 404,
     description: 'Property not found',
   })
-  createExpense(@Body() createExpenseDto: CreateExpenseDto) {
-    return this.financialsService.createExpense(createExpenseDto, HARDCODED_ACCOUNT_ID);
+  createExpense(@Request() req: any, @Body() createExpenseDto: CreateExpenseDto) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.createExpense(createExpenseDto, accountId);
   }
 
   @Patch('expenses/:id')
@@ -83,10 +86,12 @@ export class FinancialsController {
     description: 'Expense not found',
   })
   updateExpense(
+    @Request() req: any,
     @Param('id') id: string,
     @Body() updateExpenseDto: UpdateExpenseDto,
   ) {
-    return this.financialsService.updateExpense(id, updateExpenseDto, HARDCODED_ACCOUNT_ID);
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.updateExpense(id, updateExpenseDto, accountId);
   }
 
   @Delete('expenses/:id')
@@ -99,8 +104,9 @@ export class FinancialsController {
     status: 404,
     description: 'Expense not found',
   })
-  removeExpense(@Param('id') id: string) {
-    return this.financialsService.removeExpense(id, HARDCODED_ACCOUNT_ID);
+  removeExpense(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.removeExpense(id, accountId);
   }
 
   // ============================================
@@ -117,11 +123,13 @@ export class FinancialsController {
     description: 'List of income entries',
   })
   findAllIncome(
+    @Request() req: any,
     @Query('propertyId') propertyId?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
-    return this.financialsService.findAllIncome(HARDCODED_ACCOUNT_ID, {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.findAllIncome(accountId, {
       propertyId,
       startDate,
       endDate,
@@ -138,8 +146,9 @@ export class FinancialsController {
     status: 404,
     description: 'Property not found',
   })
-  createIncome(@Body() createIncomeDto: CreateIncomeDto) {
-    return this.financialsService.createIncome(createIncomeDto, HARDCODED_ACCOUNT_ID);
+  createIncome(@Request() req: any, @Body() createIncomeDto: CreateIncomeDto) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.createIncome(createIncomeDto, accountId);
   }
 
   @Patch('income/:id')
@@ -153,10 +162,12 @@ export class FinancialsController {
     description: 'Income not found',
   })
   updateIncome(
+    @Request() req: any,
     @Param('id') id: string,
     @Body() updateIncomeDto: UpdateIncomeDto,
   ) {
-    return this.financialsService.updateIncome(id, updateIncomeDto, HARDCODED_ACCOUNT_ID);
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.updateIncome(id, updateIncomeDto, accountId);
   }
 
   @Delete('income/:id')
@@ -169,8 +180,9 @@ export class FinancialsController {
     status: 404,
     description: 'Income not found',
   })
-  removeIncome(@Param('id') id: string) {
-    return this.financialsService.removeIncome(id, HARDCODED_ACCOUNT_ID);
+  removeIncome(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.removeIncome(id, accountId);
   }
 
   // ============================================
@@ -188,8 +200,9 @@ export class FinancialsController {
     status: 404,
     description: 'Property not found',
   })
-  getPropertyFinancials(@Param('propertyId') propertyId: string) {
-    return this.financialsService.getPropertyFinancials(propertyId, HARDCODED_ACCOUNT_ID);
+  getPropertyFinancials(@Request() req: any, @Param('propertyId') propertyId: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.financialsService.getPropertyFinancials(propertyId, accountId);
   }
 
   @Get('summary')
@@ -201,11 +214,13 @@ export class FinancialsController {
     description: 'Financial summary with total income, expenses, and net',
   })
   getFinancialSummary(
+    @Request() req: any,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
     return this.financialsService.getFinancialSummary(
-      HARDCODED_ACCOUNT_ID,
+      accountId,
       startDate,
       endDate,
     );
@@ -225,12 +240,14 @@ export class FinancialsController {
     description: 'Expense breakdown grouped by type',
   })
   getExpenseBreakdown(
+    @Request() req: any,
     @Query('propertyId') propertyId?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
     return this.financialsService.getExpenseBreakdown(
-      HARDCODED_ACCOUNT_ID,
+      accountId,
       {
         propertyId,
         startDate,
@@ -249,12 +266,14 @@ export class FinancialsController {
     description: 'Income breakdown grouped by type',
   })
   getIncomeBreakdown(
+    @Request() req: any,
     @Query('propertyId') propertyId?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
     return this.financialsService.getIncomeBreakdown(
-      HARDCODED_ACCOUNT_ID,
+      accountId,
       {
         propertyId,
         startDate,
@@ -276,13 +295,15 @@ export class FinancialsController {
     description: 'Complete financial dashboard data',
   })
   getPropertyDashboard(
+    @Request() req: any,
     @Param('propertyId') propertyId: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
   ) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
     return this.financialsService.getPropertyDashboard(
       propertyId,
-      HARDCODED_ACCOUNT_ID,
+      accountId,
       startDate,
       endDate,
     );
