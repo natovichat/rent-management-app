@@ -7,11 +7,20 @@ async function bootstrap() {
   
   // Enable CORS
   app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'https://rent-management-app.vercel.app',
-      'https://rent-management-app-*.vercel.app', // Preview deployments
-    ],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:3000',
+        'https://rent-management-app.vercel.app',
+        'https://rent-management-app-frontend.vercel.app',
+      ];
+      
+      // Allow any Vercel preview deployment
+      if (!origin || allowedOrigins.includes(origin) || origin.match(/\.vercel\.app$/)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
 
