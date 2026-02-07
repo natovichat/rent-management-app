@@ -811,3 +811,18 @@ model Session {
   @@index([token])
   @@map("sessions")
 }
+
+// ============================================
+// Table Configuration (Dynamic Column Management)
+// ============================================
+
+model TableConfiguration {
+  id         String   @id @default(uuid())
+  entityType String   @map("entity_type") // 'properties', 'tenants', 'leases', etc.
+  columns    Json     // Array of { field: string, visible: boolean, order: number, required: boolean }
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  
+  @@unique([entityType])
+  @@map("table_configurations")
+}

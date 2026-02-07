@@ -1,0 +1,78 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e4]:
+    - generic [ref=e6]:
+      - img [ref=e7]
+      - generic [ref=e9]:
+        - generic [ref=e10]: חשבון
+        - generic "חשבון" [ref=e11]:
+          - combobox "חשבון משפחת נטוביץ 061cf47d..." [ref=e12] [cursor=pointer]:
+            - generic [ref=e13]:
+              - paragraph [ref=e14]: משפחת נטוביץ
+              - generic [ref=e15]: 061cf47d...
+          - textbox: 061cf47d-f167-4f5d-8602-6f24792dc008
+          - img
+          - group:
+            - generic: חשבון
+    - img [ref=e16]
+    - heading "מערכת ניהול דירות להשכרה" [level=1] [ref=e18]
+    - heading "Rent Management Application" [level=6] [ref=e19]
+    - paragraph [ref=e20]: ברוכים הבאים למערכת ניהול נכסים להשכרה
+    - link "התחבר למערכת" [ref=e22] [cursor=pointer]:
+      - /url: /login
+      - img [ref=e24]
+      - text: התחבר למערכת
+    - heading "ניהול נכסים" [level=6] [ref=e26]
+    - generic [ref=e27]:
+      - link "נכסים" [ref=e28] [cursor=pointer]:
+        - /url: /properties
+        - text: נכסים
+      - link "יחידות" [ref=e29] [cursor=pointer]:
+        - /url: /units
+        - text: יחידות
+    - heading "ניהול דיירים וחוזים" [level=6] [ref=e30]
+    - generic [ref=e31]:
+      - link "דיירים" [ref=e32] [cursor=pointer]:
+        - /url: /tenants
+        - text: דיירים
+      - link "חוזי שכירות" [ref=e33] [cursor=pointer]:
+        - /url: /leases
+        - text: חוזי שכירות
+    - heading "ניהול בעלות ומימון" [level=6] [ref=e34]
+    - generic [ref=e35]:
+      - link "בעלים" [ref=e36] [cursor=pointer]:
+        - /url: /owners
+        - text: בעלים
+      - link "משכנתאות" [ref=e37] [cursor=pointer]:
+        - /url: /mortgages
+        - text: משכנתאות
+      - link "חשבונות בנק" [ref=e38] [cursor=pointer]:
+        - /url: /bank-accounts
+        - text: חשבונות בנק
+      - link "חברות השקעה" [ref=e39] [cursor=pointer]:
+        - /url: /investment-companies
+        - text: חברות השקעה
+    - heading "מעקב פיננסי" [level=6] [ref=e40]
+    - generic [ref=e41]:
+      - link "הוצאות" [ref=e42] [cursor=pointer]:
+        - /url: /expenses
+        - text: הוצאות
+      - link "הכנסות" [ref=e43] [cursor=pointer]:
+        - /url: /income
+        - text: הכנסות
+    - heading "דוחות וניתוחים" [level=6] [ref=e44]
+    - link "דשבורד" [ref=e46] [cursor=pointer]:
+      - /url: /dashboard
+      - text: דשבורד
+    - generic [ref=e48]:
+      - strong [ref=e49]: "תכונות:"
+      - text: • ניהול נכסים, יחידות דיור וחוזי שכירות
+      - text: • ניהול דיירים ובעלים
+      - text: • ניהול משכנתאות וחשבונות בנק
+      - text: • מעקב הוצאות והכנסות
+      - text: • ניהול חברות השקעה
+      - text: • דשבורד ואנליטיקה
+  - alert [ref=e50]
+```

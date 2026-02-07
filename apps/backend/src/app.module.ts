@@ -20,6 +20,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { ImportModule } from './modules/import/import.module';
 import { ExportModule } from './modules/export/export.module';
+import { TableConfigurationsModule } from './table-configurations/table-configurations.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { ExportModule } from './modules/export/export.module';
     NotificationsModule,
     ImportModule,
     ExportModule,
+    TableConfigurationsModule,
   ],
   controllers: [],
   providers: [],

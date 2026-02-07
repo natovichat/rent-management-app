@@ -1,0 +1,257 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - heading "ניהול נכסים" [level=1] [ref=e5]
+        - paragraph [ref=e6]: ניהול נכסים, יחידות דיור וחוזים
+      - generic [ref=e7]:
+        - generic [ref=e9]:
+          - generic [ref=e10]: מעבר לטבלה
+          - generic [ref=e11]:
+            - combobox "מעבר לטבלה נכסים" [ref=e12] [cursor=pointer]:
+              - img [ref=e14]
+              - generic [ref=e16]: נכסים
+            - textbox: properties
+            - img
+            - group:
+              - generic: מעבר לטבלה
+        - generic [ref=e17]:
+          - img [ref=e18]
+          - generic [ref=e20]:
+            - generic [ref=e21]: חשבון
+            - generic "חשבון" [ref=e22]:
+              - combobox "חשבון משפחת נטוביץ 061cf47d..." [ref=e23] [cursor=pointer]:
+                - generic [ref=e24]:
+                  - paragraph [ref=e25]: משפחת נטוביץ
+                  - generic [ref=e26]: 061cf47d...
+              - textbox: 061cf47d-f167-4f5d-8602-6f24792dc008
+              - img
+              - group:
+                - generic: חשבון
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e30]:
+          - textbox "חיפוש נכסים..." [ref=e31]
+          - group
+        - generic [ref=e32]:
+          - button "CSV Actions" [ref=e33] [cursor=pointer]:
+            - img [ref=e34]
+          - button "נכס חדש" [ref=e36] [cursor=pointer]:
+            - img [ref=e38]
+            - text: נכס חדש
+      - generic [ref=e40]:
+        - button "סינון נכסים" [expanded] [ref=e41] [cursor=pointer]:
+          - generic [ref=e43]:
+            - img [ref=e44]
+            - paragraph [ref=e46]: סינון נכסים
+          - img [ref=e48]
+        - region [ref=e53]:
+          - generic [ref=e55]:
+            - generic [ref=e57]:
+              - generic: סוג נכס
+              - generic [ref=e58]:
+                - combobox [ref=e59] [cursor=pointer]
+                - textbox
+                - img
+                - group:
+                  - generic: סוג נכס
+            - generic [ref=e61]:
+              - generic: סטטוס
+              - generic [ref=e62]:
+                - combobox [ref=e63] [cursor=pointer]
+                - textbox
+                - img
+                - group:
+                  - generic: סטטוס
+            - generic [ref=e65]:
+              - generic: עיר
+              - generic [ref=e66]:
+                - textbox "עיר" [ref=e67]:
+                  - /placeholder: הזן שם עיר
+                - group:
+                  - generic: עיר
+            - generic [ref=e69]:
+              - generic [ref=e70]: מדינה
+              - generic [ref=e71]:
+                - combobox [ref=e72] [cursor=pointer]: ישראל
+                - textbox: Israel
+                - img
+                - group:
+                  - generic: מדינה
+            - generic [ref=e74] [cursor=pointer]:
+              - generic [ref=e75]:
+                - checkbox "יש משכנתא" [ref=e76]
+                - img [ref=e77]
+              - generic [ref=e79]: יש משכנתא
+            - separator [ref=e81]:
+              - paragraph [ref=e83]: סינונים מתקדמים
+            - generic [ref=e85]:
+              - generic: ערך משוער מינימלי (₪)
+              - generic [ref=e86]:
+                - spinbutton "ערך משוער מינימלי (₪)" [ref=e87]
+                - group:
+                  - generic: ערך משוער מינימלי (₪)
+            - generic [ref=e89]:
+              - generic: ערך משוער מקסימלי (₪)
+              - generic [ref=e90]:
+                - spinbutton "ערך משוער מקסימלי (₪)" [ref=e91]
+                - group:
+                  - generic: ערך משוער מקסימלי (₪)
+            - generic [ref=e93]:
+              - generic: שטח כולל מינימלי (מ״ר)
+              - generic [ref=e94]:
+                - spinbutton "שטח כולל מינימלי (מ״ר)" [ref=e95]
+                - group:
+                  - generic: שטח כולל מינימלי (מ״ר)
+            - generic [ref=e97]:
+              - generic: שטח כולל מקסימלי (מ״ר)
+              - generic [ref=e98]:
+                - spinbutton "שטח כולל מקסימלי (מ״ר)" [ref=e99]
+                - group:
+                  - generic: שטח כולל מקסימלי (מ״ר)
+            - generic [ref=e101]:
+              - generic: שטח קרקע מינימלי (מ״ר)
+              - generic [ref=e102]:
+                - spinbutton "שטח קרקע מינימלי (מ״ר)" [ref=e103]
+                - group:
+                  - generic: שטח קרקע מינימלי (מ״ר)
+            - generic [ref=e105]:
+              - generic: שטח קרקע מקסימלי (מ״ר)
+              - generic [ref=e106]:
+                - spinbutton "שטח קרקע מקסימלי (מ״ר)" [ref=e107]
+                - group:
+                  - generic: שטח קרקע מקסימלי (מ״ר)
+            - generic [ref=e109]:
+              - generic [ref=e110]: תאריך יצירה מ-
+              - generic [ref=e111]:
+                - textbox "תאריך יצירה מ-" [ref=e112]
+                - group:
+                  - generic: תאריך יצירה מ-
+            - generic [ref=e114]:
+              - generic [ref=e115]: תאריך יצירה עד
+              - generic [ref=e116]:
+                - textbox "תאריך יצירה עד" [ref=e117]
+                - group:
+                  - generic: תאריך יצירה עד
+            - generic [ref=e119]:
+              - generic [ref=e120]: תאריך הערכה אחרונה מ-
+              - generic [ref=e121]:
+                - textbox "תאריך הערכה אחרונה מ-" [ref=e122]
+                - group:
+                  - generic: תאריך הערכה אחרונה מ-
+            - generic [ref=e124]:
+              - generic [ref=e125]: תאריך הערכה אחרונה עד
+              - generic [ref=e126]:
+                - textbox "תאריך הערכה אחרונה עד" [ref=e127]
+                - group:
+                  - generic: תאריך הערכה אחרונה עד
+      - grid [ref=e129]:
+        - generic [ref=e130]:
+          - rowgroup [ref=e131]:
+            - row "מספר תיק כתובת מספר יחידות סטטוס משכון תאריך יצירה פעולות" [ref=e132]:
+              - columnheader "מספר תיק" [ref=e133] [cursor=pointer]:
+                - generic [ref=e135]: מספר תיק
+              - columnheader "כתובת" [ref=e136] [cursor=pointer]:
+                - generic [ref=e138]: כתובת
+              - columnheader "מספר יחידות" [ref=e139] [cursor=pointer]:
+                - generic [ref=e141]: מספר יחידות
+              - columnheader "סטטוס משכון" [ref=e142] [cursor=pointer]:
+                - generic [ref=e144]: סטטוס משכון
+              - columnheader "תאריך יצירה" [ref=e145] [cursor=pointer]:
+                - generic [ref=e147]: תאריך יצירה
+              - columnheader "פעולות" [ref=e148]:
+                - generic [ref=e150]: פעולות
+          - rowgroup [ref=e151]:
+            - row "- רחוב יפו 10, ירושלים 0 7.2.2026" [ref=e152]:
+              - cell "-" [ref=e153]:
+                - generic [ref=e154]: "-"
+              - cell "רחוב יפו 10, ירושלים" [ref=e155]:
+                - link "רחוב יפו 10, ירושלים" [ref=e156] [cursor=pointer]:
+                  - /url: /properties/0e64ca2e-32fd-4004-88e9-b18f689a1a4f
+              - cell "0" [ref=e157]:
+                - generic [ref=e158]: "0"
+              - cell [ref=e159]
+              - cell "7.2.2026" [ref=e160]:
+                - generic [ref=e161]: 7.2.2026
+              - cell [ref=e162]:
+                - menu [ref=e163]:
+                  - menuitem "צפייה" [ref=e164] [cursor=pointer]:
+                    - img [ref=e165]
+                  - menuitem "עריכה" [ref=e167] [cursor=pointer]:
+                    - img [ref=e168]
+                  - menuitem "מחיקה" [ref=e170] [cursor=pointer]:
+                    - img [ref=e171]
+            - row "- רחוב רוטשילד 1, תל אביב 0 7.2.2026" [ref=e173]:
+              - cell "-" [ref=e174]:
+                - generic [ref=e175]: "-"
+              - cell "רחוב רוטשילד 1, תל אביב" [ref=e176]:
+                - link "רחוב רוטשילד 1, תל אביב" [ref=e177] [cursor=pointer]:
+                  - /url: /properties/a55e4ae3-9b0e-453b-97a3-f77983921811
+              - cell "0" [ref=e178]:
+                - generic [ref=e179]: "0"
+              - cell [ref=e180]
+              - cell "7.2.2026" [ref=e181]:
+                - generic [ref=e182]: 7.2.2026
+              - cell [ref=e183]:
+                - menu [ref=e184]:
+                  - menuitem "צפייה" [ref=e185] [cursor=pointer]:
+                    - img [ref=e186]
+                  - menuitem "עריכה" [ref=e188] [cursor=pointer]:
+                    - img [ref=e189]
+                  - menuitem "מחיקה" [ref=e191] [cursor=pointer]:
+                    - img [ref=e192]
+            - row "- רחוב יפו 10, ירושלים 0 7.2.2026" [ref=e194]:
+              - cell "-" [ref=e195]:
+                - generic [ref=e196]: "-"
+              - cell "רחוב יפו 10, ירושלים" [ref=e197]:
+                - link "רחוב יפו 10, ירושלים" [ref=e198] [cursor=pointer]:
+                  - /url: /properties/25988a04-9d42-42f6-9780-c123e60ea9a8
+              - cell "0" [ref=e199]:
+                - generic [ref=e200]: "0"
+              - cell [ref=e201]
+              - cell "7.2.2026" [ref=e202]:
+                - generic [ref=e203]: 7.2.2026
+              - cell [ref=e204]:
+                - menu [ref=e205]:
+                  - menuitem "צפייה" [ref=e206] [cursor=pointer]:
+                    - img [ref=e207]
+                  - menuitem "עריכה" [ref=e209] [cursor=pointer]:
+                    - img [ref=e210]
+                  - menuitem "מחיקה" [ref=e212] [cursor=pointer]:
+                    - img [ref=e213]
+            - row "- רחוב רוטשילד 1, תל אביב 0 7.2.2026" [ref=e215]:
+              - cell "-" [ref=e216]:
+                - generic [ref=e217]: "-"
+              - cell "רחוב רוטשילד 1, תל אביב" [ref=e218]:
+                - link "רחוב רוטשילד 1, תל אביב" [ref=e219] [cursor=pointer]:
+                  - /url: /properties/a593a972-ccc6-45d2-be15-bd85c3a68534
+              - cell "0" [ref=e220]:
+                - generic [ref=e221]: "0"
+              - cell [ref=e222]
+              - cell "7.2.2026" [ref=e223]:
+                - generic [ref=e224]: 7.2.2026
+              - cell [ref=e225]:
+                - menu [ref=e226]:
+                  - menuitem "צפייה" [ref=e227] [cursor=pointer]:
+                    - img [ref=e228]
+                  - menuitem "עריכה" [ref=e230] [cursor=pointer]:
+                    - img [ref=e231]
+                  - menuitem "מחיקה" [ref=e233] [cursor=pointer]:
+                    - img [ref=e234]
+        - generic [ref=e238]:
+          - paragraph [ref=e239]: "Rows per page:"
+          - generic [ref=e240]:
+            - 'combobox "Rows per page: 10" [ref=e241] [cursor=pointer]': "10"
+            - textbox: "10"
+            - img
+          - paragraph [ref=e242]: 1–4 of 4
+          - generic [ref=e243]:
+            - button "Go to previous page" [disabled]:
+              - img
+            - button "Go to next page" [disabled]:
+              - img
+  - alert [ref=e244]
+```

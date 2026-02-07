@@ -1,0 +1,162 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]:
+        - heading "ניהול הוצאות" [level=1] [ref=e5]
+        - paragraph [ref=e6]: ניהול הוצאות נכסים, צפייה בפרטים וסינון
+      - generic [ref=e7]:
+        - generic [ref=e9]:
+          - generic [ref=e10]: מעבר לטבלה
+          - generic [ref=e11]:
+            - combobox "מעבר לטבלה הוצאות" [ref=e12] [cursor=pointer]:
+              - img [ref=e14]
+              - generic [ref=e16]: הוצאות
+            - textbox: expenses
+            - img
+            - group:
+              - generic: מעבר לטבלה
+        - generic [ref=e17]:
+          - img [ref=e18]
+          - generic [ref=e20]:
+            - generic [ref=e21]: חשבון
+            - generic "חשבון" [ref=e22]:
+              - combobox "חשבון משפחת נטוביץ 061cf47d..." [ref=e23] [cursor=pointer]:
+                - generic [ref=e24]:
+                  - paragraph [ref=e25]: משפחת נטוביץ
+                  - generic [ref=e26]: 061cf47d...
+              - textbox: 061cf47d-f167-4f5d-8602-6f24792dc008
+              - img
+              - group:
+                - generic: חשבון
+    - generic [ref=e27]:
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - heading "ניהול הוצאות" [level=1] [ref=e30]
+          - paragraph [ref=e31]: רשימת כל ההוצאות במערכת
+        - button "הוצאה חדשה" [ref=e32] [cursor=pointer]:
+          - img [ref=e34]
+          - text: הוצאה חדשה
+      - generic [ref=e36]:
+        - generic [ref=e38]:
+          - textbox "חפש..." [ref=e39]
+          - group
+        - generic [ref=e40]:
+          - generic: נכס
+          - generic [ref=e41]:
+            - combobox [ref=e42] [cursor=pointer]
+            - textbox
+            - img
+            - group:
+              - generic: נכס
+        - generic [ref=e43]:
+          - generic: סוג
+          - generic [ref=e44]:
+            - combobox [ref=e45] [cursor=pointer]
+            - textbox
+            - img
+            - group:
+              - generic: סוג
+      - grid [ref=e47]:
+        - generic [ref=e48]:
+          - rowgroup [ref=e49]:
+            - row "נכס תאריך סוג קטגוריה סכום תיאור פעולות" [ref=e50]:
+              - columnheader "נכס" [ref=e51] [cursor=pointer]:
+                - generic [ref=e53]: נכס
+              - columnheader "תאריך" [ref=e54] [cursor=pointer]:
+                - generic [ref=e56]: תאריך
+              - columnheader "סוג" [ref=e57] [cursor=pointer]:
+                - generic [ref=e59]: סוג
+              - columnheader "קטגוריה" [ref=e60] [cursor=pointer]:
+                - generic [ref=e62]: קטגוריה
+              - columnheader "סכום" [ref=e63] [cursor=pointer]:
+                - generic [ref=e65]: סכום
+              - columnheader "תיאור" [ref=e66] [cursor=pointer]:
+                - generic [ref=e68]: תיאור
+              - columnheader "פעולות" [ref=e69]:
+                - generic [ref=e71]: פעולות
+          - rowgroup [ref=e72]:
+            - row "רחוב יפו 10, ירושלים 5.2.2026 מס ארנונה ‏800 ‏₪ ארנונה חודשית" [ref=e73]:
+              - cell "רחוב יפו 10, ירושלים" [ref=e74]:
+                - generic [ref=e75] [cursor=pointer]: רחוב יפו 10, ירושלים
+              - cell "5.2.2026" [ref=e76]
+              - cell "מס" [ref=e77]:
+                - generic [ref=e79]: מס
+              - cell "ארנונה" [ref=e80]
+              - cell "‏800 ‏₪" [ref=e81]
+              - cell "ארנונה חודשית" [ref=e82]
+              - cell [ref=e83]:
+                - menu [ref=e84]:
+                  - menuitem "צפייה" [ref=e85] [cursor=pointer]:
+                    - img [ref=e86]
+                  - menuitem "עריכה" [ref=e88] [cursor=pointer]:
+                    - img [ref=e89]
+                  - menuitem "מחיקה" [ref=e91] [cursor=pointer]:
+                    - img [ref=e92]
+            - row "רחוב רוטשילד 1, תל אביב 1.2.2026 תחזוקה תיקון צנרת ‏1,500 ‏₪ תיקון דליפה במטבח" [ref=e94]:
+              - cell "רחוב רוטשילד 1, תל אביב" [ref=e95]:
+                - generic [ref=e96] [cursor=pointer]: רחוב רוטשילד 1, תל אביב
+              - cell "1.2.2026" [ref=e97]
+              - cell "תחזוקה" [ref=e98]:
+                - generic [ref=e100]: תחזוקה
+              - cell "תיקון צנרת" [ref=e101]
+              - cell "‏1,500 ‏₪" [ref=e102]
+              - cell "תיקון דליפה במטבח" [ref=e103]
+              - cell [ref=e104]:
+                - menu [ref=e105]:
+                  - menuitem "צפייה" [ref=e106] [cursor=pointer]:
+                    - img [ref=e107]
+                  - menuitem "עריכה" [ref=e109] [cursor=pointer]:
+                    - img [ref=e110]
+                  - menuitem "מחיקה" [ref=e112] [cursor=pointer]:
+                    - img [ref=e113]
+            - row "רחוב יפו 10, ירושלים 30.1.2026 חשמל/מים/גז חשמל ‏350 ‏₪ חשבון חשמל דו חודשי" [ref=e115]:
+              - cell "רחוב יפו 10, ירושלים" [ref=e116]:
+                - generic [ref=e117] [cursor=pointer]: רחוב יפו 10, ירושלים
+              - cell "30.1.2026" [ref=e118]
+              - cell "חשמל/מים/גז" [ref=e119]:
+                - generic [ref=e121]: חשמל/מים/גז
+              - cell "חשמל" [ref=e122]
+              - cell "‏350 ‏₪" [ref=e123]
+              - cell "חשבון חשמל דו חודשי" [ref=e124]
+              - cell [ref=e125]:
+                - menu [ref=e126]:
+                  - menuitem "צפייה" [ref=e127] [cursor=pointer]:
+                    - img [ref=e128]
+                  - menuitem "עריכה" [ref=e130] [cursor=pointer]:
+                    - img [ref=e131]
+                  - menuitem "מחיקה" [ref=e133] [cursor=pointer]:
+                    - img [ref=e134]
+            - row "רחוב רוטשילד 1, תל אביב 15.1.2026 ביטוח ביטוח דירה ‏2,400 ‏₪ ביטוח שנתי" [ref=e136]:
+              - cell "רחוב רוטשילד 1, תל אביב" [ref=e137]:
+                - generic [ref=e138] [cursor=pointer]: רחוב רוטשילד 1, תל אביב
+              - cell "15.1.2026" [ref=e139]
+              - cell "ביטוח" [ref=e140]:
+                - generic [ref=e142]: ביטוח
+              - cell "ביטוח דירה" [ref=e143]
+              - cell "‏2,400 ‏₪" [ref=e144]
+              - cell "ביטוח שנתי" [ref=e145]
+              - cell [ref=e146]:
+                - menu [ref=e147]:
+                  - menuitem "צפייה" [ref=e148] [cursor=pointer]:
+                    - img [ref=e149]
+                  - menuitem "עריכה" [ref=e151] [cursor=pointer]:
+                    - img [ref=e152]
+                  - menuitem "מחיקה" [ref=e154] [cursor=pointer]:
+                    - img [ref=e155]
+        - generic [ref=e159]:
+          - paragraph [ref=e160]: "Rows per page:"
+          - generic [ref=e161]:
+            - 'combobox "Rows per page: 25" [ref=e162] [cursor=pointer]': "25"
+            - textbox: "25"
+            - img
+          - paragraph [ref=e163]: 1–4 of 4
+          - generic [ref=e164]:
+            - button "Go to previous page" [disabled]:
+              - img
+            - button "Go to next page" [disabled]:
+              - img
+  - alert [ref=e165]
+```
