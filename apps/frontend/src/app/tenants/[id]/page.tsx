@@ -27,7 +27,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { tenantsApi } from '@/lib/api/tenants';
 import { isAuthenticated } from '@/lib/auth';
 import { useAccount } from '@/contexts/AccountContext';
-import { LeaseStatus } from '@prisma/client';
+import { LeaseStatus } from '@/types/lease';
 
 /**
  * Tenant detail page showing tenant information and lease history.
