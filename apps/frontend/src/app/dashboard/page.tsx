@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import {
   Container,
   Box,
@@ -10,11 +9,9 @@ import {
   Grid,
   CircularProgress,
 } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
 import DownloadIcon from '@mui/icons-material/Download';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, FormControlLabel, List, ListItem, Button as MuiButton } from '@mui/material';
-import { isAuthenticated, logout } from '@/lib/auth';
 import { useQuery } from '@tanstack/react-query';
 import { dashboardApi } from '@/lib/api/dashboard';
 import { api } from '@/lib/api';
@@ -43,7 +40,6 @@ import QuickNavigator from '@/components/navigation/QuickNavigator';
  * - Cash flow summary (US10.12)
  */
 export default function DashboardPage() {
-  const router = useRouter();
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [exportMenuAnchor, setExportMenuAnchor] = useState<null | HTMLElement>(null);
@@ -51,12 +47,6 @@ export default function DashboardPage() {
   const [customizeDialogOpen, setCustomizeDialogOpen] = useState(false);
   const [widgetPreferences, setWidgetPreferences] = useState<{ visibleWidgets: string[]; widgetOrder: string[] } | null>(null);
   const [savingPreferences, setSavingPreferences] = useState(false);
-
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/');
-    }
-  }, [router]);
 
   // Format dates for API
   const startDateStr = startDate ? startDate.toISOString().split('T')[0] : undefined;
@@ -256,13 +246,6 @@ export default function DashboardPage() {
               <MenuItem onClick={() => handleExport('excel')}>ייצא דוח כספי ל-Excel</MenuItem>
               <MenuItem onClick={() => handleExport('pdf')}>ייצא סיכום תיק ל-PDF</MenuItem>
             </Menu>
-            <Button
-              variant="outlined"
-              startIcon={<LogoutIcon />}
-              onClick={logout}
-            >
-              התנתק
-            </Button>
           </Box>
         </Box>
       </Box>

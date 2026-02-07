@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import {
   Container,
@@ -21,7 +19,6 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import { leasesApi } from '@/lib/api/leases';
-import { isAuthenticated } from '@/lib/auth';
 import { useAccount } from '@/contexts/AccountContext';
 import { format } from 'date-fns';
 import { he } from 'date-fns/locale/he';
@@ -66,16 +63,10 @@ const getStatusLabel = (status: string) => {
  * Lease detail page showing lease information.
  */
 export default function LeaseDetailPage() {
-  const router = useRouter();
   const params = useParams();
   const leaseId = params.id as string;
   const { selectedAccountId } = useAccount();
 
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/');
-    }
-  }, [router]);
 
   const { data: lease, isLoading, error } = useQuery({
     queryKey: ['leases', selectedAccountId, leaseId],
@@ -83,9 +74,6 @@ export default function LeaseDetailPage() {
     enabled: !!selectedAccountId && !!leaseId,
   });
 
-  if (!isAuthenticated()) {
-    return null;
-  }
 
   if (isLoading) {
     return (

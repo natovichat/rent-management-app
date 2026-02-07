@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter, useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import {
   Container,
@@ -25,7 +23,6 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import { tenantsApi } from '@/lib/api/tenants';
-import { isAuthenticated } from '@/lib/auth';
 import { useAccount } from '@/contexts/AccountContext';
 import { LeaseStatus } from '@/types/lease';
 
@@ -33,16 +30,10 @@ import { LeaseStatus } from '@/types/lease';
  * Tenant detail page showing tenant information and lease history.
  */
 export default function TenantDetailPage() {
-  const router = useRouter();
   const params = useParams();
   const tenantId = params.id as string;
   const { selectedAccountId } = useAccount();
 
-  useEffect(() => {
-    if (!isAuthenticated()) {
-      router.push('/');
-    }
-  }, [router]);
 
   const { data: tenant, isLoading, error } = useQuery({
     queryKey: ['tenants', selectedAccountId, tenantId],
@@ -50,9 +41,6 @@ export default function TenantDetailPage() {
     enabled: !!selectedAccountId && !!tenantId,
   });
 
-  if (!isAuthenticated()) {
-    return null;
-  }
 
   if (isLoading) {
     return (
