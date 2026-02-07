@@ -612,17 +612,15 @@ export default function PropertyList() {
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
           sx={{
-            '& .MuiDataGrid-columnHeader': {
-              textAlign: 'right',
-              justifyContent: 'flex-end',
-              display: 'flex',
-            },
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(0, 0, 0, 0.05)',
               direction: 'rtl !important',
             },
             '& .MuiDataGrid-columnHeader': {
+              textAlign: 'right',
+              justifyContent: 'flex-end',
+              display: 'flex',
               direction: 'rtl !important',
             },
             '& .MuiDataGrid-columnHeaderDraggableContainer': {
