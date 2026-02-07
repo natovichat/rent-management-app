@@ -32,6 +32,7 @@ import {
 } from '@mui/icons-material';
 import { propertiesApi, Property, PropertyFilters } from '@/services/properties';
 import { useAccount } from '@/contexts/AccountContext';
+import { useConfiguredColumns } from '@/lib/hooks/useConfiguredColumns';
 import PropertyForm from './PropertyForm';
 import PropertyCsvActions from './PropertyCsvActions';
 import PropertyFilterPanel from './PropertyFilterPanel';
@@ -291,7 +292,8 @@ export default function PropertyList() {
     setPropertyToDelete(null);
   };
 
-  const columns: GridColDef<Property>[] = [
+  // All available columns (before configuration)
+  const allColumns: GridColDef<Property>[] = useMemo(() => [
     {
       field: 'fileNumber',
       headerName: 'מספר תיק',
@@ -493,7 +495,11 @@ export default function PropertyList() {
         />,
       ],
     },
-  ];
+  ], [router]); // End of allColumns useMemo
+
+  // Get configured columns based on user settings
+  // Falls back to all columns if no configuration exists
+  const columns = useConfiguredColumns('properties', allColumns);
 
   const handleCloseForm = () => {
     setOpenForm(false);

@@ -173,6 +173,20 @@ export default function Home() {
             </Button>
           </Stack>
 
+          <Typography variant="h6" sx={{ mt: 3, mb: 2 }}>
+            הגדרות
+          </Typography>
+          <Stack spacing={2} direction="row" justifyContent="center" flexWrap="wrap">
+            <Button
+              component={Link}
+              href="/settings/tables"
+              variant="outlined"
+              size="large"
+            >
+              הגדרות טבלאות
+            </Button>
+          </Stack>
+
           <Box sx={{ mt: 4, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
             <Typography variant="caption" color="text.secondary">
               <strong>תכונות:</strong>
