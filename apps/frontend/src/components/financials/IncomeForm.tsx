@@ -139,27 +139,36 @@ export const IncomeForm: React.FC<IncomeFormProps> = ({
         <DialogTitle>{initialData ? 'ערוך הכנסה' : 'הוסף הכנסה'}</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-            {properties && properties.length > 0 && (
-              <Controller
-                name="propertyId"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.propertyId}>
-                    <InputLabel>נכס *</InputLabel>
-                    <Select {...field} label="נכס *">
-                      {properties.map((property) => (
+            <Controller
+              name="propertyId"
+              control={control}
+              render={({ field }) => (
+                <FormControl fullWidth error={!!errors.propertyId}>
+                  <InputLabel>נכס *</InputLabel>
+                  <Select {...field} label="נכס *" disabled={!properties || properties.length === 0}>
+                    {properties && properties.length > 0 ? (
+                      properties.map((property) => (
                         <MenuItem key={property.id} value={property.id}>
                           {property.address}
                         </MenuItem>
-                      ))}
-                    </Select>
-                    {errors.propertyId && (
-                      <FormHelperText>{errors.propertyId.message}</FormHelperText>
+                      ))
+                    ) : (
+                      <MenuItem value="" disabled>
+                        אין נכסים במערכת - יש ליצור נכס תחילה
+                      </MenuItem>
                     )}
-                  </FormControl>
-                )}
-              />
-            )}
+                  </Select>
+                  {errors.propertyId && (
+                    <FormHelperText>{errors.propertyId.message}</FormHelperText>
+                  )}
+                  {(!properties || properties.length === 0) && (
+                    <FormHelperText sx={{ color: 'warning.main' }}>
+                      יש ליצור נכס לפני יצירת הכנסה
+                    </FormHelperText>
+                  )}
+                </FormControl>
+              )}
+            />
             <Controller
               name="incomeDate"
               control={control}
