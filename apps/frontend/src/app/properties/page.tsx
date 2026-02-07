@@ -1,9 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import {
   Container,
   Box,
   Typography,
+  CircularProgress,
 } from '@mui/material';
 import PropertyList from '@/components/properties/PropertyList';
 import { AccountSelector } from '@/components/layout/AccountSelector';
@@ -35,7 +37,13 @@ export default function PropertiesPage() {
         </Box>
       </Box>
 
-      <PropertyList />
+      <Suspense fallback={
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}>
+          <CircularProgress />
+        </Box>
+      }>
+        <PropertyList />
+      </Suspense>
     </Container>
   );
 }
