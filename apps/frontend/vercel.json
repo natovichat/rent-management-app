@@ -1,10 +1,10 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
+  "buildCommand": "cd ../.. && npm run build --workspace=apps/frontend",
   "framework": "nextjs",
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/properties/:id",
+      "destination": "/properties/[id]"
+    }
   ]
 }
