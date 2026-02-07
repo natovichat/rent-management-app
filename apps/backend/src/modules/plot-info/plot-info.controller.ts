@@ -6,6 +6,7 @@ import {
   Param,
   Put,
   Delete,
+  Request,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -37,10 +38,12 @@ export class PlotInfoController {
   @ApiResponse({ status: 404, description: 'נכס לא נמצא' })
   @ApiResponse({ status: 409, description: 'פרטי חלקה כבר קיימים לנכס זה' })
   create(
+    @Request() req: any,
     @Param('propertyId') propertyId: string,
     @Body() createDto: CreatePlotInfoDto,
   ) {
-    return this.plotInfoService.create(HARDCODED_ACCOUNT_ID, propertyId, createDto);
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.plotInfoService.create(accountId, propertyId, createDto);
   }
 
   @Get('properties/:propertyId/plot-info')
@@ -52,8 +55,9 @@ export class PlotInfoController {
     type: PlotInfoResponseDto,
   })
   @ApiResponse({ status: 404, description: 'פרטי חלקה לא נמצאו' })
-  findOne(@Param('propertyId') propertyId: string) {
-    return this.plotInfoService.findOne(HARDCODED_ACCOUNT_ID, propertyId);
+  findOne(@Request() req: any, @Param('propertyId') propertyId: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.plotInfoService.findOne(accountId, propertyId);
   }
 
   @Put('plot-info/:id')
@@ -65,8 +69,9 @@ export class PlotInfoController {
     type: PlotInfoResponseDto,
   })
   @ApiResponse({ status: 404, description: 'פרטי חלקה לא נמצאו' })
-  update(@Param('id') id: string, @Body() updateDto: UpdatePlotInfoDto) {
-    return this.plotInfoService.update(HARDCODED_ACCOUNT_ID, id, updateDto);
+  update(@Request() req: any, @Param('id') id: string, @Body() updateDto: UpdatePlotInfoDto) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.plotInfoService.update(accountId, id, updateDto);
   }
 
   @Delete('plot-info/:id')
@@ -77,7 +82,8 @@ export class PlotInfoController {
     description: 'פרטי החלקה נמחקו בהצלחה',
   })
   @ApiResponse({ status: 404, description: 'פרטי חלקה לא נמצאו' })
-  remove(@Param('id') id: string) {
-    return this.plotInfoService.remove(HARDCODED_ACCOUNT_ID, id);
+  remove(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.plotInfoService.remove(accountId, id);
   }
 }

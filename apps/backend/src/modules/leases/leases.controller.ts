@@ -30,8 +30,9 @@ export class LeasesController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new lease' })
-  create(@Body() createLeaseDto: CreateLeaseDto) {
-    return this.leasesService.create(HARDCODED_ACCOUNT_ID, createLeaseDto);
+  create(@Request() req: any, @Body() createLeaseDto: CreateLeaseDto) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.leasesService.create(accountId, createLeaseDto);
   }
 
   @Get()
@@ -105,26 +106,30 @@ export class LeasesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a lease by ID' })
-  findOne(@Param('id') id: string) {
-    return this.leasesService.findOne(HARDCODED_ACCOUNT_ID, id);
+  findOne(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.leasesService.findOne(accountId, id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a lease' })
-  update(@Param('id') id: string, @Body() updateLeaseDto: UpdateLeaseDto) {
-    return this.leasesService.update(HARDCODED_ACCOUNT_ID, id, updateLeaseDto);
+  update(@Request() req: any, @Param('id') id: string, @Body() updateLeaseDto: UpdateLeaseDto) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.leasesService.update(accountId, id, updateLeaseDto);
   }
 
   @Post(':id/terminate')
   @ApiOperation({ summary: 'Terminate a lease early' })
-  terminate(@Param('id') id: string) {
-    return this.leasesService.terminate(HARDCODED_ACCOUNT_ID, id);
+  terminate(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.leasesService.terminate(accountId, id);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a lease' })
-  remove(@Param('id') id: string) {
-    return this.leasesService.remove(HARDCODED_ACCOUNT_ID, id);
+  remove(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.leasesService.remove(accountId, id);
   }
 
   @Delete('test/cleanup')

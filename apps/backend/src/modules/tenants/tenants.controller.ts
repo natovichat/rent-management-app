@@ -7,18 +7,20 @@ import {
   Param,
   Delete,
   Query,
+  Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { TenantsService } from './tenants.service';
 import { CreateTenantDto } from './dto/create-tenant.dto';
 import { UpdateTenantDto } from './dto/update-tenant.dto';
-// Hardcoded test account ID - authentication removed for simplification
+// Hardcoded test account ID - fallback for development/testing
 const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 /**
  * Controller for tenant management.
  * 
- * Authentication removed - using hardcoded test account.
+ * Reads accountId from X-Account-Id header (sent by frontend).
+ * Falls back to hardcoded account ID for development/testing.
  */
 @ApiTags('tenants')
 @Controller('tenants')
@@ -27,32 +29,37 @@ export class TenantsController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new tenant' })
-  create(@Body() createTenantDto: CreateTenantDto) {
-    return this.tenantsService.create(HARDCODED_ACCOUNT_ID, createTenantDto);
+  create(@Request() req: any, @Body() createTenantDto: CreateTenantDto) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.tenantsService.create(accountId, createTenantDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all tenants' })
   @ApiQuery({ name: 'search', required: false, description: 'Search by name, email, or phone' })
-  findAll(@Query('search') search?: string) {
-    return this.tenantsService.findAll(HARDCODED_ACCOUNT_ID, search);
+  findAll(@Request() req: any, @Query('search') search?: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.tenantsService.findAll(accountId, search);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a tenant by ID' })
-  findOne(@Param('id') id: string) {
-    return this.tenantsService.findOne(HARDCODED_ACCOUNT_ID, id);
+  findOne(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.tenantsService.findOne(accountId, id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a tenant' })
-  update(@Param('id') id: string, @Body() updateTenantDto: UpdateTenantDto) {
-    return this.tenantsService.update(HARDCODED_ACCOUNT_ID, id, updateTenantDto);
+  update(@Request() req: any, @Param('id') id: string, @Body() updateTenantDto: UpdateTenantDto) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.tenantsService.update(accountId, id, updateTenantDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a tenant' })
-  remove(@Param('id') id: string) {
-    return this.tenantsService.remove(HARDCODED_ACCOUNT_ID, id);
+  remove(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.tenantsService.remove(accountId, id);
   }
 }
