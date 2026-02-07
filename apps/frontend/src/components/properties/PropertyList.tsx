@@ -611,7 +611,6 @@ export default function PropertyList() {
           }}
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
-          disableColumnReorder={false}
           sx={{
             '& .MuiDataGrid-columnHeader': {
               textAlign: 'right',
