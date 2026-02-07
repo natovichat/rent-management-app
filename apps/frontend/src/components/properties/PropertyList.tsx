@@ -50,12 +50,12 @@ import ActiveFiltersChips from './ActiveFiltersChips';
  * - React Query for caching
  * 
  * Column Order (RTL - right to left):
- * 1. כתובת (Address) - Clickable link
+ * 1. כתובת (Address) - Clickable link, PRIMARY column (right-most)
  * 2. מספר תיק (File Number)
  * 3. גוש/חלקה (Gush/Helka) - Land registry parcel numbers
  * 4. סטטוס משכון (Mortgage Status) - Shows "משועבד" chip for mortgaged properties
  * 5. תאריך יצירה (Created At)
- * 6. פעולות (Actions)
+ * 6. פעולות (Actions) - LEFT-MOST
  */
 export default function PropertyList() {
   const router = useRouter();
@@ -293,29 +293,6 @@ export default function PropertyList() {
 
   const columns: GridColDef<Property>[] = [
     {
-      field: 'fileNumber',
-      headerName: 'מספר תיק',
-      width: 150,
-      align: 'right',
-      headerAlign: 'right',
-      renderHeader: () => (
-        <Box sx={{ 
-          width: '100% !important', 
-          textAlign: 'right !important', 
-          direction: 'rtl !important',
-          display: 'flex !important',
-          justifyContent: 'flex-end !important',
-        }}>
-          מספר תיק
-        </Box>
-      ),
-      renderCell: (params) => (
-        <Box sx={{ textAlign: 'right', width: '100%' }}>
-          {params.value || '-'}
-        </Box>
-      ),
-    },
-    {
       field: 'address',
       headerName: 'כתובת',
       flex: 1,
@@ -357,6 +334,29 @@ export default function PropertyList() {
           }}
         >
           {params.value}
+        </Box>
+      ),
+    },
+    {
+      field: 'fileNumber',
+      headerName: 'מספר תיק',
+      width: 150,
+      align: 'right',
+      headerAlign: 'right',
+      renderHeader: () => (
+        <Box sx={{ 
+          width: '100% !important', 
+          textAlign: 'right !important', 
+          direction: 'rtl !important',
+          display: 'flex !important',
+          justifyContent: 'flex-end !important',
+        }}>
+          מספר תיק
+        </Box>
+      ),
+      renderCell: (params) => (
+        <Box sx={{ textAlign: 'right', width: '100%' }}>
+          {params.value || '-'}
         </Box>
       ),
     },
