@@ -1,0 +1,815 @@
+# TypeScript Pre-Commit Verification - MANDATORY
+
+**CRITICAL**: NEVER commit or push code without verifying TypeScript compilation passes.
+
+## Golden Rules
+
+```
+🚫 NO COMMIT without TypeScript check
+🚫 NO PUSH without production build verification
+✅ ALWAYS run type check before commit
+✅ ALWAYS run build before push to main
+```
+
+---
+
+## Why This Matters
+
+**Production build failures are expensive:**
+- ❌ Deployment failures
+- ❌ Broken production site
+- ❌ Wasted CI/CD resources
+- ❌ Lost developer time debugging
+- ❌ User-facing downtime
+
+**TypeScript errors caught locally save time and money!**
+
+---
+
+## Mandatory Verification Workflow
+
+### Before EVERY Commit
+
+**Step 1: Check TypeScript Errors**
+```bash
+# For frontend
+cd apps/frontend && npm run type-check
+# Or: npx tsc --noEmit
+
+# For backend
+cd apps/backend && npm run type-check
+# Or: npx tsc --noEmit
+```
+
+**Expected Result:** ✅ No errors
+
+**If errors found:** 🚫 DO NOT COMMIT - Fix errors first!
+
+---
+
+### Before EVERY Push to Main
+
+**Step 2: Run Production Build**
+```bash
+# For frontend (where build failures are critical)
+cd apps/frontend && npm run build
+```
+
+**Expected Result:** ✅ Build completes successfully
+
+**If build fails:** 🚫 DO NOT PUSH - Fix build errors first!
+
+---
+
+## Common TypeScript Errors
+
+### Error 1: Missing Type Constraint
+
+**Error Message:**
+```
+Type 'T' does not satisfy the constraint 'GridValidRowModel'
+```
+
+**Example:**
+```typescript
+// ❌ Bad - Missing constraint
+export function useColumns<T = any>(
+  columns: GridColDef<T>[]
+): GridColDef<T>[] {
+  // ...
+}
+
+// ✅ Good - Proper constraint
+import { GridValidRowModel, GridColDef } from '@mui/x-data-grid';
+
+export function useColumns<T extends GridValidRowModel = any>(
+  columns: GridColDef<T>[]
+): GridColDef<T>[] {
+  // ...
+}
+```
+
+---
+
+### Error 2: Missing Import
+
+**Error Message:**
+```
+Cannot find name 'GridValidRowModel'
+```
+
+**Fix:**
+```typescript
+// ❌ Bad - Missing import
+import { GridColDef } from '@mui/x-data-grid';
+
+// ✅ Good - Import constraint type
+import { GridColDef, GridValidRowModel } from '@mui/x-data-grid';
+```
+
+---
+
+### Error 3: Property Does Not Exist
+
+**Error Message:**
+```
+Property 'field' does not exist on type 'T'
+```
+
+**Fix:**
+```typescript
+// ❌ Bad - Wrong type
+function getField<T>(obj: T): string {
+  return obj.field; // Error: T doesn't have field
+}
+
+// ✅ Good - Use proper interface
+interface HasField {
+  field: string;
+}
+
+function getField<T extends HasField>(obj: T): string {
+  return obj.field;
+}
+```
+
+---
+
+### Error 4: Async Function Not Awaited
+
+**Error Message:**
+```
+Promise returned in function argument where void expected
+```
+
+**Fix:**
+```typescript
+// ❌ Bad - Missing await
+useEffect(() => {
+  fetchData(); // Returns Promise but not awaited
+}, []);
+
+// ✅ Good - Proper async handling
+useEffect(() => {
+  const load = async () => {
+    await fetchData();
+  };
+  load();
+}, []);
+```
+
+---
+
+## Automated Pre-Commit Hook
+
+### Installation
+
+Create `.git/hooks/pre-commit` in project root:
+
+```bash
+#!/bin/bash
+# TypeScript Pre-Commit Hook
+
+echo "🔍 Running TypeScript checks before commit..."
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+FAILED=0
+
+# Check Frontend TypeScript
+echo ""
+echo "📝 Checking Frontend TypeScript..."
+cd apps/frontend
+npx tsc --noEmit --pretty
+if [ $? -ne 0 ]; then
+  echo -e "${RED}❌ Frontend TypeScript errors found${NC}"
+  FAILED=1
+else
+  echo -e "${GREEN}✅ Frontend TypeScript OK${NC}"
+fi
+cd ../..
+
+# Check Backend TypeScript
+echo ""
+echo "📝 Checking Backend TypeScript..."
+cd apps/backend
+npx tsc --noEmit --pretty
+if [ $? -ne 0 ]; then
+  echo -e "${RED}❌ Backend TypeScript errors found${NC}"
+  FAILED=1
+else
+  echo -e "${GREEN}✅ Backend TypeScript OK${NC}"
+fi
+cd ../..
+
+# Final result
+echo ""
+echo "================================="
+if [ $FAILED -ne 0 ]; then
+  echo -e "${RED}❌ PRE-COMMIT CHECKS FAILED${NC}"
+  echo "Please fix TypeScript errors before committing"
+  exit 1
+else
+  echo -e "${GREEN}✅ ALL PRE-COMMIT CHECKS PASSED${NC}"
+  echo "Proceeding with commit..."
+  exit 0
+fi
+```
+
+### Make Executable
+
+```bash
+chmod +x .git/hooks/pre-commit
+```
+
+---
+
+## Automated Pre-Push Hook
+
+### Installation
+
+Create `.git/hooks/pre-push` in project root:
+
+```bash
+#!/bin/bash
+# Pre-Push Hook - Run production build
+
+echo "🚀 Running production build before push..."
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+FAILED=0
+
+# Build Frontend (most critical)
+echo ""
+echo "🏗️  Building Frontend for production..."
+cd apps/frontend
+npm run build
+if [ $? -ne 0 ]; then
+  echo -e "${RED}❌ Frontend build failed${NC}"
+  FAILED=1
+else
+  echo -e "${GREEN}✅ Frontend build successful${NC}"
+fi
+cd ../..
+
+# Build Backend
+echo ""
+echo "🏗️  Building Backend..."
+cd apps/backend
+npm run build
+if [ $? -ne 0 ]; then
+  echo -e "${RED}❌ Backend build failed${NC}"
+  FAILED=1
+else
+  echo -e "${GREEN}✅ Backend build successful${NC}"
+fi
+cd ../..
+
+# Final result
+echo ""
+echo "================================="
+if [ $FAILED -ne 0 ]; then
+  echo -e "${RED}❌ PRE-PUSH BUILD FAILED${NC}"
+  echo "Fix build errors before pushing to remote"
+  exit 1
+else
+  echo -e "${GREEN}✅ ALL BUILDS PASSED${NC}"
+  echo "Safe to push to remote"
+  exit 0
+fi
+```
+
+### Make Executable
+
+```bash
+chmod +x .git/hooks/pre-push
+```
+
+---
+
+## Quick Commands
+
+### Manual Type Check (Run Before Commit)
+
+```bash
+# Check both frontend and backend
+npm run type-check --workspaces
+
+# Or individually:
+cd apps/frontend && npm run type-check
+cd apps/backend && npm run type-check
+```
+
+### Manual Build Check (Run Before Push)
+
+```bash
+# Build both
+npm run build --workspaces
+
+# Or individually:
+cd apps/frontend && npm run build
+cd apps/backend && npm run build
+```
+
+---
+
+## Package.json Scripts
+
+Add these scripts to workspace root `package.json`:
+
+```json
+{
+  "scripts": {
+    "type-check": "npm run type-check --workspaces",
+    "type-check:frontend": "npm run type-check --workspace=apps/frontend",
+    "type-check:backend": "npm run type-check --workspace=apps/backend",
+    "build": "npm run build --workspaces",
+    "build:frontend": "npm run build --workspace=apps/frontend",
+    "build:backend": "npm run build --workspace=apps/backend",
+    "pre-commit": "npm run type-check",
+    "pre-push": "npm run build"
+  }
+}
+```
+
+Add to `apps/frontend/package.json`:
+```json
+{
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  }
+}
+```
+
+Add to `apps/backend/package.json`:
+```json
+{
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  }
+}
+```
+
+---
+
+## Husky Integration (Recommended)
+
+For automated enforcement, use Husky:
+
+### Installation
+
+```bash
+npm install --save-dev husky
+npx husky install
+```
+
+### Configure Pre-Commit Hook
+
+```bash
+npx husky add .husky/pre-commit "npm run type-check"
+chmod +x .husky/pre-commit
+```
+
+### Configure Pre-Push Hook
+
+```bash
+npx husky add .husky/pre-push "npm run build"
+chmod +x .husky/pre-push
+```
+
+---
+
+## VSCode/Cursor Integration
+
+### Enable Error Checking
+
+Add to `.vscode/settings.json`:
+
+```json
+{
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.validate.enable": true,
+  "typescript.showUnused": true,
+  "typescript.suggest.paths": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.organizeImports": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/dist/**": true
+  }
+}
+```
+
+---
+
+## CI/CD Integration
+
+### GitHub Actions Example
+
+```yaml
+# .github/workflows/ci.yml
+name: CI - Type Check & Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  type-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Type check frontend
+        run: npm run type-check --workspace=apps/frontend
+      
+      - name: Type check backend
+        run: npm run type-check --workspace=apps/backend
+  
+  build:
+    needs: type-check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build frontend
+        run: npm run build --workspace=apps/frontend
+      
+      - name: Build backend
+        run: npm run build --workspace=apps/backend
+```
+
+---
+
+## Common Scenarios
+
+### Scenario 1: TypeScript Error Found During Commit
+
+```bash
+$ git commit -m "feat: add new feature"
+
+🔍 Running TypeScript checks before commit...
+
+📝 Checking Frontend TypeScript...
+src/components/MyComponent.tsx:25:10 - error TS2339: 
+Property 'field' does not exist on type 'Props'.
+
+❌ PRE-COMMIT CHECKS FAILED
+Please fix TypeScript errors before committing
+```
+
+**Action:** Fix the TypeScript error, then commit again.
+
+---
+
+### Scenario 2: Build Fails During Push
+
+```bash
+$ git push origin main
+
+🚀 Running production build before push...
+
+🏗️  Building Frontend for production...
+Failed to compile.
+
+Type error: Type 'T' does not satisfy constraint 'GridValidRowModel'
+
+❌ PRE-PUSH BUILD FAILED
+Fix build errors before pushing to remote
+```
+
+**Action:** Fix the build error, commit the fix, then push again.
+
+---
+
+### Scenario 3: Everything Passes
+
+```bash
+$ git commit -m "feat: add tenant feature"
+
+🔍 Running TypeScript checks before commit...
+✅ Frontend TypeScript OK
+✅ Backend TypeScript OK
+✅ ALL PRE-COMMIT CHECKS PASSED
+
+$ git push origin main
+
+🚀 Running production build before push...
+✅ Frontend build successful
+✅ Backend build successful
+✅ ALL BUILDS PASSED
+Safe to push to remote
+```
+
+**Result:** ✨ Clean deployment!
+
+---
+
+## Benefits
+
+### Prevents Issues
+
+1. ✅ **Catch TypeScript errors early** - Before they reach CI/CD
+2. ✅ **No broken builds** - Verify locally before pushing
+3. ✅ **Faster feedback** - Immediate error detection
+4. ✅ **Saves time** - No waiting for CI/CD to fail
+5. ✅ **Professional workflow** - Quality gates enforced
+
+### Team Benefits
+
+1. ✅ **Consistent quality** - All commits are type-safe
+2. ✅ **Fewer reverts** - No breaking commits
+3. ✅ **Better collaboration** - Team gets working code
+4. ✅ **Reduced debugging** - Fewer production issues
+
+---
+
+## Quick Setup Guide
+
+### Option 1: Manual Git Hooks (Simple)
+
+```bash
+# Create pre-commit hook
+cat > .git/hooks/pre-commit << 'EOF'
+#!/bin/bash
+echo "🔍 Type checking..."
+cd apps/frontend && npx tsc --noEmit && cd ../..
+if [ $? -ne 0 ]; then
+  echo "❌ TypeScript errors found!"
+  exit 1
+fi
+echo "✅ TypeScript OK"
+EOF
+
+chmod +x .git/hooks/pre-commit
+
+# Create pre-push hook
+cat > .git/hooks/pre-push << 'EOF'
+#!/bin/bash
+echo "🏗️  Building..."
+cd apps/frontend && npm run build
+if [ $? -ne 0 ]; then
+  echo "❌ Build failed!"
+  exit 1
+fi
+echo "✅ Build OK"
+EOF
+
+chmod +x .git/hooks/pre-push
+```
+
+---
+
+### Option 2: Husky (Recommended for Teams)
+
+```bash
+# Install husky
+npm install --save-dev husky
+
+# Initialize husky
+npx husky install
+
+# Add pre-commit hook
+npx husky add .husky/pre-commit "npm run type-check"
+
+# Add pre-push hook
+npx husky add .husky/pre-push "npm run build:frontend"
+
+# Make executable
+chmod +x .husky/pre-commit
+chmod +x .husky/pre-push
+```
+
+---
+
+### Option 3: Lint-Staged (Most Granular)
+
+```bash
+# Install dependencies
+npm install --save-dev husky lint-staged
+
+# Configure in package.json
+{
+  "lint-staged": {
+    "apps/frontend/src/**/*.{ts,tsx}": [
+      "tsc-files --noEmit"
+    ],
+    "apps/backend/src/**/*.ts": [
+      "tsc-files --noEmit"
+    ]
+  }
+}
+
+# Add hook
+npx husky add .husky/pre-commit "npx lint-staged"
+```
+
+---
+
+## AI Agent Compliance
+
+### When Making Code Changes
+
+**AI agents MUST:**
+
+1. ✅ After modifying TypeScript files, run type check:
+   ```bash
+   cd apps/frontend && npm run type-check
+   # or
+   cd apps/backend && npm run type-check
+   ```
+
+2. ✅ Before committing, verify no TypeScript errors
+
+3. ✅ Before pushing to main, run production build:
+   ```bash
+   cd apps/frontend && npm run build
+   ```
+
+4. ✅ If errors found, fix them immediately before commit/push
+
+---
+
+## Bypass (EMERGENCY ONLY)
+
+**WARNING:** Only in extreme emergencies!
+
+```bash
+# Skip hooks (NOT RECOMMENDED)
+git commit --no-verify -m "Emergency fix"
+git push --no-verify
+
+# You MUST fix TypeScript errors immediately after!
+```
+
+**When to bypass:**
+- 🚨 Critical production bug that needs immediate hotfix
+- 🚨 TypeScript errors are false positives (very rare)
+- 🚨 Build system is broken (not your code)
+
+**After bypassing:**
+- ⚠️ Create follow-up ticket to fix TypeScript errors
+- ⚠️ Fix within 24 hours
+- ⚠️ Document reason for bypass in commit message
+
+---
+
+## Checklist
+
+### Before Every Commit
+- [ ] Run `npm run type-check` in modified workspace
+- [ ] Fix all TypeScript errors
+- [ ] No `any` types added without reason
+- [ ] All imports resolved
+- [ ] No type assertion hacks (`as any`)
+
+### Before Every Push to Main
+- [ ] Run `npm run build` in frontend
+- [ ] Build completes successfully
+- [ ] No new ESLint warnings (critical ones)
+- [ ] TypeScript strict mode passes
+
+---
+
+## TypeScript Best Practices
+
+### 1. Use Strict Mode
+
+**tsconfig.json:**
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true
+  }
+}
+```
+
+### 2. Avoid `any`
+
+```typescript
+// ❌ Bad - Using any
+const data: any = fetchData();
+
+// ✅ Good - Proper types
+interface UserData {
+  id: string;
+  name: string;
+}
+const data: UserData = fetchData();
+```
+
+### 3. Use Type Guards
+
+```typescript
+// ✅ Good - Type guard
+function isUser(obj: any): obj is User {
+  return obj && typeof obj.id === 'string' && typeof obj.name === 'string';
+}
+
+if (isUser(data)) {
+  console.log(data.name); // TypeScript knows it's User
+}
+```
+
+---
+
+## Real Example: Recent Fix
+
+**Error in Production Build:**
+```
+./src/lib/hooks/useConfiguredColumns.ts:25:26
+Type error: Type 'T' does not satisfy the constraint 'GridValidRowModel'.
+```
+
+**Fix Applied:**
+```typescript
+// Before (caused build failure):
+export function useConfiguredColumns<T = any>(
+  entityType: EntityType,
+  allColumns: GridColDef<T>[],
+): GridColDef<T>[] {
+
+// After (fixed):
+import { GridValidRowModel } from '@mui/x-data-grid';
+
+export function useConfiguredColumns<T extends GridValidRowModel = any>(
+  entityType: EntityType,
+  allColumns: GridColDef<T>[],
+): GridColDef<T>[] {
+```
+
+**Lesson:** Always run `npm run build` before pushing to catch these!
+
+---
+
+## Enforcement
+
+**Code will be REJECTED if:**
+- ❌ Committed with TypeScript errors
+- ❌ Pushed without running build
+- ❌ Production build fails in CI/CD
+- ❌ TypeScript strict mode disabled
+
+---
+
+## Summary
+
+```
+🔍 Type check: BEFORE every commit
+🏗️  Build: BEFORE every push to main
+✅ Fix errors: IMMEDIATELY
+🚫 No bypass: Unless emergency
+📋 Document: If you must bypass
+```
+
+**TypeScript verification is MANDATORY - protect production!**
+
+---
+
+**Last Updated:** February 7, 2026  
+**Severity:** 🔴 CRITICAL - Build failures break production  
+**Applies To:** All TypeScript code changes
