@@ -76,11 +76,12 @@ jobs:
           echo "url=$URL" >> $GITHUB_OUTPUT
           echo "Backend deployed to: $URL"
 
-  # Job 2: Build and Deploy Frontend (depends on backend)
+  # Job 2: Build and Deploy Frontend (DISABLED - Using Vercel instead)
   deploy-frontend:
     name: Deploy Frontend to Cloud Run
     runs-on: ubuntu-latest
     needs: deploy-backend
+    if: false # Disabled - Frontend deployed to Vercel
     
     permissions:
       contents: read
@@ -147,12 +148,12 @@ jobs:
           echo "✅ Frontend deployed to: $URL"
           echo "✅ Backend URL: ${{ steps.backend-url.outputs.url }}"
 
-  # Job 3: Run Database Migrations
+  # Job 3: Run Database Migrations (DISABLED - Already ran successfully)
   run-migrations:
     name: Run Database Migrations
     runs-on: ubuntu-latest
     needs: deploy-backend
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: false # Disabled - Migrations already completed
     
     steps:
       - name: Checkout code
