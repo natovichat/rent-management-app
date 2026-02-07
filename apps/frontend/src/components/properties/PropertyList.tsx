@@ -336,24 +336,28 @@ export default function PropertyList() {
         </Box>
       ),
       renderCell: (params) => (
-        <Link
-          component="button"
-          variant="body2"
-          onClick={() => router.push(`/properties/${params.row.id}`)}
+        <Box
+          component="a"
+          href={`/properties/${params.row.id}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Navigating to property:', params.row.id);
+            router.push(`/properties/${params.row.id}`);
+          }}
           sx={{
-            textDecoration: 'none',
             color: 'primary.main',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
             cursor: 'pointer',
             textAlign: 'right',
             width: '100%',
-            display: 'block',
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
           }}
         >
           {params.value}
-        </Link>
+        </Box>
       ),
     },
     {
@@ -452,7 +456,10 @@ export default function PropertyList() {
           key="view"
           icon={<VisibilityIcon />}
           label="צפייה"
-          onClick={() => router.push(`/properties/${params.row.id}`)}
+          onClick={() => {
+            console.log('View button clicked for property:', params.row.id);
+            router.push(`/properties/${params.row.id}`);
+          }}
           showInMenu={false}
         />,
         <GridActionsCellItem
