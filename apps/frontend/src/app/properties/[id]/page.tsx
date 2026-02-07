@@ -199,6 +199,13 @@ export default function PropertyDetailsPage() {
   const params = useParams();
   const queryClient = useQueryClient();
   const propertyId = params.id as string;
+  
+  // Debug: Log property ID on mount and when params change
+  useEffect(() => {
+    console.log('[PropertyDetailsPage] Mounted with params:', params);
+    console.log('[PropertyDetailsPage] Property ID:', propertyId);
+  }, [params, propertyId]);
+  
   const [loading, setLoading] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [editPropertyOpen, setEditPropertyOpen] = useState(false);
@@ -225,9 +232,22 @@ export default function PropertyDetailsPage() {
   // Fetch property details
   const { data: property, isLoading: propertyLoading, error: propertyError } = useQuery({
     queryKey: ['property', propertyId],
-    queryFn: () => propertiesApi.getOne(propertyId),
+    queryFn: () => {
+      console.log('[PropertyDetailsPage] Fetching property with ID:', propertyId);
+      return propertiesApi.getOne(propertyId);
+    },
     enabled: !!propertyId && !loading,
   });
+  
+  // Debug: Log property data and errors
+  useEffect(() => {
+    if (property) {
+      console.log('[PropertyDetailsPage] Property loaded:', property);
+    }
+    if (propertyError) {
+      console.error('[PropertyDetailsPage] Property error:', propertyError);
+    }
+  }, [property, propertyError]);
 
   // Fetch ownerships
   const { data: ownerships = [], isLoading: ownershipsLoading } = useQuery({
