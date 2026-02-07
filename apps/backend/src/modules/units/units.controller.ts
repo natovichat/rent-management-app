@@ -22,7 +22,7 @@ import { CreateUnitDto } from './dto/create-unit.dto';
 import { UpdateUnitDto } from './dto/update-unit.dto';
 import { UnitResponseDto } from './dto/unit-response.dto';
 // Hardcoded test account ID - authentication removed for simplification
-const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 @ApiTags('units')
 @Controller('units')

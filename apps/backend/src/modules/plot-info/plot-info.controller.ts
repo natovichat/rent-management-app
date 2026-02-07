@@ -19,7 +19,7 @@ import { UpdatePlotInfoDto } from './dto/update-plot-info.dto';
 import { PlotInfoResponseDto } from './dto/plot-info-response.dto';
 
 // Hardcoded test account ID - authentication removed for simplification
-const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 @ApiTags('plot-info')
 @Controller()

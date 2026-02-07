@@ -17,7 +17,7 @@ import {
 } from '@nestjs/swagger';
 import { ImportService, PreviewRow } from './import.service';
 
-const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 @ApiTags('import')
 @Controller('import')

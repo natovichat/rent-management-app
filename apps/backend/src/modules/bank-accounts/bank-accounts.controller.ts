@@ -20,7 +20,7 @@ import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
 import { BankAccountResponseDto } from './dto/bank-account-response.dto';
 // Hardcoded test account ID - authentication removed for simplification
-const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 @ApiTags('bank-accounts')
 @Controller('bank-accounts')

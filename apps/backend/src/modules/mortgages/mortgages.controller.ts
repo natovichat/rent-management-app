@@ -23,7 +23,7 @@ import { UpdateMortgageDto } from './dto/update-mortgage.dto';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { MortgageStatus } from '@prisma/client';
 // Hardcoded test account ID - fallback if header not provided
-const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 /**
  * Controller for mortgage management.

@@ -17,7 +17,7 @@ import {
 import { Response } from 'express';
 import { DashboardService } from './dashboard.service';
 // Hardcoded test account ID - fallback if header not provided
-const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 @ApiTags('dashboard')
 @Controller('dashboard')

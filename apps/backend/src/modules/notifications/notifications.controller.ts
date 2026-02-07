@@ -14,7 +14,7 @@ import { FindAllNotificationsDto } from './dto/find-all-notifications.dto';
 import { NotificationSettingsDto } from './dto/notification-settings.dto';
 
 // Hardcoded test account ID - authentication removed for simplification
-const HARDCODED_ACCOUNT_ID = '00000000-0000-0000-0000-000000000001';
+const HARDCODED_ACCOUNT_ID = 'test-account-1';
 
 /**
  * Controller for notification management.
