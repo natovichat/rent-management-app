@@ -49,13 +49,13 @@ import ActiveFiltersChips from './ActiveFiltersChips';
  * - Hebrew RTL layout
  * - React Query for caching
  * 
- * Column Order (RTL - right to left):
- * 1. כתובת (Address) - Clickable link, PRIMARY column (right-most)
- * 2. מספר תיק (File Number)
- * 3. גוש/חלקה (Gush/Helka) - Land registry parcel numbers
- * 4. סטטוס משכון (Mortgage Status) - Shows "משועבד" chip for mortgaged properties
- * 5. תאריך יצירה (Created At)
- * 6. פעולות (Actions) - LEFT-MOST
+ * Column Order (left to right in array = right to left on screen):
+ * 1. מספר תיק (File Number)
+ * 2. גוש/חלקה (Gush/Helka) - Land registry parcel numbers
+ * 3. סטטוס משכון (Mortgage Status) - Shows "משועבד" chip for mortgaged properties
+ * 4. תאריך יצירה (Created At)
+ * 5. כתובת (Address) - Clickable link, PRIMARY column (LAST in array = RIGHT-MOST on screen)
+ * 6. פעולות (Actions) - ALWAYS last
  */
 export default function PropertyList() {
   const router = useRouter();
@@ -293,51 +293,6 @@ export default function PropertyList() {
 
   const columns: GridColDef<Property>[] = [
     {
-      field: 'address',
-      headerName: 'כתובת',
-      flex: 1,
-      minWidth: 250,
-      align: 'right',
-      headerAlign: 'right',
-      hideable: false,
-      disableColumnMenu: true,
-      renderHeader: () => (
-        <Box sx={{ 
-          width: '100% !important', 
-          textAlign: 'right !important', 
-          direction: 'rtl !important',
-          display: 'flex !important',
-          justifyContent: 'flex-end !important',
-        }}>
-          כתובת
-        </Box>
-      ),
-      renderCell: (params) => (
-        <Box
-          component="a"
-          href={`/properties/${params.row.id}`}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Navigating to property:', params.row.id);
-            router.push(`/properties/${params.row.id}`);
-          }}
-          sx={{
-            color: 'primary.main',
-            cursor: 'pointer',
-            textAlign: 'right',
-            width: '100%',
-            textDecoration: 'none',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-    },
-    {
       field: 'fileNumber',
       headerName: 'מספר תיק',
       width: 150,
@@ -452,6 +407,51 @@ export default function PropertyList() {
       renderCell: (params) => (
         <Box sx={{ textAlign: 'right', width: '100%' }}>
           {params.formattedValue}
+        </Box>
+      ),
+    },
+    {
+      field: 'address',
+      headerName: 'כתובת',
+      flex: 1,
+      minWidth: 250,
+      align: 'right',
+      headerAlign: 'right',
+      hideable: false,
+      disableColumnMenu: true,
+      renderHeader: () => (
+        <Box sx={{ 
+          width: '100% !important', 
+          textAlign: 'right !important', 
+          direction: 'rtl !important',
+          display: 'flex !important',
+          justifyContent: 'flex-end !important',
+        }}>
+          כתובת
+        </Box>
+      ),
+      renderCell: (params) => (
+        <Box
+          component="a"
+          href={`/properties/${params.row.id}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Navigating to property:', params.row.id);
+            router.push(`/properties/${params.row.id}`);
+          }}
+          sx={{
+            color: 'primary.main',
+            cursor: 'pointer',
+            textAlign: 'right',
+            width: '100%',
+            textDecoration: 'none',
+            '&:hover': {
+              textDecoration: 'underline',
+            },
+          }}
+        >
+          {params.value}
         </Box>
       ),
     },
