@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import {
   Container,
@@ -30,17 +31,16 @@ import { LeaseStatus } from '@/types/lease';
  * Tenant detail page showing tenant information and lease history.
  */
 export default function TenantDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const tenantId = params.id as string;
   const { selectedAccountId } = useAccount();
-
 
   const { data: tenant, isLoading, error } = useQuery({
     queryKey: ['tenants', selectedAccountId, tenantId],
     queryFn: () => tenantsApi.getById(tenantId),
     enabled: !!selectedAccountId && !!tenantId,
   });
-
 
   if (isLoading) {
     return (

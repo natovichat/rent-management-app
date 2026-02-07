@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import {
   Container,
@@ -63,17 +64,16 @@ const getStatusLabel = (status: string) => {
  * Lease detail page showing lease information.
  */
 export default function LeaseDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const leaseId = params.id as string;
   const { selectedAccountId } = useAccount();
-
 
   const { data: lease, isLoading, error } = useQuery({
     queryKey: ['leases', selectedAccountId, leaseId],
     queryFn: () => leasesApi.getById(leaseId),
     enabled: !!selectedAccountId && !!leaseId,
   });
-
 
   if (isLoading) {
     return (
