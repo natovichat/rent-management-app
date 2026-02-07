@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef, GridValidRowModel } from '@mui/x-data-grid';
 import { useTableConfiguration } from './useTableConfigurations';
 import { EntityType } from '@/types/table-config';
 
@@ -20,7 +20,7 @@ import { EntityType } from '@/types/table-config';
  * 3. Sorts columns based on configured order
  * 4. Falls back to all columns if no configuration exists
  */
-export function useConfiguredColumns<T = any>(
+export function useConfiguredColumns<T extends GridValidRowModel = any>(
   entityType: EntityType,
   allColumns: GridColDef<T>[],
 ): GridColDef<T>[] {
