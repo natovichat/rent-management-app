@@ -37,6 +37,7 @@ import {
   Apartment as ApartmentIcon,
   AccountBalance as BankIcon,
   Assessment as AssessmentIcon,
+  ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
 import { propertiesApi, Property } from '@/services/properties';
 import { PropertyCard } from '@/components/properties/PropertyCard';
@@ -600,6 +601,23 @@ export default function PropertyDetailsPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
+      {/* Back Button */}
+      <Box sx={{ mb: 2 }}>
+        <Button
+          variant="text"
+          startIcon={<ArrowBackIcon />}
+          onClick={() => router.push('/properties')}
+          sx={{ 
+            color: 'text.secondary',
+            '&:hover': {
+              backgroundColor: 'action.hover',
+            }
+          }}
+        >
+          חזרה לרשימת נכסים
+        </Button>
+      </Box>
+
       {/* Header with PropertyCard */}
       <Box sx={{ mb: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
