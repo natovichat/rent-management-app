@@ -443,9 +443,12 @@ export default function PropertyList() {
           sx={{
             color: 'primary.main',
             cursor: 'pointer',
-            textAlign: 'right',
+            textAlign: 'right !important',
             width: '100%',
             textDecoration: 'none',
+            direction: 'rtl !important',
+            display: 'flex !important',
+            justifyContent: 'flex-end !important',
             '&:hover': {
               textDecoration: 'underline',
             },
