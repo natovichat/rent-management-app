@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'http://localhost:3001', // Hardcoded for testing - backend is on 3001
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://rent-app-backend-6s337cqx6a-uc.a.run.app',
   headers: {
     'Content-Type': 'application/json',
   },
