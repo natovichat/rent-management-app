@@ -52,7 +52,7 @@ import ActiveFiltersChips from './ActiveFiltersChips';
  * Column Order (RTL - right to left):
  * 1. כתובת (Address) - Clickable link
  * 2. מספר תיק (File Number)
- * 3. מספר יחידות (Unit Count)
+ * 3. גוש/חלקה (Gush/Helka) - Land registry parcel numbers
  * 4. סטטוס משכון (Mortgage Status) - Shows "משועבד" chip for mortgaged properties
  * 5. תאריך יצירה (Created At)
  * 6. פעולות (Actions)
@@ -361,10 +361,9 @@ export default function PropertyList() {
       ),
     },
     {
-      field: 'unitCount',
-      headerName: 'מספר יחידות',
-      width: 120,
-      type: 'number',
+      field: 'gushHelka',
+      headerName: 'גוש/חלקה',
+      width: 150,
       align: 'center',
       headerAlign: 'center',
       renderHeader: () => (
@@ -375,9 +374,21 @@ export default function PropertyList() {
           display: 'flex !important',
           justifyContent: 'center !important',
         }}>
-          מספר יחידות
+          גוש/חלקה
         </Box>
       ),
+      valueGetter: (params) => {
+        const gush = params.row.gush;
+        const helka = params.row.helka;
+        if (gush && helka) {
+          return `${gush}/${helka}`;
+        } else if (gush) {
+          return gush;
+        } else if (helka) {
+          return helka;
+        }
+        return '-';
+      },
       renderCell: (params) => (
         <Box sx={{ textAlign: 'center', width: '100%' }}>
           {params.value}
