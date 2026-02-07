@@ -7,7 +7,11 @@ async function bootstrap() {
   
   // Enable CORS
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+      'http://localhost:3000',
+      'https://rent-management-app.vercel.app',
+      'https://rent-management-app-*.vercel.app', // Preview deployments
+    ],
     credentials: true,
   });
 
