@@ -9,6 +9,7 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  Request,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -36,9 +37,11 @@ export class BankAccountsController {
   })
   @ApiResponse({ status: 409, description: 'חשבון בנק כבר קיים' })
   create(
+    @Request() req: any,
     @Body() createBankAccountDto: CreateBankAccountDto,
   ): Promise<BankAccountResponseDto> {
-    return this.bankAccountsService.create(HARDCODED_ACCOUNT_ID, createBankAccountDto);
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.bankAccountsService.create(accountId, createBankAccountDto);
   }
 
   @Get()
@@ -49,12 +52,14 @@ export class BankAccountsController {
     type: [BankAccountResponseDto],
   })
   findAll(
+    @Request() req: any,
     @Query('activeOnly') activeOnly?: boolean,
   ): Promise<BankAccountResponseDto[]> {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
     if (activeOnly === true || activeOnly === 'true' as any) {
-      return this.bankAccountsService.findAllActive(HARDCODED_ACCOUNT_ID);
+      return this.bankAccountsService.findAllActive(accountId);
     }
-    return this.bankAccountsService.findAll(HARDCODED_ACCOUNT_ID);
+    return this.bankAccountsService.findAll(accountId);
   }
 
   @Get(':id')
@@ -65,8 +70,9 @@ export class BankAccountsController {
     type: BankAccountResponseDto,
   })
   @ApiResponse({ status: 404, description: 'חשבון בנק לא נמצא' })
-  findOne(@Param('id') id: string): Promise<BankAccountResponseDto> {
-    return this.bankAccountsService.findOne(id, HARDCODED_ACCOUNT_ID);
+  findOne(@Request() req: any, @Param('id') id: string): Promise<BankAccountResponseDto> {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.bankAccountsService.findOne(id, accountId);
   }
 
   @Get(':id/mortgages')
@@ -75,8 +81,9 @@ export class BankAccountsController {
     status: 200,
     description: 'רשימת משכנתאות',
   })
-  getMortgages(@Param('id') id: string) {
-    return this.bankAccountsService.getMortgagesUsingAccount(id, HARDCODED_ACCOUNT_ID);
+  getMortgages(@Request() req: any, @Param('id') id: string) {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.bankAccountsService.getMortgagesUsingAccount(id, accountId);
   }
 
   @Patch(':id')
@@ -89,10 +96,12 @@ export class BankAccountsController {
   @ApiResponse({ status: 404, description: 'חשבון בנק לא נמצא' })
   @ApiResponse({ status: 409, description: 'חשבון בנק כבר קיים' })
   update(
+    @Request() req: any,
     @Param('id') id: string,
     @Body() updateBankAccountDto: UpdateBankAccountDto,
   ): Promise<BankAccountResponseDto> {
-    return this.bankAccountsService.update(id, HARDCODED_ACCOUNT_ID, updateBankAccountDto);
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.bankAccountsService.update(id, accountId, updateBankAccountDto);
   }
 
   @Patch(':id/deactivate')
@@ -102,8 +111,9 @@ export class BankAccountsController {
     description: 'חשבון הבנק הושבת בהצלחה',
     type: BankAccountResponseDto,
   })
-  deactivate(@Param('id') id: string): Promise<BankAccountResponseDto> {
-    return this.bankAccountsService.deactivate(id, HARDCODED_ACCOUNT_ID);
+  deactivate(@Request() req: any, @Param('id') id: string): Promise<BankAccountResponseDto> {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.bankAccountsService.deactivate(id, accountId);
   }
 
   @Patch(':id/activate')
@@ -113,8 +123,9 @@ export class BankAccountsController {
     description: 'חשבון הבנק הופעל בהצלחה',
     type: BankAccountResponseDto,
   })
-  activate(@Param('id') id: string): Promise<BankAccountResponseDto> {
-    return this.bankAccountsService.activate(id, HARDCODED_ACCOUNT_ID);
+  activate(@Request() req: any, @Param('id') id: string): Promise<BankAccountResponseDto> {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.bankAccountsService.activate(id, accountId);
   }
 
   @Delete(':id')
@@ -126,7 +137,8 @@ export class BankAccountsController {
     status: 409,
     description: 'לא ניתן למחוק חשבון בנק המשויך למשכנתאות',
   })
-  remove(@Param('id') id: string): Promise<void> {
-    return this.bankAccountsService.remove(id, HARDCODED_ACCOUNT_ID);
+  remove(@Request() req: any, @Param('id') id: string): Promise<void> {
+    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
+    return this.bankAccountsService.remove(id, accountId);
   }
 }
