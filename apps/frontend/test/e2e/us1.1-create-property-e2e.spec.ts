@@ -666,7 +666,7 @@ test.describe('US1.1 - Create Property (TDD)', () => {
     ]);
     
     // Check if POST request was successful
-    if (response2.status() >= 400) {
+    if (response2 && response2.status() >= 400) {
       const errorBody = await response2.text().catch(() => '');
       throw new Error(`Property creation failed: ${response2.status()} ${errorBody}`);
     }

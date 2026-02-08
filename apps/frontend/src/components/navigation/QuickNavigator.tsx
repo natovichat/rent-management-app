@@ -9,6 +9,8 @@ import {
   MenuItem,
   Box,
   SelectChangeEvent,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import {
   Home as HomeIcon,
@@ -159,42 +161,63 @@ export default function QuickNavigator({
     }
   };
 
+  const handleHomeClick = () => {
+    router.push('/');
+  };
+
   return (
-    <Box sx={{ minWidth: width }}>
-      <FormControl fullWidth size={size}>
-        <InputLabel id="quick-navigator-label">{label}</InputLabel>
-        <Select
-          labelId="quick-navigator-label"
-          id="quick-navigator-select"
-          value={getCurrentValue()}
-          label={label}
-          onChange={handleChange}
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Tooltip title="חזרה למסך הראשי" placement="bottom">
+        <IconButton 
+          onClick={handleHomeClick}
+          color="primary"
+          size={size}
           sx={{
-            '& .MuiSelect-select': {
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1,
+            '&:hover': {
+              backgroundColor: 'primary.lighter',
             },
           }}
         >
-          {navigationOptions.map((option) => (
-            <MenuItem 
-              key={option.value} 
-              value={option.value}
-              sx={{
+          <HomeIcon />
+        </IconButton>
+      </Tooltip>
+      
+      <Box sx={{ minWidth: width }}>
+        <FormControl fullWidth size={size}>
+          <InputLabel id="quick-navigator-label">{label}</InputLabel>
+          <Select
+            labelId="quick-navigator-label"
+            id="quick-navigator-select"
+            value={getCurrentValue()}
+            label={label}
+            onChange={handleChange}
+            sx={{
+              '& .MuiSelect-select': {
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
-              }}
-            >
-              <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-                {option.icon}
-              </Box>
-              <Box>{option.label}</Box>
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+              },
+            }}
+          >
+            {navigationOptions.map((option) => (
+              <MenuItem 
+                key={option.value} 
+                value={option.value}
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                }}
+              >
+                <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
+                  {option.icon}
+                </Box>
+                <Box>{option.label}</Box>
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
     </Box>
   );
 }

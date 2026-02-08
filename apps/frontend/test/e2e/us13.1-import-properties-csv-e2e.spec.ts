@@ -77,7 +77,7 @@ test.describe('US13.1 - Import Properties from CSV (TDD)', () => {
   test.beforeEach(async ({ browser }) => {
     page = await browser.newPage();
     await page.goto(FRONTEND_URL);
-    await selectTestAccount(page, TEST_ACCOUNT_ID);
+    await selectTestAccount(page);
     await page.goto(`${FRONTEND_URL}/properties`);
     await waitForPropertiesPageReady();
   });

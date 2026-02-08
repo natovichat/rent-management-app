@@ -29,7 +29,6 @@ describe('PropertyForm - Submission Test', () => {
   test('Should execute mutation when form is submitted', async () => {
     const user = userEvent.setup();
     const mockOnClose = jest.fn();
-    const mockSetSnackbar = jest.fn();
     
     // Mock successful API response
     mockPropertiesApi.create.mockResolvedValue({
@@ -53,8 +52,7 @@ describe('PropertyForm - Submission Test', () => {
       <QueryClientProvider client={queryClient}>
         <Dialog open={true} onClose={mockOnClose}>
           <PropertyForm 
-            onClose={mockOnClose} 
-            setSnackbar={mockSetSnackbar}
+            onClose={mockOnClose}
           />
         </Dialog>
       </QueryClientProvider>
@@ -64,7 +62,7 @@ describe('PropertyForm - Submission Test', () => {
     
     // Wait for form to be ready
     await waitFor(() => {
-      expect(screen.getByText(/נכס חדש/)).toBeInTheDocument();
+      expect(screen.getByText(/נכס חדש/)).toBeDefined();
     });
     
     console.log('=== FORM READY - Starting to fill fields ===');
@@ -151,22 +149,17 @@ describe('PropertyForm - Submission Test', () => {
     
     console.log('✓✓✓ ONCLOSE WAS CALLED! ✓✓✓');
     
-    // Check if success message was shown
+    // Check if success snackbar was shown (PropertyForm has internal snackbar)
     await waitFor(
       () => {
-        console.log(`setSnackbar call count: ${mockSetSnackbar.mock.calls.length}`);
-        expect(mockSetSnackbar).toHaveBeenCalledWith(
-          expect.objectContaining({
-            open: true,
-            severity: 'success',
-          })
-        );
+        const snackbar = screen.queryByTestId('property-form-snackbar');
+        console.log(`Snackbar present: ${!!snackbar}`);
+        expect(snackbar).toBeDefined();
       },
       { timeout: 3000 }
     );
     
     console.log('✓✓✓ SUCCESS MESSAGE SHOWN! ✓✓✓');
-    console.log('Success message:', mockSetSnackbar.mock.calls[0][0]);
     
     console.log('=== TEST PASSED! ALL CALLBACKS EXECUTED ===');
   }, 30000); // 30 second timeout

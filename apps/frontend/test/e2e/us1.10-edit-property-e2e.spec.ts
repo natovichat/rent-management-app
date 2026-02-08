@@ -274,14 +274,14 @@ test.describe('US1.10 - Edit Property Information (TDD)', () => {
                 break;
               }
             } catch (e) {
-              console.log(`→ Step 7.6: Nested element not found:`, e.message);
+              console.log(`→ Step 7.6: Nested element not found:`, (e as Error).message);
               // Nested element not found, continue
             }
             
             console.log(`⚠️ Element found but doesn't contain success message. Text: "${textContent}", trying next...`);
           }
         } catch (e) {
-          console.log(`⚠️ Selector ${selector} not found: ${e.message}`);
+          console.log(`⚠️ Selector ${selector} not found: ${(e as Error).message}`);
         }
       }
     }

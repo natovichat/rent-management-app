@@ -44,7 +44,7 @@ test.describe('US13.2 - Import Owners from CSV (TDD)', () => {
   test.beforeEach(async ({ browser }) => {
     page = await browser.newPage();
     await page.goto(FRONTEND_URL);
-    await selectTestAccount(page, TEST_ACCOUNT_ID);
+    await selectTestAccount(page);
     await page.goto(`${FRONTEND_URL}/owners`);
     await waitForOwnersPageReady();
   });

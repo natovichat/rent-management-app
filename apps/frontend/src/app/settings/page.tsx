@@ -13,6 +13,8 @@ import ProfileTab from '@/components/settings/ProfileTab';
 import AccountTab from '@/components/settings/AccountTab';
 import PreferencesTab from '@/components/settings/PreferencesTab';
 import SessionsTab from '@/components/settings/SessionsTab';
+import { AccountSelector } from '@/components/layout/AccountSelector';
+import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
  * Settings page - Epic 8: User Management & Settings
@@ -29,12 +31,21 @@ export default function SettingsPage() {
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
-        הגדרות
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        ניהול פרופיל, הגדרות חשבון והעדפות
-      </Typography>
+      {/* Header with Quick Navigator */}
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
+        <Box>
+          <Typography variant="h4" component="h1" gutterBottom>
+            הגדרות
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            ניהול פרופיל, הגדרות חשבון והעדפות
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
+          <AccountSelector />
+        </Box>
+      </Box>
 
       <Paper sx={{ mt: 2 }}>
         <Tabs

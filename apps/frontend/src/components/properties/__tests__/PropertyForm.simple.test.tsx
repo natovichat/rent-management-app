@@ -26,7 +26,6 @@ describe('PropertyForm - Simple DEBUG', () => {
   test('Should log form state and identify validation error', async () => {
     const user = userEvent.setup();
     const mockOnClose = jest.fn();
-    const mockSetSnackbar = jest.fn();
     
     const queryClient = new QueryClient({
       defaultOptions: {
@@ -39,8 +38,7 @@ describe('PropertyForm - Simple DEBUG', () => {
       <QueryClientProvider client={queryClient}>
         <Dialog open={true} onClose={mockOnClose}>
           <PropertyForm 
-            onClose={mockOnClose} 
-            setSnackbar={mockSetSnackbar}
+            onClose={mockOnClose}
           />
         </Dialog>
       </QueryClientProvider>
@@ -50,7 +48,7 @@ describe('PropertyForm - Simple DEBUG', () => {
     
     // Wait for form to be ready
     await waitFor(() => {
-      expect(screen.getByText(/נכס חדש/)).toBeInTheDocument();
+      expect(screen.getByText(/נכס חדש/)).toBeDefined();
     });
     
     console.log('=== FORM IS READY ===');
@@ -60,6 +58,6 @@ describe('PropertyForm - Simple DEBUG', () => {
     console.log(`Found ${inputs.length} textbox inputs`);
     
     // Log what's on screen
-    screen.debug(null, 50000);
+    screen.debug(undefined, 50000);
   });
 });

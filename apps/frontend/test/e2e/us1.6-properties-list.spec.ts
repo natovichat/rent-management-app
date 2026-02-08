@@ -12,7 +12,7 @@ test.describe('US1.6: View Properties List', () => {
 
     console.log('→ Selecting test account...');
     const testAccount = await getTestAccount();
-    await selectTestAccount(page, testAccount.id);
+    await selectTestAccount(page);
     console.log(`✓ Account selected (ID: ${testAccount.id})`);
 
     console.log('→ Navigating to properties page...');

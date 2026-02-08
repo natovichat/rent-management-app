@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Container, Box, Typography, Button } from '@mui/material';
+import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 export default function PropertiesTestPage() {
   const [data, setData] = useState<any>(null);
@@ -43,9 +44,12 @@ export default function PropertiesTestPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Properties Test Page
-      </Typography>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography variant="h4">
+          Properties Test Page
+        </Typography>
+        <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
+      </Box>
 
       <Box sx={{ my: 2 }}>
         <Typography variant="body1">

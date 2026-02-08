@@ -76,7 +76,7 @@ const renderPropertyForm = (props = {}) => {
 describe('PropertyForm - Validation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue([]);
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
   });
 
   test('should validate required fields', async () => {
@@ -94,7 +94,7 @@ describe('PropertyForm - Validation', () => {
 
     // Address field should show error
     const addressInput = screen.getByTestId('property-address-input');
-    expect(addressInput).toHaveAttribute('aria-invalid', 'true');
+    expect(addressInput.getAttribute('aria-invalid')).toBe('true');
   });
 
   test('should accept valid numeric fields', async () => {
@@ -126,8 +126,8 @@ describe('PropertyForm - Validation', () => {
 
     // Check that no validation errors appear
     await waitFor(() => {
-      expect(totalAreaInput).not.toHaveAttribute('aria-invalid', 'true');
-      expect(landAreaInput).not.toHaveAttribute('aria-invalid', 'true');
+      expect(totalAreaInput.getAttribute('aria-invalid')).not.toBe('true');
+      expect(landAreaInput.getAttribute('aria-invalid')).not.toBe('true');
     });
   });
 
@@ -234,7 +234,7 @@ describe('PropertyForm - Validation', () => {
 describe('PropertyForm - Submission', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue([]);
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
   });
 
   test('should call API when form is valid', async () => {
@@ -342,7 +342,7 @@ describe('PropertyForm - Submission', () => {
       expect(mockPropertiesApi.create).toHaveBeenCalled();
     });
 
-    const callArgs = mockPropertiesApi.create.mock.calls[0][0];
+    const callArgs = mockPropertiesApi.create.mock.calls[0][0] as any;
     
     // Check that no undefined values are present
     Object.keys(callArgs).forEach((key) => {
@@ -360,7 +360,7 @@ describe('PropertyForm - Submission', () => {
 describe('PropertyForm - Mutation Callbacks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue([]);
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
   });
 
   test('should call onClose when mutation succeeds', async () => {
@@ -404,9 +404,9 @@ describe('PropertyForm - Mutation Callbacks', () => {
     // Verify success message appears
     await waitFor(() => {
       const snackbar = screen.getByTestId('property-form-snackbar');
-      expect(snackbar).toBeInTheDocument();
+      expect(snackbar).toBeDefined();
       const alert = screen.getByTestId('property-form-alert');
-      expect(alert).toHaveTextContent('הנכס נוסף בהצלחה');
+      expect(alert.textContent).toContain('הנכס נוסף בהצלחה');
     });
   });
 
@@ -479,7 +479,7 @@ describe('PropertyForm - Mutation Callbacks', () => {
 describe('PropertyForm - Error Handling', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue([]);
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
   });
 
   test('should show error message when API fails', async () => {
@@ -502,8 +502,8 @@ describe('PropertyForm - Error Handling', () => {
     // Verify error message appears
     await waitFor(() => {
       const alert = screen.getByTestId('property-form-alert');
-      expect(alert).toHaveTextContent(errorMessage);
-      expect(alert).toHaveClass('MuiAlert-standardError');
+      expect(alert.textContent).toContain(errorMessage);
+      expect(alert.className).toContain('MuiAlert-standardError');
     });
   });
 
@@ -527,8 +527,8 @@ describe('PropertyForm - Error Handling', () => {
     // Verify error is displayed
     await waitFor(() => {
       const alert = screen.getByTestId('property-form-alert');
-      expect(alert).toBeInTheDocument();
-      expect(alert).toHaveClass('MuiAlert-standardError');
+      expect(alert).toBeDefined();
+      expect(alert.className).toContain('MuiAlert-standardError');
     });
   });
 });
@@ -536,7 +536,7 @@ describe('PropertyForm - Error Handling', () => {
 describe('PropertyForm - DEBUG: Identify Validation Error', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue([]);
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
   });
 
   test('DEBUG: Identify which field has validation error with exact E2E data', async () => {

@@ -514,7 +514,7 @@ test.describe('US2.2 - View Units List (TDD)', () => {
     console.log('→ Verifying units appear in correct order in full list...');
     const ourUnitsInOrder: Array<{ apartmentNumber: string; propertyAddress: string }> = [];
     unitData.forEach(unit => {
-      if (testPropertyAddresses.includes(unit.propertyAddress)) {
+      if (propertyAddresses.includes(unit.propertyAddress)) {
         ourUnitsInOrder.push(unit);
       }
     });
