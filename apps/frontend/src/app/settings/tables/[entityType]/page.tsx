@@ -27,6 +27,7 @@ import {
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { EntityType, ENTITY_DISPLAY_NAMES, ColumnConfig } from '@/types/table-config';
+import { COLUMN_LABELS, COLUMN_GROUPS } from '@/types/table-config-labels';
 import {
   useTableConfiguration,
   useUpsertTableConfiguration,
@@ -34,69 +35,44 @@ import {
 } from '@/lib/hooks/useTableConfigurations';
 
 /**
- * Default column configurations for each entity type
+ * Build default column configurations from COLUMN_GROUPS
  * These are used as fallback if no custom configuration exists
  */
+const buildDefaultColumns = (entityType: EntityType): ColumnConfig[] => {
+  const groups = COLUMN_GROUPS[entityType] || [];
+  const columns: ColumnConfig[] = [];
+  let order = 0;
+
+  groups.forEach((group) => {
+    group.fields.forEach((field, index) => {
+      // First field in first group is required (usually the primary identifier)
+      const isFirstField = order === 0;
+      columns.push({
+        field,
+        visible: true,
+        order: order++,
+        required: isFirstField,
+      });
+    });
+  });
+
+  return columns;
+};
+
+/**
+ * Default column configurations for each entity type
+ */
 const DEFAULT_COLUMNS: Record<EntityType, ColumnConfig[]> = {
-  properties: [
-    { field: 'address', visible: true, order: 0, required: true },
-    { field: 'fileNumber', visible: true, order: 1, required: false },
-    { field: 'gushHelka', visible: true, order: 2, required: false },
-    { field: 'isMortgaged', visible: true, order: 3, required: false },
-    { field: 'createdAt', visible: true, order: 4, required: false },
-  ],
-  tenants: [
-    { field: 'name', visible: true, order: 0, required: true },
-    { field: 'email', visible: true, order: 1, required: false },
-    { field: 'phone', visible: true, order: 2, required: false },
-    { field: 'createdAt', visible: true, order: 3, required: false },
-  ],
-  leases: [
-    { field: 'unit', visible: true, order: 0, required: true },
-    { field: 'tenant', visible: true, order: 1, required: false },
-    { field: 'startDate', visible: true, order: 2, required: false },
-    { field: 'endDate', visible: true, order: 3, required: false },
-    { field: 'monthlyRent', visible: true, order: 4, required: false },
-    { field: 'status', visible: true, order: 5, required: false },
-  ],
-  units: [
-    { field: 'apartmentNumber', visible: true, order: 0, required: true },
-    { field: 'floor', visible: true, order: 1, required: false },
-    { field: 'roomCount', visible: true, order: 2, required: false },
-    { field: 'createdAt', visible: true, order: 3, required: false },
-  ],
-  expenses: [
-    { field: 'description', visible: true, order: 0, required: true },
-    { field: 'amount', visible: true, order: 1, required: false },
-    { field: 'date', visible: true, order: 2, required: false },
-    { field: 'category', visible: true, order: 3, required: false },
-  ],
-  income: [
-    { field: 'description', visible: true, order: 0, required: true },
-    { field: 'amount', visible: true, order: 1, required: false },
-    { field: 'date', visible: true, order: 2, required: false },
-    { field: 'source', visible: true, order: 3, required: false },
-  ],
-  owners: [
-    { field: 'name', visible: true, order: 0, required: true },
-    { field: 'email', visible: true, order: 1, required: false },
-    { field: 'phone', visible: true, order: 2, required: false },
-  ],
-  ownerships: [
-    { field: 'property', visible: true, order: 0, required: true },
-    { field: 'owner', visible: true, order: 1, required: false },
-    { field: 'percentage', visible: true, order: 2, required: false },
-  ],
-  bankAccounts: [
-    { field: 'accountNumber', visible: true, order: 0, required: true },
-    { field: 'bankName', visible: true, order: 1, required: false },
-    { field: 'balance', visible: true, order: 2, required: false },
-  ],
-  mortgages: [
-    { field: 'property', visible: true, order: 0, required: true },
-    { field: 'amount', visible: true, order: 1, required: false },
-    { field: 'monthlyPayment', visible: true, order: 2, required: false },
-  ],
+  properties: buildDefaultColumns('properties'),
+  tenants: buildDefaultColumns('tenants'),
+  leases: buildDefaultColumns('leases'),
+  units: buildDefaultColumns('units'),
+  expenses: buildDefaultColumns('expenses'),
+  income: buildDefaultColumns('income'),
+  owners: buildDefaultColumns('owners'),
+  ownerships: buildDefaultColumns('ownerships'),
+  bankAccounts: buildDefaultColumns('bankAccounts'),
+  mortgages: buildDefaultColumns('mortgages'),
 };
 
 interface PageProps {
@@ -261,93 +237,113 @@ export default function EditTableConfigPage({ params }: PageProps) {
         </Alert>
       )}
 
-      {/* Columns list */}
+      {/* Columns list - organized by groups */}
       {!isLoading && !error && (
-        <Paper sx={{ p: 3 }}>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            עמודות
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          {COLUMN_GROUPS[entityType]?.map((group) => {
+            // Get columns for this group
+            const groupColumns = columns.filter((col) =>
+              group.fields.includes(col.field)
+            );
 
-          {columns.map((column, index) => (
-            <Box
-              key={column.field}
-              sx={{
-                mb: 2,
-                p: 2,
-                border: '1px solid',
-                borderColor: 'divider',
-                borderRadius: 1,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 2,
-              }}
-            >
-              {/* Move buttons */}
-              <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-                <IconButton
-                  size="small"
-                  onClick={() => handleMoveUp(index)}
-                  disabled={index === 0}
-                >
-                  <UpIcon />
-                </IconButton>
-                <IconButton
-                  size="small"
-                  onClick={() => handleMoveDown(index)}
-                  disabled={index === columns.length - 1}
-                >
-                  <DownIcon />
-                </IconButton>
-              </Box>
+            if (groupColumns.length === 0) return null;
 
-              {/* Column info */}
-              <Box sx={{ flex: 1 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {column.field}
-                  </Typography>
-                  {column.required && (
-                    <Chip
-                      icon={<LockIcon />}
-                      label="חובה"
-                      size="small"
-                      color="warning"
-                      variant="outlined"
-                    />
-                  )}
-                </Box>
-                <Typography variant="caption" color="text.secondary">
-                  סדר: {column.order + 1}
+            return (
+              <Paper key={group.label} sx={{ p: 3 }}>
+                <Typography variant="h6" sx={{ mb: 2 }}>
+                  {group.label}
                 </Typography>
-              </Box>
+                <Divider sx={{ mb: 2 }} />
 
-              {/* Visibility toggle */}
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Typography variant="body2" color="text.secondary">
-                  {column.visible ? 'מוצג' : 'מוסתר'}
-                </Typography>
-                <Switch
-                  checked={column.visible}
-                  onChange={() => handleToggleVisibility(column.field)}
-                  disabled={column.required}
-                  color="primary"
-                />
-              </Box>
-            </Box>
-          ))}
-        </Paper>
+                {groupColumns.map((column) => {
+                  const columnIndex = columns.findIndex((c) => c.field === column.field);
+                  return (
+                    <Box
+                      key={column.field}
+                      sx={{
+                        mb: 2,
+                        p: 2,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 2,
+                      }}
+                    >
+                      {/* Move buttons */}
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleMoveUp(columnIndex)}
+                          disabled={columnIndex === 0}
+                        >
+                          <UpIcon />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleMoveDown(columnIndex)}
+                          disabled={columnIndex === columns.length - 1}
+                        >
+                          <DownIcon />
+                        </IconButton>
+                      </Box>
+
+                      {/* Column info */}
+                      <Box sx={{ flex: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                            {COLUMN_LABELS[column.field] || column.field}
+                          </Typography>
+                          {column.required && (
+                            <Chip
+                              icon={<LockIcon />}
+                              label="חובה"
+                              size="small"
+                              color="warning"
+                              variant="outlined"
+                            />
+                          )}
+                        </Box>
+                        <Typography variant="caption" color="text.secondary">
+                          שם שדה: {column.field} • סדר: {column.order + 1}
+                        </Typography>
+                      </Box>
+
+                      {/* Visibility toggle */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="body2" color="text.secondary">
+                          {column.visible ? 'מוצג' : 'מוסתר'}
+                        </Typography>
+                        <Switch
+                          checked={column.visible}
+                          onChange={() => handleToggleVisibility(column.field)}
+                          disabled={column.required}
+                          color="primary"
+                        />
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Paper>
+            );
+          })}
+        </Box>
       )}
 
       {/* Info */}
       <Alert severity="info" sx={{ mt: 3 }}>
         <Typography variant="body2">
-          • השתמש בחצים למעלה/למטה כדי לשנות את סדר העמודות
+          • העמודות מאורגנות לפי קבוצות כפי שמופיעות בטופס העריכה
+          <br />
+          • השתמש בחצים למעלה/למטה כדי לשנות את סדר העמודות (גם בין קבוצות)
           <br />
           • השתמש במתג כדי להציג/להסתיר עמודות
           <br />
           • עמודות המסומנות כ&quot;חובה&quot; לא ניתנות להסתרה
-          <br />• לחץ על &quot;שמור&quot; כדי לשמור את השינויים לכל המשתמשים
+          <br />
+          • לחץ על &quot;שמור&quot; כדי לשמור את השינויים לכל המשתמשים
+          <br />• ניתן לאפס את ההגדרות לברירת המחדל בכל עת
         </Typography>
       </Alert>
     </Container>
