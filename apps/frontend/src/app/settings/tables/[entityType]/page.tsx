@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
@@ -100,14 +100,13 @@ const DEFAULT_COLUMNS: Record<EntityType, ColumnConfig[]> = {
 };
 
 interface PageProps {
-  params: Promise<{ entityType: EntityType }>;
+  params: { entityType: EntityType };
 }
 
 /**
  * Edit table configuration for specific entity type
  */
-export default function EditTableConfigPage(props: PageProps) {
-  const params = use(props.params);
+export default function EditTableConfigPage({ params }: PageProps) {
   const entityType = params.entityType;
   const router = useRouter();
 
