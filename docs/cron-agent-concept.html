@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron Agent - AI Task Automation Concept</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
+            background-size: 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8892b0;
+            font-size: 1.1em;
+            margin-bottom: 50px;
+        }
+
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            margin-bottom: 50px;
+        }
+
+        .flow-step {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 24px 32px;
+            width: 100%;
+            max-width: 700px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0, 210, 255, 0.15);
+        }
+
+        .flow-arrow {
+            font-size: 2em;
+            color: #3a7bd5;
+            line-height: 1;
+            padding: 8px 0;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-left: 14px;
+        }
+
+        .step-1 .step-number { background: #4CAF50; color: #fff; }
+        .step-2 .step-number { background: #2196F3; color: #fff; }
+        .step-3 .step-number { background: #FF9800; color: #fff; }
+        .step-4 .step-number { background: #9C27B0; color: #fff; }
+        .step-5 .step-number { background: #F44336; color: #fff; }
+
+        .step-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #ffffff;
+            display: inline;
+        }
+
+        .step-desc {
+            margin-top: 10px;
+            color: #a0aec0;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+
+        .step-icon {
+            font-size: 1.5em;
+            float: left;
+            margin-right: 12px;
+        }
+
+        /* Tech stack badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.78em;
+            font-weight: 600;
+            margin: 2px;
+        }
+        .badge-google { background: rgba(66,133,244,0.2); color: #4285F4; border: 1px solid rgba(66,133,244,0.3); }
+        .badge-cursor { background: rgba(0,210,255,0.15); color: #00d2ff; border: 1px solid rgba(0,210,255,0.3); }
+        .badge-cron   { background: rgba(255,152,0,0.2); color: #FF9800; border: 1px solid rgba(255,152,0,0.3); }
+        .badge-slack  { background: rgba(97,31,105,0.25); color: #E01E5A; border: 1px solid rgba(224,30,90,0.3); }
+        .badge-gmail  { background: rgba(234,67,53,0.2); color: #EA4335; border: 1px solid rgba(234,67,53,0.3); }
+
+        /* Architecture box */
+        .arch-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 32px;
+            margin-bottom: 40px;
+        }
+
+        .arch-box h2 {
+            color: #00d2ff;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .code-block {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.85em;
+            line-height: 1.8;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+            color: #c9d1d9;
+        }
+
+        .code-block .comment { color: #6a737d; }
+        .code-block .keyword { color: #ff7b72; }
+        .code-block .string  { color: #a5d6ff; }
+        .code-block .func    { color: #d2a8ff; }
+        .code-block .var     { color: #79c0ff; }
+
+        /* Capabilities grid */
+        .capabilities {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .cap-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .cap-icon { font-size: 2em; margin-bottom: 8px; }
+        .cap-title { font-weight: 600; color: #e2e8f0; margin-bottom: 4px; }
+        .cap-desc  { font-size: 0.82em; color: #718096; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            color: #4a5568;
+            font-size: 0.85em;
+        }
+
+        .footer .live-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 20px;
+            background: rgba(76, 175, 80, 0.15);
+            color: #4CAF50;
+            font-weight: 600;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .highlight { color: #00d2ff; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h1>🤖 Cron Agent</h1>
+        <p class="subtitle">
+            AI-Powered Task Automation — from Google Tasks to Execution
+            <br>
+            <span class="badge badge-google">Google Tasks</span>
+            <span class="badge badge-cron">Cron</span>
+            <span class="badge badge-cursor">Cursor AI</span>
+            <span class="badge badge-slack">Slack</span>
+            <span class="badge badge-gmail">Gmail</span>
+        </p>
+
+        <!-- Flow Diagram -->
+        <div class="flow">
+            <div class="flow-step step-1">
+                <span class="step-icon">📝</span>
+                <span class="step-number">1</span>
+                <span class="step-title">User Creates Task in Google Tasks</span>
+                <div class="step-desc">
+                    The user adds a new task to their <span class="highlight">Google Tasks</span> list — in natural language.
+                    <br>
+                    Example: <em>"Generate an HTML explaining the cron agent concept and send it to team Slack"</em>
+                </div>
+            </div>
+            <div class="flow-arrow">⬇</div>
+
+            <div class="flow-step step-2">
+                <span class="step-icon">⏰</span>
+                <span class="step-number">2</span>
+                <span class="step-title">Cron Job Polls for New Tasks</span>
+                <div class="step-desc">
+                    A <span class="highlight">cron job</span> runs every few minutes, using <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">gtcli</code> (Google Tasks CLI) to check for new uncompleted tasks in the designated task list.
+                </div>
+            </div>
+            <div class="flow-arrow">⬇</div>
+
+            <div class="flow-step step-3">
+                <span class="step-number">3</span>
+                <span class="step-icon">🧠</span>
+                <span class="step-title">Cursor AI Agent Executes the Task</span>
+                <div class="step-desc">
+                    The task is passed to <span class="highlight">Cursor AI</span> as a prompt. The agent has access to:
+                    <br>
+                    <span class="badge badge-cursor">MCP Servers</span>
+                    <span class="badge badge-cursor">Skills</span>
+                    <span class="badge badge-cursor">Shell</span>
+                    <span class="badge badge-cursor">GitLab CLI</span>
+                    <span class="badge badge-gmail">Gmail SMTP</span>
+                    <span class="badge badge-slack">Slack Integration</span>
+                    <br><br>
+                    The agent analyzes the task, breaks it into steps, and executes them autonomously — writing code, running commands, sending emails, creating files, etc.
+                </div>
+            </div>
+            <div class="flow-arrow">⬇</div>
+
+            <div class="flow-step step-4">
+                <span class="step-icon">✅</span>
+                <span class="step-number">4</span>
+                <span class="step-title">Task Marked Complete + Notification</span>
+                <div class="step-desc">
+                    After execution, the agent marks the task as <span class="highlight">complete</span> in Google Tasks using <code style="background:rgba(255,255,255,0.1);padding:2px 6px;border-radius:4px;">gtcli ... complete</code>, sends an email summary, and optionally notifies via Slack.
+                </div>
+            </div>
+            <div class="flow-arrow">⬇</div>
+
+            <div class="flow-step step-5">
+                <span class="step-icon">🔔</span>
+                <span class="step-number">5</span>
+                <span class="step-title">Results Delivered</span>
+                <div class="step-desc">
+                    The output (files, messages, notifications) is delivered to the intended recipients.
+                    <br>
+                    <em>This very HTML you're reading was created and sent by the Cron Agent!</em> 🎉
+                </div>
+            </div>
+        </div>
+
+        <!-- Architecture -->
+        <div class="arch-box">
+            <h2>🏗️ Architecture Overview</h2>
+            <div class="code-block">
+<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="comment">│</span>  <span class="keyword">USER</span>                                                       <span class="comment">│</span>
+<span class="comment">│</span>  <span class="string">📱 Google Tasks App / Web</span>                                 <span class="comment">│</span>
+<span class="comment">│</span>       │  (adds task in natural language)                     <span class="comment">│</span>
+<span class="comment">└───────┼─────────────────────────────────────────────────────┘</span>
+        ▼
+<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="comment">│</span>  <span class="keyword">CRON SCHEDULER</span>  (runs every 5 min)                        <span class="comment">│</span>
+<span class="comment">│</span>  <span class="func">gtcli</span> → polls Google Tasks API                            <span class="comment">│</span>
+<span class="comment">│</span>  Detects new tasks → passes to Cursor                      <span class="comment">│</span>
+<span class="comment">└───────┼─────────────────────────────────────────────────────┘</span>
+        ▼
+<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="comment">│</span>  <span class="keyword">CURSOR AI AGENT</span>                                           <span class="comment">│</span>
+<span class="comment">│</span>                                                             <span class="comment">│</span>
+<span class="comment">│</span>  <span class="var">Tools:</span>                                                    <span class="comment">│</span>
+<span class="comment">│</span>    ├── 🛠️  Shell (bash, git, glab, npm, etc.)               <span class="comment">│</span>
+<span class="comment">│</span>    ├── 📧  Gmail SMTP (send_email.py)                       <span class="comment">│</span>
+<span class="comment">│</span>    ├── 💬  Slack (via email integration)                     <span class="comment">│</span>
+<span class="comment">│</span>    ├── 📂  File System (read, write, edit)                   <span class="comment">│</span>
+<span class="comment">│</span>    ├── 🔍  MCP Servers (Gmail, Jira, Browser)                <span class="comment">│</span>
+<span class="comment">│</span>    ├── 📋  Skills Library (~/.cursor/skills/)                <span class="comment">│</span>
+<span class="comment">│</span>    └── ✅  gtcli (mark tasks complete)                       <span class="comment">│</span>
+<span class="comment">│</span>                                                             <span class="comment">│</span>
+<span class="comment">└───────┼─────────────────────────────────────────────────────┘</span>
+        ▼
+<span class="comment">┌─────────────────────────────────────────────────────────────┐</span>
+<span class="comment">│</span>  <span class="keyword">OUTPUT</span>                                                     <span class="comment">│</span>
+<span class="comment">│</span>  ├── 📬 Email / Slack notification                          <span class="comment">│</span>
+<span class="comment">│</span>  ├── 📄 Generated files (HTML, code, docs)                  <span class="comment">│</span>
+<span class="comment">│</span>  ├── 🔀 GitLab MR actions                                   <span class="comment">│</span>
+<span class="comment">│</span>  └── ✅ Google Task → marked complete                        <span class="comment">│</span>
+<span class="comment">└─────────────────────────────────────────────────────────────┘</span>
+            </div>
+        </div>
+
+        <!-- Capabilities -->
+        <div class="arch-box">
+            <h2>⚡ Agent Capabilities</h2>
+            <div class="capabilities">
+                <div class="cap-card">
+                    <div class="cap-icon">💻</div>
+                    <div class="cap-title">Code Generation</div>
+                    <div class="cap-desc">Write, edit, and review code across any language</div>
+                </div>
+                <div class="cap-card">
+                    <div class="cap-icon">📧</div>
+                    <div class="cap-title">Email & Slack</div>
+                    <div class="cap-desc">Send messages via Gmail SMTP or Slack integration</div>
+                </div>
+                <div class="cap-card">
+                    <div class="cap-icon">🔀</div>
+                    <div class="cap-title">GitLab Ops</div>
+                    <div class="cap-desc">Create MRs, review code, manage branches</div>
+                </div>
+                <div class="cap-card">
+                    <div class="cap-icon">🌐</div>
+                    <div class="cap-title">Web Browsing</div>
+                    <div class="cap-desc">Access URLs, scrape data, interact with web apps</div>
+                </div>
+                <div class="cap-card">
+                    <div class="cap-icon">📊</div>
+                    <div class="cap-title">Jira Integration</div>
+                    <div class="cap-desc">Create tickets, update status, track sprints</div>
+                </div>
+                <div class="cap-card">
+                    <div class="cap-icon">📂</div>
+                    <div class="cap-title">File Management</div>
+                    <div class="cap-desc">Create, edit, organize files and documentation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example -->
+        <div class="arch-box">
+            <h2>💡 Live Example — This Task!</h2>
+            <div class="code-block">
+<span class="comment"># 1. User added this to Google Tasks:</span>
+<span class="string">"אני רוצה להדגים לצוות איך אני מוסיף משימה ל google task ai</span>
+<span class="string"> והcron agent מבצע אותה, לכן אני רוצה שתייצר html עם הקונספט</span>
+<span class="string"> הבסיסי של הcron agent ותשלח אותו לסלאק של הצוות"</span>
+
+<span class="comment"># 2. Cron detected the task and launched Cursor AI</span>
+
+<span class="comment"># 3. The agent:</span>
+<span class="func">   → Created</span> this HTML file
+<span class="func">   → Sent</span> it to team Slack via email integration
+<span class="func">   → Marked</span> the Google Task as complete
+<span class="func">   → Sent</span> email summary of actions taken
+
+<span class="comment"># 4. You're reading the result right now! 🎉</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="live-badge">✅ LIVE — This was generated and sent by the Cron Agent</div>
+            <br>
+            Built with Cursor AI + Google Tasks + Gmail SMTP + Slack Integration
+            <br>
+            <span style="color:#2d3748;">February 2026</span>
+        </div>
+
+    </div>
+</body>
+</html>

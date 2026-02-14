@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הדרכה חינמית | Cron Agent - העוזר האישי שעובד בשבילך 24/7</title>
+  <meta name="description" content="הדרכה חינמית לאנשים לא טכניים - איך ליצור עוזר אישי שעובד בשבילך מסביב לשעון, בלי לשלם על שרתים">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Heebo', sans-serif;
+      background: #0a0a1a;
+      color: #fff;
+      overflow-x: hidden;
+      line-height: 1.7;
+    }
+
+    /* Animated gradient background */
+    .bg-gradient {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse at 20% 50%, rgba(72, 49, 212, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(0, 194, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 80%, rgba(120, 40, 200, 0.1) 0%, transparent 50%),
+        #0a0a1a;
+    }
+
+    /* Floating particles */
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: rgba(100, 180, 255, 0.3);
+      border-radius: 50%;
+      animation: float-up linear infinite;
+    }
+
+    @keyframes float-up {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 24px;
+      position: relative;
+    }
+
+    .hero-content {
+      max-width: 800px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(72, 49, 212, 0.2);
+      border: 1px solid rgba(72, 49, 212, 0.4);
+      color: #a78bfa;
+      padding: 8px 24px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 32px;
+      letter-spacing: 0.5px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    .badge .free {
+      color: #34d399;
+      font-weight: 700;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .hero h1 .gradient-text {
+      background: linear-gradient(135deg, #00c2ff, #a78bfa, #ff6b9d);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero .subtitle {
+      font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+      color: #94a3b8;
+      margin-bottom: 48px;
+      font-weight: 300;
+      max-width: 650px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+
+    .hero .subtitle strong {
+      color: #e2e8f0;
+      font-weight: 600;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      animation: fadeInUp 0.8s ease-out 0.6s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, #25D366, #128C7E);
+      color: white;
+      padding: 18px 48px;
+      border-radius: 16px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(37, 211, 102, 0.3);
+      border: none;
+      cursor: pointer;
+      font-family: 'Heebo', sans-serif;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 40px rgba(37, 211, 102, 0.45);
+    }
+
+    .btn-primary svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .cta-hint {
+      font-size: 0.9rem;
+      color: #64748b;
+    }
+
+    .cta-disclaimer {
+      font-size: 0.75rem;
+      color: #64748b;
+      max-width: 500px;
+      margin: 8px auto 0;
+      line-height: 1.6;
+      text-align: center;
+      opacity: 0.8;
+    }
+
+    .event-info {
+      margin-top: 48px;
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+      animation: fadeInUp 0.8s ease-out 0.8s both;
+    }
+
+    .event-info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #cbd5e1;
+      font-size: 1.05rem;
+    }
+
+    .event-info-item .icon {
+      font-size: 1.5rem;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: bounce 2s infinite;
+      color: #475569;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(10px); }
+    }
+
+    /* Section Styles */
+    section {
+      padding: 80px 24px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 1.1rem;
+      margin-bottom: 56px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* What is Cron Agent Section */
+    .what-section {
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .explanation-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 48px;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      text-align: center;
+    }
+
+    .explanation-card .emoji-big {
+      font-size: 4rem;
+      margin-bottom: 24px;
+    }
+
+    .explanation-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .explanation-card p {
+      color: #94a3b8;
+      font-size: 1.1rem;
+      line-height: 1.8;
+    }
+
+    .explanation-card p strong {
+      color: #e2e8f0;
+    }
+
+    .analogy-box {
+      background: linear-gradient(135deg, rgba(72, 49, 212, 0.1), rgba(0, 194, 255, 0.1));
+      border: 1px solid rgba(72, 49, 212, 0.2);
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 700px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .analogy-box p {
+      font-size: 1.15rem;
+      color: #cbd5e1;
+      line-height: 1.8;
+    }
+
+    .analogy-box .highlight {
+      color: #a78bfa;
+      font-weight: 600;
+    }
+
+    /* Benefits Section */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .benefit-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(167, 139, 250, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .benefit-card .icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+    }
+
+    .benefit-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .benefit-card p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* Use Cases Section */
+    .usecases-section {
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .usecases-list {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .usecase-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px 28px;
+      transition: all 0.3s ease;
+    }
+
+    .usecase-item:hover {
+      border-color: rgba(0, 194, 255, 0.3);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .usecase-item .icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .usecase-item h4 {
+      font-size: 1.1rem;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .usecase-item p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+
+    /* Important Note */
+    .note-section {
+      padding: 40px 24px 80px;
+    }
+
+    .note-card {
+      max-width: 750px;
+      margin: 0 auto;
+      background: rgba(251, 191, 36, 0.08);
+      border: 1px solid rgba(251, 191, 36, 0.2);
+      border-radius: 20px;
+      padding: 36px;
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .note-card .icon {
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+
+    .note-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: #fbbf24;
+      font-weight: 700;
+    }
+
+    .note-card p {
+      color: #cbd5e1;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    /* How It Works Section */
+    .steps-container {
+      max-width: 700px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step {
+      display: flex;
+      gap: 24px;
+      position: relative;
+    }
+
+    .step-number-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+
+    .step-number {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4831d4, #00c2ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .step-line {
+      width: 2px;
+      flex-grow: 1;
+      background: linear-gradient(to bottom, rgba(72, 49, 212, 0.4), rgba(72, 49, 212, 0.05));
+      min-height: 30px;
+    }
+
+    .step-content {
+      padding-bottom: 40px;
+      padding-top: 12px;
+    }
+
+    .step-content h4 {
+      font-size: 1.15rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .step-content p {
+      color: #94a3b8;
+      font-size: 1rem;
+    }
+
+    /* Final CTA */
+    .final-cta {
+      text-align: center;
+      padding: 80px 24px 100px;
+      background: linear-gradient(to bottom, transparent, rgba(72, 49, 212, 0.08));
+    }
+
+    .final-cta h2 {
+      font-size: clamp(1.8rem, 4vw, 2.5rem);
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .final-cta .subtitle {
+      color: #94a3b8;
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+
+    .final-cta .btn-primary {
+      font-size: 1.3rem;
+      padding: 20px 56px;
+    }
+
+    .final-cta .reassurance {
+      margin-top: 24px;
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+
+    .final-cta .reassurance span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 32px;
+      color: #475569;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s ease-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Countdown Timer */
+    .countdown {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 32px;
+      animation: fadeInUp 0.8s ease-out 1s both;
+    }
+
+    .countdown-item {
+      text-align: center;
+    }
+
+    .countdown-item .number {
+      display: block;
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #00c2ff, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    .countdown-item .label {
+      font-size: 0.8rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .countdown-separator {
+      font-size: 2rem;
+      color: #334155;
+      line-height: 1.3;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .event-info {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .explanation-card {
+        padding: 32px 24px;
+      }
+
+      .note-card {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+      }
+
+      .step {
+        gap: 16px;
+      }
+
+      .countdown {
+        gap: 12px;
+      }
+
+      .countdown-item .number {
+        font-size: 1.6rem;
+      }
+
+      .final-cta .reassurance {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Participant Ideas Section */
+    .ideas-section {
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .ideas-form-card {
+      max-width: 700px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 40px;
+    }
+
+    .ideas-form-card .form-description {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 1.05rem;
+      margin-bottom: 32px;
+      line-height: 1.8;
+    }
+
+    .ideas-form-card .form-description strong {
+      color: #e2e8f0;
+    }
+
+    .idea-input-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .idea-input-group textarea {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 14px;
+      padding: 16px 20px;
+      color: #e2e8f0;
+      font-size: 1rem;
+      font-family: 'Heebo', sans-serif;
+      resize: vertical;
+      min-height: 56px;
+      max-height: 160px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      direction: rtl;
+    }
+
+    .idea-input-group textarea::placeholder {
+      color: #64748b;
+    }
+
+    .idea-input-group textarea:focus {
+      outline: none;
+      border-color: rgba(167, 139, 250, 0.5);
+      box-shadow: 0 0 20px rgba(167, 139, 250, 0.1);
+    }
+
+    .btn-submit-idea {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #4831d4, #00c2ff);
+      color: white;
+      padding: 16px 32px;
+      border-radius: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      font-family: 'Heebo', sans-serif;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      align-self: flex-start;
+    }
+
+    .btn-submit-idea:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(72, 49, 212, 0.35);
+    }
+
+    .btn-submit-idea:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .ideas-list {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ideas-list-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .ideas-list-header h4 {
+      font-size: 1rem;
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+
+    .ideas-count {
+      background: rgba(167, 139, 250, 0.15);
+      color: #a78bfa;
+      padding: 4px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .idea-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 18px 22px;
+      animation: fadeInUp 0.4s ease-out;
+    }
+
+    .idea-item .idea-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .idea-item .idea-text {
+      color: #cbd5e1;
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    .ideas-empty {
+      text-align: center;
+      color: #475569;
+      font-size: 0.95rem;
+      padding: 24px 0;
+    }
+
+    .idea-success-msg {
+      text-align: center;
+      color: #34d399;
+      font-size: 0.95rem;
+      margin-top: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .idea-success-msg.show {
+      opacity: 1;
+    }
+
+    .ideas-inspiration {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .inspiration-chip {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .inspiration-chip:hover {
+      background: rgba(167, 139, 250, 0.15);
+      border-color: rgba(167, 139, 250, 0.3);
+      color: #a78bfa;
+    }
+
+    @media (max-width: 640px) {
+      .idea-input-group {
+        flex-direction: column;
+      }
+
+      .btn-submit-idea {
+        width: 100%;
+      }
+
+      .ideas-form-card {
+        padding: 28px 20px;
+      }
+    }
+
+    /* Pulse animation for CTA */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 8px 32px rgba(37, 211, 102, 0.3); }
+      50% { box-shadow: 0 8px 48px rgba(37, 211, 102, 0.5); }
+    }
+
+    .btn-primary {
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    .btn-primary:hover {
+      animation: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="particles" id="particles"></div>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="badge">הדרכה חינמית <span class="free">100% ללא עלות</span></div>
+      <h1>
+        הכירו את ה-<span class="gradient-text">Cron Agent</span>
+        <br>העוזר האישי שלכם
+      </h1>
+      <p class="subtitle">
+        תארו לעצמכם שיש לכם עוזר אישי דיגיטלי שעובד <strong>מסביב לשעון</strong> - 
+        שולח הודעות, מזכיר לכם דברים, ומבצע משימות <strong>אוטומטית</strong>. 
+        בהדרכה הזו נלמד איך לעשות את זה - <strong>בלי ידע טכני, ובלי לשלם שקל</strong>.
+      </p>
+
+      <div class="cta-group">
+        <a href="https://chat.whatsapp.com/GL9oINPN4vW1e5AzsGmQEx?mode=gi_t" class="btn-primary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          הצטרפו לקבוצת הוואטסאפ
+        </a>
+        <p class="cta-hint">לינק להדרכה ישלח בקבוצה ביום ההדרכה</p>
+        <p class="cta-disclaimer">* בהצטרפותכם לקבוצה אתם מאשרים קבלת דיוור ותכנים שיווקיים מ-AI Boost Academy בהמשך. ניתן להסיר את עצמכם בכל עת.</p>
+      </div>
+
+      <div class="event-info">
+        <div class="event-info-item">
+          <span class="icon">📅</span>
+          <span>יום ראשון, 15 בפברואר 2026</span>
+        </div>
+        <div class="event-info-item">
+          <span class="icon">🕗</span>
+          <span>שעה 20:30</span>
+        </div>
+        <div class="event-info-item">
+          <span class="icon">💰</span>
+          <span>חינם לגמרי</span>
+        </div>
+      </div>
+
+      <div class="countdown" id="countdown">
+        <div class="countdown-item">
+          <span class="number" id="days">--</span>
+          <span class="label">ימים</span>
+        </div>
+        <span class="countdown-separator">:</span>
+        <div class="countdown-item">
+          <span class="number" id="hours">--</span>
+          <span class="label">שעות</span>
+        </div>
+        <span class="countdown-separator">:</span>
+        <div class="countdown-item">
+          <span class="number" id="minutes">--</span>
+          <span class="label">דקות</span>
+        </div>
+        <span class="countdown-separator">:</span>
+        <div class="countdown-item">
+          <span class="number" id="seconds">--</span>
+          <span class="label">שניות</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-indicator">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 5v14M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- What is Cron Agent -->
+  <section class="what-section">
+    <div class="container">
+      <h2 class="section-title fade-in">מה זה בכלל <span style="color: #a78bfa;">Cron Agent</span>?</h2>
+      <p class="section-subtitle fade-in">בואו נסביר את זה בשפה פשוטה</p>
+
+      <div class="explanation-card fade-in">
+        <div class="emoji-big">🤖</div>
+        <h3>עוזר אישי דיגיטלי שעובד לפי לוח זמנים</h3>
+        <p>
+          דמיינו שיש לכם עוזר אישי שיושב ליד המחשב שלכם ומבצע משימות <strong>באופן אוטומטי</strong> - 
+          בדיוק בזמנים שאתם קובעים. הוא יכול לשלוח הודעות, לבדוק דברים באינטרנט, 
+          לארגן מידע, ועוד - <strong>בלי שתצטרכו להיות שם</strong>.
+        </p>
+      </div>
+
+      <div class="analogy-box fade-in">
+        <p>
+          חשבו על זה כמו <span class="highlight">שעון מעורר חכם</span> - 
+          אבל במקום רק לצלצל, הוא באמת <span class="highlight">עושה דברים</span> בשבילכם.
+          רוצים שכל בוקר בשמונה תקבלו סיכום חדשות? הוא יעשה את זה.
+          רוצים שכל ערב יישלח לכם תזכורת? גם את זה.
+          <br><br>
+          והכי חשוב? <span class="highlight">לא צריך לדעת לתכנת</span> כדי להשתמש בזה. 
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section>
+    <div class="container">
+      <h2 class="section-title fade-in">למה כדאי להגיע?</h2>
+      <p class="section-subtitle fade-in">הנה כמה סיבות טובות להירשם עכשיו</p>
+
+      <div class="benefits-grid">
+        <div class="benefit-card fade-in">
+          <div class="icon">🆓</div>
+          <h3>חינם לגמרי</h3>
+          <p>ההדרכה ללא עלות. גם הפתרון עצמו לא דורש תשלום חודשי לשום שרת.</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="icon">🧑‍🎓</div>
+          <h3>לא צריך ידע טכני</h3>
+          <p>ההדרכה מותאמת לאנשים ללא רקע טכנולוגי. נסביר הכל צעד אחר צעד.</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="icon">⚡</div>
+          <h3>חסכון בזמן</h3>
+          <p>תנו לעוזר לעשות את העבודה המשעממת בשבילכם - אוטומטית.</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="icon">🔒</div>
+          <h3>פרטי ובטוח</h3>
+          <p>הכל רץ על המחשב שלכם. אין צורך להעלות מידע אישי לשום מקום.</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="icon">🔄</div>
+          <h3>עובד 24/7</h3>
+          <p>כל עוד המחשב מחובר לאינטרנט - העוזר עובד בשבילכם מסביב לשעון.</p>
+        </div>
+        <div class="benefit-card fade-in">
+          <div class="icon">🎯</div>
+          <h3>פרקטי ומיידי</h3>
+          <p>תצאו מההדרכה עם ידע שתוכלו להפעיל כבר באותו ערב.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Use Cases Section -->
+  <section class="usecases-section">
+    <div class="container">
+      <h2 class="section-title fade-in">מה אפשר לעשות עם זה?</h2>
+      <p class="section-subtitle fade-in">כמה דוגמאות ממשיות לשימוש יומיומי</p>
+
+      <div class="usecases-list">
+        <div class="usecase-item fade-in">
+          <span class="icon">📧</span>
+          <div>
+            <h4>שליחת תזכורות אוטומטיות</h4>
+            <p>תזכורת יומית, שבועית או חודשית - לעצמכם או לאחרים</p>
+          </div>
+        </div>
+        <div class="usecase-item fade-in">
+          <span class="icon">📊</span>
+          <div>
+            <h4>סיכום חדשות ומידע</h4>
+            <p>קבלו כל בוקר סיכום אוטומטי של מה שחשוב לכם</p>
+          </div>
+        </div>
+        <div class="usecase-item fade-in">
+          <span class="icon">💬</span>
+          <div>
+            <h4>שליחת הודעות מתוזמנות</h4>
+            <p>ברכות ליום הולדת, תזכורות ללקוחות, הודעות מעקב</p>
+          </div>
+        </div>
+        <div class="usecase-item fade-in">
+          <span class="icon">📋</span>
+          <div>
+            <h4>ניהול משימות חכם</h4>
+            <p>העוזר יכול לנהל את רשימת המשימות שלכם ולעקוב אחרי התקדמות</p>
+          </div>
+        </div>
+        <div class="usecase-item fade-in">
+          <span class="icon">🔍</span>
+          <div>
+            <h4>מעקב מחירים והשוואות</h4>
+            <p>עקבו אחרי מחירים באתרים ותקבלו התראה כשמשהו יורד במחיר</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Participant Ideas Section -->
+  <section class="ideas-section" id="ideas-section">
+    <div class="container">
+      <h2 class="section-title fade-in">מה <span style="color: #a78bfa;">אתם</span> הייתם רוצים שהעוזר יעשה?</h2>
+      <p class="section-subtitle fade-in">שתפו אותנו - אולי נדגים את הרעיון שלכם בהדרכה!</p>
+
+      <div class="ideas-form-card fade-in">
+        <p class="form-description">
+          חשבו על פעולה שהייתם שמחים ש<strong>מישהו יעשה בשבילכם אוטומטית</strong> - 
+          כל יום, כל שבוע, או בזמן מסוים. זה יכול להיות כל דבר! 
+          <br>הרעיונות שלכם יעזרו לנו להתאים את ההדרכה בדיוק אליכם.
+        </p>
+
+        <div class="ideas-inspiration">
+          <span class="inspiration-chip" onclick="useInspiration(this)">📧 תזכורת יומית במייל</span>
+          <span class="inspiration-chip" onclick="useInspiration(this)">📰 סיכום חדשות כל בוקר</span>
+          <span class="inspiration-chip" onclick="useInspiration(this)">🎂 ברכות יום הולדת אוטומטיות</span>
+          <span class="inspiration-chip" onclick="useInspiration(this)">💰 מעקב אחרי מחירי טיסות</span>
+          <span class="inspiration-chip" onclick="useInspiration(this)">📋 דוח שבועי על הוצאות</span>
+        </div>
+
+        <div class="idea-input-group">
+          <textarea 
+            id="ideaInput" 
+            placeholder="למשל: ״כל בוקר בשמונה לשלוח לי סיכום של מזג האוויר ומה ביומן שלי היום״"
+            rows="2"
+            maxlength="500"
+          ></textarea>
+          <button class="btn-submit-idea" onclick="submitIdea()" id="submitBtn">
+            שליחה ✨
+          </button>
+        </div>
+        <p class="idea-success-msg" id="successMsg">תודה! הרעיון שלך נוסף בהצלחה 🎉</p>
+
+        <div class="ideas-list" id="ideasList">
+          <div class="ideas-list-header">
+            <h4>💡 רעיונות מהמשתתפים</h4>
+            <span class="ideas-count" id="ideasCount">0 רעיונות</span>
+          </div>
+          <div class="ideas-empty" id="ideasEmpty">
+            היו הראשונים לשתף רעיון! 🚀
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Important Note -->
+  <section class="note-section">
+    <div class="container">
+      <div class="note-card fade-in">
+        <span class="icon">💡</span>
+        <div>
+          <h3>חשוב לדעת</h3>
+          <p>
+            הפתרון של Cron Agent <strong>לא דורש תשלום לשום שרת</strong> - הכל רץ ישירות על המחשב שלכם, 
+            בלי עלויות חודשיות.
+            <br><br>
+            הדבר היחיד שצריך: <strong>המחשב שלכם צריך להיות דלוק ומחובר לאינטרנט</strong> בזמנים שאתם רוצים 
+            שהעוזר יהיה זמין ויבצע משימות. בדיוק כמו שצריך להדליק את הטלוויזיה כדי לראות סרט.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to Join Section -->
+  <section>
+    <div class="container">
+      <h2 class="section-title fade-in">איך מצטרפים?</h2>
+      <p class="section-subtitle fade-in">שלושה צעדים פשוטים</p>
+
+      <div class="steps-container">
+        <div class="step fade-in">
+          <div class="step-number-col">
+            <div class="step-number">1</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h4>הצטרפו לקבוצת הוואטסאפ</h4>
+            <p>לחצו על הכפתור למטה והצטרפו לקבוצה. שם תקבלו את כל העדכונים.</p>
+          </div>
+        </div>
+
+        <div class="step fade-in">
+          <div class="step-number-col">
+            <div class="step-number">2</div>
+            <div class="step-line"></div>
+          </div>
+          <div class="step-content">
+            <h4>חכו ליום ההדרכה - ראשון 15.2</h4>
+            <p>ביום ראשון בשעה 20:30 יישלח לינק להדרכה ישירות בקבוצה.</p>
+          </div>
+        </div>
+
+        <div class="step fade-in">
+          <div class="step-number-col">
+            <div class="step-number">3</div>
+          </div>
+          <div class="step-content">
+            <h4>היכנסו להדרכה ותהנו! 🎉</h4>
+            <p>רק תצטרכו להיכנס ללינק ולהקשיב. אנחנו נדריך אתכם בכל שלב.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta">
+    <h2 class="fade-in">מוכנים לקבל עוזר אישי?</h2>
+    <p class="subtitle fade-in">הצטרפו עכשיו - המקום מוגבל</p>
+    <div class="fade-in">
+      <a href="https://chat.whatsapp.com/GL9oINPN4vW1e5AzsGmQEx?mode=gi_t" class="btn-primary" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="28" height="28"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        הצטרפו לקבוצה עכשיו
+      </a>
+    </div>
+    <div class="reassurance fade-in">
+      <span>✅ הדרכה חינמית</span>
+      <span>✅ בלי התחייבות</span>
+      <span>✅ מותאם ללא-טכניים</span>
+    </div>
+    <p class="cta-disclaimer fade-in" style="margin-top: 20px;">* בהצטרפותכם לקבוצה אתם מאשרים קבלת דיוור ותכנים שיווקיים מ-AI Boost Academy בהמשך. ניתן להסיר את עצמכם בכל עת.</p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>הדרכת Cron Agent | יום ראשון 15.2.2026 בשעה 20:30 | חינם ובלי התחייבות</p>
+  </footer>
+
+  <script>
+    // Countdown Timer
+    function updateCountdown() {
+      // Target: February 15, 2026 at 20:30 Israel Time (UTC+2)
+      const target = new Date('2026-02-15T20:30:00+02:00').getTime();
+      const now = new Date().getTime();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        document.getElementById('days').textContent = '0';
+        document.getElementById('hours').textContent = '0';
+        document.getElementById('minutes').textContent = '0';
+        document.getElementById('seconds').textContent = '0';
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('days').textContent = days;
+      document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+      document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // Scroll Animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Participant Ideas functionality
+    const IDEA_ICONS = ['💡', '🌟', '✨', '🔮', '🎯', '🚀', '⚡', '🧠', '💫', '🔥'];
+    let ideas = JSON.parse(localStorage.getItem('cronAgentIdeas') || '[]');
+
+    function renderIdeas() {
+      const listEl = document.getElementById('ideasList');
+      const emptyEl = document.getElementById('ideasEmpty');
+      const countEl = document.getElementById('ideasCount');
+
+      // Update count
+      const countText = ideas.length === 1 ? 'רעיון אחד' : ideas.length + ' רעיונות';
+      countEl.textContent = countText;
+
+      // Remove existing idea items (keep header and empty msg)
+      listEl.querySelectorAll('.idea-item').forEach(el => el.remove());
+
+      if (ideas.length === 0) {
+        emptyEl.style.display = 'block';
+        return;
+      }
+
+      emptyEl.style.display = 'none';
+
+      ideas.forEach((idea, index) => {
+        const item = document.createElement('div');
+        item.className = 'idea-item';
+        const icon = IDEA_ICONS[index % IDEA_ICONS.length];
+        item.innerHTML = `
+          <span class="idea-icon">${icon}</span>
+          <span class="idea-text">${escapeHtml(idea)}</span>
+        `;
+        listEl.appendChild(item);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function submitIdea() {
+      const input = document.getElementById('ideaInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      ideas.unshift(text);
+      localStorage.setItem('cronAgentIdeas', JSON.stringify(ideas));
+
+      input.value = '';
+      renderIdeas();
+
+      // Show success message
+      const msg = document.getElementById('successMsg');
+      msg.classList.add('show');
+      setTimeout(() => msg.classList.remove('show'), 3000);
+    }
+
+    function useInspiration(chip) {
+      const input = document.getElementById('ideaInput');
+      // Get just the text without the emoji prefix
+      const text = chip.textContent.trim();
+      input.value = text;
+      input.focus();
+    }
+
+    // Allow Enter key to submit (Shift+Enter for new line)
+    document.getElementById('ideaInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        submitIdea();
+      }
+    });
+
+    // Initial render
+    renderIdeas();
+
+    // Create floating particles
+    const particlesContainer = document.getElementById('particles');
+    for (let i = 0; i < 30; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
+      particle.style.animationDelay = (Math.random() * 10) + 's';
+      particle.style.width = (Math.random() * 3 + 2) + 'px';
+      particle.style.height = particle.style.width;
+      particlesContainer.appendChild(particle);
+    }
+  </script>
+</body>
+</html>
