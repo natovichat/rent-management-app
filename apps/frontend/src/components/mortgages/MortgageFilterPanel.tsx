@@ -88,7 +88,7 @@ export default function MortgageFilterPanel({
     <Accordion
       expanded={expanded}
       onChange={() => setExpanded(!expanded)}
-      sx={{ mb: 2, direction: 'rtl' }}
+      sx={{ mb: 2, direction: 'rtl', overflowX: 'hidden', maxWidth: '100%' }}
       data-testid="mortgage-filter-panel"
     >
       <AccordionSummary

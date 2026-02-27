@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Container,
   Box,
   Typography,
   Button,
+  IconButton,
   Chip,
   Grid,
   Paper,
@@ -17,6 +17,8 @@ import {
   Accordion,
   AccordionSummary,
   AccordionDetails,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import {
@@ -98,6 +100,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function PropertyDetailsPage() {
   const params = useParams();
   const router = useRouter();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const id = params.id as string;
   const [editOpen, setEditOpen] = useState(false);
 
@@ -109,7 +113,7 @@ export default function PropertyDetailsPage() {
 
   if (isLoading) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1.5, md: 3 }, overflowX: 'hidden', maxWidth: '100%' }}>
         <Skeleton variant="rectangular" height={80} sx={{ mb: 3, borderRadius: 2 }} />
         <Grid container spacing={2}>
           {[1, 2, 3].map((i) => (
@@ -118,18 +122,18 @@ export default function PropertyDetailsPage() {
             </Grid>
           ))}
         </Grid>
-      </Container>
+      </Box>
     );
   }
 
   if (error || !property) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1.5, md: 3 } }}>
         <Alert severity="error">שגיאה בטעינת הנכס. אנא נסה שוב.</Alert>
         <Button sx={{ mt: 2 }} onClick={() => router.push('/properties')}>
           חזרה לרשימה
         </Button>
-      </Container>
+      </Box>
     );
   }
 
@@ -138,24 +142,27 @@ export default function PropertyDetailsPage() {
   const typeLabel = TYPE_LABELS[property.type || ''] || property.type;
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4, direction: 'rtl' }}>
+    <Box sx={{ py: { xs: 2, md: 4 }, px: { xs: 1.5, md: 3 }, direction: 'rtl', overflowX: 'hidden', maxWidth: '100%' }}>
       {/* ── Header ── */}
-      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 2, flexWrap: 'wrap' }}>
         <Button
           startIcon={<ArrowBackIcon sx={{ transform: 'rotate(180deg)' }} />}
           onClick={() => router.push('/properties')}
           variant="outlined"
           size="small"
+          sx={{ flexShrink: 0 }}
         >
-          חזרה לנכסים
+          {isMobile ? 'חזרה' : 'חזרה לנכסים'}
         </Button>
 
-        <Box sx={{ flex: 1 }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-            <ApartmentIcon color="primary" />
-            <Typography variant="h5" fontWeight={700}>
+            <ApartmentIcon color="primary" fontSize={isMobile ? 'small' : 'medium'} />
+            <Typography variant={isMobile ? 'h6' : 'h5'} fontWeight={700} sx={{ wordBreak: 'break-word' }}>
               {property.address}
             </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
             {property.status && (
               <Chip label={statusLabel} color={statusColor} size="small" />
             )}
@@ -173,14 +180,25 @@ export default function PropertyDetailsPage() {
           )}
         </Box>
 
-        <Button
-          startIcon={<EditIcon />}
-          variant="contained"
-          size="small"
-          onClick={() => setEditOpen(true)}
-        >
-          עריכת נכס
-        </Button>
+        {isMobile ? (
+          <IconButton
+            color="primary"
+            size="small"
+            onClick={() => setEditOpen(true)}
+            sx={{ flexShrink: 0, border: '1px solid', borderColor: 'primary.main' }}
+          >
+            <EditIcon fontSize="small" />
+          </IconButton>
+        ) : (
+          <Button
+            startIcon={<EditIcon />}
+            variant="contained"
+            size="small"
+            onClick={() => setEditOpen(true)}
+          >
+            עריכת נכס
+          </Button>
+        )}
       </Box>
 
       {/* ── Sections grid ── */}
@@ -421,6 +439,6 @@ export default function PropertyDetailsPage() {
           }}
         />
       </Dialog>
-    </Container>
+    </Box>
   );
 }

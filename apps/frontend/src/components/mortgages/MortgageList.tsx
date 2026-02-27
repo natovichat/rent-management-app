@@ -340,7 +340,7 @@ export default function MortgageList() {
   };
 
   return (
-    <Box sx={{ p: 3, direction: 'rtl' }}>
+    <Box sx={{ p: { xs: 1.5, md: 3 }, direction: 'rtl', overflowX: 'hidden', maxWidth: '100%' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 1 }}>
         <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
           משכנתאות והלוואות
@@ -370,10 +370,10 @@ export default function MortgageList() {
       </Box>
 
       {/* Search */}
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ mb: 2, width: '100%' }}>
         <TextField
           fullWidth
-          placeholder="חפש לפי כתובת נכס, שם בנק או מספר הלוואה..."
+          placeholder="חפש לפי כתובת נכס, שם בנק..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           size="small"

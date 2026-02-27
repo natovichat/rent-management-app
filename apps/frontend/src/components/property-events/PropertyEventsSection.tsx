@@ -21,6 +21,8 @@ import {
   Alert,
   Skeleton,
   Divider,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -245,6 +247,8 @@ interface Props {
 }
 
 export default function PropertyEventsSection({ propertyId }: Props) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [filterType, setFilterType] = useState<PropertyEventType | ''>('');
@@ -279,12 +283,12 @@ export default function PropertyEventsSection({ propertyId }: Props) {
   const events = data?.data || [];
 
   return (
-    <Box>
+    <Box sx={{ overflowX: 'hidden', maxWidth: '100%' }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2, flexWrap: 'wrap', gap: 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flex: 1, minWidth: 0 }}>
           <FilterIcon fontSize="small" color="action" />
-          <FormControl size="small" sx={{ minWidth: 160 }}>
+          <FormControl size="small" sx={{ minWidth: isMobile ? 130 : 160, flex: isMobile ? 1 : 'unset' }}>
             <InputLabel>סנן לפי סוג</InputLabel>
             <Select
               value={filterType}
@@ -307,6 +311,7 @@ export default function PropertyEventsSection({ propertyId }: Props) {
           variant="contained"
           size="small"
           onClick={() => setAddDialogOpen(true)}
+          sx={{ flexShrink: 0 }}
         >
           הוסף אירוע
         </Button>
