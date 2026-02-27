@@ -29,6 +29,7 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Fab,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -786,6 +787,20 @@ export default function PropertyList() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="הוסף נכס"
+          sx={{ position: 'fixed', bottom: 80, left: 16, zIndex: 1200 }}
+          onClick={() => {
+            setSelectedProperty(null);
+            setOpenForm(true);
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      )}
     </Box>
   );
 }

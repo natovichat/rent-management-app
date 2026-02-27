@@ -27,6 +27,7 @@ import {
   Stack,
   Chip,
   IconButton,
+  Fab,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -397,6 +398,20 @@ export default function PersonList() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="הוסף אדם"
+          sx={{ position: 'fixed', bottom: 80, left: 16, zIndex: 1200 }}
+          onClick={() => {
+            setSelectedPerson(null);
+            setOpenForm(true);
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      )}
     </Box>
   );
 }

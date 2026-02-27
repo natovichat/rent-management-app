@@ -24,6 +24,7 @@ import {
   CardActions,
   Stack,
   IconButton,
+  Fab,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -428,6 +429,20 @@ export default function LeaseList() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="הוסף חוזה"
+          sx={{ position: 'fixed', bottom: 80, left: 16, zIndex: 1200 }}
+          onClick={() => {
+            setSelectedLease(null);
+            setOpenDialog(true);
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      )}
     </Box>
   );
 }

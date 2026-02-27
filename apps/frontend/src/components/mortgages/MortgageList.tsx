@@ -27,6 +27,7 @@ import {
   CardContent,
   CardActions,
   Stack,
+  Fab,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -340,30 +341,32 @@ export default function MortgageList() {
 
   return (
     <Box sx={{ p: 3, direction: 'rtl' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4" component="h1">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, flexWrap: 'wrap', gap: 1 }}>
+        <Typography variant={isMobile ? 'h5' : 'h4'} component="h1">
           משכנתאות והלוואות
         </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            <GenericCsvImport
-              importType="mortgages"
-              entityLabel="משכנתאות"
-              queryKey={['mortgages']}
-            />
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={() => {
-                setSelectedMortgage(null);
-                setOpenDialog(true);
-              }}
-            >
-              משכנתא חדשה
-            </Button>
+        {!isMobile && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <GenericCsvImport
+                importType="mortgages"
+                entityLabel="משכנתאות"
+                queryKey={['mortgages']}
+              />
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={() => {
+                  setSelectedMortgage(null);
+                  setOpenDialog(true);
+                }}
+              >
+                משכנתא חדשה
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        )}
       </Box>
 
       {/* Search */}
@@ -491,6 +494,20 @@ export default function MortgageList() {
         onClose={() => setSnackbar({ ...snackbar, open: false })}
         message={snackbar.message}
       />
+
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="הוסף משכנתא"
+          sx={{ position: 'fixed', bottom: 80, left: 16, zIndex: 1200 }}
+          onClick={() => {
+            setSelectedMortgage(null);
+            setOpenDialog(true);
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      )}
     </Box>
   );
 }

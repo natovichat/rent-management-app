@@ -28,6 +28,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Fab,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -493,6 +494,20 @@ export default function BankAccountList() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="הוסף חשבון בנק"
+          sx={{ position: 'fixed', bottom: 80, left: 16, zIndex: 1200 }}
+          onClick={() => {
+            setSelectedAccount(null);
+            setOpenForm(true);
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      )}
     </Box>
   );
 }

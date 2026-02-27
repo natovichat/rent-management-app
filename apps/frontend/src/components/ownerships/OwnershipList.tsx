@@ -24,6 +24,7 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
+  Fab,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -414,6 +415,20 @@ export default function OwnershipList() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {isMobile && (
+        <Fab
+          color="primary"
+          aria-label="הוסף בעלות"
+          sx={{ position: 'fixed', bottom: 80, left: 16, zIndex: 1200 }}
+          onClick={() => {
+            setSelectedOwnership(null);
+            setOpenForm(true);
+          }}
+        >
+          <AddIcon />
+        </Fab>
+      )}
     </Box>
   );
 }
