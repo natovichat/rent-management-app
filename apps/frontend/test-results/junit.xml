@@ -1,0 +1,389 @@
+<testsuites id="" name="" tests="7" failures="1" skipped="6" errors="0" time="6.427028">
+<testsuite name="us1.4-land-registry.spec.ts" timestamp="2026-02-07T22:24:20.829Z" hostname="chromium" tests="7" failures="1" skipped="6" time="4.977" errors="0">
+<testcase name="US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-001-gush-field-exists" classname="us1.4-land-registry.spec.ts" time="4.977">
+<failure message="us1.4-land-registry.spec.ts:63:7 TC-E2E-1.4-001-gush-field-exists" type="FAILURE">
+<![CDATA[  [chromium] › us1.4-land-registry.spec.ts:63:7 › US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-001-gush-field-exists 
+
+    Error: Test account with ID "test-account-1" not found in database
+
+       at ../utils/test-helpers.ts:131
+
+      129 |   const testAccount = accounts.find((a: any) => a.id === 'test-account-1');
+      130 |   if (!testAccount) {
+    > 131 |     throw new Error('Test account with ID "test-account-1" not found in database');
+          |           ^
+      132 |   }
+      133 |   
+      134 |   return testAccount;
+        at getTestAccount (/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/utils/test-helpers.ts:131:11)
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.4-land-registry.spec.ts:59:19
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #1 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: Test account with ID "test-account-1" not found in database
+
+       at ../utils/test-helpers.ts:131
+
+      129 |   const testAccount = accounts.find((a: any) => a.id === 'test-account-1');
+      130 |   if (!testAccount) {
+    > 131 |     throw new Error('Test account with ID "test-account-1" not found in database');
+          |           ^
+      132 |   }
+      133 |   
+      134 |   return testAccount;
+        at getTestAccount (/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/utils/test-helpers.ts:131:11)
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.4-land-registry.spec.ts:59:19
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Retry #2 ───────────────────────────────────────────────────────────────────────────────────────
+
+    Error: Test account with ID "test-account-1" not found in database
+
+       at ../utils/test-helpers.ts:131
+
+      129 |   const testAccount = accounts.find((a: any) => a.id === 'test-account-1');
+      130 |   if (!testAccount) {
+    > 131 |     throw new Error('Test account with ID "test-account-1" not found in database');
+          |           ^
+      132 |   }
+      133 |   
+      134 |   return testAccount;
+        at getTestAccount (/Users/aviad.natovich/personal/rentApplication/apps/frontend/test/utils/test-helpers.ts:131:11)
+        at /Users/aviad.natovich/personal/rentApplication/apps/frontend/test/e2e/us1.4-land-registry.spec.ts:59:19
+
+    attachment #1: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../../test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/trace.zip
+    Usage:
+
+        npx playwright show-trace ../../test-results/us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+]]>
+</failure>
+<system-out>
+<![CDATA[=== RESETTING DATABASE (npm run db:reset:force) ===
+
+> rent-application@0.1.0 db:reset:force
+> cd apps/backend && npx ts-node ../../scripts/reset-test-account.ts
+
+🔄 Starting test account reset...
+
+🎯 Target: Account ID "test-account-1"
+
+📊 Existing test account found:
+   - 1 users
+   - 35 properties
+   - 4 tenants
+   - 0 leases
+
+🗑️  Deleting test account data...
+
+   ✓ Deleted 0 notifications
+   ✓ Deleted 0 mortgage payments
+   ✓ Deleted 0 leases
+   ✓ Deleted 4 tenants
+   ✓ Deleted 3 units
+   ✓ Deleted 0 mortgages
+   ✓ Deleted 0 income records
+   ✓ Deleted 0 expenses
+   ✓ Deleted 0 valuations
+   ✓ Deleted 0 property ownerships
+   ✓ Deleted 0 plot info records
+   ✓ Deleted 35 properties
+   ✓ Deleted 12 owners
+   ✓ Deleted 0 bank accounts
+   ✓ Deleted 0 investment companies
+   ✓ Deleted 1 users
+   ✓ Deleted test account
+
+✅ Test account data deleted successfully
+
+🔨 Creating fresh test account...
+
+✅ Test account created:
+   ID: test-account-1
+   Name: Test Account
+   Status: ACTIVE
+   Created: 2026-02-07T22:24:22.565Z
+
+🔨 Creating test user...
+
+✅ Test user created:
+   ID: 38f10455-3545-470d-82bd-f092b2d2663a
+   Email: test@example.com
+   Name: Test User
+   Role: OWNER
+   Account ID: test-account-1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 Test account reset complete!
+
+Test Account Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Account ID:   test-account-1
+Account Name: Test Account
+User Email:   test@example.com
+User ID:      38f10455-3545-470d-82bd-f092b2d2663a
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Test account is now clean and empty.
+💡 Run "npm run db:reset:with-seed" to populate with sample data.
+💡 Other accounts were not affected.
+
+✅ 10 other account(s) preserved:
+   - Other Test Account (5a4305c6-649a-4450-ba7f-29290feaa01c): 0 users, 1 properties
+   - Other Test Account (2d2629a9-6c3e-478f-bb19-0e7a32fb17c9): 0 users, 1 properties
+   - Other Account 1770343474550 (7e456943-82db-4503-b410-3a1976c410e7): 0 users, 1 properties
+   - Other Account 1770343521068 (c7f4aaa2-7b93-4713-b975-c560c4979812): 0 users, 1 properties
+   - Other Account 1770343578319 (b43b482b-7c20-47ea-a6fe-adf1acd3cddc): 0 users, 1 properties
+   - Test Account 2 (test-account-2): 0 users, 25 properties
+   - Updated Account Name (00000000-0000-0000-0000-000000000001): 0 users, 0 properties
+   - Other Account (c4697ff9-ab77-4531-a4da-263025452da5): 0 users, 1 properties
+   - Other Account (00000000-0000-0000-0000-000000000002): 0 users, 0 properties
+   - משפחת נטוביץ (8b7e0d4c-65b3-4c20-ba85-d7d28c6ee57d): 0 users, 28 properties
+
+✨ Script completed successfully
+✓ Database reset complete - only Test Account remains
+=== FETCHING TEST ACCOUNT ID FROM DATABASE ===
+
+[[ATTACHMENT|us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium/trace.zip]]
+=== RESETTING DATABASE (npm run db:reset:force) ===
+
+> rent-application@0.1.0 db:reset:force
+> cd apps/backend && npx ts-node ../../scripts/reset-test-account.ts
+
+🔄 Starting test account reset...
+
+🎯 Target: Account ID "test-account-1"
+
+📊 Existing test account found:
+   - 1 users
+   - 0 properties
+   - 0 tenants
+   - 0 leases
+
+🗑️  Deleting test account data...
+
+   ✓ Deleted 0 notifications
+   ✓ Deleted 0 mortgage payments
+   ✓ Deleted 0 leases
+   ✓ Deleted 0 tenants
+   ✓ Deleted 0 units
+   ✓ Deleted 0 mortgages
+   ✓ Deleted 0 income records
+   ✓ Deleted 0 expenses
+   ✓ Deleted 0 valuations
+   ✓ Deleted 0 property ownerships
+   ✓ Deleted 0 plot info records
+   ✓ Deleted 0 properties
+   ✓ Deleted 0 owners
+   ✓ Deleted 0 bank accounts
+   ✓ Deleted 0 investment companies
+   ✓ Deleted 1 users
+   ✓ Deleted test account
+
+✅ Test account data deleted successfully
+
+🔨 Creating fresh test account...
+
+✅ Test account created:
+   ID: test-account-1
+   Name: Test Account
+   Status: ACTIVE
+   Created: 2026-02-07T22:24:24.912Z
+
+🔨 Creating test user...
+
+✅ Test user created:
+   ID: e9da9e0a-7761-4139-a644-d2cdcfe13c0a
+   Email: test@example.com
+   Name: Test User
+   Role: OWNER
+   Account ID: test-account-1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 Test account reset complete!
+
+Test Account Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Account ID:   test-account-1
+Account Name: Test Account
+User Email:   test@example.com
+User ID:      e9da9e0a-7761-4139-a644-d2cdcfe13c0a
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Test account is now clean and empty.
+💡 Run "npm run db:reset:with-seed" to populate with sample data.
+💡 Other accounts were not affected.
+
+✅ 10 other account(s) preserved:
+   - Other Test Account (5a4305c6-649a-4450-ba7f-29290feaa01c): 0 users, 1 properties
+   - Other Test Account (2d2629a9-6c3e-478f-bb19-0e7a32fb17c9): 0 users, 1 properties
+   - Other Account 1770343474550 (7e456943-82db-4503-b410-3a1976c410e7): 0 users, 1 properties
+   - Other Account 1770343521068 (c7f4aaa2-7b93-4713-b975-c560c4979812): 0 users, 1 properties
+   - Other Account 1770343578319 (b43b482b-7c20-47ea-a6fe-adf1acd3cddc): 0 users, 1 properties
+   - Test Account 2 (test-account-2): 0 users, 25 properties
+   - Updated Account Name (00000000-0000-0000-0000-000000000001): 0 users, 0 properties
+   - Other Account (c4697ff9-ab77-4531-a4da-263025452da5): 0 users, 1 properties
+   - Other Account (00000000-0000-0000-0000-000000000002): 0 users, 0 properties
+   - משפחת נטוביץ (8b7e0d4c-65b3-4c20-ba85-d7d28c6ee57d): 0 users, 28 properties
+
+✨ Script completed successfully
+✓ Database reset complete - only Test Account remains
+=== FETCHING TEST ACCOUNT ID FROM DATABASE ===
+
+[[ATTACHMENT|us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry1/trace.zip]]
+=== RESETTING DATABASE (npm run db:reset:force) ===
+
+> rent-application@0.1.0 db:reset:force
+> cd apps/backend && npx ts-node ../../scripts/reset-test-account.ts
+
+🔄 Starting test account reset...
+
+🎯 Target: Account ID "test-account-1"
+
+📊 Existing test account found:
+   - 1 users
+   - 0 properties
+   - 0 tenants
+   - 0 leases
+
+🗑️  Deleting test account data...
+
+   ✓ Deleted 0 notifications
+   ✓ Deleted 0 mortgage payments
+   ✓ Deleted 0 leases
+   ✓ Deleted 0 tenants
+   ✓ Deleted 0 units
+   ✓ Deleted 0 mortgages
+   ✓ Deleted 0 income records
+   ✓ Deleted 0 expenses
+   ✓ Deleted 0 valuations
+   ✓ Deleted 0 property ownerships
+   ✓ Deleted 0 plot info records
+   ✓ Deleted 0 properties
+   ✓ Deleted 0 owners
+   ✓ Deleted 0 bank accounts
+   ✓ Deleted 0 investment companies
+   ✓ Deleted 1 users
+   ✓ Deleted test account
+
+✅ Test account data deleted successfully
+
+🔨 Creating fresh test account...
+
+✅ Test account created:
+   ID: test-account-1
+   Name: Test Account
+   Status: ACTIVE
+   Created: 2026-02-07T22:24:26.717Z
+
+🔨 Creating test user...
+
+✅ Test user created:
+   ID: 1173579e-7321-4de5-a501-41efeede46ff
+   Email: test@example.com
+   Name: Test User
+   Role: OWNER
+   Account ID: test-account-1
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 Test account reset complete!
+
+Test Account Details:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Account ID:   test-account-1
+Account Name: Test Account
+User Email:   test@example.com
+User ID:      1173579e-7321-4de5-a501-41efeede46ff
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 Test account is now clean and empty.
+💡 Run "npm run db:reset:with-seed" to populate with sample data.
+💡 Other accounts were not affected.
+
+✅ 10 other account(s) preserved:
+   - Other Test Account (5a4305c6-649a-4450-ba7f-29290feaa01c): 0 users, 1 properties
+   - Other Test Account (2d2629a9-6c3e-478f-bb19-0e7a32fb17c9): 0 users, 1 properties
+   - Other Account 1770343474550 (7e456943-82db-4503-b410-3a1976c410e7): 0 users, 1 properties
+   - Other Account 1770343521068 (c7f4aaa2-7b93-4713-b975-c560c4979812): 0 users, 1 properties
+   - Other Account 1770343578319 (b43b482b-7c20-47ea-a6fe-adf1acd3cddc): 0 users, 1 properties
+   - Test Account 2 (test-account-2): 0 users, 25 properties
+   - Updated Account Name (00000000-0000-0000-0000-000000000001): 0 users, 0 properties
+   - Other Account (c4697ff9-ab77-4531-a4da-263025452da5): 0 users, 1 properties
+   - Other Account (00000000-0000-0000-0000-000000000002): 0 users, 0 properties
+   - משפחת נטוביץ (8b7e0d4c-65b3-4c20-ba85-d7d28c6ee57d): 0 users, 28 properties
+
+✨ Script completed successfully
+✓ Database reset complete - only Test Account remains
+=== FETCHING TEST ACCOUNT ID FROM DATABASE ===
+
+[[ATTACHMENT|us1.4-land-registry-US1-4--6fc56-E-1-4-001-gush-field-exists-chromium-retry2/trace.zip]]
+]]>
+</system-out>
+<system-err>
+<![CDATA[(node:85698) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:85729) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:85729) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/aviad.natovich/personal/rentApplication/scripts/reset-test-account.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/aviad.natovich/personal/rentApplication/package.json.
+(node:85882) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:85937) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:85937) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/aviad.natovich/personal/rentApplication/scripts/reset-test-account.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/aviad.natovich/personal/rentApplication/package.json.
+(node:86016) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:86047) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:86047) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///Users/aviad.natovich/personal/rentApplication/scripts/reset-test-account.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to /Users/aviad.natovich/personal/rentApplication/package.json.
+]]>
+</system-err>
+</testcase>
+<testcase name="US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-002-helka-field-exists" classname="us1.4-land-registry.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-003-create-with-gush-helka" classname="us1.4-land-registry.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-004-create-without-gush-helka" classname="us1.4-land-registry.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-005-view-displays-gush-helka" classname="us1.4-land-registry.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-006-edit-update-gush-helka" classname="us1.4-land-registry.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="US1.4 - Add Land Registry Information (TDD) › TC-E2E-1.4-007-gush-helka-persist-after-save" classname="us1.4-land-registry.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

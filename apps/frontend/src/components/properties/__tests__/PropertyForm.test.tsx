@@ -76,7 +76,7 @@ const renderPropertyForm = (props = {}) => {
 describe('PropertyForm - Validation', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } });
   });
 
   test('should validate required fields', async () => {
@@ -234,7 +234,7 @@ describe('PropertyForm - Validation', () => {
 describe('PropertyForm - Submission', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } });
   });
 
   test('should call API when form is valid', async () => {
@@ -360,7 +360,7 @@ describe('PropertyForm - Submission', () => {
 describe('PropertyForm - Mutation Callbacks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } });
   });
 
   test('should call onClose when mutation succeeds', async () => {
@@ -479,7 +479,7 @@ describe('PropertyForm - Mutation Callbacks', () => {
 describe('PropertyForm - Error Handling', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } });
   });
 
   test('should show error message when API fails', async () => {
@@ -536,7 +536,7 @@ describe('PropertyForm - Error Handling', () => {
 describe('PropertyForm - DEBUG: Identify Validation Error', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10 } });
+    mockInvestmentCompaniesApi.getAll.mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } });
   });
 
   test('DEBUG: Identify which field has validation error with exact E2E data', async () => {

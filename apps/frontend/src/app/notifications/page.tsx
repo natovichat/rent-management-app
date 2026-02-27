@@ -2,7 +2,6 @@
 
 import { Container, Typography, Box } from '@mui/material';
 import NotificationList from '@/components/notifications/NotificationList';
-import { AccountSelector } from '@/components/layout/AccountSelector';
 import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
@@ -28,7 +27,6 @@ export default function NotificationsPage() {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <AccountSelector />
         </Box>
       </Box>
 

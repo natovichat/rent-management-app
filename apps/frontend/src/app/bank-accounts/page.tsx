@@ -2,7 +2,6 @@
 
 import { Container, Typography, Box } from '@mui/material';
 import BankAccountList from '@/components/bank-accounts/BankAccountList';
-import { AccountSelector } from '@/components/layout/AccountSelector';
 import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
@@ -29,7 +28,6 @@ export default function BankAccountsPage() {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <AccountSelector />
         </Box>
       </Box>
 

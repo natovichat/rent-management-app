@@ -1,419 +1,383 @@
 'use client';
 
-import { useState } from 'react';
 import {
-  Container,
   Box,
-  Typography,
-  Button,
+  Card,
+  CardContent,
+  Container,
   Grid,
-  CircularProgress,
+  Paper,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
 } from '@mui/material';
-import DownloadIcon from '@mui/icons-material/Download';
-import SettingsIcon from '@mui/icons-material/Settings';
-import { Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Checkbox, FormControlLabel, List, ListItem, Button as MuiButton } from '@mui/material';
+import {
+  AccountBalance as BankIcon,
+  Description as ContractIcon,
+  Groups as GroupsIcon,
+  Home as HomeIcon,
+  Person as PersonIcon,
+  CreditCard as MortgageIcon,
+} from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
-import { dashboardApi } from '@/lib/api/dashboard';
-import { api } from '@/lib/api';
-import PortfolioSummaryCards from '@/components/dashboard/PortfolioSummaryCards';
-import PropertyDistributionChart from '@/components/dashboard/PropertyDistributionChart';
-import DateRangePicker from '@/components/dashboard/DateRangePicker';
-import IncomeExpenseChart from '@/components/charts/IncomeExpenseChart';
-import PropertyValueChart from '@/components/charts/PropertyValueChart';
-import LeaseExpirationTimeline from '@/components/dashboard/LeaseExpirationTimeline';
-import CashFlowChart from '@/components/dashboard/CashFlowChart';
-import ROIMetricCard from '@/components/dashboard/ROIMetricCard';
-import QuickNavigator from '@/components/navigation/QuickNavigator';
+import { useRouter } from 'next/navigation';
+import {
+  propertiesApi,
+  type Property,
+} from '@/lib/api/properties';
+import { ownersApi } from '@/lib/api/owners';
+import { personsApi } from '@/lib/api/persons';
+import { mortgagesApi } from '@/lib/api/mortgages';
+import { rentalAgreementsApi, type RentalAgreement } from '@/lib/api/leases';
+import { bankAccountsApi } from '@/lib/api/bank-accounts';
 
-/**
- * Dashboard & Analytics page - Epic 10
- * 
- * Features:
- * - Portfolio summary cards (US10.1)
- * - Property distribution chart (US10.2)
- * - Income vs expenses chart (US10.3)
- * - Property value over time (US10.4)
- * - Mortgage summary (US10.5)
- * - Lease expiration timeline (US10.6)
- * - Date range filtering (US10.7)
- * - ROI metrics (US10.10)
- * - Cash flow summary (US10.12)
- */
+const PROPERTY_TYPE_LABELS: Record<string, string> = {
+  RESIDENTIAL: 'מגורים',
+  COMMERCIAL: 'מסחרי',
+  LAND: 'קרקע',
+  MIXED_USE: 'מעורב',
+};
+
+const PROPERTY_STATUS_LABELS: Record<string, string> = {
+  OWNED: 'בבעלות',
+  IN_CONSTRUCTION: 'בבנייה',
+  IN_PURCHASE: 'ברכישה',
+  SOLD: 'נמכר',
+  INVESTMENT: 'השקעה',
+};
+
+function SummaryCard({
+  title,
+  count,
+  icon: Icon,
+  loading,
+  error,
+}: {
+  title: string;
+  count: number;
+  icon: React.ElementType;
+  loading: boolean;
+  error?: boolean;
+}) {
+  return (
+    <Card sx={{ height: '100%' }}>
+      <CardContent sx={{ textAlign: 'center', direction: 'rtl' }}>
+        <Box sx={{ mb: 1, display: 'flex', justifyContent: 'center' }}>
+          <Icon sx={{ fontSize: 40, color: 'primary.main' }} />
+        </Box>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          {title}
+        </Typography>
+        {loading ? (
+          <Skeleton variant="text" width={60} height={40} sx={{ mx: 'auto' }} />
+        ) : error ? (
+          <Typography variant="h5" color="error">
+            —
+          </Typography>
+        ) : (
+          <Typography variant="h4" component="div" fontWeight="bold">
+            {count.toLocaleString('he-IL')}
+          </Typography>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function DashboardPage() {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [exportMenuAnchor, setExportMenuAnchor] = useState<null | HTMLElement>(null);
-  const [exporting, setExporting] = useState(false);
-  const [customizeDialogOpen, setCustomizeDialogOpen] = useState(false);
-  const [widgetPreferences, setWidgetPreferences] = useState<{ visibleWidgets: string[]; widgetOrder: string[] } | null>(null);
-  const [savingPreferences, setSavingPreferences] = useState(false);
+  const router = useRouter();
 
-  // Format dates for API
-  const startDateStr = startDate ? startDate.toISOString().split('T')[0] : undefined;
-  const endDateStr = endDate ? endDate.toISOString().split('T')[0] : undefined;
-
-  // Fetch all dashboard data
-  const { data: portfolioSummary, isLoading: loadingSummary } = useQuery({
-    queryKey: ['portfolioSummary', startDateStr, endDateStr],
-    queryFn: () => dashboardApi.getPortfolioSummary(startDateStr, endDateStr),
+  const { data: propertiesData, isLoading: loadingProperties, isError: errorProperties } = useQuery({
+    queryKey: ['dashboard-properties'],
+    queryFn: () => propertiesApi.getProperties(1, 5),
   });
 
-  const { data: distribution, isLoading: loadingDistribution } = useQuery({
-    queryKey: ['propertyDistribution'],
-    queryFn: () => dashboardApi.getPropertyDistribution(),
+  const { data: propertiesCountData } = useQuery({
+    queryKey: ['dashboard-properties-count'],
+    queryFn: () => propertiesApi.getProperties(1, 1),
   });
 
-  const { data: valuationHistory, isLoading: loadingValuation } = useQuery({
-    queryKey: ['valuationHistory', startDateStr, endDateStr],
-    queryFn: () => dashboardApi.getValuationHistory(startDateStr, endDateStr),
+  const { data: ownersData, isLoading: loadingOwners, isError: errorOwners } = useQuery({
+    queryKey: ['dashboard-owners'],
+    queryFn: () => ownersApi.getOwners(1, 1),
   });
 
-  const { data: incomeExpenses, isLoading: loadingIncomeExpenses } = useQuery({
-    queryKey: ['incomeExpenses', startDateStr, endDateStr],
-    queryFn: () => dashboardApi.getIncomeExpenses(startDateStr, endDateStr, 'month'),
+  const { data: personsData, isLoading: loadingPersons, isError: errorPersons } = useQuery({
+    queryKey: ['dashboard-persons'],
+    queryFn: () => personsApi.getPersons(1, 1),
   });
 
-  const { data: mortgageSummary, isLoading: loadingMortgage } = useQuery({
-    queryKey: ['mortgageSummary'],
-    queryFn: () => dashboardApi.getMortgageSummary(),
+  const { data: mortgagesData, isLoading: loadingMortgages, isError: errorMortgages } = useQuery({
+    queryKey: ['dashboard-mortgages'],
+    queryFn: () => mortgagesApi.getMortgages(1, 1),
   });
 
-  const { data: leaseTimeline, isLoading: loadingLease } = useQuery({
-    queryKey: ['leaseTimeline'],
-    queryFn: () => dashboardApi.getLeaseExpirationTimeline(12),
+  const { data: activeMortgagesData } = useQuery({
+    queryKey: ['dashboard-mortgages-active'],
+    queryFn: () => mortgagesApi.getMortgages(1, 1, { status: 'ACTIVE' }),
   });
 
-  const { data: roiMetrics, isLoading: loadingROI } = useQuery({
-    queryKey: ['roiMetrics', startDateStr, endDateStr],
-    queryFn: () => dashboardApi.getROI(startDateStr, endDateStr),
+  const { data: rentalAgreementsData, isLoading: loadingRentalAgreements, isError: errorRentalAgreements } = useQuery({
+    queryKey: ['dashboard-rental-agreements'],
+    queryFn: () => rentalAgreementsApi.getRentalAgreements(1, 5, { status: 'ACTIVE' }),
   });
 
-  const { data: cashFlow, isLoading: loadingCashFlow } = useQuery({
-    queryKey: ['cashFlow', startDateStr, endDateStr],
-    queryFn: () => dashboardApi.getCashFlow(startDateStr, endDateStr, 'month'),
+  const { data: activeRentalAgreementsCountData } = useQuery({
+    queryKey: ['dashboard-rental-agreements-active-count'],
+    queryFn: () => rentalAgreementsApi.getRentalAgreements(1, 1, { status: 'ACTIVE' }),
   });
 
-  const { data: preferences } = useQuery({
-    queryKey: ['widgetPreferences'],
-    queryFn: () => dashboardApi.getWidgetPreferences(),
+  const { data: bankAccountsData, isLoading: loadingBankAccounts, isError: errorBankAccounts } = useQuery({
+    queryKey: ['dashboard-bank-accounts'],
+    queryFn: () => bankAccountsApi.getBankAccounts(),
   });
 
-  // Use preferences if available, otherwise show all widgets
-  const visibleWidgets = preferences?.visibleWidgets || [
-    'portfolioSummary',
-    'propertyDistribution',
-    'incomeExpenses',
-    'valuationHistory',
-    'mortgageSummary',
-    'leaseTimeline',
-    'roiMetrics',
-    'cashFlow',
-  ];
+  const properties = propertiesData?.data ?? [];
+  const propertiesTotal = propertiesCountData?.meta?.total ?? 0;
+  const ownersTotal = ownersData?.meta?.total ?? 0;
+  const personsTotal = personsData?.meta?.total ?? 0;
+  const mortgagesTotal = mortgagesData?.meta?.total ?? 0;
+  const activeMortgagesCount = activeMortgagesData?.meta?.total ?? 0;
+  const activeRentalAgreements = rentalAgreementsData?.data ?? [];
+  const activeRentalAgreementsCount = activeRentalAgreementsCountData?.meta?.total ?? 0;
+  const bankAccountsCount = bankAccountsData?.meta?.total ?? 0;
 
-  // Transform data for charts
-  const incomeExpenseChartData = incomeExpenses?.map((item) => ({
-    period: item.period,
-    income: item.income,
-    expenses: item.expenses,
-    net: item.net,
-  })) || [];
-
-  const valuationChartData = valuationHistory?.map((item) => ({
-    date: item.date,
-    value: item.totalValue,
-  })) || [];
-
-  const handleExport = async (format: 'pdf' | 'excel') => {
-    setExportMenuAnchor(null);
-    setExporting(true);
-    try {
-      let endpoint: string;
-      let filename: string;
-      let contentType: string;
-
-      if (format === 'excel') {
-        // US13.9: Export Financial Report to Excel
-        endpoint = '/export/financial/excel';
-        filename = `financial-report-${new Date().toISOString().split('T')[0]}.xlsx`;
-        contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-      } else {
-        // US13.10: Export Portfolio Summary to PDF
-        endpoint = '/export/portfolio/pdf';
-        filename = `portfolio-summary-${new Date().toISOString().split('T')[0]}.pdf`;
-        contentType = 'application/pdf';
-      }
-
-      const response = await api.get(endpoint, {
-        responseType: 'blob',
-      });
-
-      const blob = new Blob([response.data], { type: contentType });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error: any) {
-      console.error('Export failed:', error);
-      alert(error.response?.data?.message || 'שגיאה בייצוא הנתונים');
-    } finally {
-      setExporting(false);
-    }
-  };
-
-  const handleOpenCustomize = () => {
-    if (preferences) {
-      setWidgetPreferences({ ...preferences });
-    } else {
-      setWidgetPreferences({
-        visibleWidgets: visibleWidgets,
-        widgetOrder: visibleWidgets,
-      });
-    }
-    setCustomizeDialogOpen(true);
-  };
-
-  const handleSavePreferences = async () => {
-    if (!widgetPreferences) return;
-    setSavingPreferences(true);
-    try {
-      await dashboardApi.saveWidgetPreferences(widgetPreferences);
-      setCustomizeDialogOpen(false);
-      // Refetch preferences
-      window.location.reload(); // Simple refresh to reload preferences
-    } catch (error) {
-      console.error('Failed to save preferences:', error);
-      alert('שגיאה בשמירת העדפות');
-    } finally {
-      setSavingPreferences(false);
-    }
-  };
-
-  const toggleWidget = (widgetId: string) => {
-    if (!widgetPreferences) return;
-    const isVisible = widgetPreferences.visibleWidgets.includes(widgetId);
-    setWidgetPreferences({
-      ...widgetPreferences,
-      visibleWidgets: isVisible
-        ? widgetPreferences.visibleWidgets.filter((id) => id !== widgetId)
-        : [...widgetPreferences.visibleWidgets, widgetId],
-    });
-  };
-
-  const allWidgets = [
-    { id: 'portfolioSummary', label: 'סיכום תיק נכסים' },
-    { id: 'propertyDistribution', label: 'התפלגות נכסים' },
-    { id: 'roiMetrics', label: 'מדדי תשואה' },
-    { id: 'incomeExpenses', label: 'הכנסות מול הוצאות' },
-    { id: 'valuationHistory', label: 'שווי נכסים לאורך זמן' },
-    { id: 'cashFlow', label: 'תזרים מזומנים' },
-    { id: 'leaseTimeline', label: 'ציר זמן פקיעת חוזים' },
-    { id: 'mortgageSummary', label: 'סיכום משכנתאות' },
-  ];
+  const hasError =
+    errorProperties ||
+    errorOwners ||
+    errorPersons ||
+    errorMortgages ||
+    errorRentalAgreements ||
+    errorBankAccounts;
 
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" component="h1">
-          לוח בקרה ואנליטיקה
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<SettingsIcon />}
-              onClick={handleOpenCustomize}
-            >
-              התאם אישית
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<DownloadIcon />}
-              onClick={(e) => setExportMenuAnchor(e.currentTarget)}
-              disabled={exporting}
-            >
-              {exporting ? 'מייצא...' : 'ייצא נתונים'}
-            </Button>
-            <Menu
-              anchorEl={exportMenuAnchor}
-              open={Boolean(exportMenuAnchor)}
-              onClose={() => setExportMenuAnchor(null)}
-            >
-              <MenuItem onClick={() => handleExport('excel')}>ייצא דוח כספי ל-Excel</MenuItem>
-              <MenuItem onClick={() => handleExport('pdf')}>ייצא סיכום תיק ל-PDF</MenuItem>
-            </Menu>
-          </Box>
-        </Box>
-      </Box>
+    <Container maxWidth="xl" sx={{ py: 4, direction: 'rtl' }}>
+      <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: 'right' }}>
+        לוח בקרה
+      </Typography>
 
-      {/* Date Range Filter - US10.7 */}
-      <DateRangePicker
-        startDate={startDate}
-        endDate={endDate}
-        onStartDateChange={setStartDate}
-        onEndDateChange={setEndDate}
-      />
-
-      {/* Portfolio Summary Cards - US10.1 */}
-      {visibleWidgets.includes('portfolioSummary') && (
-        <Box mb={4}>
-          <PortfolioSummaryCards data={portfolioSummary} loading={loadingSummary} />
-        </Box>
+      {hasError && (
+        <Paper sx={{ p: 2, mb: 3, bgcolor: 'error.light', color: 'error.contrastText' }}>
+          <Typography>
+            שגיאה בטעינת נתונים. ייתכן שהשרת לא זמין. נסה לרענן את הדף.
+          </Typography>
+        </Paper>
       )}
 
-      {/* Charts Grid */}
-      <Grid container spacing={3}>
-        {/* Property Distribution - US10.2 */}
-        {visibleWidgets.includes('propertyDistribution') && (
-          <Grid item xs={12} md={6}>
-            <PropertyDistributionChart data={distribution} loading={loadingDistribution} />
-          </Grid>
-        )}
-
-        {/* ROI Metrics - US10.10 */}
-        {visibleWidgets.includes('roiMetrics') && (
-          <Grid item xs={12} md={6}>
-            <ROIMetricCard data={roiMetrics} loading={loadingROI} />
-          </Grid>
-        )}
-
-        {/* Income vs Expenses - US10.3 */}
-        {visibleWidgets.includes('incomeExpenses') && (
-          <Grid item xs={12}>
-            {loadingIncomeExpenses ? (
-              <Box display="flex" justifyContent="center" p={4}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <IncomeExpenseChart
-                data={incomeExpenseChartData || []}
-                title="הכנסות מול הוצאות"
-              />
-            )}
-          </Grid>
-        )}
-
-        {/* Property Value Over Time - US10.4 */}
-        {visibleWidgets.includes('valuationHistory') && (
-          <Grid item xs={12} md={6}>
-            {loadingValuation ? (
-              <Box display="flex" justifyContent="center" p={4}>
-                <CircularProgress />
-              </Box>
-            ) : (
-              <PropertyValueChart
-                data={valuationChartData || []}
-                title="שווי נכסים לאורך זמן"
-              />
-            )}
-          </Grid>
-        )}
-
-        {/* Cash Flow - US10.12 */}
-        {visibleWidgets.includes('cashFlow') && (
-          <Grid item xs={12} md={6}>
-            <CashFlowChart data={cashFlow} loading={loadingCashFlow} />
-          </Grid>
-        )}
-
-        {/* Lease Expiration Timeline - US10.6 */}
-        {visibleWidgets.includes('leaseTimeline') && (
-          <Grid item xs={12}>
-            <LeaseExpirationTimeline data={leaseTimeline} loading={loadingLease} />
-          </Grid>
-        )}
-
-        {/* Mortgage Summary - US10.5 */}
-        {visibleWidgets.includes('mortgageSummary') && mortgageSummary && (
-          <Grid item xs={12}>
-            <Box sx={{ p: 2, bgcolor: 'background.paper', borderRadius: 1 }}>
-              <Typography variant="h6" gutterBottom>
-                סיכום משכנתאות
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="body2" color="text.secondary">
-                    חוב כולל
-                  </Typography>
-                  <Typography variant="h6">
-                    ₪{mortgageSummary.totalMortgageDebt.toLocaleString('he-IL')}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="body2" color="text.secondary">
-                    תשלומים חודשיים
-                  </Typography>
-                  <Typography variant="h6">
-                    ₪{mortgageSummary.totalMonthlyPayments.toLocaleString('he-IL')}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="body2" color="text.secondary">
-                    משכנתאות פעילות
-                  </Typography>
-                  <Typography variant="h6">
-                    {mortgageSummary.activeMortgagesCount}
-                  </Typography>
-                </Grid>
-                <Grid item xs={6} sm={3}>
-                  <Typography variant="body2" color="text.secondary">
-                    ריבית ממוצעת
-                  </Typography>
-                  <Typography variant="h6">
-                    {mortgageSummary.averageInterestRate.toFixed(2)}%
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          </Grid>
-        )}
+      {/* Summary Cards Row */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={6} sm={4} md={2}>
+          <SummaryCard
+            title="נכסים"
+            count={propertiesTotal}
+            icon={HomeIcon}
+            loading={loadingProperties}
+            error={errorProperties}
+          />
+        </Grid>
+        <Grid item xs={6} sm={4} md={2}>
+          <SummaryCard
+            title="בעלים"
+            count={ownersTotal}
+            icon={PersonIcon}
+            loading={loadingOwners}
+            error={errorOwners}
+          />
+        </Grid>
+        <Grid item xs={6} sm={4} md={2}>
+          <SummaryCard
+            title="אנשים"
+            count={personsTotal}
+            icon={GroupsIcon}
+            loading={loadingPersons}
+            error={errorPersons}
+          />
+        </Grid>
+        <Grid item xs={6} sm={4} md={2}>
+          <SummaryCard
+            title="משכנתאות"
+            count={mortgagesTotal}
+            icon={MortgageIcon}
+            loading={loadingMortgages}
+            error={errorMortgages}
+          />
+        </Grid>
+        <Grid item xs={6} sm={4} md={2}>
+          <SummaryCard
+            title="חוזי שכירות"
+            count={activeRentalAgreementsCount}
+            icon={ContractIcon}
+            loading={loadingRentalAgreements}
+            error={errorRentalAgreements}
+          />
+        </Grid>
+        <Grid item xs={6} sm={4} md={2}>
+          <SummaryCard
+            title="חשבונות בנק"
+            count={bankAccountsCount}
+            icon={BankIcon}
+            loading={loadingBankAccounts}
+            error={errorBankAccounts}
+          />
+        </Grid>
       </Grid>
 
-      {/* Customize Dashboard Dialog - US10.13 */}
-      <Dialog
-        open={customizeDialogOpen}
-        onClose={() => setCustomizeDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>התאם אישית את לוח הבקרה</DialogTitle>
-        <DialogContent>
-          <Typography variant="body2" sx={{ mb: 2 }}>
-            בחר את הווידג'טים שתרצה לראות בלוח הבקרה:
-          </Typography>
-          <List>
-            {allWidgets.map((widget) => (
-              <ListItem key={widget.id} disablePadding>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={widgetPreferences?.visibleWidgets.includes(widget.id) || false}
-                      onChange={() => toggleWidget(widget.id)}
-                    />
-                  }
-                  label={widget.label}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <MuiButton onClick={() => setCustomizeDialogOpen(false)}>
-            ביטול
-          </MuiButton>
-          <MuiButton
-            onClick={handleSavePreferences}
-            variant="contained"
-            disabled={savingPreferences}
-          >
-            {savingPreferences ? 'שומר...' : 'שמור'}
-          </MuiButton>
-        </DialogActions>
-      </Dialog>
+      {/* Two-column row: Recent Properties | Active Rental Agreements */}
+      <Grid container spacing={3} sx={{ mb: 4 }}>
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom sx={{ textAlign: 'right' }}>
+              נכסים אחרונים
+            </Typography>
+            {loadingProperties ? (
+              <Box sx={{ py: 2 }}>
+                <Skeleton variant="rectangular" height={200} />
+              </Box>
+            ) : (
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ textAlign: 'right' }}>כתובת</TableCell>
+                      <TableCell sx={{ textAlign: 'right' }}>סוג</TableCell>
+                      <TableCell sx={{ textAlign: 'right' }}>סטטוס</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {properties.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={3} sx={{ textAlign: 'center', py: 3 }}>
+                          אין נכסים
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      properties.map((p: Property) => (
+                        <TableRow
+                          key={p.id}
+                          onClick={() => router.push(`/properties/${p.id}`)}
+                          sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+                        >
+                          <TableCell sx={{ textAlign: 'right' }}>{p.address}</TableCell>
+                          <TableCell sx={{ textAlign: 'right' }}>
+                            {p.type ? PROPERTY_TYPE_LABELS[p.type] ?? p.type : '—'}
+                          </TableCell>
+                          <TableCell sx={{ textAlign: 'right' }}>
+                            {p.status ? PROPERTY_STATUS_LABELS[p.status] ?? p.status : '—'}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <Paper sx={{ p: 2, height: '100%' }}>
+            <Typography variant="h6" gutterBottom sx={{ textAlign: 'right' }}>
+              חוזי שכירות פעילים
+            </Typography>
+            {loadingRentalAgreements ? (
+              <Box sx={{ py: 2 }}>
+                <Skeleton variant="rectangular" height={200} />
+              </Box>
+            ) : (
+              <TableContainer>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{ textAlign: 'right' }}>נכס</TableCell>
+                      <TableCell sx={{ textAlign: 'right' }}>שכירות חודשית</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {activeRentalAgreements.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={2} sx={{ textAlign: 'center', py: 3 }}>
+                          אין חוזים פעילים
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      activeRentalAgreements.map((ra: RentalAgreement) => (
+                        <TableRow
+                          key={ra.id}
+                          onClick={() => router.push(`/leases/${ra.id}`)}
+                          sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+                        >
+                          <TableCell sx={{ textAlign: 'right' }}>
+                            {ra.property?.address ?? '—'}
+                          </TableCell>
+                          <TableCell sx={{ textAlign: 'right' }}>
+                            ₪{ra.monthlyRent?.toLocaleString('he-IL') ?? '—'}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            )}
+          </Paper>
+        </Grid>
+      </Grid>
+
+      {/* Stats Row */}
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom sx={{ textAlign: 'right' }}>
+          סיכום
+        </Typography>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={4}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                סה״כ נכסים
+              </Typography>
+              <Typography variant="h5" fontWeight="bold">
+                {loadingProperties ? (
+                  <Skeleton variant="text" width={40} height={40} sx={{ mx: 'auto' }} />
+                ) : (
+                  propertiesTotal.toLocaleString('he-IL')
+                )}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                חוזי שכירות פעילים
+              </Typography>
+              <Typography variant="h5" fontWeight="bold">
+                {loadingRentalAgreements ? (
+                  <Skeleton variant="text" width={40} height={40} sx={{ mx: 'auto' }} />
+                ) : (
+                  activeRentalAgreementsCount.toLocaleString('he-IL')
+                )}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={4}>
+            <Box sx={{ textAlign: 'center' }}>
+              <Typography variant="body2" color="text.secondary">
+                משכנתאות פעילות
+              </Typography>
+              <Typography variant="h5" fontWeight="bold">
+                {loadingMortgages ? (
+                  <Skeleton variant="text" width={40} height={40} sx={{ mx: 'auto' }} />
+                ) : (
+                  activeMortgagesCount.toLocaleString('he-IL')
+                )}
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
+      </Paper>
     </Container>
   );
 }

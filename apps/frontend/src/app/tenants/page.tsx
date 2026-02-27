@@ -3,7 +3,6 @@
 import { Container, Box, Typography } from '@mui/material';
 import TenantList from '@/components/tenants/TenantList';
 import QuickNavigator from '@/components/navigation/QuickNavigator';
-import { AccountSelector } from '@/components/layout/AccountSelector';
 
 /**
  * Tenants management page.
@@ -28,7 +27,6 @@ export default function TenantsPage() {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <AccountSelector />
         </Box>
       </Box>
 

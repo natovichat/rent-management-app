@@ -2,7 +2,6 @@
 
 import { Container, Typography, Box } from '@mui/material';
 import MortgageList from '@/components/mortgages/MortgageList';
-import { AccountSelector } from '@/components/layout/AccountSelector';
 import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
@@ -28,7 +27,6 @@ export default function MortgagesPage() {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <AccountSelector />
         </Box>
       </Box>
 

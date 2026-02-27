@@ -50,6 +50,33 @@ export class OwnershipsService {
   }
 
   /**
+   * Find all ownerships with pagination (includes property and owner)
+   */
+  async findAll(page: number = 1, limit: number = 20) {
+    const skip = (page - 1) * limit;
+
+    const [ownerships, total] = await Promise.all([
+      this.prisma.ownership.findMany({
+        skip,
+        take: limit,
+        include: OWNERSHIP_INCLUDE,
+        orderBy: { startDate: 'desc' },
+      }),
+      this.prisma.ownership.count(),
+    ]);
+
+    return {
+      data: ownerships,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  /**
    * Find all ownerships for a property (includes owner details)
    */
   async findByProperty(propertyId: string) {

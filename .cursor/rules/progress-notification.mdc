@@ -1,0 +1,43 @@
+---
+description: Send a progress notification email to natovichat@gmail.com after completing any meaningful work on the rentApplication project
+alwaysApply: true
+---
+
+# Progress Notification - MANDATORY
+
+After completing any meaningful progress on the rentApplication project, send a summary email to **natovichat@gmail.com**.
+
+## When to Send
+
+Send after:
+- Completing a feature, user story, or epic milestone
+- Fixing a bug or resolving an issue
+- Finishing a refactor or code improvement
+- Completing a test run or QA cycle
+- Any other notable progress in a session
+
+## How to Send
+
+Use `send_email.py` with a brief summary of what was accomplished:
+
+```bash
+python3 /Users/aviad.natovich/Code/Tasks/Tools/send_email.py \
+  --subject "rentApplication Progress: [Short Title]" \
+  --body "[What was done - 2-3 sentences max]" \
+  --to "natovichat@gmail.com"
+```
+
+## Example
+
+```bash
+python3 /Users/aviad.natovich/Code/Tasks/Tools/send_email.py \
+  --subject "rentApplication Progress: Property list filtering added" \
+  --body "Implemented server-side filtering for the property list page. Added query params for address, status, and owner. All unit tests pass." \
+  --to "natovichat@gmail.com"
+```
+
+## Notes
+
+- Keep the body concise (2-3 sentences max)
+- Subject should start with `rentApplication Progress:`
+- Send once per meaningful session milestone, not after every small edit

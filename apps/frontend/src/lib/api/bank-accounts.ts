@@ -28,11 +28,12 @@ export interface UpdateBankAccountDto extends Partial<CreateBankAccountDto> {}
 
 export const bankAccountsApi = {
   /**
-   * Get all bank accounts
+   * Get all bank accounts with pagination and optional isActive filter
    */
-  getBankAccounts: async (activeOnly?: boolean): Promise<BankAccount[]> => {
-    const params = activeOnly ? { activeOnly: 'true' } : {};
-    const response = await api.get<BankAccount[]>('/bank-accounts', { params });
+  getBankAccounts: async (page = 1, limit = 20, isActive?: boolean): Promise<{ data: BankAccount[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
+    const params: Record<string, unknown> = { page, limit };
+    if (isActive !== undefined) params.isActive = isActive;
+    const response = await api.get('/bank-accounts', { params });
     return response.data;
   },
 

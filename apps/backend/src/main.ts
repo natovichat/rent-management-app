@@ -21,6 +21,8 @@ async function bootstrap() {
     origin: (origin, callback) => {
       const allowedOrigins = [
         'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
         'https://rent-management-app.vercel.app',
         'https://rent-management-app-frontend.vercel.app',
       ];

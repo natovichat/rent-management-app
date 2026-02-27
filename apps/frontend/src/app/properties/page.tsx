@@ -8,7 +8,6 @@ import {
   CircularProgress,
 } from '@mui/material';
 import PropertyList from '@/components/properties/PropertyList';
-import { AccountSelector } from '@/components/layout/AccountSelector';
 import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
@@ -33,7 +32,6 @@ export default function PropertiesPage() {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <AccountSelector />
         </Box>
       </Box>
 

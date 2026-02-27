@@ -34,23 +34,21 @@ export const ENTITY_DISPLAY_NAMES: Record<EntityType, string> = {
 
 /**
  * Column configuration
+ * NEW STRUCTURE: Matches backend response format
  */
 export interface ColumnConfig {
   field: string;
   visible: boolean;
   order: number;
-  required: boolean;
 }
 
 /**
  * Table configuration
+ * NEW STRUCTURE: Each column is a separate database row
  */
 export interface TableConfiguration {
-  id: string;
-  entityType: EntityType;
+  tableName: string;
   columns: ColumnConfig[];
-  createdAt: string;
-  updatedAt: string;
 }
 
 /**

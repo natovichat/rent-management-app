@@ -11,18 +11,20 @@ export interface MortgagePayment {
 
 export interface Mortgage {
   id: string;
-  accountId: string;
-  propertyId: string;
+  propertyId?: string | null;
   bank: string;
-  loanAmount: number;
-  interestRate?: number;
-  monthlyPayment?: number;
+  loanAmount: string | number;
+  interestRate?: string | number;
+  monthlyPayment?: string | number;
+  earlyRepaymentPenalty?: string | number;
   startDate: string;
-  endDate?: string;
+  endDate?: string | null;
   status: 'ACTIVE' | 'PAID_OFF' | 'REFINANCED' | 'DEFAULTED';
-  bankAccountId?: string;
+  bankAccountId?: string | null;
+  mortgageOwnerId?: string | null;
+  payerId?: string | null;
   linkedProperties?: string[];
-  notes?: string;
+  notes?: string | null;
   createdAt: string;
   updatedAt: string;
   payments?: MortgagePayment[];
@@ -38,18 +40,29 @@ export interface Mortgage {
     accountNumber: string;
     accountType: string;
   };
+  mortgageOwner?: {
+    id: string;
+    name: string;
+  };
+  payer?: {
+    id: string;
+    name: string;
+  };
 }
 
 export interface CreateMortgageDto {
-  propertyId: string;
+  propertyId?: string;
   bank: string;
   loanAmount: number;
+  payerId?: string;
   interestRate?: number;
   monthlyPayment?: number;
+  earlyRepaymentPenalty?: number;
   startDate: string;
   endDate?: string;
   status: 'ACTIVE' | 'PAID_OFF' | 'REFINANCED' | 'DEFAULTED';
   bankAccountId?: string;
+  mortgageOwnerId?: string;
   linkedProperties?: string[];
   notes?: string;
 }
@@ -152,8 +165,13 @@ export const mortgagesApi = {
    * Get all mortgages for a property.
    */
   getPropertyMortgages: async (propertyId: string): Promise<Mortgage[]> => {
-    const response = await api.get<Mortgage[]>(`/mortgages/property/${propertyId}`);
-    return response.data;
+    const params = new URLSearchParams({
+      page: '1',
+      limit: '100',
+      propertyId,
+    });
+    const response = await api.get<MortgagesResponse>(`/mortgages?${params}`);
+    return response.data.data;
   },
 
   /**

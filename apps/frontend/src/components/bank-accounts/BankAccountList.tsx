@@ -28,11 +28,9 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
-import { useAccount } from '@/contexts/AccountContext';
 import {
   bankAccountsApi,
   BankAccount,
-  CreateBankAccountDto,
 } from '@/lib/api/bank-accounts';
 import BankAccountForm from './BankAccountForm';
 
@@ -40,6 +38,10 @@ const ACCOUNT_TYPE_LABELS: Record<string, string> = {
   CHECKING: 'עו"ש',
   SAVINGS: 'חסכון',
   BUSINESS: 'עסקי',
+  PERSONAL_CHECKING: 'עו"ש אישי',
+  PERSONAL_SAVINGS: 'חסכון אישי',
+  TRUST_ACCOUNT: 'חשבון נאמנות',
+  MORTGAGE_ACCOUNT: 'חשבון משכנתא',
 };
 
 const formatDate = (dateString: string): string => {
@@ -48,10 +50,9 @@ const formatDate = (dateString: string): string => {
 
 export default function BankAccountList() {
   const queryClient = useQueryClient();
-  const { selectedAccountId } = useAccount();
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search, 300);
-  const [activeOnly, setActiveOnly] = useState(true);
+  const [activeOnly, setActiveOnly] = useState(false);
   const [openForm, setOpenForm] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<BankAccount | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -63,14 +64,15 @@ export default function BankAccountList() {
   }>({ open: false, message: '', severity: 'success' });
 
   // Fetch bank accounts
-  const { data: accounts = [], isLoading } = useQuery({
-    queryKey: ['bank-accounts', selectedAccountId, activeOnly],
-    queryFn: () => bankAccountsApi.getBankAccounts(activeOnly),
-    enabled: !!selectedAccountId,
+  const { data, isLoading } = useQuery({
+    queryKey: ['bank-accounts', activeOnly],
+    queryFn: () => bankAccountsApi.getBankAccounts(1, 100, activeOnly ? true : undefined),
   });
 
+  const allAccounts = data?.data || [];
+
   // Filter accounts by search
-  const filteredAccounts = accounts.filter((account) => {
+  const filteredAccounts = allAccounts.filter((account) => {
     if (!debouncedSearch) return true;
     const searchLower = debouncedSearch.toLowerCase();
     return (
@@ -103,12 +105,10 @@ export default function BankAccountList() {
     },
   });
 
-  // Activate/Deactivate mutation
+  // Activate/Deactivate mutation (via update)
   const toggleActiveMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
-      isActive
-        ? bankAccountsApi.activateBankAccount(id)
-        : bankAccountsApi.deactivateBankAccount(id),
+      bankAccountsApi.updateBankAccount(id, { isActive }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bank-accounts'] });
       setSnackbar({

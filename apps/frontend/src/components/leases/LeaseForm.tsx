@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -11,401 +11,291 @@ import {
   TextField,
   Alert,
   MenuItem,
-  Grid,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
+  FormControl,
+  InputLabel,
+  Select,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
-import { leasesApi, Lease, CreateLeaseDto } from '@/lib/api/leases';
-import { tenantsApi, CreateTenantDto } from '@/lib/api/tenants';
-import { unitsApi, CreateUnitDto } from '@/lib/api/units';
-import { propertiesApi, CreatePropertyDto } from '@/services/properties';
+import {
+  RentalAgreement,
+  rentalAgreementsApi,
+  CreateRentalAgreementDto,
+  RentalAgreementStatus,
+} from '@/lib/api/leases';
+import { propertiesApi } from '@/lib/api/properties';
+import { personsApi } from '@/lib/api/persons';
 
 const leaseSchema = z.object({
-  unitId: z.string().min(1, 'יחידת דיור חובה'),
-  tenantId: z.string().min(1, 'דייר חובה'),
-  startDate: z.string().min(1, 'תאריך התחלה חובה'),
-  endDate: z.string().min(1, 'תאריך סיום חובה'),
-  monthlyRent: z.number().min(0, 'שכר דירה חייב להיות חיובי'),
-  paymentTo: z.string().min(1, 'פרטי תשלום חובה'),
+  propertyId: z.string().min(1, 'נכס הוא שדה חובה'),
+  tenantId: z.string().min(1, 'שוכר הוא שדה חובה'),
+  monthlyRent: z.coerce.number().min(1, 'שכ"ד חייב להיות גדול מ-0'),
+  startDate: z.string().min(1, 'תאריך התחלה הוא שדה חובה'),
+  endDate: z.string().min(1, 'תאריך סיום הוא שדה חובה'),
+  status: z.enum(['FUTURE', 'ACTIVE', 'EXPIRED', 'TERMINATED']).default('ACTIVE'),
+  hasExtensionOption: z.boolean().optional(),
+  extensionUntilDate: z.string().optional(),
+  extensionMonthlyRent: z.union([z.number(), z.string()]).optional().transform((v) => (v === '' || v === undefined ? undefined : Number(v))),
   notes: z.string().optional(),
-}).refine((data) => new Date(data.endDate) > new Date(data.startDate), {
-  message: 'תאריך הסיום חייב להיות אחרי תאריך ההתחלה',
-  path: ['endDate'],
 });
 
 type LeaseFormData = z.infer<typeof leaseSchema>;
 
+const formatDateForInput = (dateString?: string) => {
+  if (!dateString) return '';
+  return new Date(dateString).toISOString().split('T')[0];
+};
+
 interface LeaseFormProps {
-  lease?: Lease | null;
+  lease?: RentalAgreement | null;
   onSuccess: () => void;
   onCancel: () => void;
 }
 
 /**
- * Form for creating/editing a lease.
+ * Form for creating/editing a rental agreement (lease).
  */
 export default function LeaseForm({ lease, onSuccess, onCancel }: LeaseFormProps) {
   const queryClient = useQueryClient();
-  
-  // Inline creation state
-  const [createTenantDialogOpen, setCreateTenantDialogOpen] = useState(false);
-  const [createUnitDialogOpen, setCreateUnitDialogOpen] = useState(false);
-  const [createPropertyDialogOpen, setCreatePropertyDialogOpen] = useState(false);
-
-  // Fetch units and tenants for dropdowns
-  const { data: unitsData } = useQuery({
-    queryKey: ['units'],
-    queryFn: unitsApi.getAll,
-  });
-
-  const { data: tenants = [] } = useQuery({
-    queryKey: ['tenants'],
-    queryFn: () => tenantsApi.getAll(),
-  });
 
   const { data: propertiesData } = useQuery({
-    queryKey: ['properties', 'all'],
-    queryFn: () => propertiesApi.getAll(1, 100),
+    queryKey: ['properties-for-lease'],
+    queryFn: () => propertiesApi.getProperties(1, 100),
   });
 
-  const units = unitsData?.data || [];
+  const { data: personsData } = useQuery({
+    queryKey: ['persons-for-lease'],
+    queryFn: () => personsApi.getPersons(1, 100),
+  });
+
   const properties = propertiesData?.data || [];
+  const persons = personsData?.data || [];
+
+  const mutation = useMutation({
+    mutationFn: (data: CreateRentalAgreementDto) =>
+      lease
+        ? rentalAgreementsApi.updateRentalAgreement(lease.id, data)
+        : rentalAgreementsApi.createRentalAgreement(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rental-agreements'] });
+      onSuccess();
+    },
+  });
+
+  const defaultValues: LeaseFormData = {
+    propertyId: lease?.propertyId || '',
+    tenantId: lease?.tenantId || '',
+    monthlyRent: lease?.monthlyRent ?? 0,
+    startDate: formatDateForInput(lease?.startDate) || '',
+    endDate: formatDateForInput(lease?.endDate) || '',
+    status: (lease?.status as RentalAgreementStatus) || 'ACTIVE',
+    hasExtensionOption: lease?.hasExtensionOption ?? false,
+    extensionUntilDate: formatDateForInput(lease?.extensionUntilDate) || '',
+    extensionMonthlyRent: lease?.extensionMonthlyRent ?? undefined,
+    notes: lease?.notes || '',
+  };
 
   const {
     register,
     handleSubmit,
     control,
-    setValue,
+    watch,
+    reset,
     formState: { errors },
   } = useForm<LeaseFormData>({
     resolver: zodResolver(leaseSchema),
-    defaultValues: {
-      unitId: lease?.unitId || '',
+    defaultValues,
+  });
+
+  useEffect(() => {
+    reset({
+      propertyId: lease?.propertyId || '',
       tenantId: lease?.tenantId || '',
-      startDate: lease?.startDate ? lease.startDate.split('T')[0] : '',
-      endDate: lease?.endDate ? lease.endDate.split('T')[0] : '',
-      monthlyRent: lease?.monthlyRent ? Number(lease.monthlyRent) : 0,
-      paymentTo: lease?.paymentTo || '',
+      monthlyRent: lease?.monthlyRent ?? 0,
+      startDate: formatDateForInput(lease?.startDate) || '',
+      endDate: formatDateForInput(lease?.endDate) || '',
+      status: (lease?.status as RentalAgreementStatus) || 'ACTIVE',
+      hasExtensionOption: lease?.hasExtensionOption ?? false,
+      extensionUntilDate: formatDateForInput(lease?.extensionUntilDate) || '',
+      extensionMonthlyRent: lease?.extensionMonthlyRent ?? undefined,
       notes: lease?.notes || '',
-    },
-  });
+    });
+  }, [lease?.id, reset]);
 
-  // Tenant creation mutation
-  const createTenantMutation = useMutation({
-    mutationFn: (data: CreateTenantDto) => tenantsApi.create(data),
-    onSuccess: (newTenant) => {
-      queryClient.invalidateQueries({ queryKey: ['tenants'] });
-      setCreateTenantDialogOpen(false);
-      setValue('tenantId', newTenant.id);
-    },
-  });
-
-  // Property creation mutation (for unit creation)
-  const createPropertyMutation = useMutation({
-    mutationFn: (data: CreatePropertyDto) => propertiesApi.create(data),
-    onSuccess: (newProperty) => {
-      queryClient.invalidateQueries({ queryKey: ['properties'] });
-      setCreatePropertyDialogOpen(false);
-      // Auto-select property in unit form
-      unitForm.setValue('propertyId', newProperty.id);
-    },
-  });
-
-  // Unit creation mutation
-  const createUnitMutation = useMutation({
-    mutationFn: (data: CreateUnitDto) => {
-      const propertyId = unitForm.getValues('propertyId');
-      return unitsApi.create({ ...data, propertyId });
-    },
-    onSuccess: (newUnit) => {
-      queryClient.invalidateQueries({ queryKey: ['units'] });
-      setCreateUnitDialogOpen(false);
-      unitForm.reset();
-      setValue('unitId', newUnit.id);
-    },
-  });
-
-  const mutation = useMutation({
-    mutationFn: (data: CreateLeaseDto) =>
-      lease ? leasesApi.update(lease.id, data) : leasesApi.create(data),
-    onSuccess,
-  });
+  const hasExtensionOption = watch('hasExtensionOption');
 
   const onSubmit = (data: LeaseFormData) => {
-    mutation.mutate(data);
-  };
-
-  // Tenant form
-  const tenantForm = useForm({
-    defaultValues: { name: '', phone: '', email: '' },
-  });
-
-  // Property form (for unit creation)
-  const propertyForm = useForm({
-    defaultValues: { address: '', fileNumber: '' },
-  });
-
-  // Unit form
-  const unitForm = useForm({
-    defaultValues: { apartmentNumber: '', propertyId: '' },
-  });
-
-  const handleTenantSubmit = (data: any) => {
-    createTenantMutation.mutate(data);
-  };
-
-  const handlePropertySubmit = (data: any) => {
-    createPropertyMutation.mutate(data);
-  };
-
-  const handleUnitSubmit = (data: any) => {
-    createUnitMutation.mutate(data);
+    mutation.mutate({
+      propertyId: data.propertyId,
+      tenantId: data.tenantId,
+      monthlyRent: Number(data.monthlyRent),
+      startDate: data.startDate,
+      endDate: data.endDate,
+      status: data.status,
+      hasExtensionOption: data.hasExtensionOption,
+      extensionUntilDate: data.hasExtensionOption ? data.extensionUntilDate : undefined,
+      extensionMonthlyRent: data.hasExtensionOption && data.extensionMonthlyRent
+        ? Number(data.extensionMonthlyRent)
+        : undefined,
+      notes: data.notes || undefined,
+    });
   };
 
   return (
     <Box
       component="form"
       onSubmit={handleSubmit(onSubmit)}
-      sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}
+      sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}
     >
       {mutation.isError && (
         <Alert severity="error">
-          {(mutation.error as any)?.response?.data?.message ||
-            'שגיאה בשמירת החוזה'}
+          {(mutation.error as any)?.response?.data?.message || 'שגיאה בשמירת חוזה'}
         </Alert>
       )}
 
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="unitId"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                select
-                label="יחידת דיור"
-                error={!!errors.unitId}
-                helperText={errors.unitId?.message}
-                required
-                fullWidth
-                onChange={(e) => {
-                  if (e.target.value === '__CREATE_NEW__') {
-                    setCreateUnitDialogOpen(true);
-                  } else {
-                    field.onChange(e);
-                  }
-                }}
-              >
-                {units.map((unit) => (
-                  <MenuItem key={unit.id} value={unit.id}>
-                    {unit.property?.address} - דירה {unit.apartmentNumber}
-                  </MenuItem>
-                ))}
-                <MenuItem value="__CREATE_NEW__" sx={{ color: 'primary.main', fontWeight: 600, borderTop: units.length > 0 ? 1 : 0, borderColor: 'divider' }}>
-                  + צור יחידת דיור חדשה
+      <Controller
+        name="propertyId"
+        control={control}
+        render={({ field }) => (
+          <FormControl fullWidth error={!!errors.propertyId} required>
+            <InputLabel>נכס *</InputLabel>
+            <Select {...field} value={field.value ?? ''} label="נכס *" error={!!errors.propertyId}>
+              {properties.map((p) => (
+                <MenuItem key={p.id} value={p.id}>
+                  {p.address}
+                  {p.fileNumber ? ` (${p.fileNumber})` : ''}
                 </MenuItem>
-              </TextField>
+              ))}
+            </Select>
+            {errors.propertyId && (
+              <Alert severity="error" sx={{ mt: 0.5 }}>
+                {errors.propertyId.message}
+              </Alert>
             )}
-          />
-        </Grid>
+          </FormControl>
+        )}
+      />
 
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="tenantId"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                select
-                label="דייר"
-                error={!!errors.tenantId}
-                helperText={errors.tenantId?.message}
-                required
-                fullWidth
-                onChange={(e) => {
-                  if (e.target.value === '__CREATE_NEW__') {
-                    setCreateTenantDialogOpen(true);
-                  } else {
-                    field.onChange(e);
-                  }
-                }}
-              >
-                {tenants.map((tenant) => (
-                  <MenuItem key={tenant.id} value={tenant.id}>
-                    {tenant.name}
-                  </MenuItem>
-                ))}
-                <MenuItem value="__CREATE_NEW__" sx={{ color: 'primary.main', fontWeight: 600, borderTop: tenants.length > 0 ? 1 : 0, borderColor: 'divider' }}>
-                  + צור דייר חדש
+      <Controller
+        name="tenantId"
+        control={control}
+        render={({ field }) => (
+          <FormControl fullWidth error={!!errors.tenantId} required>
+            <InputLabel>שוכר *</InputLabel>
+            <Select {...field} value={field.value ?? ''} label="שוכר *" error={!!errors.tenantId}>
+              {persons.map((p) => (
+                <MenuItem key={p.id} value={p.id}>
+                  {p.name}
+                  {p.email ? ` (${p.email})` : ''}
                 </MenuItem>
-              </TextField>
+              ))}
+            </Select>
+            {errors.tenantId && (
+              <Alert severity="error" sx={{ mt: 0.5 }}>
+                {errors.tenantId.message}
+              </Alert>
             )}
-          />
-        </Grid>
+          </FormControl>
+        )}
+      />
 
-        <Grid item xs={12} md={6}>
+      <TextField
+        label='שכ"ד חודשי *'
+        type="number"
+        {...register('monthlyRent', { valueAsNumber: true })}
+        error={!!errors.monthlyRent}
+        helperText={errors.monthlyRent?.message}
+        required
+        fullWidth
+        inputProps={{ min: 1, step: 1 }}
+      />
+
+      <TextField
+        label="תאריך התחלה *"
+        type="date"
+        {...register('startDate')}
+        error={!!errors.startDate}
+        helperText={errors.startDate?.message}
+        required
+        fullWidth
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <TextField
+        label="תאריך סיום *"
+        type="date"
+        {...register('endDate')}
+        error={!!errors.endDate}
+        helperText={errors.endDate?.message}
+        required
+        fullWidth
+        InputLabelProps={{ shrink: true }}
+      />
+
+      <Controller
+        name="status"
+        control={control}
+        render={({ field }) => (
+          <FormControl fullWidth required>
+            <InputLabel>סטטוס *</InputLabel>
+            <Select {...field} label="סטטוס *">
+              <MenuItem value="FUTURE">עתידי</MenuItem>
+              <MenuItem value="ACTIVE">פעיל</MenuItem>
+              <MenuItem value="EXPIRED">פג תוקף</MenuItem>
+              <MenuItem value="TERMINATED">הופסק</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+      />
+
+      <Controller
+        name="hasExtensionOption"
+        control={control}
+        render={({ field }) => (
+          <FormControlLabel
+            control={<Switch {...field} checked={field.value} />}
+            label="אפשרות הארכה"
+          />
+        )}
+      />
+
+      {hasExtensionOption && (
+        <>
           <TextField
-            label="תאריך התחלה"
+            label="תאריך הארכה עד"
             type="date"
-            {...register('startDate')}
-            error={!!errors.startDate}
-            helperText={errors.startDate?.message}
-            required
+            {...register('extensionUntilDate')}
             fullWidth
             InputLabelProps={{ shrink: true }}
           />
-        </Grid>
-
-        <Grid item xs={12} md={6}>
           <TextField
-            label="תאריך סיום"
-            type="date"
-            {...register('endDate')}
-            error={!!errors.endDate}
-            helperText={errors.endDate?.message}
-            required
+            label='שכ"ד בהארכה'
+            type="number"
+            {...register('extensionMonthlyRent', { valueAsNumber: true })}
             fullWidth
-            InputLabelProps={{ shrink: true }}
+            inputProps={{ min: 0, step: 1 }}
           />
-        </Grid>
+        </>
+      )}
 
-        <Grid item xs={12} md={6}>
-          <Controller
-            name="monthlyRent"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="שכר דירה חודשי (₪)"
-                type="number"
-                error={!!errors.monthlyRent}
-                helperText={errors.monthlyRent?.message}
-                required
-                fullWidth
-                onChange={(e) => field.onChange(Number(e.target.value))}
-              />
-            )}
-          />
-        </Grid>
+      <TextField
+        label="הערות"
+        {...register('notes')}
+        multiline
+        rows={3}
+        fullWidth
+      />
 
-        <Grid item xs={12} md={6}>
-          <TextField
-            label="פרטי תשלום"
-            {...register('paymentTo')}
-            error={!!errors.paymentTo}
-            helperText={errors.paymentTo?.message}
-            required
-            fullWidth
-            placeholder="העברה בנקאית לחשבון..."
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <TextField
-            label="הערות"
-            {...register('notes')}
-            error={!!errors.notes}
-            helperText={errors.notes?.message}
-            fullWidth
-            multiline
-            rows={3}
-          />
-        </Grid>
-      </Grid>
-
-      <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
-        <Button onClick={onCancel} disabled={mutation.isPending}>
-          ביטול
-        </Button>
+      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', mt: 2 }}>
+        <Button onClick={onCancel}>ביטול</Button>
         <Button
           type="submit"
           variant="contained"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? 'שומר...' : lease ? 'עדכן' : 'צור'}
+          {mutation.isPending ? 'שומר...' : lease ? 'עדכן' : 'צור חוזה'}
         </Button>
       </Box>
-
-      {/* Create Tenant Dialog */}
-      <Dialog open={createTenantDialogOpen} onClose={() => setCreateTenantDialogOpen(false)} maxWidth="sm" fullWidth>
-        <Box component="form" onSubmit={tenantForm.handleSubmit(handleTenantSubmit)}>
-          <DialogTitle>צור דייר חדש</DialogTitle>
-          <DialogContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-              <TextField label="שם *" {...tenantForm.register('name')} autoFocus fullWidth required />
-              <TextField label="טלפון *" {...tenantForm.register('phone')} fullWidth required />
-              <TextField label="אימייל" {...tenantForm.register('email')} fullWidth type="email" />
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setCreateTenantDialogOpen(false)}>ביטול</Button>
-            <Button type="submit" variant="contained" disabled={createTenantMutation.isPending}>
-              {createTenantMutation.isPending ? 'יוצר...' : 'צור דייר'}
-            </Button>
-          </DialogActions>
-        </Box>
-      </Dialog>
-
-      {/* Create Unit Dialog */}
-      <Dialog open={createUnitDialogOpen} onClose={() => setCreateUnitDialogOpen(false)} maxWidth="sm" fullWidth>
-        <Box component="form" onSubmit={unitForm.handleSubmit(handleUnitSubmit)}>
-          <DialogTitle>צור יחידת דיור חדשה</DialogTitle>
-          <DialogContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-              <TextField
-                select
-                label="נכס"
-                {...unitForm.register('propertyId')}
-                fullWidth
-                required
-                onChange={(e) => {
-                  if (e.target.value === '__CREATE_PROPERTY__') {
-                    setCreatePropertyDialogOpen(true);
-                  } else {
-                    unitForm.setValue('propertyId', e.target.value);
-                  }
-                }}
-              >
-                {properties.map((prop) => (
-                  <MenuItem key={prop.id} value={prop.id}>{prop.address}</MenuItem>
-                ))}
-                <MenuItem value="__CREATE_PROPERTY__" sx={{ color: 'primary.main', fontWeight: 600 }}>
-                  + צור נכס חדש
-                </MenuItem>
-              </TextField>
-              <TextField label="מספר דירה *" {...unitForm.register('apartmentNumber')} autoFocus fullWidth required />
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setCreateUnitDialogOpen(false)}>ביטול</Button>
-            <Button type="submit" variant="contained" disabled={createUnitMutation.isPending}>
-              {createUnitMutation.isPending ? 'יוצר...' : 'צור יחידה'}
-            </Button>
-          </DialogActions>
-        </Box>
-      </Dialog>
-
-      {/* Create Property Dialog */}
-      <Dialog open={createPropertyDialogOpen} onClose={() => setCreatePropertyDialogOpen(false)} maxWidth="sm" fullWidth>
-        <Box component="form" onSubmit={propertyForm.handleSubmit(handlePropertySubmit)}>
-          <DialogTitle>צור נכס חדש</DialogTitle>
-          <DialogContent>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
-              <TextField label="כתובת *" {...propertyForm.register('address')} autoFocus fullWidth required />
-              <TextField label="מספר תיק" {...propertyForm.register('fileNumber')} fullWidth />
-            </Box>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setCreatePropertyDialogOpen(false)}>ביטול</Button>
-            <Button type="submit" variant="contained" disabled={createPropertyMutation.isPending}>
-              {createPropertyMutation.isPending ? 'יוצר...' : 'צור נכס'}
-            </Button>
-          </DialogActions>
-        </Box>
-      </Dialog>
     </Box>
   );
 }

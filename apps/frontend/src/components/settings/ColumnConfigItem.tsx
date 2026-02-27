@@ -18,7 +18,7 @@ export default function ColumnConfigItem({
   isDragging = false,
 }: ColumnConfigItemProps) {
   const handleToggle = () => {
-    if (!column.required) {
+    if (!false) {
       onToggleVisibility(column.field);
     }
   };
@@ -47,7 +47,7 @@ export default function ColumnConfigItem({
             <Typography variant="body1" sx={{ fontWeight: 500 }}>
               {column.field}
             </Typography>
-            {column.required && (
+            {false && (
               <Chip
                 icon={<LockIcon />}
                 label="חובה"
@@ -67,7 +67,7 @@ export default function ColumnConfigItem({
           <Switch
             checked={column.visible}
             onChange={handleToggle}
-            disabled={column.required}
+            disabled={false}
             color="primary"
           />
           <Typography variant="caption" color="text.secondary">

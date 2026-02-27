@@ -64,7 +64,6 @@ export default function OwnerList() {
   const { data, isLoading } = useQuery({
     queryKey: ['owners', selectedAccountId, page, pageSize, debouncedSearch],
     queryFn: () => ownersApi.getOwners(page, pageSize, debouncedSearch || undefined),
-    enabled: !!selectedAccountId,
   });
 
   const owners = data?.data || [];

@@ -1,17 +1,18 @@
 import { api } from '../api';
 
-export type OwnershipType = 'FULL' | 'PARTIAL' | 'PARTNERSHIP' | 'COMPANY';
+export type OwnershipType = 'FULL' | 'PARTIAL' | 'PARTNERSHIP' | 'COMPANY' | 'REAL' | 'LEGAL';
 
 export interface Ownership {
   id: string;
-  accountId: string;
   propertyId: string;
   ownerId: string;
-  ownershipPercentage: number;
+  ownershipPercentage: number | string;
   ownershipType: OwnershipType;
+  managementFee?: number | string | null;
+  familyDivision?: boolean;
   startDate: string;
-  endDate?: string;
-  notes?: string;
+  endDate?: string | null;
+  notes?: string | null;
   createdAt: string;
   updatedAt: string;
   property?: {
@@ -28,8 +29,17 @@ export interface Ownership {
   };
 }
 
+export interface OwnershipsResponse {
+  data: Ownership[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
 export interface CreateOwnershipDto {
-  propertyId: string;
   ownerId: string;
   ownershipPercentage: number;
   ownershipType: OwnershipType;
@@ -45,10 +55,25 @@ export interface UpdateOwnershipDto extends Partial<CreateOwnershipDto> {}
  */
 export const ownershipsApi = {
   /**
+   * Get all ownerships with pagination.
+   */
+  getOwnerships: async (
+    page = 1,
+    limit = 20,
+  ): Promise<OwnershipsResponse> => {
+    const response = await api.get<OwnershipsResponse>('/ownerships', {
+      params: { page, limit },
+    });
+    return response.data;
+  },
+
+  /**
    * Get all ownerships for a property.
    */
   getPropertyOwnerships: async (propertyId: string): Promise<Ownership[]> => {
-    const response = await api.get<Ownership[]>(`/ownerships/property/${propertyId}`);
+    const response = await api.get<Ownership[]>(
+      `/properties/${propertyId}/ownerships`,
+    );
     return response.data;
   },
 
@@ -61,10 +86,16 @@ export const ownershipsApi = {
   },
 
   /**
-   * Create a new ownership with validation.
+   * Create a new ownership for a property.
    */
-  createOwnership: async (data: CreateOwnershipDto): Promise<Ownership> => {
-    const response = await api.post<Ownership>('/ownerships', data);
+  createOwnership: async (
+    propertyId: string,
+    data: CreateOwnershipDto,
+  ): Promise<Ownership> => {
+    const response = await api.post<Ownership>(
+      `/properties/${propertyId}/ownerships`,
+      data,
+    );
     return response.data;
   },
 

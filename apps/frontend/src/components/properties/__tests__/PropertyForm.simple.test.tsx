@@ -18,7 +18,7 @@ jest.mock('@/services/properties', () => ({
 
 jest.mock('@/services/investmentCompanies', () => ({
   investmentCompaniesApi: {
-    getAll: jest.fn().mockResolvedValue([]), // Return empty array
+    getAll: jest.fn().mockResolvedValue({ data: [], meta: { total: 0, page: 1, limit: 10, totalPages: 0 } }),
   },
 }));
 

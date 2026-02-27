@@ -42,7 +42,7 @@ export function useUpsertTableConfiguration() {
       // Invalidate all configs
       queryClient.invalidateQueries({ queryKey: tableConfigKeys.all });
       // Invalidate specific config
-      queryClient.invalidateQueries({ queryKey: tableConfigKeys.detail(data.entityType) });
+      queryClient.invalidateQueries({ queryKey: tableConfigKeys.detail(data.tableName as EntityType) });
     },
   });
 }

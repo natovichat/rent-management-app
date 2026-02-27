@@ -31,8 +31,9 @@ import {
   AccountBalance as AccountBalanceIcon,
 } from '@mui/icons-material';
 import { propertiesApi, Property, PropertyFilters } from '@/services/properties';
-import { useAccount } from '@/contexts/AccountContext';
 import { useConfiguredColumns } from '@/lib/hooks/useConfiguredColumns';
+import { useTableConfiguration } from '@/lib/hooks/useTableConfigurations';
+import { generatePropertyColumns } from '@/lib/utils/generateColumns';
 import PropertyForm from './PropertyForm';
 import PropertyCsvActions from './PropertyCsvActions';
 import PropertyFilterPanel from './PropertyFilterPanel';
@@ -62,7 +63,6 @@ export default function PropertyList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
-  const { selectedAccountId } = useAccount(); // Get selected account from context
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
@@ -202,11 +202,9 @@ export default function PropertyList() {
   }), [filters, debouncedSearch]);
 
   // Fetch properties with filters
-  // Note: accountId is automatically added by API interceptor from localStorage
   const { data, isLoading, error } = useQuery({
-    queryKey: ['properties', selectedAccountId, page, pageSize, apiFilters], // Include accountId in query key for cache invalidation
-    queryFn: () => propertiesApi.getAll(page, pageSize, apiFilters), // No need to pass accountId - it's automatic!
-    enabled: !!selectedAccountId, // Only fetch when account is selected
+    queryKey: ['properties', page, pageSize, apiFilters],
+    queryFn: () => propertiesApi.getAll(page, pageSize, apiFilters),
   });
 
   // Clear deleted IDs when data changes (new fetch means deletions are reflected server-side)
@@ -292,32 +290,52 @@ export default function PropertyList() {
     setPropertyToDelete(null);
   };
 
-  // All available columns (before configuration)
-  const allColumns: GridColDef<Property>[] = useMemo(() => [
-    {
-      field: 'fileNumber',
-      headerName: 'מספר תיק',
-      width: 150,
-      align: 'right',
-      headerAlign: 'right',
-      renderHeader: () => (
-        <Box sx={{ 
-          width: '100% !important', 
-          textAlign: 'right !important', 
-          direction: 'rtl !important',
-          display: 'flex !important',
-          justifyContent: 'flex-end !important',
-        }}>
-          מספר תיק
-        </Box>
-      ),
-      renderCell: (params) => (
-        <Box sx={{ textAlign: 'right', width: '100%' }}>
-          {params.value || '-'}
-        </Box>
-      ),
-    },
-    {
+  // Define ALL possible columns (not filtered by configuration)
+  const allColumns: GridColDef<Property>[] = useMemo(() => {
+    // All possible fields
+    const allPossibleFields = [
+      // Basic Information
+      'address', 'fileNumber', 'type', 'status', 'country', 'city',
+      // Area & Dimensions
+      'totalArea', 'landArea', 'floors', 'totalUnits', 'parkingSpaces', 'balconyArea',
+      // Financial
+      'estimatedValue', 'acquisitionPrice', 'acquisitionDate', 'acquisitionMethod', 'rentalIncome', 'projectedValue',
+      // Legal & Registry (use combined gushHelka, not individual gush/helka)
+      'gushHelka', 'cadastralNumber', 'taxId', 'registrationDate', 'legalStatus',
+      // Property Details
+      'constructionYear', 'lastRenovationYear', 'buildingPermitNumber', 'propertyCondition', 'floor', 'storage',
+      // Land Information
+      'landType', 'landDesignation', 'plotSize', 'buildingPotential',
+      // Ownership
+      'isPartialOwnership', 'sharedOwnershipPercentage', 'coOwners', 'isMortgaged',
+      // Sale Information
+      'isSold', 'saleDate', 'salePrice', 'isSoldPending',
+      // Management
+      'propertyManager', 'managementCompany', 'managementFees', 'managementFeeFrequency',
+      // Financial Obligations
+      'taxAmount', 'taxFrequency', 'lastTaxPayment',
+      // Insurance
+      'insuranceDetails', 'insuranceExpiry',
+      // Utilities & Infrastructure
+      'zoning', 'utilities', 'restrictions',
+      // Valuation
+      'lastValuationDate', 'estimationSource',
+      // Investment Company
+      'investmentCompanyId',
+      // Development
+      'developmentStatus', 'developmentCompany', 'expectedCompletionYears',
+      // General
+      'propertyDetails', 'notes', 'createdAt', 'updatedAt',
+    ];
+    
+    // Generate columns for all fields (except gushHelka which is special)
+    const generatedColumns = generatePropertyColumns<Property>(
+      allPossibleFields.filter(f => f !== 'gushHelka'),
+      (id: string) => router.push(`/properties/${id}`)
+    );
+
+    // Add special combined gushHelka column
+    const gushHelkaColumn: GridColDef<Property> = {
       field: 'gushHelka',
       headerName: 'גוש/חלקה',
       width: 150,
@@ -351,116 +369,18 @@ export default function PropertyList() {
           {params.value}
         </Box>
       ),
-    },
-    {
-      field: 'isMortgaged',
-      headerName: 'סטטוס משכון',
-      width: 120,
-      align: 'center',
-      headerAlign: 'center',
-      renderHeader: () => (
-        <Box sx={{ 
-          width: '100% !important', 
-          textAlign: 'center !important', 
-          direction: 'rtl !important',
-          display: 'flex !important',
-          justifyContent: 'center !important',
-        }}>
-          סטטוס משכון
-        </Box>
-      ),
-      renderCell: (params) => (
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-          {params.value ? (
-            <Chip
-              label="משועבד"
-              size="small"
-              color="warning"
-              icon={<AccountBalanceIcon />}
-              data-testid="mortgage-indicator"
-            />
-          ) : null}
-        </Box>
-      ),
-    },
-    {
-      field: 'createdAt',
-      headerName: 'תאריך יצירה',
-      width: 150,
-      type: 'date',
-      align: 'right',
-      headerAlign: 'right',
-      renderHeader: () => (
-        <Box sx={{ 
-          width: '100% !important', 
-          textAlign: 'right !important', 
-          direction: 'rtl !important',
-          display: 'flex !important',
-          justifyContent: 'flex-end !important',
-        }}>
-          תאריך יצירה
-        </Box>
-      ),
-      valueGetter: (params) => new Date(params.value),
-      valueFormatter: (params) => {
-        if (!params.value) return '';
-        return new Date(params.value).toLocaleDateString('he-IL');
-      },
-      renderCell: (params) => (
-        <Box sx={{ textAlign: 'right', width: '100%' }}>
-          {params.formattedValue}
-        </Box>
-      ),
-    },
-    {
-      field: 'address',
-      headerName: 'כתובת',
-      flex: 1,
-      minWidth: 250,
-      align: 'right',
-      headerAlign: 'right',
-      hideable: false,
-      disableColumnMenu: true,
-      renderHeader: () => (
-        <Box sx={{ 
-          width: '100% !important', 
-          textAlign: 'right !important', 
-          direction: 'rtl !important',
-          display: 'flex !important',
-          justifyContent: 'flex-end !important',
-        }}>
-          כתובת
-        </Box>
-      ),
-      renderCell: (params) => (
-        <Box
-          component="a"
-          href={`/properties/${params.row.id}`}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Navigating to property:', params.row.id);
-            router.push(`/properties/${params.row.id}`);
-          }}
-          sx={{
-            color: 'primary.main',
-            cursor: 'pointer',
-            textAlign: 'right !important',
-            width: '100%',
-            textDecoration: 'none',
-            direction: 'rtl !important',
-            display: 'flex !important',
-            justifyContent: 'flex-end !important',
-            '&:hover': {
-              textDecoration: 'underline',
-            },
-          }}
-        >
-          {params.value}
-        </Box>
-      ),
-    },
-    {
+    };
+    
+    // Insert gushHelka after city
+    const cityIndex = generatedColumns.findIndex(col => col.field === 'city');
+    if (cityIndex >= 0) {
+      generatedColumns.splice(cityIndex + 1, 0, gushHelkaColumn);
+    } else {
+      generatedColumns.push(gushHelkaColumn);
+    }
+    
+    // Add actions column at the end
+    generatedColumns.push({
       field: 'actions',
       type: 'actions',
       headerName: 'פעולות',
@@ -494,12 +414,17 @@ export default function PropertyList() {
           onClick={() => handleDeleteClick(params.row)}
         />,
       ],
-    },
-  ], [router]); // End of allColumns useMemo
+    } as GridColDef<Property>);
+    
+    console.log('🔍 allColumns generated count:', generatedColumns.length);
+    return generatedColumns;
+  }, [router]); // End of allColumns useMemo
 
-  // Get configured columns based on user settings
-  // Falls back to all columns if no configuration exists
+  // Get configured columns based on user settings (applies visibility and ordering from database)
   const columns = useConfiguredColumns('properties', allColumns);
+  
+  console.log('🔍 PropertyList - columns count:', columns.length);
+  console.log('🔍 PropertyList - columns fields:', columns.map(c => c.field).slice(0, 10).join(', '));
 
   const handleCloseForm = () => {
     setOpenForm(false);
@@ -619,9 +544,9 @@ export default function PropertyList() {
       )}
 
       {/* Data Grid */}
-      <Box sx={{ height: 600, width: '100%', direction: 'rtl' }}>
+      <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid
-          key={`properties-grid-${selectedAccountId}-${page}-${data?.meta.total || 0}-${data?.data?.length || 0}-${deletedPropertyIds.size}`}
+          key={`properties-grid-${page}-${data?.meta.total || 0}-${data?.data?.length || 0}-${deletedPropertyIds.size}`}
           rows={useMemo(() => {
             const allRows = data?.data || [];
             // Filter out deleted properties for immediate UI update
@@ -638,38 +563,7 @@ export default function PropertyList() {
           }}
           pageSizeOptions={[10, 25, 50, 100]}
           disableRowSelectionOnClick
-          sx={{
-            direction: 'rtl',
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              direction: 'rtl !important',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              textAlign: 'right',
-              justifyContent: 'flex-end',
-              display: 'flex',
-              direction: 'rtl !important',
-            },
-            '& .MuiDataGrid-columnHeaderDraggableContainer': {
-              direction: 'rtl !important',
-              justifyContent: 'flex-end !important',
-            },
-            '& .MuiDataGrid-columnHeaderTitleContainer': {
-              direction: 'rtl !important',
-              justifyContent: 'flex-end !important',
-              flexDirection: 'row !important',
-            },
-            '& .MuiDataGrid-columnHeaderTitle': {
-              textAlign: 'right !important',
-              direction: 'rtl !important',
-              width: '100%',
-            },
-            '& .MuiDataGrid-cell': {
-              direction: 'rtl !important',
-              textAlign: 'right !important',
-              justifyContent: 'flex-end !important',
-            },
-          }}
+          // disableColumnReorder removed (not supported in this DataGrid version)
         />
       </Box>
 

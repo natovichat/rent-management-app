@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -114,6 +115,39 @@ export class OwnerOwnershipsController {
 @Controller('ownerships')
 export class OwnershipsController {
   constructor(private readonly ownershipsService: OwnershipsService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'List all ownerships with pagination' })
+  @ApiResponse({
+    status: 200,
+    description: 'Paginated list of ownerships with property and owner details',
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: { $ref: '#/components/schemas/OwnershipEntity' },
+        },
+        meta: {
+          type: 'object',
+          properties: {
+            total: { type: 'number' },
+            page: { type: 'number' },
+            limit: { type: 'number' },
+            totalPages: { type: 'number' },
+          },
+        },
+      },
+    },
+  })
+  findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pageNum = page ? parseInt(page, 10) : 1;
+    const limitNum = limit ? parseInt(limit, 10) : 20;
+    return this.ownershipsService.findAll(pageNum, limitNum);
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get ownership by ID' })

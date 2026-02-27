@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Portfolio Management - Entity Relationship Diagram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .entity-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .entity-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .entity-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .entity-header h3 {
+            font-size: 1.4rem;
+            margin-bottom: 5px;
+        }
+
+        .entity-type-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+
+        .expand-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .expand-icon.expanded {
+            transform: rotate(45deg);
+        }
+
+        .entity-description {
+            padding: 20px;
+            background: white;
+        }
+
+        .description-text {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .description-hebrew {
+            direction: rtl;
+            color: #667eea;
+            font-weight: 500;
+            padding: 10px;
+            background: #edf2f7;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .relationships-section {
+            padding: 20px;
+            background: #edf2f7;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .relationship-item {
+            background: white;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .relationship-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .relationship-type.one-to-one {
+            background: #48bb78;
+        }
+
+        .relationship-type.one-to-many {
+            background: #ed8936;
+        }
+
+        .relationship-type.many-to-one {
+            background: #667eea;
+        }
+
+        .relationship-type.many-to-many {
+            background: #9f7aea;
+        }
+
+        .attributes-section {
+            padding: 20px;
+            background: white;
+            border-top: 2px solid #e2e8f0;
+            display: none;
+        }
+
+        .attributes-section.visible {
+            display: block;
+        }
+
+        .attribute-item {
+            padding: 10px;
+            margin-bottom: 6px;
+            background: #f7fafc;
+            border-radius: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .attribute-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-family: 'Courier New', monospace;
+        }
+
+        .attribute-type {
+            color: #718096;
+            font-size: 0.85rem;
+            background: #edf2f7;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .attribute-required {
+            color: #e53e3e;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            color: #718096;
+        }
+
+        .new-entity-badge {
+            background: #48bb78;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .entity-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏢 Property Portfolio Management System</h1>
+        <div class="subtitle">Entity Relationship Diagram - Interactive Documentation</div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number">14</div>
+                <div class="stat-label">Total Entities</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">60+</div>
+                <div class="stat-label">New Fields Identified</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">~250</div>
+                <div class="stat-label">Records to Migrate</div>
+            </div>
+        </div>
+
+        <!-- Core Entities -->
+        <div class="entity-grid">
+            
+            <!-- Property Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('property')">
+                    <div>
+                        <h3>Property <span class="entity-type-badge">Core Entity</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-property">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Central entity representing real estate properties in the portfolio. 
+                        Tracks residential, commercial, and land properties with ownership, financial, and registry details.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> ישות מרכזית המייצגת נכסי נדל"ן בתיק ההשקעות. 
+                        עוקבת אחר נכסי מגורים, מסחר וקרקע עם פרטי בעלות, מימון ורישום.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>investmentCompanyId</strong> → InvestmentCompany</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>units</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>ownerships</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>mortgages</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>plotInfo</strong> (1:1)</span>
+                        <span class="relationship-type one-to-one">One-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>valuations</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-property">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">address</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">fileNumber</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">type</span>
+                        <span><span class="attribute-type">PropertyType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">status</span>
+                        <span><span class="attribute-type">PropertyStatus</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">country</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">city</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">totalArea</span>
+                        <span><span class="attribute-type">Decimal(10,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">landArea</span>
+                        <span><span class="attribute-type">Decimal(10,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">estimatedValue</span>
+                        <span><span class="attribute-type">Decimal(12,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">gush</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">helka</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">isMortgaged</span>
+                        <span><span class="attribute-type">Boolean</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Owner Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('owner')">
+                    <div>
+                        <h3>Owner <span class="entity-type-badge">Core Entity</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-owner">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Represents property owners including individuals, companies, and partnerships. 
+                        Tracks ownership across multiple properties with contact and identification details.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> מייצג בעלי נכסים כולל יחידים, חברות ושותפויות. 
+                        עוקב אחר בעלות על פני מספר נכסים עם פרטי קשר וזיהוי.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>ownerships</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-owner">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">name</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">idNumber</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">type</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">OwnerType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">email</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">phone</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">address</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PropertyOwnership Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('ownership')">
+                    <div>
+                        <h3>PropertyOwnership <span class="entity-type-badge">Relationship</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-ownership">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Junction table linking owners to properties with ownership details. 
+                        Tracks ownership percentages, types, and historical changes.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> טבלת חיבור המקשרת בעלים לנכסים עם פרטי הבעלות. 
+                        עוקבת אחר אחוזי בעלות, סוגים ושינויים היסטוריים.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>propertyId</strong> → Property</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>ownerId</strong> → Owner</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-ownership">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">ownershipPercentage</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Decimal(5,2)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">ownershipType</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">OwnershipType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">startDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">endDate</span>
+                        <span><span class="attribute-type">DateTime?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mortgage Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('mortgage')">
+                    <div>
+                        <h3>Mortgage <span class="entity-type-badge">Financial</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-mortgage">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Tracks loans secured by property collateral. 
+                        Manages mortgage amounts, payments, interest rates, and can link multiple properties as collateral.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> עוקבת אחר הלוואות המובטחות במשכון נכס. 
+                        מנהלת סכומי משכנתאות, תשלומים, ריביות, ויכולה לקשר מספר נכסים כבטוחה.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>propertyId</strong> → Property</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>bankAccountId</strong> → BankAccount</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>payments</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>linkedProperties</strong> (Array)</span>
+                        <span class="relationship-type">Multi-Property</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-mortgage">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">bank</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">loanAmount</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Decimal(12,2)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">interestRate</span>
+                        <span><span class="attribute-type">Decimal(5,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">monthlyPayment</span>
+                        <span><span class="attribute-type">Decimal(10,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">startDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">endDate</span>
+                        <span><span class="attribute-type">DateTime?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">status</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">MortgageStatus</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unit Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('unit')">
+                    <div>
+                        <h3>Unit <span class="entity-type-badge">Core Entity</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-unit">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Represents individual rental units within properties. 
+                        Each unit can be leased separately with its own tenants and rental terms.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> מייצג יחידות שכירות בודדות בתוך נכסים. 
+                        כל יחידה יכולה להיות מושכרת בנפרד עם דיירים ותנאי שכירות משלה.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>propertyId</strong> → Property</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>leases</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-unit">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">apartmentNumber</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">floor</span>
+                        <span><span class="attribute-type">Integer?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">roomCount</span>
+                        <span><span class="attribute-type">Integer?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lease Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('lease')">
+                    <div>
+                        <h3>Lease <span class="entity-type-badge">Contract</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-lease">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Represents rental contracts between tenants and units. 
+                        Tracks lease terms, rent amounts, dates, and status with automatic expiration notifications.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> מייצג חוזי שכירות בין דיירים ליחידות. 
+                        עוקב אחר תנאי חוזה, סכומי שכירות, תאריכים וסטטוס עם התראות אוטומטיות על פג תוקף.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>unitId</strong> → Unit</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>tenantId</strong> → Tenant</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>notifications</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-lease">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">startDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">endDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">monthlyRent</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Decimal(10,2)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">paymentTo</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">status</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">LeaseStatus</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tenant Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('tenant')">
+                    <div>
+                        <h3>Tenant <span class="entity-type-badge">Core Entity</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-tenant">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Represents individuals or companies renting properties. 
+                        Stores tenant contact information, rental history, and tracks multiple leases.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> מייצג יחידים או חברות השוכרות נכסים. 
+                        שומר מידע ליצירת קשר עם דיירים, היסטוריית שכירות ועוקב אחר חוזי שכירות מרובים.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>leases</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-tenant">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">name</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">email</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">phone</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- InvestmentCompany Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('investment')">
+                    <div>
+                        <h3>InvestmentCompany <span class="entity-type-badge">Financial</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-investment">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Tracks investment companies, holding companies, and partnership entities. 
+                        Manages indirect property ownership, profit sharing, and investment returns.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> עוקבת אחר חברות השקעה, חברות אחזקות וישויות שותפות. 
+                        מנהלת בעלות עקיפה על נכסים, חלוקת רווחים ותשואות השקעה.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>properties</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-investment">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">name</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">registrationNumber</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">country</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">investmentAmount</span>
+                        <span><span class="attribute-type">Decimal(12,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">ownershipPercentage</span>
+                        <span><span class="attribute-type">Decimal(5,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PlotInfo Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('plotinfo')">
+                    <div>
+                        <h3>PlotInfo <span class="entity-type-badge">Registry</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-plotinfo">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Stores Israeli land registry information (Gush/Chelka system). 
+                        Essential for legal identification, property transactions, and official documentation.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> שומר מידע רישום מקרקעין ישראלי (מערכת גוש/חלקה). 
+                        חיוני לזיהוי משפטי, עסקאות נכסים ותיעוד רשמי.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>propertyId</strong> → Property (UNIQUE)</span>
+                        <span class="relationship-type one-to-one">One-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-plotinfo">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">gush</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">chelka</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">subChelka</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">registryNumber</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">registryOffice</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BankAccount Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('bankaccount')">
+                    <div>
+                        <h3>BankAccount <span class="entity-type-badge">Financial</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-bankaccount">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Tracks bank accounts for mortgage payments and property transactions. 
+                        Links financial operations to specific banking relationships.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> עוקבת אחר חשבונות בנק לתשלומי משכנתא ועסקאות נכסים. 
+                        מקשרת פעולות פיננסיות לקשרים בנקאיים ספציפיים.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>mortgages</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-bankaccount">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">bankName</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">branchNumber</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">accountNumber</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">accountType</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">BankAccountType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">accountHolder</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">isActive</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Boolean</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PropertyValuation Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('valuation')">
+                    <div>
+                        <h3>PropertyValuation <span class="entity-type-badge">Financial</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-valuation">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Tracks property valuations over time for portfolio analysis. 
+                        Records market values, appraisals, and historical price changes.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> עוקבת אחר שומות נכסים לאורך זמן לניתוח תיק ההשקעות. 
+                        רושמת שווי שוק, שמאויות ושינויי מחירים היסטוריים.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>propertyId</strong> → Property</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-valuation">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">valuationDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">estimatedValue</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Decimal(12,2)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">valuationType</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">ValuationType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">valuatedBy</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PropertyExpense Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('expense')">
+                    <div>
+                        <h3>PropertyExpense <span class="entity-type-badge">Financial</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-expense">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Tracks all property-related expenses including maintenance, taxes, insurance. 
+                        Essential for calculating net income and property performance.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> עוקבת אחר כל הוצאות הקשורות לנכס כולל תחזוקה, מיסים, ביטוח. 
+                        חיונית לחישוב הכנסה נטו וביצועי נכס.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>propertyId</strong> → Property</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-expense">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">expenseDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">amount</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Decimal(10,2)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">type</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">ExpenseType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">category</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">description</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">paymentMethod</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PropertyIncome Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('income')">
+                    <div>
+                        <h3>PropertyIncome <span class="entity-type-badge">Financial</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-income">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Tracks income generated from properties including rent, sales, and other revenue. 
+                        Used for financial reporting and ROI calculations.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> עוקבת אחר הכנסה שנוצרה מנכסים כולל שכירות, מכירות והכנסות אחרות. 
+                        משמשת לדיווח פיננסי וחישובי החזר השקעה.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>propertyId</strong> → Property</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-income">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">incomeDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">amount</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Decimal(10,2)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">type</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">IncomeType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">source</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">description</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MortgagePayment Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('mortgagepayment')">
+                    <div>
+                        <h3>MortgagePayment <span class="entity-type-badge">Financial</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-mortgagepayment">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Records individual mortgage payment transactions with principal and interest breakdown. 
+                        Used for payment tracking and balance calculations.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> רושמת עסקאות תשלום משכנתא בודדות עם פירוט קרן וריבית. 
+                        משמשת למעקב תשלומים וחישובי יתרה.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>mortgageId</strong> → Mortgage</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-mortgagepayment">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">paymentDate</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">amount</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Decimal(10,2)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">principal</span>
+                        <span><span class="attribute-type">Decimal(10,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">interest</span>
+                        <span><span class="attribute-type">Decimal(10,2)?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('notification')">
+                    <div>
+                        <h3>Notification <span class="entity-type-badge">System</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-notification">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Manages automated notifications for lease expirations and important events. 
+                        Tracks notification delivery status and scheduling.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> מנהלת התראות אוטומטיות לפגי תוקף חוזים ואירועים חשובים. 
+                        עוקבת אחר סטטוס משלוח התראות ותזמון.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>leaseId</strong> → Lease</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-notification">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">type</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">NotificationType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">daysBeforeExpiration</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">Integer</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">sentAt</span>
+                        <span><span class="attribute-type">DateTime?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">status</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">NotificationStatus</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">error</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Account Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('account')">
+                    <div>
+                        <h3>Account <span class="entity-type-badge">Core Entity</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-account">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Top-level container for all user data and portfolio information. 
+                        Provides multi-tenancy and data isolation between different user accounts.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> מיכל ברמה העליונה לכל מידע המשתמש ומידע תיק ההשקעות. 
+                        מספק ריבוי דיירים ובידוד נתונים בין חשבונות משתמשים שונים.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>users</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>properties</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>owners</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>tenants</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>leases</strong> (1:N)</span>
+                        <span class="relationship-type one-to-many">One-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-account">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">name</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">status</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">AccountStatus</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Entity -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('user')">
+                    <div>
+                        <h3>User <span class="entity-type-badge">Authentication</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-user">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Represents system users with authentication and authorization. 
+                        Manages user access, roles, and Google OAuth integration.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> מייצג משתמשי מערכת עם אימות והרשאה. 
+                        מנהל גישת משתמש, תפקידים ואינטגרציה עם Google OAuth.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-user">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">email</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String (UNIQUE)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">name</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">googleId</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String (UNIQUE)</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">role</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">UserRole</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">lastLoginAt</span>
+                        <span><span class="attribute-type">DateTime?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partner Entity (NEW) -->
+            <div class="entity-card">
+                <div class="entity-header" onclick="toggleAttributes('partner')">
+                    <div>
+                        <h3>Partner <span class="entity-type-badge">Relationship</span><span class="new-entity-badge">NEW</span></h3>
+                    </div>
+                    <span class="expand-icon" id="icon-partner">+</span>
+                </div>
+                <div class="entity-description">
+                    <div class="description-text">
+                        <strong>Purpose:</strong> Tracks informal co-owners, business partners, and co-investors not in Owner table. 
+                        Lightweight entity for coordination and reference without full ownership tracking.
+                    </div>
+                    <div class="description-hebrew">
+                        <strong>מטרה:</strong> עוקבת אחר בעלים משותפים לא פורמליים, שותפים עסקיים ומשקיעים משותפים שאינם בטבלת בעלים. 
+                        ישות קלה לתיאום והפניה ללא מעקב בעלות מלא.
+                    </div>
+                </div>
+                <div class="relationships-section">
+                    <div class="section-title">🔗 Relationships (PKs & FKs)</div>
+                    <div class="relationship-item">
+                        <span><strong>id</strong> (PK)</span>
+                        <span class="relationship-type">Primary Key</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>accountId</strong> → Account</span>
+                        <span class="relationship-type many-to-one">Many-to-One</span>
+                    </div>
+                    <div class="relationship-item">
+                        <span><strong>properties</strong> (N:M)</span>
+                        <span class="relationship-type many-to-many">Many-to-Many</span>
+                    </div>
+                </div>
+                <div class="attributes-section" id="attrs-partner">
+                    <div class="section-title">📋 Data Attributes</div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">name</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">String</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">email</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">phone</span>
+                        <span><span class="attribute-type">String?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">partnerType</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">PartnerType</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">notes</span>
+                        <span><span class="attribute-type">Text?</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">createdAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                    <div class="attribute-item">
+                        <span class="attribute-name">updatedAt</span>
+                        <span><span class="attribute-required">*</span><span class="attribute-type">DateTime</span></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color one-to-one" style="background: #48bb78;"></div>
+                <span>One-to-One (1:1)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color one-to-many" style="background: #ed8936;"></div>
+                <span>One-to-Many (1:N)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color many-to-one" style="background: #667eea;"></div>
+                <span>Many-to-One (N:1)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color many-to-many" style="background: #9f7aea;"></div>
+                <span>Many-to-Many (N:M)</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Property Portfolio Management System</strong></p>
+            <p>Entity Relationship Diagram • Click any entity header to expand/collapse attributes</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">
+                <span style="color: #e53e3e;">*</span> = Required field • 
+                <span style="color: #48bb78;">NEW</span> = Proposed new entity
+            </p>
+            <p style="margin-top: 15px; font-size: 0.85rem; color: #a0aec0;">
+                Generated: February 2, 2026 • Total Entities: 14 • New Fields Identified: 60+
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function toggleAttributes(entityId) {
+            const attrsSection = document.getElementById(`attrs-${entityId}`);
+            const icon = document.getElementById(`icon-${entityId}`);
+            
+            if (attrsSection.classList.contains('visible')) {
+                attrsSection.classList.remove('visible');
+                icon.classList.remove('expanded');
+                icon.textContent = '+';
+            } else {
+                attrsSection.classList.add('visible');
+                icon.classList.add('expanded');
+                icon.textContent = '+';
+            }
+        }
+
+        // Add keyboard accessibility
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                // Close all expanded sections
+                document.querySelectorAll('.attributes-section.visible').forEach(section => {
+                    section.classList.remove('visible');
+                });
+                document.querySelectorAll('.expand-icon.expanded').forEach(icon => {
+                    icon.classList.remove('expanded');
+                    icon.textContent = '+';
+                });
+            }
+        });
+
+        // Expand all / Collapse all functionality
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + E: Expand all
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                document.querySelectorAll('.attributes-section').forEach(section => {
+                    section.classList.add('visible');
+                });
+                document.querySelectorAll('.expand-icon').forEach(icon => {
+                    icon.classList.add('expanded');
+                    icon.textContent = '+';
+                });
+            }
+            
+            // Ctrl/Cmd + C: Collapse all
+            if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+                e.preventDefault();
+                document.querySelectorAll('.attributes-section').forEach(section => {
+                    section.classList.remove('visible');
+                });
+                document.querySelectorAll('.expand-icon').forEach(icon => {
+                    icon.classList.remove('expanded');
+                    icon.textContent = '+';
+                });
+            }
+        });
+    </script>
+</body>
+</html>

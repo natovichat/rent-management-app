@@ -68,6 +68,7 @@ export const COLUMN_LABELS: Record<string, string> = {
   isSold: 'נמכר',
   saleDate: 'תאריך מכירה',
   salePrice: 'מחיר מכירה (₪)',
+  isSoldPending: 'בהמתנה למכירה',
 
   // Property fields - Management
   propertyManager: 'מנהל נכס',
@@ -96,6 +97,13 @@ export const COLUMN_LABELS: Record<string, string> = {
   // Property fields - Investment Company
   investmentCompanyId: 'חברת השקעה',
   investmentCompany: 'חברת השקעה',
+
+  // Property fields - Development
+  developmentStatus: 'סטטוס פיתוח',
+  developmentCompany: 'חברת פיתוח',
+  expectedCompletionYears: 'שנים צפויות להשלמה',
+  propertyDetails: 'פרטי נכס',
+  unitCount: 'מספר יחידות',
 
   // Tenant fields
   name: 'שם',

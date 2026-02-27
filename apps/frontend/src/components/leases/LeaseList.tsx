@@ -1,41 +1,41 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import { useDebounce } from 'use-debounce';
 import {
   Box,
   Button,
-  IconButton,
   Typography,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Chip,
-  Alert,
-  TextField,
-  MenuItem,
-  Select,
   FormControl,
   InputLabel,
+  Select,
+  MenuItem,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import CancelIcon from '@mui/icons-material/Cancel';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { leasesApi, Lease, LeaseFilters } from '@/lib/api/leases';
-import { useAccount } from '@/contexts/AccountContext';
+import { rentalAgreementsApi, RentalAgreement, RentalAgreementStatus } from '@/lib/api/leases';
 import LeaseForm from './LeaseForm';
-import LeaseFilterPanel from './LeaseFilterPanel';
 
-/**
- * Get status color for lease.
- */
-const getStatusColor = (status: string) => {
+const formatCurrency = (amount: number) =>
+  new Intl.NumberFormat('he-IL', {
+    style: 'currency',
+    currency: 'ILS',
+    maximumFractionDigits: 0,
+  }).format(amount);
+
+const formatDate = (dateString: string) =>
+  new Date(dateString).toLocaleDateString('he-IL');
+
+const getStatusColor = (status: RentalAgreementStatus) => {
   switch (status) {
     case 'ACTIVE':
       return 'success';
@@ -50,10 +50,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-/**
- * Get status label in Hebrew.
- */
-const getStatusLabel = (status: string) => {
+const getStatusLabel = (status: RentalAgreementStatus) => {
   switch (status) {
     case 'ACTIVE':
       return 'פעיל';
@@ -62,128 +59,106 @@ const getStatusLabel = (status: string) => {
     case 'EXPIRED':
       return 'פג תוקף';
     case 'TERMINATED':
-      return 'בוטל';
+      return 'הופסק';
     default:
       return status;
   }
 };
 
 /**
- * Component for displaying and managing the list of leases.
+ * Component for displaying and managing the list of rental agreements (leases).
  */
 export default function LeaseList() {
-  const router = useRouter();
   const queryClient = useQueryClient();
-  const { selectedAccountId } = useAccount();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [search, setSearch] = useState('');
-  const [debouncedSearch] = useDebounce(search, 300);
-  const [filters, setFilters] = useState<LeaseFilters>({});
+  const [statusFilter, setStatusFilter] = useState<RentalAgreementStatus | ''>('');
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedLease, setSelectedLease] = useState<Lease | null>(null);
+  const [selectedLease, setSelectedLease] = useState<RentalAgreement | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [leaseToDelete, setLeaseToDelete] = useState<Lease | null>(null);
-  const [terminateDialogOpen, setTerminateDialogOpen] = useState(false);
-  const [leaseToTerminate, setLeaseToTerminate] = useState<Lease | null>(null);
+  const [leaseToDelete, setLeaseToDelete] = useState<RentalAgreement | null>(null);
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'success' | 'error';
+  }>({ open: false, message: '', severity: 'success' });
 
-  // Reset to page 1 when filters or search change
   useEffect(() => {
     setPage(1);
-  }, [filters, debouncedSearch]);
+  }, [statusFilter]);
 
-  // Build filters object for API call (use debounced search value)
-  const apiFilters: LeaseFilters = useMemo(() => ({
-    ...filters,
-    ...(debouncedSearch && { search: debouncedSearch }),
-  }), [filters, debouncedSearch]);
-
-  // Fetch all leases (filtered by account via backend)
   const { data, isLoading } = useQuery({
-    queryKey: ['leases', selectedAccountId, page, pageSize, apiFilters],
-    queryFn: () => leasesApi.getAll(page, pageSize, apiFilters),
-    enabled: !!selectedAccountId,
+    queryKey: ['rental-agreements', page, pageSize, statusFilter],
+    queryFn: () =>
+      rentalAgreementsApi.getRentalAgreements(
+        page,
+        pageSize,
+        statusFilter ? { status: statusFilter as RentalAgreementStatus } : undefined,
+      ),
   });
 
   const leases = data?.data || [];
 
-  // Delete mutation
   const deleteMutation = useMutation({
-    mutationFn: leasesApi.delete,
+    mutationFn: rentalAgreementsApi.deleteRentalAgreement,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['leases'] });
+      queryClient.invalidateQueries({ queryKey: ['rental-agreements'] });
       setDeleteDialogOpen(false);
       setLeaseToDelete(null);
+      setSnackbar({ open: true, message: 'חוזה נמחק בהצלחה', severity: 'success' });
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה במחיקת חוזה', severity: 'error' });
     },
   });
 
-  // Terminate mutation
-  const terminateMutation = useMutation({
-    mutationFn: leasesApi.terminate,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['leases'] });
-      setTerminateDialogOpen(false);
-      setLeaseToTerminate(null);
-    },
-  });
-
-  const columns: GridColDef[] = [
+  const columns: GridColDef<RentalAgreement>[] = [
     {
-      field: 'unit',
+      field: 'property',
       headerName: 'נכס',
       flex: 1,
       minWidth: 200,
       align: 'right',
       headerAlign: 'right',
-      valueGetter: (params) => {
-        const unit = params?.value;
-        if (!unit) return '';
-        return `${unit.property?.address} - דירה ${unit.apartmentNumber}`;
-      },
+      valueGetter: (params) => params.row.property?.address || '-',
     },
     {
       field: 'tenant',
-      headerName: 'דייר',
+      headerName: 'שוכר',
       flex: 1,
       minWidth: 150,
       align: 'right',
       headerAlign: 'right',
-      valueGetter: (params) => params?.value?.name || '',
+      valueGetter: (params) => params.row.tenant?.name || '-',
+    },
+    {
+      field: 'monthlyRent',
+      headerName: 'שכ"ד חודשי',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      valueFormatter: (params) => formatCurrency(params.value ?? 0),
     },
     {
       field: 'startDate',
       headerName: 'תאריך התחלה',
-      width: 120,
+      width: 130,
       align: 'right',
       headerAlign: 'right',
-      valueFormatter: (params) => {
-        return new Date(params.value).toLocaleDateString('he-IL');
-      },
+      valueFormatter: (params) => formatDate(params.value ?? ''),
     },
     {
       field: 'endDate',
       headerName: 'תאריך סיום',
-      width: 120,
-      align: 'right',
-      headerAlign: 'right',
-      valueFormatter: (params) => {
-        return new Date(params.value).toLocaleDateString('he-IL');
-      },
-    },
-    {
-      field: 'monthlyRent',
-      headerName: 'שכירות חודשית',
       width: 130,
       align: 'right',
       headerAlign: 'right',
-      valueFormatter: (params) => {
-        return `₪${Number(params.value).toLocaleString()}`;
-      },
+      valueFormatter: (params) => formatDate(params.value ?? ''),
     },
     {
       field: 'status',
       headerName: 'סטטוס',
-      width: 110,
+      width: 120,
       align: 'center',
       headerAlign: 'center',
       renderCell: (params) => (
@@ -201,53 +176,26 @@ export default function LeaseList() {
       width: 150,
       align: 'left',
       headerAlign: 'left',
-      getActions: (params) => {
-        const actions = [
-          <GridActionsCellItem
-            key="view"
-            icon={<VisibilityIcon />}
-            label="צפייה"
-            onClick={() => {
-              router.push(`/leases/${params.row.id}`);
-            }}
-          />,
-          <GridActionsCellItem
-            key="edit"
-            icon={<EditIcon />}
-            label="עריכה"
-            onClick={() => {
-              setSelectedLease(params.row);
-              setOpenDialog(true);
-            }}
-            disabled={params.row.status === 'TERMINATED'}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={<DeleteIcon />}
-            label="מחיקה"
-            onClick={() => {
-              setLeaseToDelete(params.row);
-              setDeleteDialogOpen(true);
-            }}
-          />,
-        ];
-
-        if (params.row.status === 'ACTIVE' || params.row.status === 'FUTURE') {
-          actions.push(
-            <GridActionsCellItem
-              key="terminate"
-              icon={<CancelIcon />}
-              label="ביטול חוזה"
-              onClick={() => {
-                setLeaseToTerminate(params.row);
-                setTerminateDialogOpen(true);
-              }}
-            />
-          );
-        }
-
-        return actions;
-      },
+      getActions: (params) => [
+        <GridActionsCellItem
+          key="edit"
+          icon={<EditIcon />}
+          label="עריכה"
+          onClick={() => {
+            setSelectedLease(params.row);
+            setOpenDialog(true);
+          }}
+        />,
+        <GridActionsCellItem
+          key="delete"
+          icon={<DeleteIcon />}
+          label="מחיקה"
+          onClick={() => {
+            setLeaseToDelete(params.row);
+            setDeleteDialogOpen(true);
+          }}
+        />,
+      ],
     },
   ];
 
@@ -256,76 +204,63 @@ export default function LeaseList() {
     setSelectedLease(null);
   };
 
+  const handleFormSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['rental-agreements'] });
+    handleCloseDialog();
+    setSnackbar({ open: true, message: 'חוזה נשמר בהצלחה', severity: 'success' });
+  };
+
   const handleDelete = () => {
     if (leaseToDelete) {
       deleteMutation.mutate(leaseToDelete.id);
     }
   };
 
-  const handleTerminate = () => {
-    if (leaseToTerminate) {
-      terminateMutation.mutate(leaseToTerminate.id);
-    }
-  };
-
   return (
-    <Box>
+    <Box sx={{ direction: 'rtl' }}>
       <Box
         sx={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           mb: 3,
+          flexWrap: 'wrap',
+          gap: 2,
         }}
       >
-        <div>
-          <Typography variant="h4" component="h1" gutterBottom>
-            ניהול חוזים
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            רשימת כל החוזים במערכת
-          </Typography>
-        </div>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setOpenDialog(true)}
-        >
-          חוזה חדש
-        </Button>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <FormControl size="small" sx={{ minWidth: 150 }}>
+            <InputLabel>סנן לפי סטטוס</InputLabel>
+            <Select
+              value={statusFilter}
+              label="סנן לפי סטטוס"
+              onChange={(e) => setStatusFilter(e.target.value as RentalAgreementStatus | '')}
+            >
+              <MenuItem value="">הכל</MenuItem>
+              <MenuItem value="ACTIVE">פעיל</MenuItem>
+              <MenuItem value="FUTURE">עתידי</MenuItem>
+              <MenuItem value="EXPIRED">פג תוקף</MenuItem>
+              <MenuItem value="TERMINATED">הופסק</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => {
+              setSelectedLease(null);
+              setOpenDialog(true);
+            }}
+          >
+            הוסף חוזה
+          </Button>
+        </Box>
       </Box>
-
-      {/* Search */}
-      <Box sx={{ mb: 2 }}>
-        <TextField
-          fullWidth
-          placeholder="חפש לפי כתובת נכס, שם דייר או מספר דירה..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          size="small"
-        />
-      </Box>
-
-      {/* Advanced Filters */}
-      <LeaseFilterPanel
-        filters={filters}
-        onFiltersChange={setFilters}
-        onClear={() => setFilters({})}
-      />
 
       <Box sx={{ height: 600, width: '100%' }}>
         <DataGrid
           rows={leases}
           columns={columns}
           loading={isLoading}
-          paginationMode="server"
-          rowCount={data?.meta?.total || 0}
-          paginationModel={{ page: page - 1, pageSize }}
-          onPaginationModelChange={(model) => {
-            setPage(model.page + 1);
-            setPageSize(model.pageSize);
-          }}
-          pageSizeOptions={[10, 25, 50, 100]}
           sx={{
             direction: 'rtl',
             '& .MuiDataGrid-columnHeaders': {
@@ -346,33 +281,40 @@ export default function LeaseList() {
               paddingRight: '16px',
             },
           }}
+          paginationMode="server"
+          rowCount={data?.meta?.total || 0}
+          paginationModel={{ page: page - 1, pageSize }}
+          onPaginationModelChange={(model) => {
+            setPage(model.page + 1);
+            setPageSize(model.pageSize);
+          }}
+          pageSizeOptions={[10, 25, 50, 100]}
           getRowId={(row) => row.id}
         />
       </Box>
 
-      {/* Create/Edit Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="md" fullWidth>
-        <DialogTitle>
-          {selectedLease ? 'עריכת חוזה' : 'חוזה חדש'}
-        </DialogTitle>
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>{selectedLease ? 'עריכת חוזה' : 'חוזה חדש'}</DialogTitle>
         <DialogContent>
           <LeaseForm
             lease={selectedLease}
-            onSuccess={() => {
-              handleCloseDialog();
-              queryClient.invalidateQueries({ queryKey: ['leases'] });
-            }}
+            onSuccess={handleFormSuccess}
             onCancel={handleCloseDialog}
           />
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>אישור מחיקה</DialogTitle>
+        <DialogTitle>מחיקת חוזה</DialogTitle>
         <DialogContent>
           <Typography>
             האם אתה בטוח שברצונך למחוק את החוזה?
+            {leaseToDelete && (
+              <>
+                <br />
+                <strong>{leaseToDelete.property?.address}</strong> - {leaseToDelete.tenant?.name}
+              </>
+            )}
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -380,6 +322,7 @@ export default function LeaseList() {
           <Button
             onClick={handleDelete}
             color="error"
+            variant="contained"
             disabled={deleteMutation.isPending}
           >
             {deleteMutation.isPending ? 'מוחק...' : 'מחק'}
@@ -387,28 +330,20 @@ export default function LeaseList() {
         </DialogActions>
       </Dialog>
 
-      {/* Terminate Confirmation Dialog */}
-      <Dialog open={terminateDialogOpen} onClose={() => setTerminateDialogOpen(false)}>
-        <DialogTitle>ביטול חוזה</DialogTitle>
-        <DialogContent>
-          <Alert severity="warning" sx={{ mb: 2 }}>
-            פעולה זו תבטל את החוזה לפני תאריך הסיום. לא ניתן לבטל פעולה זו.
-          </Alert>
-          <Typography>
-            האם אתה בטוח שברצונך לבטל את החוזה?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setTerminateDialogOpen(false)}>ביטול</Button>
-          <Button
-            onClick={handleTerminate}
-            color="error"
-            disabled={terminateMutation.isPending}
-          >
-            {terminateMutation.isPending ? 'מבטל...' : 'בטל חוזה'}
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert
+          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          severity={snackbar.severity}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

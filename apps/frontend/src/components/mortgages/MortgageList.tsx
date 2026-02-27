@@ -30,7 +30,6 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { mortgagesApi, Mortgage, MortgageFilters } from '@/lib/api/mortgages';
 
 type MortgageStatus = 'ACTIVE' | 'PAID_OFF' | 'REFINANCED' | 'DEFAULTED';
-import { useAccount } from '@/contexts/AccountContext';
 import MortgageForm from './MortgageForm';
 import GenericCsvImport from '../import/GenericCsvImport';
 import MortgageFilterPanel from './MortgageFilterPanel';
@@ -78,7 +77,6 @@ const getStatusLabel = (status: MortgageStatus) => {
 export default function MortgageList() {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { selectedAccountId } = useAccount();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
@@ -105,11 +103,10 @@ export default function MortgageList() {
     ...(debouncedSearch && { search: debouncedSearch }),
   }), [filters, debouncedSearch]);
 
-  // Fetch all mortgages (filtered by account via backend)
+  // Fetch all mortgages
   const { data, isLoading } = useQuery({
-    queryKey: ['mortgages', selectedAccountId, page, pageSize, apiFilters],
+    queryKey: ['mortgages', page, pageSize, apiFilters],
     queryFn: () => mortgagesApi.getMortgages(page, pageSize, apiFilters),
-    enabled: !!selectedAccountId,
   });
 
   const mortgages = data?.data || [];
@@ -152,6 +149,22 @@ export default function MortgageList() {
       minWidth: 150,
       align: 'right',
       headerAlign: 'right',
+    },
+    {
+      field: 'mortgageOwner',
+      headerName: 'בעלים',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      valueGetter: (params) => params?.value?.name ?? '-',
+    },
+    {
+      field: 'payer',
+      headerName: 'משלם',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      valueGetter: (params) => params?.value?.name ?? '-',
     },
     {
       field: 'loanAmount',
@@ -277,7 +290,7 @@ export default function MortgageList() {
             <GenericCsvImport
               importType="mortgages"
               entityLabel="משכנתאות"
-              queryKey={['mortgages', selectedAccountId]}
+              queryKey={['mortgages']}
             />
             <Button
               variant="contained"

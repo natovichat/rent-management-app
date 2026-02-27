@@ -24,22 +24,26 @@ import {
   Snackbar,
 } from '@mui/material';
 import { mortgagesApi, Mortgage, CreateMortgageDto } from '@/lib/api/mortgages';
-
-type MortgageStatus = 'ACTIVE' | 'PAID_OFF' | 'REFINANCED' | 'DEFAULTED';
 import { propertiesApi } from '@/services/properties';
 import { bankAccountsApi, CreateBankAccountDto, BankAccount } from '@/lib/api/bank-accounts';
+import { personsApi } from '@/lib/api/persons';
 import BankAccountForm from '@/components/bank-accounts/BankAccountForm';
 
+type MortgageStatus = 'ACTIVE' | 'PAID_OFF' | 'REFINANCED' | 'DEFAULTED';
+
 const mortgageSchema = z.object({
-  propertyId: z.string().min(1, 'נכס הוא שדה חובה'),
+  propertyId: z.string().optional().or(z.literal('')),
   bank: z.string().min(1, 'שם הבנק הוא שדה חובה'),
   loanAmount: z.number().min(0.01, 'סכום הלוואה חייב להיות חיובי'),
   interestRate: z.number().min(0).max(100).optional(),
   monthlyPayment: z.number().min(0).optional(),
+  earlyRepaymentPenalty: z.number().min(0).optional(),
   startDate: z.string().min(1, 'תאריך התחלה הוא שדה חובה'),
   endDate: z.string().optional().or(z.literal('')),
   status: z.enum(['ACTIVE', 'PAID_OFF', 'REFINANCED', 'DEFAULTED']),
   bankAccountId: z.string().optional().or(z.literal('')),
+  mortgageOwnerId: z.string().optional().or(z.literal('')),
+  payerId: z.string().optional().or(z.literal('')),
   linkedProperties: z.array(z.string()).optional(),
   notes: z.string().optional(),
 }).refine((data) => {
@@ -86,12 +90,19 @@ export default function MortgageForm({
     queryFn: () => propertiesApi.getAll(1, 100),
   });
 
-  const { data: bankAccounts = [] } = useQuery({
-    queryKey: ['bankAccounts'],
-    queryFn: () => bankAccountsApi.getBankAccounts(true), // Only active accounts
+  const { data: bankAccountsResponse } = useQuery({
+    queryKey: ['bankAccounts', true],
+    queryFn: () => bankAccountsApi.getBankAccounts(1, 100, true), // Only active accounts
   });
+  const bankAccounts = bankAccountsResponse?.data || [];
 
   const properties = propertiesData?.data || [];
+
+  const { data: personsData } = useQuery({
+    queryKey: ['persons', 1, 100],
+    queryFn: () => personsApi.getPersons(1, 100),
+  });
+  const persons = personsData?.data || [];
 
   const {
     register,
@@ -107,14 +118,17 @@ export default function MortgageForm({
       propertyId: mortgage?.propertyId || preFilledPropertyId || '',
       bank: mortgage?.bank || '',
       loanAmount: mortgage?.loanAmount ? Number(mortgage.loanAmount) : 0.01,
+      payerId: mortgage?.payerId || '',
       interestRate: mortgage?.interestRate ? Number(mortgage.interestRate) : undefined,
       monthlyPayment: mortgage?.monthlyPayment ? Number(mortgage.monthlyPayment) : undefined,
+      earlyRepaymentPenalty: mortgage?.earlyRepaymentPenalty ? Number(mortgage.earlyRepaymentPenalty) : undefined,
       startDate: mortgage?.startDate
         ? mortgage.startDate.split('T')[0]
         : new Date().toISOString().split('T')[0],
       endDate: mortgage?.endDate ? mortgage.endDate.split('T')[0] : '',
       status: mortgage?.status || 'ACTIVE',
       bankAccountId: mortgage?.bankAccountId || '',
+      mortgageOwnerId: mortgage?.mortgageOwnerId || '',
       linkedProperties: mortgage?.linkedProperties || [],
       notes: mortgage?.notes || '',
     },
@@ -124,15 +138,18 @@ export default function MortgageForm({
   useEffect(() => {
     if (mortgage) {
       reset({
-        propertyId: mortgage.propertyId,
+        propertyId: mortgage.propertyId || '',
         bank: mortgage.bank,
         loanAmount: Number(mortgage.loanAmount),
+        payerId: mortgage.payerId || '',
         interestRate: mortgage.interestRate ? Number(mortgage.interestRate) : undefined,
         monthlyPayment: mortgage.monthlyPayment ? Number(mortgage.monthlyPayment) : undefined,
+        earlyRepaymentPenalty: mortgage.earlyRepaymentPenalty ? Number(mortgage.earlyRepaymentPenalty) : undefined,
         startDate: mortgage.startDate.split('T')[0],
         endDate: mortgage.endDate ? mortgage.endDate.split('T')[0] : '',
         status: mortgage.status,
         bankAccountId: mortgage.bankAccountId || '',
+        mortgageOwnerId: mortgage.mortgageOwnerId || '',
         linkedProperties: mortgage.linkedProperties || [],
         notes: mortgage.notes || '',
       });
@@ -141,12 +158,15 @@ export default function MortgageForm({
         propertyId: preFilledPropertyId,
         bank: '',
         loanAmount: 0.01,
+        payerId: '',
         interestRate: undefined,
         monthlyPayment: undefined,
+        earlyRepaymentPenalty: undefined,
         startDate: new Date().toISOString().split('T')[0],
         endDate: '',
         status: 'ACTIVE',
         bankAccountId: '',
+        mortgageOwnerId: '',
         linkedProperties: [],
         notes: '',
       });
@@ -202,36 +222,33 @@ export default function MortgageForm({
   };
 
   const mutation = useMutation({
-    mutationFn: (data: CreateMortgageDto) => {
-      console.log('[MortgageForm] Mutation called with data:', data);
+    mutationFn: (data: MortgageFormData) => {
       const submitData: CreateMortgageDto = {
-        propertyId: data.propertyId,
+        propertyId: data.propertyId === '' ? undefined : data.propertyId,
         bank: data.bank,
         loanAmount: data.loanAmount,
+        payerId: data.payerId,
         interestRate: data.interestRate,
         monthlyPayment: data.monthlyPayment,
+        earlyRepaymentPenalty: data.earlyRepaymentPenalty,
         startDate: data.startDate,
         endDate: data.endDate === '' ? undefined : data.endDate,
         status: data.status,
         bankAccountId: data.bankAccountId === '' ? undefined : data.bankAccountId,
+        mortgageOwnerId: data.mortgageOwnerId === '' ? undefined : data.mortgageOwnerId,
         linkedProperties: data.linkedProperties && data.linkedProperties.length > 0
           ? data.linkedProperties
           : undefined,
         notes: data.notes || undefined,
       };
-      console.log('[MortgageForm] Submitting to API:', submitData);
       return mortgage
         ? mortgagesApi.updateMortgage(mortgage.id, submitData)
         : mortgagesApi.createMortgage(submitData);
     },
-    onSuccess: (data) => {
-      console.log('[MortgageForm] Mutation successful:', data);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['mortgages'] });
       queryClient.invalidateQueries({ queryKey: ['properties'] });
       onSuccess();
-    },
-    onError: (error) => {
-      console.error('[MortgageForm] Mutation error:', error);
     },
   });
 
@@ -272,12 +289,18 @@ export default function MortgageForm({
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <FormControl fullWidth error={!!errors.propertyId}>
-                  <InputLabel>נכס *</InputLabel>
+                  <InputLabel>נכס</InputLabel>
                   <Controller
                     name="propertyId"
                     control={control}
                     render={({ field }) => (
-                      <Select {...field} label="נכס *" disabled={!!preFilledPropertyId}>
+                      <Select
+                        {...field}
+                        value={field.value || ''}
+                        label="נכס"
+                        disabled={!!preFilledPropertyId}
+                      >
+                        <MenuItem value="">ללא נכס (הלוואה עצמאית)</MenuItem>
                         {properties.map((property) => (
                           <MenuItem key={property.id} value={property.id}>
                             {property.address} {property.fileNumber ? `(${property.fileNumber})` : ''}
@@ -291,6 +314,51 @@ export default function MortgageForm({
                       {errors.propertyId.message}
                     </Alert>
                   )}
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth error={!!errors.payerId}>
+                  <InputLabel>משלם *</InputLabel>
+                  <Controller
+                    name="payerId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select {...field} label="משלם *" value={field.value || ''}>
+                        <MenuItem value="">בחר משלם</MenuItem>
+                        {persons.map((person) => (
+                          <MenuItem key={person.id} value={person.id}>
+                            {person.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.payerId && (
+                    <Alert severity="error" sx={{ mt: 0.5 }}>
+                      {errors.payerId.message}
+                    </Alert>
+                  )}
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                  <InputLabel>בעלים משכנתא</InputLabel>
+                  <Controller
+                    name="mortgageOwnerId"
+                    control={control}
+                    render={({ field }) => (
+                      <Select {...field} label="בעלים משכנתא" value={field.value || ''}>
+                        <MenuItem value="">ללא</MenuItem>
+                        {persons.map((person) => (
+                          <MenuItem key={person.id} value={person.id}>
+                            {person.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
                 </FormControl>
               </Grid>
 
@@ -345,6 +413,21 @@ export default function MortgageForm({
                   error={!!errors.monthlyPayment}
                   helperText={errors.monthlyPayment?.message}
                   fullWidth
+                />
+              </Grid>
+
+              <Grid item xs={12} sm={4}>
+                <TextField
+                  label="עמלת פירעון מוקדם"
+                  type="number"
+                  {...register('earlyRepaymentPenalty', {
+                    valueAsNumber: true,
+                    setValueAs: (v) => (v === '' ? '' : Number(v)),
+                  })}
+                  error={!!errors.earlyRepaymentPenalty}
+                  helperText={errors.earlyRepaymentPenalty?.message}
+                  fullWidth
+                  inputProps={{ min: 0.01, step: 0.01 }}
                 />
               </Grid>
 

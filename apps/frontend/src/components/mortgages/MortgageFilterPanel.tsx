@@ -57,14 +57,12 @@ export default function MortgageFilterPanel({
   onFiltersChange,
   onClear,
 }: MortgageFilterPanelProps) {
-  const { selectedAccountId } = useAccount();
   const [expanded, setExpanded] = useState(false);
 
   // Fetch properties for dropdown
   const { data: propertiesData } = useQuery({
-    queryKey: ['properties', selectedAccountId, 1, 100],
+    queryKey: ['properties', 1, 100],
     queryFn: () => propertiesApi.getAll(1, 100),
-    enabled: !!selectedAccountId,
   });
 
   const properties = propertiesData?.data || [];

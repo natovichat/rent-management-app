@@ -13,7 +13,6 @@ import ProfileTab from '@/components/settings/ProfileTab';
 import AccountTab from '@/components/settings/AccountTab';
 import PreferencesTab from '@/components/settings/PreferencesTab';
 import SessionsTab from '@/components/settings/SessionsTab';
-import { AccountSelector } from '@/components/layout/AccountSelector';
 import QuickNavigator from '@/components/navigation/QuickNavigator';
 
 /**
@@ -43,7 +42,6 @@ export default function SettingsPage() {
         </Box>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
-          <AccountSelector />
         </Box>
       </Box>
 

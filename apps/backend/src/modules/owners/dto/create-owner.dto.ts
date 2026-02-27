@@ -6,6 +6,7 @@ import {
   MinLength,
   MaxLength,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OwnerType } from '@prisma/client';
 
@@ -49,6 +50,7 @@ export class CreateOwnerDto {
     example: 'owner@example.com',
   })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsEmail({}, { message: 'email must be a valid email address' })
   @MaxLength(255)
   email?: string;
@@ -58,6 +60,7 @@ export class CreateOwnerDto {
     example: '050-1234567',
   })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsString()
   @MaxLength(50)
   phone?: string;
@@ -67,6 +70,7 @@ export class CreateOwnerDto {
     example: '123 Main St, Tel Aviv',
   })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsString()
   @MaxLength(500)
   address?: string;
@@ -76,6 +80,7 @@ export class CreateOwnerDto {
     example: 'Primary contact for property management',
   })
   @IsOptional()
+  @Transform(({ value }) => value === '' ? undefined : value)
   @IsString()
   @MaxLength(2000)
   notes?: string;

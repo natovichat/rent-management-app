@@ -24,11 +24,20 @@ export function useConfiguredColumns<T extends GridValidRowModel = any>(
   entityType: EntityType,
   allColumns: GridColDef<T>[],
 ): GridColDef<T>[] {
-  const { data: config } = useTableConfiguration(entityType);
+  const { data: config, isLoading, error } = useTableConfiguration(entityType);
+
+  console.log('🔍 useConfiguredColumns DEBUG:');
+  console.log('  entityType:', entityType);
+  console.log('  isLoading:', isLoading);
+  console.log('  error:', error);
+  console.log('  config:', config);
+  console.log('  allColumnsCount:', allColumns.length);
+  console.log('  configColumnsCount:', config?.columns?.length);
 
   return useMemo(() => {
     // If no configuration, return all columns in original order
     if (!config || !config.columns) {
+      console.log('⚠️ No config found, returning all columns');
       return allColumns;
     }
 
@@ -39,11 +48,23 @@ export function useConfiguredColumns<T extends GridValidRowModel = any>(
     });
 
     // Filter and sort based on configuration
-    const configured = config.columns
-      .filter((colConfig) => colConfig.visible) // Only visible columns
-      .sort((a, b) => a.order - b.order) // Sort by order
-      .map((colConfig) => columnMap.get(colConfig.field)) // Get GridColDef
-      .filter((col): col is GridColDef<T> => col !== undefined); // Remove undefined
+    const visibleConfigs = config.columns.filter((colConfig) => colConfig.visible);
+    console.log('  visibleConfigs count:', visibleConfigs.length);
+    
+    const sortedConfigs = [...visibleConfigs].sort((a, b) => a.order - b.order);
+    console.log('  sortedConfigs count:', sortedConfigs.length);
+    
+    const mappedColumns = sortedConfigs.map((colConfig) => {
+      const col = columnMap.get(colConfig.field);
+      if (!col) {
+        console.warn(`  ⚠️ Column not found in columnMap: ${colConfig.field}`);
+      }
+      return col;
+    });
+    
+    const configured = mappedColumns.filter((col): col is GridColDef<T> => col !== undefined);
+    console.log('  configured columns count:', configured.length);
+    console.log('  configured column fields:', configured.map(c => c.field).join(', '));
 
     // Always include 'actions' column at the end if it exists
     const actionsColumn = allColumns.find((col) => col.field === 'actions');
@@ -51,6 +72,7 @@ export function useConfiguredColumns<T extends GridValidRowModel = any>(
       configured.push(actionsColumn);
     }
 
+    console.log('  final columns count:', configured.length);
     return configured;
   }, [config, allColumns]);
 }
