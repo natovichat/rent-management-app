@@ -56,7 +56,6 @@ const NAV_GROUPS: NavGroup[] = [
     label: 'נכסים',
     items: [
       { label: 'נכסים', href: '/properties', icon: <ApartmentIcon /> },
-      { label: 'יחידות', href: '/units', icon: <ApartmentIcon /> },
       { label: 'בעלות', href: '/ownerships', icon: <HandshakeIcon /> },
     ],
   },

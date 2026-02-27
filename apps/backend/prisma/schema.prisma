@@ -195,7 +195,6 @@ model Property {
   mortgages            Mortgage[]
   rentalAgreements     RentalAgreement[]
   propertyEvents       PropertyEvent[]
-  units                Unit[]
 
   @@index([type])
   @@index([status])
@@ -273,27 +272,6 @@ enum EstimationSource {
   MARKET_ESTIMATE
   TAX_ASSESSMENT
   OWNER_ESTIMATE
-}
-
-// ============================================
-// Unit (Apartment/unit within a Property)
-// ============================================
-
-model Unit {
-  id              String  @id @default(uuid())
-  propertyId      String  @map("property_id")
-  apartmentNumber String  @map("apartment_number")
-  floor           Int?
-  roomCount       Int?    @map("room_count")
-  notes           String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-
-  @@index([propertyId])
-  @@map("units")
 }
 
 // ============================================
