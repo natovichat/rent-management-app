@@ -41,10 +41,14 @@ COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/package.json ./
 COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/prisma ./prisma
 COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
 
+# Copy startup script
+COPY --chown=nestjs:nodejs apps/backend/start.sh ./start.sh
+RUN chmod +x ./start.sh
+
 USER nestjs
 
 EXPOSE 3000
 
 ENV PORT=3000
 
-CMD ["node", "dist/main.js"]
+CMD ["./start.sh"]

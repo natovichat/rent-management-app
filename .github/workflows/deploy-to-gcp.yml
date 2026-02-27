@@ -8,9 +8,10 @@ on:
 
 env:
   PROJECT_ID: calm-armor-616
-  REGION: us-central1 # Change to your preferred region
+  REGION: us-central1
   BACKEND_SERVICE: rent-app-backend
   FRONTEND_SERVICE: rent-app-frontend
+  CLOUD_SQL_INSTANCE: calm-armor-616:us-central1:rent-app-db
 
 jobs:
   # Job 1: Build and Deploy Backend
@@ -64,6 +65,7 @@ jobs:
             --timeout 300 \
             --min-instances 0 \
             --max-instances 10 \
+            --add-cloudsql-instances=${{ env.CLOUD_SQL_INSTANCE }} \
             --set-env-vars="NODE_ENV=production" \
             --set-env-vars="DATABASE_URL=${{ secrets.DATABASE_URL }}" \
             --set-env-vars="JWT_SECRET=${{ secrets.JWT_SECRET }}"
@@ -76,6 +78,13 @@ jobs:
             --format 'value(status.url)')
           echo "url=$URL" >> $GITHUB_OUTPUT
           echo "Backend deployed to: $URL"
+      
+      - name: Print Deployment Info
+        run: |
+          echo "✅ Backend deployed with Cloud SQL connection"
+          echo "📦 Image: gcr.io/${{ env.PROJECT_ID }}/${{ env.BACKEND_SERVICE }}:${{ github.sha }}"
+          echo "🗄️ Cloud SQL: ${{ env.CLOUD_SQL_INSTANCE }}"
+          echo "📝 Migrations run automatically on container startup"
 
   # Job 2: Build and Deploy Frontend (DISABLED - Using Vercel instead)
   deploy-frontend:
