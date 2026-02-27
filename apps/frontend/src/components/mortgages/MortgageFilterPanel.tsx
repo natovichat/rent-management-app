@@ -35,7 +35,7 @@ interface MortgageFilterPanelProps {
 
 const MORTGAGE_STATUSES = [
   { value: 'ACTIVE', label: 'פעיל' },
-  { value: 'PAID_OFF', label: 'סולק' },
+  { value: 'PAID_OFF', label: 'שולם' },
   { value: 'REFINANCED', label: 'מימון מחדש' },
   { value: 'DEFAULTED', label: 'ברירת מחדל' },
 ];

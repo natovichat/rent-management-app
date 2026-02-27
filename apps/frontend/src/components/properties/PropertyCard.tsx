@@ -101,7 +101,7 @@ const getStatusLabel = (status?: string): string => {
     case 'IN_CONSTRUCTION':
       return 'בבנייה';
     case 'IN_PURCHASE':
-      return 'בהליכי רכישה';
+      return 'ברכישה';
     case 'SOLD':
       return 'נמכר';
     case 'INVESTMENT':
@@ -120,7 +120,7 @@ const getTypeLabel = (type?: string): string => {
     case 'LAND':
       return 'קרקע';
     case 'MIXED_USE':
-      return 'שימוש מעורב';
+      return 'מעורב';
     default:
       return '';
   }

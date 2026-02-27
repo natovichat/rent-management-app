@@ -71,7 +71,7 @@ export default function ColumnConfigItem({
             color="primary"
           />
           <Typography variant="caption" color="text.secondary">
-            {column.visible ? 'מוצג' : 'מוסתר'}
+            {column.visible ? 'גלוי' : 'מוסתר'}
           </Typography>
         </Box>
       </Box>

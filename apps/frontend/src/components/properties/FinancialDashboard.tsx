@@ -91,6 +91,14 @@ interface FinancialDashboardProps {
 // Chart colors
 const COLORS = ['#4A90E2', '#50C878', '#FFB347', '#FF6B6B', '#9B59B6', '#3498DB'];
 
+// Property type labels for portfolio breakdown
+const PROPERTY_TYPE_LABELS: Record<string, string> = {
+  RESIDENTIAL: 'מגורים',
+  COMMERCIAL: 'מסחרי',
+  LAND: 'קרקע',
+  MIXED_USE: 'מעורב',
+};
+
 // Helper functions
 const formatCurrency = (value: number): string => {
   if (value >= 1000000) {
@@ -301,7 +309,8 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ name, value, percent }) => `${name}: ${formatCurrency(value)} (${percent ? (percent * 100).toFixed(0) : 0}%)`}
+                      nameKey="type"
+                      label={({ name, value, percent }: { name?: string; value?: number; percent?: number }) => `${PROPERTY_TYPE_LABELS[name as string] || name}: ${formatCurrency(value ?? 0)} (${percent ? (percent * 100).toFixed(0) : 0}%)`}
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="value"
@@ -351,7 +360,7 @@ export const FinancialDashboard: React.FC<FinancialDashboardProps> = ({
                         />
                         <Box>
                           <Typography variant="body2" fontWeight="600">
-                            {item.type}
+                            {PROPERTY_TYPE_LABELS[item.type] || item.type}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
                             {item.count} נכסים

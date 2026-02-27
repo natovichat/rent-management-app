@@ -37,13 +37,13 @@ const PROPERTY_TYPES: { value: PropertyType; label: string }[] = [
   { value: 'RESIDENTIAL', label: 'מגורים' },
   { value: 'COMMERCIAL', label: 'מסחרי' },
   { value: 'LAND', label: 'קרקע' },
-  { value: 'MIXED_USE', label: 'שימוש מעורב' },
+  { value: 'MIXED_USE', label: 'מעורב' },
 ];
 
 const PROPERTY_STATUSES: { value: PropertyStatus; label: string }[] = [
   { value: 'OWNED', label: 'בבעלות' },
   { value: 'IN_CONSTRUCTION', label: 'בבנייה' },
-  { value: 'IN_PURCHASE', label: 'בהליכי רכישה' },
+  { value: 'IN_PURCHASE', label: 'ברכישה' },
   { value: 'SOLD', label: 'נמכר' },
   { value: 'INVESTMENT', label: 'השקעה' },
 ];

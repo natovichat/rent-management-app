@@ -55,7 +55,7 @@ const getStatusLabel = (status: string) => {
     case 'ACTIVE':
       return 'פעיל';
     case 'PAID_OFF':
-      return 'סולק';
+      return 'שולם';
     case 'REFINANCED':
       return 'מימון מחדש';
     case 'DEFAULTED':

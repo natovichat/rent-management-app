@@ -54,7 +54,7 @@ export default function SettingsPage() {
           <Tab label="פרופיל" />
           <Tab label="הגדרות חשבון" />
           <Tab label="העדפות" />
-          <Tab label="סשנים" />
+          <Tab label="כניסות" />
         </Tabs>
 
         <Box sx={{ p: 3 }}>

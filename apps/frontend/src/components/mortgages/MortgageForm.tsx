@@ -440,7 +440,7 @@ export default function MortgageForm({
                     render={({ field }) => (
                       <Select {...field} label="סטטוס *">
                         <MenuItem value="ACTIVE">פעיל</MenuItem>
-                        <MenuItem value="PAID_OFF">סולק</MenuItem>
+                        <MenuItem value="PAID_OFF">שולם</MenuItem>
                         <MenuItem value="REFINANCED">מימון מחדש</MenuItem>
                         <MenuItem value="DEFAULTED">ברירת מחדל</MenuItem>
                       </Select>

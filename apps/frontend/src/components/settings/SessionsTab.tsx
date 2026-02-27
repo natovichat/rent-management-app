@@ -67,7 +67,7 @@ export default function SessionsTab() {
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h6">
-          סשנים פעילים
+          כניסות פעילות
         </Typography>
         <Button
           variant="outlined"
@@ -91,7 +91,7 @@ export default function SessionsTab() {
       )}
 
       {sessions && sessions.length === 0 ? (
-        <Alert severity="info">אין סשנים פעילים</Alert>
+        <Alert severity="info">אין כניסות פעילות</Alert>
       ) : (
         <List>
           {sessions?.map((session) => (
@@ -110,7 +110,7 @@ export default function SessionsTab() {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                     {session.device || 'מכשיר לא ידוע'}
                     {session.isCurrent && (
-                      <Chip label="סשן נוכחי" color="primary" size="small" />
+                      <Chip label="כניסה נוכחית" color="primary" size="small" />
                     )}
                   </Box>
                 }

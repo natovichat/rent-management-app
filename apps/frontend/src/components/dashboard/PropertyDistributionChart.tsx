@@ -33,6 +33,21 @@ interface PropertyDistributionChartProps {
 
 const COLORS = ['#4A90E2', '#50C878', '#FFB347', '#FF6B6B', '#9B59B6'];
 
+const PROPERTY_TYPE_LABELS: Record<string, string> = {
+  RESIDENTIAL: 'מגורים',
+  COMMERCIAL: 'מסחרי',
+  LAND: 'קרקע',
+  MIXED_USE: 'מעורב',
+};
+
+const PROPERTY_STATUS_LABELS: Record<string, string> = {
+  OWNED: 'בבעלות',
+  IN_CONSTRUCTION: 'בבנייה',
+  IN_PURCHASE: 'ברכישה',
+  SOLD: 'נמכר',
+  INVESTMENT: 'השקעה',
+};
+
 export default function PropertyDistributionChart({
   data,
   loading = false,
@@ -56,12 +71,12 @@ export default function PropertyDistributionChart({
   }
 
   const typeData = Object.entries(data.distributionByType).map(([name, value]) => ({
-    name,
+    name: PROPERTY_TYPE_LABELS[name] ?? name,
     value,
   }));
 
   const statusData = Object.entries(data.distributionByStatus).map(([name, value]) => ({
-    name,
+    name: PROPERTY_STATUS_LABELS[name] ?? name,
     value,
   }));
 

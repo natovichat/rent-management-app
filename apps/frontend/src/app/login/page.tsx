@@ -41,7 +41,7 @@ export default function LoginPage() {
       });
 
       if (!response.ok) {
-        throw new Error('Login failed');
+        throw new Error('שגיאה בהתחברות');
       }
 
       const data = await response.json();
@@ -55,7 +55,7 @@ export default function LoginPage() {
       // Redirect to properties
       router.push('/properties');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed');
+      setError(err instanceof Error ? err.message : 'שגיאה בהתחברות');
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ export default function LoginPage() {
             align="center"
             sx={{ mb: 3 }}
           >
-            Dev Login - For Testing
+            התחברות לבדיקות
           </Typography>
 
           {error && (
@@ -93,7 +93,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin}>
             <TextField
               fullWidth
-              label="Email"
+              label="אימייל"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -117,12 +117,12 @@ export default function LoginPage() {
 
           <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
             <Typography variant="caption" color="text.secondary">
-              <strong>Test Users:</strong>
+              <strong>משתמשי בדיקה:</strong>
               <br />• test@example.com
               <br />• newuser@example.com
               <br />
               <br />
-              Or enter any email to create a new account automatically.
+              או הזן כל אימייל כדי ליצור חשבון חדש אוטומטית.
             </Typography>
           </Box>
         </Paper>

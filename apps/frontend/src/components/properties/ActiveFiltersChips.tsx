@@ -15,13 +15,13 @@ const PROPERTY_TYPE_LABELS: Record<PropertyType, string> = {
   RESIDENTIAL: 'מגורים',
   COMMERCIAL: 'מסחרי',
   LAND: 'קרקע',
-  MIXED_USE: 'שימוש מעורב',
+  MIXED_USE: 'מעורב',
 };
 
 const PROPERTY_STATUS_LABELS: Record<PropertyStatus, string> = {
   OWNED: 'בבעלות',
   IN_CONSTRUCTION: 'בבנייה',
-  IN_PURCHASE: 'בהליכי רכישה',
+  IN_PURCHASE: 'ברכישה',
   SOLD: 'נמכר',
   INVESTMENT: 'השקעה',
 };

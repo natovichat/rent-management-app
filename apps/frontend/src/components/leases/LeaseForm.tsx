@@ -242,7 +242,7 @@ export default function LeaseForm({ lease, onSuccess, onCancel }: LeaseFormProps
               <MenuItem value="FUTURE">עתידי</MenuItem>
               <MenuItem value="ACTIVE">פעיל</MenuItem>
               <MenuItem value="EXPIRED">פג תוקף</MenuItem>
-              <MenuItem value="TERMINATED">הופסק</MenuItem>
+              <MenuItem value="TERMINATED">בוטל</MenuItem>
             </Select>
           </FormControl>
         )}

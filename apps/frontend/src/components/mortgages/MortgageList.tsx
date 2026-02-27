@@ -61,7 +61,7 @@ const getStatusLabel = (status: MortgageStatus) => {
     case 'ACTIVE':
       return 'פעיל';
     case 'PAID_OFF':
-      return 'סולק';
+      return 'שולם';
     case 'REFINANCED':
       return 'מימון מחדש';
     case 'DEFAULTED':

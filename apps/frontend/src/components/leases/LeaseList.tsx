@@ -59,7 +59,7 @@ const getStatusLabel = (status: RentalAgreementStatus) => {
     case 'EXPIRED':
       return 'פג תוקף';
     case 'TERMINATED':
-      return 'הופסק';
+      return 'בוטל';
     default:
       return status;
   }
@@ -240,7 +240,7 @@ export default function LeaseList() {
               <MenuItem value="ACTIVE">פעיל</MenuItem>
               <MenuItem value="FUTURE">עתידי</MenuItem>
               <MenuItem value="EXPIRED">פג תוקף</MenuItem>
-              <MenuItem value="TERMINATED">הופסק</MenuItem>
+              <MenuItem value="TERMINATED">בוטל</MenuItem>
             </Select>
           </FormControl>
           <Button

@@ -748,7 +748,7 @@ export default function PropertyForm({
                             <MenuItem value="RESIDENTIAL">מגורים</MenuItem>
                             <MenuItem value="COMMERCIAL">מסחרי</MenuItem>
                             <MenuItem value="LAND">קרקע</MenuItem>
-                            <MenuItem value="MIXED_USE">שימוש מעורב</MenuItem>
+                            <MenuItem value="MIXED_USE">מעורב</MenuItem>
                           </Select>
                         )}
                       />
@@ -776,7 +776,7 @@ export default function PropertyForm({
                           >
                             <MenuItem value="OWNED">בבעלות</MenuItem>
                             <MenuItem value="IN_CONSTRUCTION">בבנייה</MenuItem>
-                            <MenuItem value="IN_PURCHASE">בהליכי רכישה</MenuItem>
+                            <MenuItem value="IN_PURCHASE">ברכישה</MenuItem>
                             <MenuItem value="SOLD">נמכר</MenuItem>
                             <MenuItem value="INVESTMENT">השקעה</MenuItem>
                           </Select>
@@ -1130,7 +1130,7 @@ export default function PropertyForm({
                       >
                         <MenuItem value="EXCELLENT">מצוין</MenuItem>
                         <MenuItem value="GOOD">טוב</MenuItem>
-                        <MenuItem value="FAIR">בינוני</MenuItem>
+                        <MenuItem value="FAIR">סביר</MenuItem>
                         <MenuItem value="NEEDS_RENOVATION">דורש שיפוץ</MenuItem>
                       </Select>
                     </FormControl>

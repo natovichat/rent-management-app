@@ -251,7 +251,7 @@ export default function OwnershipForm({
           variant="contained"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? 'שומר...' : ownership ? 'עדכן' : 'שומר'}
+          {mutation.isPending ? 'שומר...' : ownership ? 'עדכן' : 'הוסף'}
         </Button>
       </Box>
     </Box>

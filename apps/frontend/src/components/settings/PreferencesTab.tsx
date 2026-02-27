@@ -95,7 +95,7 @@ export default function PreferencesTab() {
         margin="normal"
       >
         <MenuItem value="he">עברית</MenuItem>
-        <MenuItem value="en">English</MenuItem>
+        <MenuItem value="en">אנגלית</MenuItem>
       </TextField>
 
       <TextField
