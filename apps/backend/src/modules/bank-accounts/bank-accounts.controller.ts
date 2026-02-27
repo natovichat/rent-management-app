@@ -6,22 +6,23 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
   HttpCode,
   HttpStatus,
-  Query,
-  Request,
 } from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { BankAccountsService } from './bank-accounts.service';
 import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
-import { BankAccountResponseDto } from './dto/bank-account-response.dto';
-// Hardcoded test account ID - authentication removed for simplification
-const HARDCODED_ACCOUNT_ID = 'test-account-1';
+import { QueryBankAccountDto } from './dto/query-bank-account.dto';
+import { BankAccountEntity } from './entities/bank-account.entity';
+import { BankAccountType } from './dto/create-bank-account.dto';
 
 @ApiTags('bank-accounts')
 @Controller('bank-accounts')
@@ -29,116 +30,114 @@ export class BankAccountsController {
   constructor(private readonly bankAccountsService: BankAccountsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'יצירת חשבון בנק חדש' })
+  @ApiOperation({ summary: 'Create a new bank account' })
   @ApiResponse({
     status: 201,
-    description: 'חשבון הבנק נוצר בהצלחה',
-    type: BankAccountResponseDto,
+    description: 'Bank account created successfully',
+    type: BankAccountEntity,
   })
-  @ApiResponse({ status: 409, description: 'חשבון בנק כבר קיים' })
-  create(
-    @Request() req: any,
-    @Body() createBankAccountDto: CreateBankAccountDto,
-  ): Promise<BankAccountResponseDto> {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    return this.bankAccountsService.create(accountId, createBankAccountDto);
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error - invalid input',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - bank account with same bankName and accountNumber already exists',
+  })
+  create(@Body() createBankAccountDto: CreateBankAccountDto) {
+    return this.bankAccountsService.create(createBankAccountDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'קבלת כל חשבונות הבנק' })
+  @ApiOperation({ summary: 'List bank accounts with pagination and filters' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number (1-based)' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page' })
+  @ApiQuery({ name: 'bankName', required: false, type: String, description: 'Filter by bank name (partial match)' })
+  @ApiQuery({ name: 'accountType', required: false, enum: BankAccountType, description: 'Filter by account type' })
+  @ApiQuery({ name: 'isActive', required: false, type: Boolean, description: 'Filter by active status' })
   @ApiResponse({
     status: 200,
-    description: 'רשימת חשבונות הבנק',
-    type: [BankAccountResponseDto],
+    description: 'Paginated list of bank accounts',
+    schema: {
+      type: 'object',
+      properties: {
+        data: { type: 'array', items: { $ref: '#/components/schemas/BankAccountEntity' } },
+        meta: {
+          type: 'object',
+          properties: {
+            page: { type: 'number', example: 1 },
+            limit: { type: 'number', example: 20 },
+            total: { type: 'number', example: 50 },
+            totalPages: { type: 'number', example: 3 },
+          },
+        },
+      },
+    },
   })
-  findAll(
-    @Request() req: any,
-    @Query('activeOnly') activeOnly?: boolean,
-  ): Promise<BankAccountResponseDto[]> {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    if (activeOnly === true || activeOnly === 'true' as any) {
-      return this.bankAccountsService.findAllActive(accountId);
-    }
-    return this.bankAccountsService.findAll(accountId);
+  findAll(@Query() query: QueryBankAccountDto) {
+    return this.bankAccountsService.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'קבלת חשבון בנק לפי ID' })
+  @ApiOperation({ summary: 'Get bank account by ID' })
+  @ApiParam({ name: 'id', description: 'Bank account UUID' })
   @ApiResponse({
     status: 200,
-    description: 'פרטי חשבון הבנק',
-    type: BankAccountResponseDto,
+    description: 'Bank account found',
+    type: BankAccountEntity,
   })
-  @ApiResponse({ status: 404, description: 'חשבון בנק לא נמצא' })
-  findOne(@Request() req: any, @Param('id') id: string): Promise<BankAccountResponseDto> {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    return this.bankAccountsService.findOne(id, accountId);
-  }
-
-  @Get(':id/mortgages')
-  @ApiOperation({ summary: 'קבלת משכנתאות המשויכות לחשבון בנק' })
   @ApiResponse({
-    status: 200,
-    description: 'רשימת משכנתאות',
+    status: 404,
+    description: 'Bank account not found',
   })
-  getMortgages(@Request() req: any, @Param('id') id: string) {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    return this.bankAccountsService.getMortgagesUsingAccount(id, accountId);
+  findOne(@Param('id') id: string) {
+    return this.bankAccountsService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'עדכון חשבון בנק' })
+  @ApiOperation({ summary: 'Update bank account' })
+  @ApiParam({ name: 'id', description: 'Bank account UUID' })
   @ApiResponse({
     status: 200,
-    description: 'חשבון הבנק עודכן בהצלחה',
-    type: BankAccountResponseDto,
+    description: 'Bank account updated successfully',
+    type: BankAccountEntity,
   })
-  @ApiResponse({ status: 404, description: 'חשבון בנק לא נמצא' })
-  @ApiResponse({ status: 409, description: 'חשבון בנק כבר קיים' })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Bank account not found',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Conflict - duplicate bankName and accountNumber',
+  })
   update(
-    @Request() req: any,
     @Param('id') id: string,
     @Body() updateBankAccountDto: UpdateBankAccountDto,
-  ): Promise<BankAccountResponseDto> {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    return this.bankAccountsService.update(id, accountId, updateBankAccountDto);
-  }
-
-  @Patch(':id/deactivate')
-  @ApiOperation({ summary: 'השבתת חשבון בנק' })
-  @ApiResponse({
-    status: 200,
-    description: 'חשבון הבנק הושבת בהצלחה',
-    type: BankAccountResponseDto,
-  })
-  deactivate(@Request() req: any, @Param('id') id: string): Promise<BankAccountResponseDto> {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    return this.bankAccountsService.deactivate(id, accountId);
-  }
-
-  @Patch(':id/activate')
-  @ApiOperation({ summary: 'הפעלת חשבון בנק' })
-  @ApiResponse({
-    status: 200,
-    description: 'חשבון הבנק הופעל בהצלחה',
-    type: BankAccountResponseDto,
-  })
-  activate(@Request() req: any, @Param('id') id: string): Promise<BankAccountResponseDto> {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    return this.bankAccountsService.activate(id, accountId);
+  ) {
+    return this.bankAccountsService.update(id, updateBankAccountDto);
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'מחיקת חשבון בנק' })
-  @ApiResponse({ status: 200, description: 'חשבון הבנק נמחק בהצלחה' })
-  @ApiResponse({ status: 404, description: 'חשבון בנק לא נמצא' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete bank account' })
+  @ApiParam({ name: 'id', description: 'Bank account UUID' })
+  @ApiResponse({
+    status: 204,
+    description: 'Bank account deleted successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Bank account not found',
+  })
   @ApiResponse({
     status: 409,
-    description: 'לא ניתן למחוק חשבון בנק המשויך למשכנתאות',
+    description: 'Conflict - bank account has linked mortgages',
   })
-  remove(@Request() req: any, @Param('id') id: string): Promise<void> {
-    const accountId = req.headers['x-account-id'] || HARDCODED_ACCOUNT_ID;
-    return this.bankAccountsService.remove(id, accountId);
+  async remove(@Param('id') id: string) {
+    await this.bankAccountsService.remove(id);
   }
 }

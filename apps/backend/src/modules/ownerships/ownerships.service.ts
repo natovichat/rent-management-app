@@ -6,332 +6,194 @@ import {
 import { PrismaService } from '../../database/prisma.service';
 import { CreateOwnershipDto } from './dto/create-ownership.dto';
 import { UpdateOwnershipDto } from './dto/update-ownership.dto';
-import { Decimal } from '@prisma/client/runtime/library';
+import { OwnershipType, Prisma } from '@prisma/client';
 
+const OWNERSHIP_INCLUDE = {
+  owner: true,
+  property: true,
+} as const;
+
+/**
+ * Service for managing ownerships (M:N junction between Owner and Property)
+ */
 @Injectable()
 export class OwnershipsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
-   * Get all ownerships for a property
+   * Create a new ownership for a property
    */
-  async findAllByProperty(propertyId: string, accountId: string) {
-    // Verify property belongs to account
-    const property = await this.prisma.property.findFirst({
-      where: { id: propertyId, accountId },
-    });
+  async create(propertyId: string, dto: CreateOwnershipDto) {
+    await this.ensurePropertyExists(propertyId);
+    await this.ensureOwnerExists(dto.ownerId);
 
-    if (!property) {
-      throw new NotFoundException(`Property with ID ${propertyId} not found`);
+    if (dto.ownershipPercentage < 0 || dto.ownershipPercentage > 100) {
+      throw new BadRequestException(
+        'ownershipPercentage must be between 0 and 100',
+      );
     }
 
-    const ownerships = await this.prisma.propertyOwnership.findMany({
-      where: {
+    return this.prisma.ownership.create({
+      data: {
         propertyId,
-        accountId,
+        ownerId: dto.ownerId,
+        ownershipPercentage: dto.ownershipPercentage,
+        ownershipType: dto.ownershipType as OwnershipType,
+        startDate: new Date(dto.startDate),
+        endDate: dto.endDate ? new Date(dto.endDate) : null,
+        managementFee: dto.managementFee ?? null,
+        familyDivision: dto.familyDivision ?? false,
+        notes: dto.notes ?? null,
       },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            type: true,
-          },
-        },
-        property: {
-          select: {
-            id: true,
-            address: true,
-            fileNumber: true,
-          },
-        },
-      },
-      orderBy: { startDate: 'desc' },
+      include: OWNERSHIP_INCLUDE,
     });
-
-    return ownerships;
   }
 
   /**
-   * Get a single ownership by ID
+   * Find all ownerships for a property (includes owner details)
    */
-  async findOne(id: string, accountId: string) {
-    const ownership = await this.prisma.propertyOwnership.findFirst({
-      where: { id, accountId },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            type: true,
-            email: true,
-            phone: true,
-          },
-        },
-        property: {
-          select: {
-            id: true,
-            address: true,
-            fileNumber: true,
-          },
-        },
-      },
+  async findByProperty(propertyId: string) {
+    await this.ensurePropertyExists(propertyId);
+
+    return this.prisma.ownership.findMany({
+      where: { propertyId },
+      include: OWNERSHIP_INCLUDE,
+      orderBy: { startDate: 'desc' },
+    });
+  }
+
+  /**
+   * Find all ownerships for an owner (includes property details)
+   */
+  async findByOwner(ownerId: string) {
+    await this.ensureOwnerExists(ownerId);
+
+    return this.prisma.ownership.findMany({
+      where: { ownerId },
+      include: OWNERSHIP_INCLUDE,
+      orderBy: { startDate: 'desc' },
+    });
+  }
+
+  /**
+   * Find one ownership by ID
+   */
+  async findOne(id: string) {
+    const ownership = await this.prisma.ownership.findUnique({
+      where: { id },
+      include: OWNERSHIP_INCLUDE,
     });
 
     if (!ownership) {
-      throw new NotFoundException(`Ownership with ID ${id} not found`);
+      throw new NotFoundException(`Ownership with id ${id} not found`);
     }
 
     return ownership;
   }
 
   /**
-   * Create a new ownership
+   * Validate total ownership percentage for a property (active ownerships only)
+   * Active = endDate is null or in the future
    */
-  async create(createOwnershipDto: CreateOwnershipDto, accountId: string) {
-    // Verify property belongs to account
-    const property = await this.prisma.property.findFirst({
-      where: { id: createOwnershipDto.propertyId, accountId },
+  async validateTotalOwnership(propertyId: string) {
+    await this.ensurePropertyExists(propertyId);
+
+    const now = new Date();
+    const activeOwnerships = await this.prisma.ownership.findMany({
+      where: {
+        propertyId,
+        OR: [{ endDate: null }, { endDate: { gt: now } }],
+      },
+      select: { ownershipPercentage: true },
     });
 
-    if (!property) {
-      throw new NotFoundException(
-        `Property with ID ${createOwnershipDto.propertyId} not found`,
-      );
-    }
-
-    // Verify owner belongs to account
-    const owner = await this.prisma.owner.findFirst({
-      where: { id: createOwnershipDto.ownerId, accountId },
-    });
-
-    if (!owner) {
-      throw new NotFoundException(
-        `Owner with ID ${createOwnershipDto.ownerId} not found`,
-      );
-    }
-
-    // Validate total percentage equals 100%
-    await this.validateTotalPercentage(
-      createOwnershipDto.propertyId,
-      accountId,
-      createOwnershipDto.ownershipPercentage,
+    const totalPercentage = activeOwnerships.reduce(
+      (sum, o) => sum + Number(o.ownershipPercentage),
+      0,
     );
 
-    const ownership = await this.prisma.propertyOwnership.create({
-      data: {
-        propertyId: createOwnershipDto.propertyId,
-        ownerId: createOwnershipDto.ownerId,
-        accountId,
-        ownershipPercentage: new Decimal(
-          createOwnershipDto.ownershipPercentage,
-        ),
-        ownershipType: createOwnershipDto.ownershipType,
-        startDate: new Date(createOwnershipDto.startDate),
-        endDate: createOwnershipDto.endDate
-          ? new Date(createOwnershipDto.endDate)
-          : null,
-        notes: createOwnershipDto.notes,
-      },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            type: true,
-          },
-        },
-        property: {
-          select: {
-            id: true,
-            address: true,
-            fileNumber: true,
-          },
-        },
-      },
-    });
+    const isValid = Math.abs(totalPercentage - 100) < 0.01; // Allow floating point tolerance
+    const message = isValid
+      ? `Total ownership is ${totalPercentage.toFixed(2)}%`
+      : `Total ownership is ${totalPercentage.toFixed(2)}% (expected 100%)`;
 
-    return ownership;
+    return {
+      isValid,
+      totalPercentage: Math.round(totalPercentage * 100) / 100,
+      message,
+    };
   }
 
   /**
    * Update an ownership
    */
-  async update(
-    id: string,
-    updateOwnershipDto: UpdateOwnershipDto,
-    accountId: string,
-  ) {
-    // Verify ownership exists and belongs to account
-    const existingOwnership = await this.prisma.propertyOwnership.findFirst({
-      where: { id, accountId },
-    });
+  async update(id: string, dto: UpdateOwnershipDto) {
+    await this.findOne(id);
 
-    if (!existingOwnership) {
-      throw new NotFoundException(`Ownership with ID ${id} not found`);
+    if (dto.ownerId !== undefined) {
+      await this.ensureOwnerExists(dto.ownerId);
     }
 
-    // If updating propertyId, verify it belongs to account
-    if (updateOwnershipDto.propertyId) {
-      const property = await this.prisma.property.findFirst({
-        where: { id: updateOwnershipDto.propertyId, accountId },
-      });
-
-      if (!property) {
-        throw new NotFoundException(
-          `Property with ID ${updateOwnershipDto.propertyId} not found`,
-        );
-      }
-    }
-
-    // If updating ownerId, verify it belongs to account
-    if (updateOwnershipDto.ownerId) {
-      const owner = await this.prisma.owner.findFirst({
-        where: { id: updateOwnershipDto.ownerId, accountId },
-      });
-
-      if (!owner) {
-        throw new NotFoundException(
-          `Owner with ID ${updateOwnershipDto.ownerId} not found`,
-        );
-      }
-    }
-
-    // Calculate new percentage for validation
-    const propertyIdToCheck =
-      updateOwnershipDto.propertyId || existingOwnership.propertyId;
-    const newPercentage =
-      updateOwnershipDto.ownershipPercentage !== undefined
-        ? updateOwnershipDto.ownershipPercentage
-        : existingOwnership.ownershipPercentage.toNumber();
-
-    // Validate total percentage equals 100% (excluding current ownership if updating percentage)
-    await this.validateTotalPercentage(
-      propertyIdToCheck,
-      accountId,
-      newPercentage,
-      id, // Exclude current ownership from calculation
-    );
-
-    const ownership = await this.prisma.propertyOwnership.update({
-      where: { id },
-      data: {
-        ...(updateOwnershipDto.propertyId && {
-          propertyId: updateOwnershipDto.propertyId,
-        }),
-        ...(updateOwnershipDto.ownerId && {
-          ownerId: updateOwnershipDto.ownerId,
-        }),
-        ...(updateOwnershipDto.ownershipPercentage !== undefined && {
-          ownershipPercentage: new Decimal(
-            updateOwnershipDto.ownershipPercentage,
-          ),
-        }),
-        ...(updateOwnershipDto.ownershipType && {
-          ownershipType: updateOwnershipDto.ownershipType,
-        }),
-        ...(updateOwnershipDto.startDate && {
-          startDate: new Date(updateOwnershipDto.startDate),
-        }),
-        ...(updateOwnershipDto.endDate !== undefined && {
-          endDate: updateOwnershipDto.endDate
-            ? new Date(updateOwnershipDto.endDate)
-            : null,
-        }),
-        ...(updateOwnershipDto.notes !== undefined && {
-          notes: updateOwnershipDto.notes,
-        }),
-      },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            name: true,
-            type: true,
-          },
-        },
-        property: {
-          select: {
-            id: true,
-            address: true,
-            fileNumber: true,
-          },
-        },
-      },
-    });
-
-    return ownership;
-  }
-
-  /**
-   * Delete an ownership
-   */
-  async remove(id: string, accountId: string) {
-    // Verify ownership exists and belongs to account
-    const ownership = await this.prisma.propertyOwnership.findFirst({
-      where: { id, accountId },
-    });
-
-    if (!ownership) {
-      throw new NotFoundException(`Ownership with ID ${id} not found`);
-    }
-
-    await this.prisma.propertyOwnership.delete({
-      where: { id },
-    });
-
-    return { message: 'Ownership deleted successfully' };
-  }
-
-  /**
-   * Validate that total ownership percentage equals 100%
-   * @param propertyId - Property ID to check
-   * @param accountId - Account ID for security
-   * @param newPercentage - New percentage being added/updated
-   * @param excludeOwnershipId - Optional ownership ID to exclude from calculation (for updates)
-   */
-  async validateTotalPercentage(
-    propertyId: string,
-    accountId: string,
-    newPercentage: number,
-    excludeOwnershipId?: string,
-  ): Promise<void> {
-    // Get all active ownerships for this property (excluding the one being updated if provided)
-    const where: any = {
-      propertyId,
-      accountId,
-      endDate: null, // Only active ownerships (no end date)
-    };
-
-    if (excludeOwnershipId) {
-      where.NOT = { id: excludeOwnershipId };
-    }
-
-    const existingOwnerships = await this.prisma.propertyOwnership.findMany({
-      where,
-      select: {
-        id: true,
-        ownershipPercentage: true,
-      },
-    });
-
-    // Calculate total percentage
-    const existingTotal = existingOwnerships.reduce(
-      (sum, ownership) => sum + ownership.ownershipPercentage.toNumber(),
-      0,
-    );
-
-    const totalPercentage = existingTotal + newPercentage;
-
-    // Validate total equals 100%
-    if (Math.abs(totalPercentage - 100) > 0.01) {
-      // Allow small floating point differences
+    if (
+      dto.ownershipPercentage !== undefined &&
+      (dto.ownershipPercentage < 0 || dto.ownershipPercentage > 100)
+    ) {
       throw new BadRequestException(
-        `Total ownership percentage must equal 100%. Current total: ${totalPercentage.toFixed(
-          2,
-        )}% (existing: ${existingTotal.toFixed(
-          2,
-        )}% + new: ${newPercentage.toFixed(2)}%)`,
+        'ownershipPercentage must be between 0 and 100',
+      );
+    }
+
+    const data: Prisma.OwnershipUpdateInput = {};
+    if (dto.ownerId !== undefined) data.owner = { connect: { id: dto.ownerId } };
+    if (dto.ownershipPercentage !== undefined)
+      data.ownershipPercentage = dto.ownershipPercentage;
+    if (dto.ownershipType !== undefined)
+      data.ownershipType = dto.ownershipType as OwnershipType;
+    if (dto.startDate !== undefined) data.startDate = new Date(dto.startDate);
+    if (dto.endDate !== undefined)
+      data.endDate = dto.endDate ? new Date(dto.endDate) : null;
+    if (dto.managementFee !== undefined)
+      data.managementFee = dto.managementFee ?? null;
+    if (dto.familyDivision !== undefined)
+      data.familyDivision = dto.familyDivision;
+    if (dto.notes !== undefined) data.notes = dto.notes ?? null;
+
+    return this.prisma.ownership.update({
+      where: { id },
+      data,
+      include: OWNERSHIP_INCLUDE,
+    });
+  }
+
+  /**
+   * Remove an ownership
+   */
+  async remove(id: string) {
+    await this.findOne(id);
+
+    await this.prisma.ownership.delete({
+      where: { id },
+    });
+  }
+
+  private async ensurePropertyExists(propertyId: string, message?: string) {
+    const property = await this.prisma.property.findUnique({
+      where: { id: propertyId },
+    });
+    if (!property) {
+      throw new NotFoundException(
+        message ?? `Property with id ${propertyId} not found`,
+      );
+    }
+  }
+
+  private async ensureOwnerExists(ownerId: string, message?: string) {
+    const owner = await this.prisma.owner.findUnique({
+      where: { id: ownerId },
+    });
+    if (!owner) {
+      throw new NotFoundException(
+        message ?? `Owner with id ${ownerId} not found`,
       );
     }
   }

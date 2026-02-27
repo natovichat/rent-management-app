@@ -1,75 +1,80 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { BankAccountType } from '@prisma/client';
 import {
   IsString,
-  IsNotEmpty,
   IsOptional,
   IsEnum,
   IsBoolean,
+  MinLength,
 } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+export enum BankAccountType {
+  TRUST_ACCOUNT = 'TRUST_ACCOUNT',
+  PERSONAL_CHECKING = 'PERSONAL_CHECKING',
+  PERSONAL_SAVINGS = 'PERSONAL_SAVINGS',
+  BUSINESS = 'BUSINESS',
+}
+
+export const BANK_ACCOUNT_TYPES = Object.values(BankAccountType);
+
+/**
+ * DTO for creating a bank account
+ */
 export class CreateBankAccountDto {
   @ApiProperty({
-    description: 'שם הבנק',
-    example: 'בנק הפועלים',
+    description: 'Bank name',
+    example: 'בנק לאומי',
   })
   @IsString()
-  @IsNotEmpty()
+  @MinLength(1, { message: 'bankName is required' })
   bankName: string;
 
-  @ApiProperty({
-    description: 'מספר סניף',
+  @ApiPropertyOptional({
+    description: 'Branch number',
     example: '689',
-    required: false,
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   branchNumber?: string;
 
   @ApiProperty({
-    description: 'מספר חשבון',
+    description: 'Account number',
     example: '123456',
   })
   @IsString()
-  @IsNotEmpty()
+  @MinLength(1, { message: 'accountNumber is required' })
   accountNumber: string;
 
   @ApiProperty({
-    description: 'סוג חשבון',
+    description: 'Account type',
     enum: BankAccountType,
-    example: BankAccountType.CHECKING,
-    default: BankAccountType.CHECKING,
-    required: false,
+    example: BankAccountType.PERSONAL_CHECKING,
   })
-  @IsEnum(BankAccountType)
-  @IsOptional()
-  accountType?: BankAccountType;
+  @IsEnum(BankAccountType, {
+    message: `accountType must be one of: ${BANK_ACCOUNT_TYPES.join(', ')}`,
+  })
+  accountType: BankAccountType;
 
-  @ApiProperty({
-    description: 'שם בעל החשבון',
+  @ApiPropertyOptional({
+    description: 'Account holder name',
     example: 'יוסי כהן',
-    required: false,
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   accountHolder?: string;
 
-  @ApiProperty({
-    description: 'הערות',
-    example: 'חשבון ראשי לתשלומי משכנתא',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Notes',
+    example: 'חשבון עיקרי',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
   notes?: string;
 
-  @ApiProperty({
-    description: 'האם החשבון פעיל',
-    example: true,
+  @ApiPropertyOptional({
+    description: 'Whether the account is active',
     default: true,
-    required: false,
   })
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   isActive?: boolean;
 }

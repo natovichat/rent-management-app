@@ -1,75 +1,92 @@
 import {
   IsString,
   IsOptional,
-  IsNotEmpty,
   IsEnum,
-  IsDateString,
+  IsBoolean,
   IsNumber,
+  IsDateString,
+  IsUUID,
   Min,
   Max,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { OwnershipType } from '@prisma/client';
 
+export const OWNERSHIP_TYPES = Object.values(OwnershipType);
+
+/**
+ * DTO for creating a new Ownership (M:N junction between Owner and Property)
+ */
 export class CreateOwnershipDto {
   @ApiProperty({
-    description: 'מזהה נכס',
-    example: 'uuid-of-property',
+    description: 'Owner UUID',
+    example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  @IsString()
-  @IsNotEmpty()
-  propertyId: string;
-
-  @ApiProperty({
-    description: 'מזהה בעלים',
-    example: 'uuid-of-owner',
-  })
-  @IsString()
-  @IsNotEmpty()
+  @IsUUID('4', { message: 'ownerId must be a valid UUID' })
   ownerId: string;
 
   @ApiProperty({
-    description: 'אחוז בעלות (0-100)',
-    example: 50.5,
+    description: 'Ownership percentage (0-100)',
+    example: 50,
     minimum: 0,
     maximum: 100,
   })
   @IsNumber()
-  @Min(0)
-  @Max(100)
+  @Min(0, { message: 'ownershipPercentage must be at least 0' })
+  @Max(100, { message: 'ownershipPercentage must not exceed 100' })
+  @Type(() => Number)
   ownershipPercentage: number;
 
   @ApiProperty({
-    description: 'סוג בעלות',
+    description: 'Ownership type',
     enum: OwnershipType,
-    example: OwnershipType.PARTIAL,
+    example: OwnershipType.REAL,
   })
-  @IsEnum(OwnershipType)
-  @IsNotEmpty()
+  @IsEnum(OwnershipType, {
+    message: `ownershipType must be one of: ${OWNERSHIP_TYPES.join(', ')}`,
+  })
   ownershipType: OwnershipType;
 
   @ApiProperty({
-    description: 'תאריך התחלה',
-    example: '2024-01-01T00:00:00Z',
+    description: 'Start date of ownership',
+    example: '2025-01-01',
   })
-  @IsDateString()
-  @IsNotEmpty()
+  @IsDateString({}, { message: 'startDate must be a valid ISO 8601 date string' })
   startDate: string;
 
-  @ApiProperty({
-    description: 'תאריך סיום (אופציונלי)',
-    example: '2025-01-01T00:00:00Z',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'End date of ownership (null = active)',
+    example: '2030-12-31',
   })
-  @IsDateString()
   @IsOptional()
+  @IsDateString({}, { message: 'endDate must be a valid ISO 8601 date string' })
   endDate?: string;
 
-  @ApiProperty({
-    description: 'הערות',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Management fee amount',
+    example: 500,
+    minimum: 0,
   })
-  @IsString()
   @IsOptional()
+  @IsNumber()
+  @Min(0, { message: 'managementFee must be at least 0' })
+  @Type(() => Number)
+  managementFee?: number;
+
+  @ApiPropertyOptional({
+    description: 'Whether this is a family division',
+    default: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  @Type(() => Boolean)
+  familyDivision?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Additional notes',
+  })
+  @IsOptional()
+  @IsString()
   notes?: string;
 }

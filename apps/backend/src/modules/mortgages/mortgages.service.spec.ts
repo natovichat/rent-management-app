@@ -4,57 +4,55 @@ import { MortgagesService } from './mortgages.service';
 import { PrismaService } from '../../database/prisma.service';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
-import { CreatePaymentDto } from './dto/create-payment.dto';
+import { QueryMortgageDto } from './dto/query-mortgage.dto';
 import { MortgageStatus } from '@prisma/client';
-import { Prisma } from '@prisma/client';
+
+const mockMortgage = {
+  id: '550e8400-e29b-41d4-a716-446655440000',
+  propertyId: '550e8400-e29b-41d4-a716-446655440001',
+  bank: 'בנק לאומי',
+  loanAmount: 1000000,
+  interestRate: 3.5,
+  monthlyPayment: 5000,
+  earlyRepaymentPenalty: 10000,
+  bankAccountId: '550e8400-e29b-41d4-a716-446655440002',
+  mortgageOwnerId: '550e8400-e29b-41d4-a716-446655440003',
+  payerId: '550e8400-e29b-41d4-a716-446655440004',
+  startDate: new Date('2025-01-01'),
+  endDate: new Date('2040-12-31'),
+  status: MortgageStatus.ACTIVE,
+  linkedProperties: [],
+  notes: 'Test mortgage',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  property: null,
+  bankAccount: null,
+  mortgageOwner: null,
+  payer: { id: '550e8400-e29b-41d4-a716-446655440004', name: 'John' },
+};
 
 describe('MortgagesService', () => {
   let service: MortgagesService;
-  let prismaService: PrismaService;
+  let prisma: PrismaService;
 
-  const mockPrismaService = {
-    property: {
-      findFirst: jest.fn(),
-      findMany: jest.fn(),
-    },
+  const mockPrisma = {
     mortgage: {
-      findMany: jest.fn(),
-      findFirst: jest.fn(),
       create: jest.fn(),
+      findMany: jest.fn(),
+      findUnique: jest.fn(),
+      count: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
     },
-    mortgagePayment: {
-      create: jest.fn(),
-      findMany: jest.fn(),
+    property: {
+      findUnique: jest.fn(),
     },
-  };
-
-  const mockAccountId = 'account-1';
-  const mockPropertyId = 'property-1';
-  const mockMortgageId = 'mortgage-1';
-
-  const mockProperty = {
-    id: mockPropertyId,
-    accountId: mockAccountId,
-    address: 'Test Address',
-  };
-
-  const mockMortgage = {
-    id: mockMortgageId,
-    propertyId: mockPropertyId,
-    accountId: mockAccountId,
-    bank: 'Bank Hapoalim',
-    loanAmount: new Prisma.Decimal(1000000),
-    interestRate: new Prisma.Decimal(3.5),
-    monthlyPayment: new Prisma.Decimal(5000),
-    startDate: new Date('2024-01-01'),
-    endDate: null,
-    status: MortgageStatus.ACTIVE,
-    linkedProperties: [],
-    notes: 'Test mortgage',
-    property: mockProperty,
-    payments: [],
+    bankAccount: {
+      findUnique: jest.fn(),
+    },
+    person: {
+      findUnique: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -63,401 +61,306 @@ describe('MortgagesService', () => {
         MortgagesService,
         {
           provide: PrismaService,
-          useValue: mockPrismaService,
+          useValue: mockPrisma,
         },
       ],
     }).compile();
 
     service = module.get<MortgagesService>(MortgagesService);
-    prismaService = module.get<PrismaService>(PrismaService);
+    prisma = module.get<PrismaService>(PrismaService);
 
     jest.clearAllMocks();
   });
 
-  describe('findAll', () => {
-    it('should return all mortgages for an account', async () => {
-      const mockMortgages = [mockMortgage];
-      mockPrismaService.mortgage.findMany.mockResolvedValue(mockMortgages);
-
-      const result = await service.findAll(mockAccountId);
-
-      expect(result).toEqual(mockMortgages);
-      expect(prismaService.mortgage.findMany).toHaveBeenCalledWith({
-        where: { accountId: mockAccountId },
-        include: {
-          property: true,
-          payments: {
-            orderBy: {
-              paymentDate: 'desc',
-            },
-          },
-        },
-        orderBy: {
-          startDate: 'desc',
-        },
-      });
-    });
-
-    it('should return empty array when no mortgages exist', async () => {
-      mockPrismaService.mortgage.findMany.mockResolvedValue([]);
-
-      const result = await service.findAll(mockAccountId);
-
-      expect(result).toEqual([]);
-    });
-
-    it('should enforce account isolation', async () => {
-      const otherAccountId = 'account-2';
-      mockPrismaService.mortgage.findMany.mockResolvedValue([]);
-
-      await service.findAll(otherAccountId);
-
-      expect(prismaService.mortgage.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { accountId: otherAccountId },
-        }),
-      );
-    });
-  });
-
-  describe('findAllByProperty', () => {
-    it('should return all mortgages for a property', async () => {
-      const mockMortgages = [mockMortgage];
-      mockPrismaService.property.findFirst.mockResolvedValue(mockProperty);
-      mockPrismaService.mortgage.findMany.mockResolvedValue(mockMortgages);
-
-      const result = await service.findAllByProperty(
-        mockPropertyId,
-        mockAccountId,
-      );
-
-      expect(result).toEqual(mockMortgages);
-      expect(prismaService.property.findFirst).toHaveBeenCalledWith({
-        where: {
-          id: mockPropertyId,
-          accountId: mockAccountId,
-        },
-      });
-      expect(prismaService.mortgage.findMany).toHaveBeenCalledWith({
-        where: {
-          propertyId: mockPropertyId,
-          accountId: mockAccountId,
-        },
-        include: {
-          property: true,
-          payments: {
-            orderBy: {
-              paymentDate: 'desc',
-            },
-          },
-        },
-        orderBy: {
-          startDate: 'desc',
-        },
-      });
-    });
-
-    it('should throw NotFoundException when property not found', async () => {
-      mockPrismaService.property.findFirst.mockResolvedValue(null);
-
-      await expect(
-        service.findAllByProperty(mockPropertyId, mockAccountId),
-      ).rejects.toThrow(NotFoundException);
-    });
+  it('should be defined', () => {
+    expect(service).toBeDefined();
   });
 
   describe('create', () => {
-    const createDto: CreateMortgageDto = {
-      propertyId: mockPropertyId,
-      bank: 'Bank Hapoalim',
-      loanAmount: 1000000,
-      interestRate: 3.5,
-      monthlyPayment: 5000,
-      startDate: '2024-01-01T00:00:00Z',
-      status: MortgageStatus.ACTIVE,
-      notes: 'Test mortgage',
-    };
-
-    it('should create a mortgage with property validation', async () => {
-      mockPrismaService.property.findFirst.mockResolvedValue(mockProperty);
-      mockPrismaService.mortgage.create.mockResolvedValue(mockMortgage);
-
-      const result = await service.create(createDto, mockAccountId);
-
-      expect(result).toEqual(mockMortgage);
-      expect(prismaService.property.findFirst).toHaveBeenCalledWith({
-        where: {
-          id: createDto.propertyId,
-          accountId: mockAccountId,
-        },
-      });
-      expect(prismaService.mortgage.create).toHaveBeenCalled();
-    });
-
-    it('should throw NotFoundException when property not found', async () => {
-      mockPrismaService.property.findFirst.mockResolvedValue(null);
-
-      await expect(
-        service.create(createDto, mockAccountId),
-      ).rejects.toThrow(NotFoundException);
-    });
-
-    it('should validate linked properties if provided', async () => {
-      const linkedPropertyId = 'property-2';
-      const linkedProperty = {
-        id: linkedPropertyId,
-        accountId: mockAccountId,
-        address: 'Linked Property',
-      };
-      const dtoWithLinked = {
-        ...createDto,
-        linkedProperties: [linkedPropertyId],
-      };
-
-      mockPrismaService.property.findFirst.mockResolvedValue(mockProperty);
-      mockPrismaService.property.findMany.mockResolvedValue([linkedProperty]);
-      mockPrismaService.mortgage.create.mockResolvedValue({
-        ...mockMortgage,
-        linkedProperties: [linkedPropertyId],
-      });
-
-      const result = await service.create(dtoWithLinked, mockAccountId);
-
-      expect(prismaService.property.findMany).toHaveBeenCalledWith({
-        where: {
-          id: { in: [linkedPropertyId] },
-          accountId: mockAccountId,
-        },
-      });
-      expect(result.linkedProperties).toEqual([linkedPropertyId]);
-    });
-
-    it('should throw BadRequestException when linked property not found', async () => {
-      const dtoWithLinked = {
-        ...createDto,
-        linkedProperties: ['non-existent-property'],
-      };
-
-      mockPrismaService.property.findFirst.mockResolvedValue(mockProperty);
-      mockPrismaService.property.findMany.mockResolvedValue([]);
-
-      await expect(
-        service.create(dtoWithLinked, mockAccountId),
-      ).rejects.toThrow(BadRequestException);
-    });
-
-    it('should handle optional fields', async () => {
-      const dtoMinimal = {
-        propertyId: mockPropertyId,
-        bank: 'Bank Hapoalim',
+    it('should create a mortgage', async () => {
+      const dto: CreateMortgageDto = {
+        bank: 'בנק לאומי',
         loanAmount: 1000000,
-        startDate: '2024-01-01T00:00:00Z',
+        payerId: '550e8400-e29b-41d4-a716-446655440004',
+        startDate: '2025-01-01',
         status: MortgageStatus.ACTIVE,
       };
 
-      mockPrismaService.property.findFirst.mockResolvedValue(mockProperty);
-      mockPrismaService.mortgage.create.mockResolvedValue(mockMortgage);
+      mockPrisma.person.findUnique.mockResolvedValue({ id: dto.payerId });
+      mockPrisma.mortgage.create.mockResolvedValue(mockMortgage);
 
-      await service.create(dtoMinimal, mockAccountId);
+      const result = await service.create(dto);
 
-      expect(prismaService.mortgage.create).toHaveBeenCalledWith({
+      expect(mockPrisma.person.findUnique).toHaveBeenCalledWith({
+        where: { id: dto.payerId },
+      });
+      expect(mockPrisma.mortgage.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          interestRate: null,
-          monthlyPayment: null,
+          bank: dto.bank,
+          loanAmount: dto.loanAmount,
+          startDate: new Date(dto.startDate),
+          status: dto.status,
           linkedProperties: [],
         }),
-        include: {
-          property: true,
-          payments: true,
-        },
+        include: expect.any(Object),
       });
+      expect(result).toEqual(mockMortgage);
     });
-  });
 
-  describe('addPayment', () => {
-    const createPaymentDto: CreatePaymentDto = {
-      paymentDate: '2024-02-01T00:00:00Z',
-      amount: 5000,
-      principal: 3000,
-      interest: 2000,
-      notes: 'Monthly payment',
-    };
-
-    it('should add a payment to a mortgage', async () => {
-      const mockPayment = {
-        id: 'payment-1',
-        mortgageId: mockMortgageId,
-        accountId: mockAccountId,
-        paymentDate: new Date(createPaymentDto.paymentDate),
-        amount: new Prisma.Decimal(createPaymentDto.amount),
-        principal: new Prisma.Decimal(createPaymentDto.principal!),
-        interest: new Prisma.Decimal(createPaymentDto.interest!),
-        notes: createPaymentDto.notes,
-        mortgage: mockMortgage,
+    it('should validate payer exists', async () => {
+      const dto: CreateMortgageDto = {
+        bank: 'בנק לאומי',
+        loanAmount: 1000000,
+        payerId: 'non-existent-payer',
+        startDate: '2025-01-01',
+        status: MortgageStatus.ACTIVE,
       };
 
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(mockMortgage);
-      mockPrismaService.mortgagePayment.create.mockResolvedValue(mockPayment);
+      mockPrisma.person.findUnique.mockResolvedValue(null);
 
-      const result = await service.addPayment(
-        mockMortgageId,
-        createPaymentDto,
-        mockAccountId,
-      );
-
-      expect(result).toEqual(mockPayment);
-      expect(prismaService.mortgage.findFirst).toHaveBeenCalledWith({
-        where: { id: mockMortgageId, accountId: mockAccountId },
-        include: {
-          property: true,
-          payments: {
-            orderBy: {
-              paymentDate: 'desc',
-            },
-          },
-        },
-      });
-      expect(prismaService.mortgagePayment.create).toHaveBeenCalled();
+      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(/payer.*not found/);
+      expect(mockPrisma.mortgage.create).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when mortgage not found', async () => {
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(null);
-
-      await expect(
-        service.addPayment(mockMortgageId, createPaymentDto, mockAccountId),
-      ).rejects.toThrow(NotFoundException);
-    });
-
-    it('should handle payment without principal and interest', async () => {
-      const paymentDtoWithoutBreakdown = {
-        paymentDate: '2024-02-01T00:00:00Z',
-        amount: 5000,
-        notes: 'Payment without breakdown',
+    it('should validate property exists when provided', async () => {
+      const dto: CreateMortgageDto = {
+        bank: 'בנק לאומי',
+        loanAmount: 1000000,
+        payerId: '550e8400-e29b-41d4-a716-446655440004',
+        propertyId: 'non-existent-property',
+        startDate: '2025-01-01',
+        status: MortgageStatus.ACTIVE,
       };
 
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(mockMortgage);
-      mockPrismaService.mortgagePayment.create.mockResolvedValue({
-        id: 'payment-1',
-        principal: null,
-        interest: null,
+      mockPrisma.person.findUnique.mockResolvedValue({ id: dto.payerId });
+      mockPrisma.property.findUnique.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(/Property.*not found/);
+      expect(mockPrisma.mortgage.create).not.toHaveBeenCalled();
+    });
+
+    it('should create mortgage with all optional fields', async () => {
+      const dto: CreateMortgageDto = {
+        bank: 'בנק הפועלים',
+        loanAmount: 500000,
+        payerId: '550e8400-e29b-41d4-a716-446655440004',
+        propertyId: '550e8400-e29b-41d4-a716-446655440001',
+        bankAccountId: '550e8400-e29b-41d4-a716-446655440002',
+        mortgageOwnerId: '550e8400-e29b-41d4-a716-446655440003',
+        startDate: '2025-01-01',
+        endDate: '2040-12-31',
+        status: MortgageStatus.ACTIVE,
+        interestRate: 3.5,
+        monthlyPayment: 2500,
+        earlyRepaymentPenalty: 5000,
+        linkedProperties: ['550e8400-e29b-41d4-a716-446655440001'],
+        notes: 'Full mortgage',
+      };
+
+      mockPrisma.person.findUnique.mockResolvedValue({ id: dto.payerId });
+      mockPrisma.property.findUnique.mockResolvedValue({ id: dto.propertyId });
+      mockPrisma.bankAccount.findUnique.mockResolvedValue({
+        id: dto.bankAccountId,
       });
+      mockPrisma.person.findUnique
+        .mockResolvedValueOnce({ id: dto.payerId })
+        .mockResolvedValueOnce({ id: dto.mortgageOwnerId });
+      mockPrisma.mortgage.create.mockResolvedValue(mockMortgage);
 
-      await service.addPayment(
-        mockMortgageId,
-        paymentDtoWithoutBreakdown,
-        mockAccountId,
-      );
+      await service.create(dto);
 
-      expect(prismaService.mortgagePayment.create).toHaveBeenCalledWith({
+      expect(mockPrisma.mortgage.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          principal: null,
-          interest: null,
+          bank: dto.bank,
+          loanAmount: dto.loanAmount,
+          interestRate: dto.interestRate,
+          monthlyPayment: dto.monthlyPayment,
+          earlyRepaymentPenalty: dto.earlyRepaymentPenalty,
+          linkedProperties: dto.linkedProperties,
+          notes: dto.notes,
         }),
-        include: {
-          mortgage: {
-            include: {
-              property: true,
-            },
-          },
-        },
+        include: expect.any(Object),
       });
     });
   });
 
-  describe('calculateRemainingBalance', () => {
-    it('should calculate remaining balance correctly', async () => {
-      const mockPayments = [
-        {
-          principal: new Prisma.Decimal(100000),
+  describe('findAll', () => {
+    it('should return paginated mortgages', async () => {
+      mockPrisma.mortgage.findMany.mockResolvedValue([mockMortgage]);
+      mockPrisma.mortgage.count.mockResolvedValue(1);
+
+      const query: QueryMortgageDto = { page: 1, limit: 20 };
+      const result = await service.findAll(query);
+
+      expect(result).toEqual({
+        data: [mockMortgage],
+        meta: {
+          page: 1,
+          limit: 20,
+          total: 1,
+          totalPages: 1,
         },
-        {
-          principal: new Prisma.Decimal(50000),
-        },
-      ];
-
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(mockMortgage);
-      mockPrismaService.mortgagePayment.findMany.mockResolvedValue(mockPayments);
-
-      const result = await service.calculateRemainingBalance(
-        mockMortgageId,
-        mockAccountId,
-      );
-
-      expect(result).toMatchObject({
-        mortgageId: mockMortgageId,
-        loanAmount: 1000000,
-        totalPrincipalPaid: 150000,
-        remainingBalance: 850000,
-        totalPayments: 2,
       });
+      expect(mockPrisma.mortgage.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          skip: 0,
+          take: 20,
+          orderBy: { createdAt: 'desc' },
+        }),
+      );
     });
 
-    it('should return loan amount when no payments exist', async () => {
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(mockMortgage);
-      mockPrismaService.mortgagePayment.findMany.mockResolvedValue([]);
+    it('should filter by status when provided', async () => {
+      mockPrisma.mortgage.findMany.mockResolvedValue([]);
+      mockPrisma.mortgage.count.mockResolvedValue(0);
 
-      const result = await service.calculateRemainingBalance(
-        mockMortgageId,
-        mockAccountId,
+      await service.findAll({ status: MortgageStatus.ACTIVE });
+
+      expect(mockPrisma.mortgage.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { status: MortgageStatus.ACTIVE },
+        }),
       );
-
-      expect(result).toMatchObject({
-        loanAmount: 1000000,
-        totalPrincipalPaid: 0,
-        remainingBalance: 1000000,
-        totalPayments: 0,
-      });
     });
 
-    it('should only consider payments with principal', async () => {
-      const mockPayments = [
-        {
-          principal: new Prisma.Decimal(100000),
-        },
-        {
-          principal: null, // Should be ignored
-        },
-        {
-          principal: new Prisma.Decimal(50000),
-        },
-      ];
+    it('should filter by propertyId when provided', async () => {
+      mockPrisma.mortgage.findMany.mockResolvedValue([]);
+      mockPrisma.mortgage.count.mockResolvedValue(0);
 
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(mockMortgage);
-      mockPrismaService.mortgagePayment.findMany.mockResolvedValue(mockPayments);
+      await service.findAll({
+        propertyId: '550e8400-e29b-41d4-a716-446655440001',
+      });
 
-      const result = await service.calculateRemainingBalance(
-        mockMortgageId,
-        mockAccountId,
+      expect(mockPrisma.mortgage.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            OR: [
+              { propertyId: '550e8400-e29b-41d4-a716-446655440001' },
+              { linkedProperties: { has: '550e8400-e29b-41d4-a716-446655440001' } },
+            ],
+          },
+        }),
       );
+    });
+  });
 
-      expect(result.totalPrincipalPaid).toBe(150000);
-      expect(result.totalPayments).toBe(3); // All payments counted, but only principal ones summed
+  describe('findOne', () => {
+    it('should return mortgage when found', async () => {
+      mockPrisma.mortgage.findUnique.mockResolvedValue(mockMortgage);
+
+      const result = await service.findOne(mockMortgage.id);
+
+      expect(result).toEqual(mockMortgage);
+      expect(mockPrisma.mortgage.findUnique).toHaveBeenCalledWith({
+        where: { id: mockMortgage.id },
+        include: expect.any(Object),
+      });
     });
 
     it('should throw NotFoundException when mortgage not found', async () => {
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(null);
+      mockPrisma.mortgage.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.calculateRemainingBalance(mockMortgageId, mockAccountId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.findOne('non-existent-id')).rejects.toThrow(
+        NotFoundException,
+      );
+      await expect(service.findOne('non-existent-id')).rejects.toThrow(
+        'Mortgage with ID non-existent-id not found',
+      );
+    });
+  });
+
+  describe('findByProperty', () => {
+    it('should return mortgages for property', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue({ id: 'prop-1' });
+      mockPrisma.mortgage.findMany.mockResolvedValue([mockMortgage]);
+
+      const result = await service.findByProperty('prop-1');
+
+      expect(result).toEqual([mockMortgage]);
+      expect(mockPrisma.property.findUnique).toHaveBeenCalledWith({
+        where: { id: 'prop-1' },
+      });
+      expect(mockPrisma.mortgage.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { propertyId: 'prop-1' },
+            { linkedProperties: { has: 'prop-1' } },
+          ],
+        },
+        orderBy: { createdAt: 'desc' },
+        include: expect.any(Object),
+      });
     });
 
-    it('should filter payments by mortgageId and accountId', async () => {
-      mockPrismaService.mortgage.findFirst.mockResolvedValue(mockMortgage);
-      mockPrismaService.mortgagePayment.findMany.mockResolvedValue([]);
+    it('should throw NotFoundException when property not found', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue(null);
 
-      await service.calculateRemainingBalance(mockMortgageId, mockAccountId);
+      await expect(service.findByProperty('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
+      await expect(service.findByProperty('non-existent')).rejects.toThrow(
+        'Property with ID non-existent not found',
+      );
+      expect(mockPrisma.mortgage.findMany).not.toHaveBeenCalled();
+    });
+  });
 
-      expect(prismaService.mortgagePayment.findMany).toHaveBeenCalledWith({
-        where: {
-          mortgageId: mockMortgageId,
-          accountId: mockAccountId,
-          principal: { not: null },
-        },
-        select: {
-          principal: true,
-        },
+  describe('update', () => {
+    it('should update mortgage', async () => {
+      const updateDto: UpdateMortgageDto = {
+        bank: 'בנק מזרחי',
+        notes: 'Updated',
+      };
+      const updated = { ...mockMortgage, ...updateDto };
+
+      mockPrisma.mortgage.findUnique.mockResolvedValue(mockMortgage);
+      mockPrisma.mortgage.update.mockResolvedValue(updated);
+
+      const result = await service.update(mockMortgage.id, updateDto);
+
+      expect(mockPrisma.mortgage.update).toHaveBeenCalledWith({
+        where: { id: mockMortgage.id },
+        data: expect.objectContaining({
+          bank: updateDto.bank,
+          notes: updateDto.notes,
+        }),
+        include: expect.any(Object),
       });
+      expect(result).toEqual(updated);
+    });
+
+    it('should throw NotFoundException when updating non-existent mortgage', async () => {
+      mockPrisma.mortgage.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.update('non-existent-id', { bank: 'Test' }),
+      ).rejects.toThrow(NotFoundException);
+      expect(mockPrisma.mortgage.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('remove', () => {
+    it('should delete mortgage', async () => {
+      mockPrisma.mortgage.findUnique.mockResolvedValue(mockMortgage);
+      mockPrisma.mortgage.delete.mockResolvedValue(mockMortgage);
+
+      const result = await service.remove(mockMortgage.id);
+
+      expect(mockPrisma.mortgage.delete).toHaveBeenCalledWith({
+        where: { id: mockMortgage.id },
+      });
+      expect(result).toEqual(mockMortgage);
+    });
+
+    it('should throw NotFoundException when mortgage not found', async () => {
+      mockPrisma.mortgage.findUnique.mockResolvedValue(null);
+
+      await expect(service.remove('non-existent-id')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(mockPrisma.mortgage.delete).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,32 +1,82 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { PrismaService } from '../../database/prisma.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import {
-  PropertyType,
-  PropertyStatus,
-  AcquisitionMethod,
-  LegalStatus,
-  PropertyCondition,
-  LandType,
-  ManagementFeeFrequency,
-  TaxFrequency,
-  EstimationSource,
-} from '@prisma/client';
+import { QueryPropertyDto } from './dto/query-property.dto';
+import { PropertyType, PropertyStatus } from '@prisma/client';
+
+const mockProperty = {
+  id: '550e8400-e29b-41d4-a716-446655440000',
+  address: 'רחוב הרצל 15, תל אביב',
+  fileNumber: '12345',
+  type: PropertyType.RESIDENTIAL,
+  status: PropertyStatus.OWNED,
+  country: 'Israel',
+  city: 'תל אביב',
+  totalArea: null,
+  landArea: null,
+  estimatedValue: null,
+  lastValuationDate: null,
+  gush: null,
+  helka: null,
+  isMortgaged: false,
+  floors: null,
+  totalUnits: null,
+  parkingSpaces: null,
+  balconySizeSqm: null,
+  storageSizeSqm: null,
+  parkingType: null,
+  purchasePrice: null,
+  purchaseDate: null,
+  acquisitionMethod: null,
+  estimatedRent: null,
+  rentalIncome: null,
+  projectedValue: null,
+  saleProjectedTax: null,
+  cadastralNumber: null,
+  taxId: null,
+  registrationDate: null,
+  legalStatus: null,
+  constructionYear: null,
+  lastRenovationYear: null,
+  buildingPermitNumber: null,
+  propertyCondition: null,
+  landType: null,
+  landDesignation: null,
+  isPartialOwnership: false,
+  sharedOwnershipPercentage: null,
+  isSold: false,
+  saleDate: null,
+  salePrice: null,
+  propertyManager: null,
+  managementCompany: null,
+  managementFees: null,
+  managementFeeFrequency: null,
+  taxAmount: null,
+  taxFrequency: null,
+  lastTaxPayment: null,
+  insuranceDetails: null,
+  insuranceExpiry: null,
+  zoning: null,
+  utilities: null,
+  restrictions: null,
+  estimationSource: null,
+  notes: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
 
 describe('PropertiesService', () => {
   let service: PropertiesService;
   let prisma: PrismaService;
-  let testAccountId: string;
-  let testPropertyId: string;
 
-  const mockPrismaService = {
+  const mockPrisma = {
     property: {
       create: jest.fn(),
       findMany: jest.fn(),
-      findFirst: jest.fn(),
+      findUnique: jest.fn(),
       count: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -39,7 +89,7 @@ describe('PropertiesService', () => {
         PropertiesService,
         {
           provide: PrismaService,
-          useValue: mockPrismaService,
+          useValue: mockPrisma,
         },
       ],
     }).compile();
@@ -47,306 +97,327 @@ describe('PropertiesService', () => {
     service = module.get<PropertiesService>(PropertiesService);
     prisma = module.get<PrismaService>(PrismaService);
 
-    testAccountId = 'test-account-id';
-    testPropertyId = 'test-property-id';
-
-    // Reset mocks
     jest.clearAllMocks();
   });
 
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+
   describe('create', () => {
-    const createDto: CreatePropertyDto = {
-      address: 'Test Address',
-      type: PropertyType.RESIDENTIAL,
-      status: PropertyStatus.OWNED,
-    };
-
-    it('should create a property successfully', async () => {
-      const mockProperty = {
-        id: testPropertyId,
-        accountId: testAccountId,
-        ...createDto,
-        _count: { units: 0 },
+    it('should create a property with minimal required fields', async () => {
+      const dto: CreatePropertyDto = {
+        address: 'רחוב הרצל 15, תל אביב',
       };
 
-      mockPrismaService.property.create.mockResolvedValue(mockProperty);
+      mockPrisma.property.create.mockResolvedValue(mockProperty);
 
-      const result = await service.create(testAccountId, createDto);
+      const result = await service.create(dto);
 
-      expect(result).toEqual({
-        ...mockProperty,
-        unitCount: 0,
+      expect(mockPrisma.property.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          address: dto.address,
+        }),
       });
-      expect(mockPrismaService.property.create).toHaveBeenCalledWith({
-        data: {
-          accountId: testAccountId,
-          ...createDto,
-        },
-        include: {
-          _count: {
-            select: { units: true },
-          },
-        },
+      expect(result).toEqual(mockProperty);
+    });
+
+    it('should create property with all optional fields', async () => {
+      const dto: CreatePropertyDto = {
+        address: 'רחוב הרצל 15, תל אביב',
+        fileNumber: '12345',
+        type: PropertyType.RESIDENTIAL,
+        status: PropertyStatus.OWNED,
+        city: 'תל אביב',
+        totalArea: 120.5,
+        estimatedValue: 1500000,
+      };
+
+      const created = { ...mockProperty, ...dto };
+      mockPrisma.property.create.mockResolvedValue(created);
+
+      const result = await service.create(dto);
+
+      expect(mockPrisma.property.create).toHaveBeenCalledWith({
+        data: expect.objectContaining({
+          address: dto.address,
+          fileNumber: dto.fileNumber,
+          type: dto.type,
+          status: dto.status,
+          city: dto.city,
+          totalArea: dto.totalArea,
+          estimatedValue: dto.estimatedValue,
+        }),
       });
-    });
-
-    it('should throw BadRequestException when acquisitionDate > saleDate', async () => {
-      const invalidDto: CreatePropertyDto = {
-        address: 'Test Address',
-        acquisitionDate: '2023-06-15T00:00:00.000Z',
-        saleDate: '2020-01-15T00:00:00.000Z',
-      };
-
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        'תאריך רכישה חייב להיות לפני או שווה לתאריך מכירה',
-      );
-    });
-
-    it('should throw BadRequestException when landArea > totalArea', async () => {
-      const invalidDto: CreatePropertyDto = {
-        address: 'Test Address',
-        landArea: 200,
-        totalArea: 100,
-      };
-
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        'שטח קרקע לא יכול להיות גדול משטח כולל',
-      );
-    });
-
-    it('should throw BadRequestException when sharedOwnershipPercentage < 0', async () => {
-      const invalidDto: CreatePropertyDto = {
-        address: 'Test Address',
-        sharedOwnershipPercentage: -1,
-      };
-
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException when sharedOwnershipPercentage > 100', async () => {
-      const invalidDto: CreatePropertyDto = {
-        address: 'Test Address',
-        sharedOwnershipPercentage: 101,
-      };
-
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-
-    it('should throw BadRequestException when isSold=true but saleDate is missing', async () => {
-      const invalidDto: CreatePropertyDto = {
-        address: 'Test Address',
-        isSold: true,
-      };
-
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        'נכס שנמכר חייב לכלול תאריך מכירה',
-      );
-    });
-
-    it('should throw BadRequestException when isPartialOwnership=true but sharedOwnershipPercentage is missing', async () => {
-      const invalidDto: CreatePropertyDto = {
-        address: 'Test Address',
-        isPartialOwnership: true,
-      };
-
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        BadRequestException,
-      );
-      await expect(service.create(testAccountId, invalidDto)).rejects.toThrow(
-        'נכס בבעלות חלקית חייב לכלול אחוז בעלות משותפת',
-      );
-    });
-
-    it('should accept valid business rules', async () => {
-      const validDto: CreatePropertyDto = {
-        address: 'Test Address',
-        acquisitionDate: '2020-01-15T00:00:00.000Z',
-        saleDate: '2023-06-15T00:00:00.000Z',
-        landArea: 100,
-        totalArea: 200,
-        sharedOwnershipPercentage: 50.5,
-        isSold: true,
-        isPartialOwnership: true,
-      };
-
-      const mockProperty = {
-        id: testPropertyId,
-        accountId: testAccountId,
-        ...validDto,
-        _count: { units: 0 },
-      };
-
-      mockPrismaService.property.create.mockResolvedValue(mockProperty);
-
-      const result = await service.create(testAccountId, validDto);
-      expect(result).toBeDefined();
+      expect(result.type).toBe(PropertyType.RESIDENTIAL);
     });
   });
 
-  describe('update', () => {
-    const existingProperty = {
-      id: testPropertyId,
-      accountId: testAccountId,
-      address: 'Existing Address',
-      acquisitionDate: new Date('2020-01-15'),
-      saleDate: null,
-      landArea: 100,
-      totalArea: 200,
-      isPartialOwnership: false,
-      sharedOwnershipPercentage: null,
-    };
+  describe('findAll', () => {
+    it('should return paginated properties', async () => {
+      mockPrisma.property.findMany.mockResolvedValue([mockProperty]);
+      mockPrisma.property.count.mockResolvedValue(1);
 
-    beforeEach(() => {
-      mockPrismaService.property.findFirst.mockResolvedValue(existingProperty);
-    });
-
-    it('should update property successfully', async () => {
-      const updateDto: UpdatePropertyDto = {
-        address: 'Updated Address',
-      };
-
-      const updatedProperty = {
-        ...existingProperty,
-        ...updateDto,
-        _count: { units: 0 },
-      };
-
-      mockPrismaService.property.update.mockResolvedValue(updatedProperty);
-
-      const result = await service.update(testPropertyId, testAccountId, updateDto);
+      const query: QueryPropertyDto = { page: 1, limit: 10 };
+      const result = await service.findAll(query);
 
       expect(result).toEqual({
-        ...updatedProperty,
-        unitCount: 0,
+        data: [mockProperty],
+        meta: {
+          page: 1,
+          limit: 10,
+          total: 1,
+          totalPages: 1,
+        },
       });
+      expect(mockPrisma.property.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          skip: 0,
+          take: 10,
+          orderBy: { address: 'asc' },
+        }),
+      );
     });
 
-    it('should throw NotFoundException when property does not exist', async () => {
-      mockPrismaService.property.findFirst.mockResolvedValue(null);
+    it('should filter by type when type is provided', async () => {
+      mockPrisma.property.findMany.mockResolvedValue([]);
+      mockPrisma.property.count.mockResolvedValue(0);
 
-      await expect(
-        service.update(testPropertyId, testAccountId, { address: 'Updated' }),
-      ).rejects.toThrow(NotFoundException);
+      await service.findAll({ type: PropertyType.COMMERCIAL });
+
+      expect(mockPrisma.property.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { type: PropertyType.COMMERCIAL },
+        }),
+      );
     });
 
-    it('should validate business rules on update', async () => {
-      const invalidUpdate: UpdatePropertyDto = {
-        acquisitionDate: '2023-06-15T00:00:00.000Z',
-        saleDate: '2020-01-15T00:00:00.000Z',
-      };
+    it('should filter by status when status is provided', async () => {
+      mockPrisma.property.findMany.mockResolvedValue([]);
+      mockPrisma.property.count.mockResolvedValue(0);
 
-      await expect(
-        service.update(testPropertyId, testAccountId, invalidUpdate),
-      ).rejects.toThrow(BadRequestException);
+      await service.findAll({ status: PropertyStatus.INVESTMENT });
+
+      expect(mockPrisma.property.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { status: PropertyStatus.INVESTMENT },
+        }),
+      );
     });
 
-    it('should validate combined existing and new values', async () => {
-      const updateDto: UpdatePropertyDto = {
-        saleDate: '2019-01-15T00:00:00.000Z', // Before existing acquisitionDate (2020-01-15)
-      };
+    it('should search by address, city, country when search is provided', async () => {
+      mockPrisma.property.findMany.mockResolvedValue([]);
+      mockPrisma.property.count.mockResolvedValue(0);
 
-      await expect(
-        service.update(testPropertyId, testAccountId, updateDto),
-      ).rejects.toThrow(BadRequestException);
+      await service.findAll({ search: 'תל אביב' });
+
+      expect(mockPrisma.property.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            OR: [
+              { address: { contains: 'תל אביב', mode: 'insensitive' } },
+              { city: { contains: 'תל אביב', mode: 'insensitive' } },
+              { country: { contains: 'תל אביב', mode: 'insensitive' } },
+            ],
+          },
+        }),
+      );
     });
 
-    it('should validate landArea vs totalArea on update', async () => {
-      const invalidUpdate: UpdatePropertyDto = {
-        landArea: 300, // Greater than existing totalArea (200)
-      };
+    it('should combine type filter and search', async () => {
+      mockPrisma.property.findMany.mockResolvedValue([]);
+      mockPrisma.property.count.mockResolvedValue(0);
 
-      await expect(
-        service.update(testPropertyId, testAccountId, invalidUpdate),
-      ).rejects.toThrow(BadRequestException);
+      await service.findAll({
+        type: PropertyType.RESIDENTIAL,
+        search: 'הרצל',
+      });
+
+      expect(mockPrisma.property.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            type: PropertyType.RESIDENTIAL,
+            OR: [
+              { address: { contains: 'הרצל', mode: 'insensitive' } },
+              { city: { contains: 'הרצל', mode: 'insensitive' } },
+              { country: { contains: 'הרצל', mode: 'insensitive' } },
+            ],
+          },
+        }),
+      );
+    });
+
+    it('should calculate correct skip for pagination', async () => {
+      mockPrisma.property.findMany.mockResolvedValue([]);
+      mockPrisma.property.count.mockResolvedValue(50);
+
+      await service.findAll({ page: 3, limit: 10 });
+
+      expect(mockPrisma.property.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          skip: 20,
+          take: 10,
+        }),
+      );
     });
   });
 
   describe('findOne', () => {
-    it('should return property with all fields', async () => {
-      const mockProperty = {
-        id: testPropertyId,
-        accountId: testAccountId,
-        address: 'Test Address',
-        type: PropertyType.RESIDENTIAL,
-        status: PropertyStatus.OWNED,
-        floors: 3,
-        totalUnits: 12,
-        parkingSpaces: 5,
-        acquisitionPrice: 2000000,
-        acquisitionMethod: AcquisitionMethod.PURCHASE,
-        legalStatus: LegalStatus.REGISTERED,
-        propertyCondition: PropertyCondition.EXCELLENT,
-        landType: LandType.URBAN,
-        managementFeeFrequency: ManagementFeeFrequency.MONTHLY,
-        taxFrequency: TaxFrequency.QUARTERLY,
-        estimationSource: EstimationSource.PROFESSIONAL_APPRAISAL,
-        units: [],
-        plotInfo: null,
-        ownerships: [],
-        mortgages: [],
-        valuations: [],
-        investmentCompany: null,
-        _count: { units: 0 },
-      };
+    it('should return property when found', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue(mockProperty);
 
-      mockPrismaService.property.findFirst.mockResolvedValue(mockProperty);
+      const result = await service.findOne(mockProperty.id);
 
-      const result = await service.findOne(testPropertyId, testAccountId);
-
-      expect(result).toEqual({
-        ...mockProperty,
-        unitCount: 0,
-      });
-      expect(mockPrismaService.property.findFirst).toHaveBeenCalledWith({
-        where: { id: testPropertyId, accountId: testAccountId },
-        include: {
-          units: {
-            include: {
-              leases: {
-                where: { status: 'ACTIVE' },
-                include: { tenant: true },
-              },
-            },
-          },
-          plotInfo: true,
-          ownerships: {
-            include: {
-              owner: true,
-            },
-          },
-          mortgages: true,
-          valuations: {
-            orderBy: {
-              valuationDate: 'desc',
-            },
-          },
-          investmentCompany: true,
-          _count: {
-            select: { units: true },
-          },
-        },
+      expect(result).toEqual(mockProperty);
+      expect(mockPrisma.property.findUnique).toHaveBeenCalledWith({
+        where: { id: mockProperty.id },
+        include: undefined,
       });
     });
 
-    it('should throw NotFoundException when property does not exist', async () => {
-      mockPrismaService.property.findFirst.mockResolvedValue(null);
+    it('should include relations when include param is provided', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue({
+        ...mockProperty,
+        planningProcessState: {},
+        utilityInfo: {},
+      });
+
+      const result = await service.findOne(
+        mockProperty.id,
+        'planningProcessState,utilityInfo',
+      );
+
+      expect(mockPrisma.property.findUnique).toHaveBeenCalledWith({
+        where: { id: mockProperty.id },
+        include: {
+          planningProcessState: true,
+          utilityInfo: true,
+        },
+      });
+      expect(result).toHaveProperty('planningProcessState');
+      expect(result).toHaveProperty('utilityInfo');
+    });
+
+    it('should throw NotFoundException when property not found', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue(null);
+
+      await expect(service.findOne('non-existent-id')).rejects.toThrow(
+        NotFoundException,
+      );
+      await expect(service.findOne('non-existent-id')).rejects.toThrow(
+        'Property with id non-existent-id not found',
+      );
+    });
+  });
+
+  describe('update', () => {
+    it('should update property', async () => {
+      const updateDto: UpdatePropertyDto = {
+        address: 'רחוב דיזנגוף 20, תל אביב',
+        city: 'תל אביב',
+      };
+      const updated = { ...mockProperty, ...updateDto };
+
+      mockPrisma.property.findUnique.mockResolvedValue(mockProperty);
+      mockPrisma.property.update.mockResolvedValue(updated);
+
+      const result = await service.update(mockProperty.id, updateDto);
+
+      expect(mockPrisma.property.update).toHaveBeenCalledWith({
+        where: { id: mockProperty.id },
+        data: expect.objectContaining({
+          address: updateDto.address,
+          city: updateDto.city,
+        }),
+      });
+      expect(result).toEqual(updated);
+    });
+
+    it('should throw NotFoundException when updating non-existent property', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue(null);
 
       await expect(
-        service.findOne(testPropertyId, testAccountId),
+        service.update('non-existent-id', { address: 'Test' }),
       ).rejects.toThrow(NotFoundException);
+      expect(mockPrisma.property.update).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('remove', () => {
+    it('should delete property when no relations', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue({
+        ...mockProperty,
+        ownerships: [],
+        mortgages: [],
+        rentalAgreements: [],
+      });
+      mockPrisma.property.delete.mockResolvedValue(mockProperty);
+
+      await service.remove(mockProperty.id);
+
+      expect(mockPrisma.property.delete).toHaveBeenCalledWith({
+        where: { id: mockProperty.id },
+      });
+    });
+
+    it('should throw ConflictException when property has ownerships', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue({
+        ...mockProperty,
+        ownerships: [{ id: 'owner-1' }],
+        mortgages: [],
+        rentalAgreements: [],
+      });
+
+      await expect(service.remove(mockProperty.id)).rejects.toThrow(
+        ConflictException,
+      );
+      await expect(service.remove(mockProperty.id)).rejects.toThrow(
+        /has 1 ownership\(s\)/,
+      );
+      expect(mockPrisma.property.delete).not.toHaveBeenCalled();
+    });
+
+    it('should throw ConflictException when property has mortgages', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue({
+        ...mockProperty,
+        ownerships: [],
+        mortgages: [{ id: 'mortgage-1' }],
+        rentalAgreements: [],
+      });
+
+      await expect(service.remove(mockProperty.id)).rejects.toThrow(
+        ConflictException,
+      );
+      await expect(service.remove(mockProperty.id)).rejects.toThrow(
+        /mortgage\(s\)/,
+      );
+      expect(mockPrisma.property.delete).not.toHaveBeenCalled();
+    });
+
+    it('should throw ConflictException when property has rental agreements', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue({
+        ...mockProperty,
+        ownerships: [],
+        mortgages: [],
+        rentalAgreements: [{ id: 'agreement-1' }],
+      });
+
+      await expect(service.remove(mockProperty.id)).rejects.toThrow(
+        ConflictException,
+      );
+      await expect(service.remove(mockProperty.id)).rejects.toThrow(
+        /rental agreement\(s\)/,
+      );
+      expect(mockPrisma.property.delete).not.toHaveBeenCalled();
+    });
+
+    it('should throw NotFoundException when property not found', async () => {
+      mockPrisma.property.findUnique.mockResolvedValue(null);
+
+      await expect(service.remove('non-existent-id')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(mockPrisma.property.delete).not.toHaveBeenCalled();
     });
   });
 });

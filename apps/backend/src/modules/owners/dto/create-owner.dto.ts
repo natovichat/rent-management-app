@@ -1,71 +1,82 @@
 import {
   IsString,
   IsOptional,
-  IsNotEmpty,
   IsEmail,
   IsEnum,
+  MinLength,
+  MaxLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OwnerType } from '@prisma/client';
 
+export const OWNER_TYPES = Object.values(OwnerType);
+
 /**
- * DTO for creating a new owner.
+ * DTO for creating a new Owner
  */
 export class CreateOwnerDto {
   @ApiProperty({
-    description: 'שם הבעלים',
+    description: 'Owner full name',
     example: 'יוסי כהן',
+    minLength: 2,
   })
   @IsString()
-  @IsNotEmpty()
+  @MinLength(2, { message: 'name must be at least 2 characters' })
+  @MaxLength(255)
   name: string;
 
   @ApiProperty({
-    description: 'סוג בעלים',
+    description: 'Owner type',
     enum: OwnerType,
     example: OwnerType.INDIVIDUAL,
   })
-  @IsEnum(OwnerType)
-  @IsNotEmpty()
+  @IsEnum(OwnerType, {
+    message: `type must be one of: ${OWNER_TYPES.join(', ')}`,
+  })
   type: OwnerType;
 
   @ApiPropertyOptional({
-    description: 'אימייל',
-    example: 'owner@example.com',
-  })
-  @IsEmail()
-  @IsOptional()
-  email?: string;
-
-  @ApiPropertyOptional({
-    description: 'טלפון',
-    example: '050-1234567',
-  })
-  @IsString()
-  @IsOptional()
-  phone?: string;
-
-  @ApiPropertyOptional({
-    description: 'מספר ת.ז.',
+    description: 'ID number (תעודת זהות / ח.פ.)',
     example: '123456789',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(50)
   idNumber?: string;
 
   @ApiPropertyOptional({
-    description: 'מספר עוסק מורשה / ח.פ.',
-    example: '123456789',
+    description: 'Email address',
+    example: 'owner@example.com',
   })
-  @IsString()
   @IsOptional()
-  taxId?: string;
+  @IsEmail({}, { message: 'email must be a valid email address' })
+  @MaxLength(255)
+  email?: string;
 
   @ApiPropertyOptional({
-    description: 'הערות',
-    example: 'בעלים ראשי',
+    description: 'Phone number',
+    example: '050-1234567',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  phone?: string;
+
+  @ApiPropertyOptional({
+    description: 'Physical address',
+    example: '123 Main St, Tel Aviv',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  address?: string;
+
+  @ApiPropertyOptional({
+    description: 'Additional notes',
+    example: 'Primary contact for property management',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
   notes?: string;
 }

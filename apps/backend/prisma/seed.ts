@@ -3,395 +3,564 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('🌱 Starting seed...');
+  console.log('🌱 Starting seed for 8-entity model...');
 
-  // Create test account
-  const account = await prisma.account.upsert({
-    where: { id: 'test-account-1' },
-    update: {},
-    create: {
-      id: 'test-account-1',
-      name: 'Test Account',
-      status: 'ACTIVE',
-    },
-  });
-  console.log('✅ Created account:', account.name);
+  // ============================================
+  // 1. Person (5-7 people) - mortgages and tenants
+  // ============================================
+  const persons = await Promise.all([
+    prisma.person.create({ data: { name: 'יוסי כהן', idNumber: '123456789', email: 'yossi.cohen@example.com', phone: '050-1234567', notes: 'בעל משכנתא' } }),
+    prisma.person.create({ data: { name: 'שרה לוי', idNumber: '234567890', email: 'sara.levi@example.com', phone: '052-7654321', notes: 'משלמת משכנתא' } }),
+    prisma.person.create({ data: { name: 'דוד מזרחי', idNumber: '345678901', email: 'david.mizrahi@example.com', phone: '054-1112223', notes: 'דייר' } }),
+    prisma.person.create({ data: { name: 'רחל אברהם', idNumber: '456789012', email: 'rachel.avraham@example.com', phone: '053-3334445', notes: 'דיירת' } }),
+    prisma.person.create({ data: { name: 'משה ליפשיץ', idNumber: '567890123', email: 'moshe.lifshitz@example.com', phone: '050-5556667', notes: 'בעל משכנתא ודירה' } }),
+    prisma.person.create({ data: { name: 'מרים גולדשטיין', idNumber: '678901234', email: 'miriam.goldstein@example.com', phone: '052-7778889', notes: 'דיירת' } }),
+    prisma.person.create({ data: { name: 'אברהם ישראלי', idNumber: '789012345', email: 'avraham.israeli@example.com', phone: '054-9990001', notes: 'משלם הלוואה' } }),
+  ]);
+  console.log('✅ Created 7 persons');
 
-  // Create test user
-  const user = await prisma.user.upsert({
-    where: { email: 'test@example.com' },
-    update: {},
-    create: {
-      email: 'test@example.com',
-      name: 'Test User',
-      googleId: 'test-google-id',
-      role: 'OWNER',
-      accountId: account.id,
-    },
-  });
-  console.log('✅ Created user:', user.email);
+  // ============================================
+  // 2. Owner (3-4 owners) - INDIVIDUAL and COMPANY
+  // ============================================
+  const owners = await Promise.all([
+    prisma.owner.create({ data: { name: 'יוסי כהן', idNumber: '123456789', type: 'INDIVIDUAL', email: 'yossi@example.com', phone: '050-1234567', address: 'רחוב הרצל 10, תל אביב', notes: 'בעלים פרטי' } }),
+    prisma.owner.create({ data: { name: 'שרה לוי', idNumber: '234567890', type: 'INDIVIDUAL', email: 'sara@example.com', phone: '052-7654321', address: 'רחוב דיזנגוף 5, תל אביב', notes: 'בעלים פרטית' } }),
+    prisma.owner.create({ data: { name: 'החברה להשקעות נדלן בע"מ', idNumber: '513456789', type: 'COMPANY', email: 'contact@realestate-inv.co.il', phone: '03-1234567', address: 'רחוב רוטשילד 30, תל אביב', notes: 'חברת השקעות' } }),
+    prisma.owner.create({ data: { name: 'משה ליפשיץ', idNumber: '567890123', type: 'INDIVIDUAL', email: 'moshe@example.com', phone: '050-5556667', address: 'רחוב בן יהודה 15, ירושלים', notes: 'בעלים יחיד' } }),
+  ]);
+  console.log('✅ Created 4 owners');
 
-  // Create test properties with Phase 4 fields
-  const property1 = await prisma.property.upsert({
-    where: { id: 'property-1' },
-    update: {},
-    create: {
-      id: 'property-1',
-      accountId: account.id,
-      address: 'רחוב הרצל 10, תל אביב',
-      fileNumber: 'PROP-001',
-      type: 'RESIDENTIAL',
-      status: 'OWNED',
-      country: 'Israel',
-      city: 'תל אביב',
-      totalArea: 120.5,
-      landArea: 150.0,
-      estimatedValue: 2500000,
-    },
-  });
-  console.log('✅ Created property 1:', property1.address);
+  // ============================================
+  // 3. BankAccount (3-4 accounts)
+  // ============================================
+  const bankAccounts = await Promise.all([
+    prisma.bankAccount.create({ data: { bankName: 'בנק הפועלים', branchNumber: '661', accountNumber: '12-345-678901', accountType: 'TRUST_ACCOUNT', accountHolder: 'יוסי כהן', notes: 'חשבון נאמנות להשקעות', isActive: true } }),
+    prisma.bankAccount.create({ data: { bankName: 'בנק לאומי', branchNumber: '888', accountNumber: '98-765-432100', accountType: 'PERSONAL_CHECKING', accountHolder: 'שרה לוי', notes: 'חשבון עו"ש', isActive: true } }),
+    prisma.bankAccount.create({ data: { bankName: 'בנק דיסקונט', branchNumber: '112', accountNumber: '11-222-333444', accountType: 'PERSONAL_SAVINGS', accountHolder: 'משה ליפשיץ', notes: 'חשבון חסכון', isActive: true } }),
+    prisma.bankAccount.create({ data: { bankName: 'בנק מזרחי טפחות', branchNumber: '445', accountNumber: '55-666-777888', accountType: 'BUSINESS', accountHolder: 'החברה להשקעות נדלן', notes: 'חשבון עסקי', isActive: true } }),
+  ]);
+  console.log('✅ Created 4 bank accounts');
 
-  const property2 = await prisma.property.upsert({
-    where: { id: 'property-2' },
-    update: {},
-    create: {
-      id: 'property-2',
-      accountId: account.id,
-      address: 'רחוב רוטשילד 45, תל אביב',
-      fileNumber: 'PROP-002',
-      type: 'COMMERCIAL',
-      status: 'OWNED',
-      country: 'Israel',
-      city: 'תל אביב',
-      totalArea: 200.0,
-      estimatedValue: 4500000,
-    },
-  });
-  console.log('✅ Created property 2:', property2.address);
-
-  // Create test owners
-  const owner1 = await prisma.owner.upsert({
-    where: { id: 'owner-1' },
-    update: {},
-    create: {
-      id: 'owner-1',
-      accountId: account.id,
-      name: 'יוסי כהן',
-      type: 'INDIVIDUAL',
-      email: 'yossi@example.com',
-      phone: '050-1234567',
-      idNumber: '123456789',
-    },
-  });
-  console.log('✅ Created owner 1:', owner1.name);
-
-  const owner2 = await prisma.owner.upsert({
-    where: { id: 'owner-2' },
-    update: {},
-    create: {
-      id: 'owner-2',
-      accountId: account.id,
-      name: 'שרה לוי',
-      type: 'INDIVIDUAL',
-      email: 'sara@example.com',
-      phone: '052-7654321',
-    },
-  });
-  console.log('✅ Created owner 2:', owner2.name);
-
-  // Create ownerships (50% each = 100%)
-  const ownership1 = await prisma.propertyOwnership.upsert({
-    where: { id: 'ownership-1' },
-    update: {},
-    create: {
-      id: 'ownership-1',
-      propertyId: property1.id,
-      ownerId: owner1.id,
-      accountId: account.id,
-      ownershipPercentage: 50.0,
-      ownershipType: 'FULL',
-      startDate: new Date('2020-01-01'),
-    },
-  });
-  console.log('✅ Created ownership 1: 50%');
-
-  const ownership2 = await prisma.propertyOwnership.upsert({
-    where: { id: 'ownership-2' },
-    update: {},
-    create: {
-      id: 'ownership-2',
-      propertyId: property1.id,
-      ownerId: owner2.id,
-      accountId: account.id,
-      ownershipPercentage: 50.0,
-      ownershipType: 'FULL',
-      startDate: new Date('2020-01-01'),
-    },
-  });
-  console.log('✅ Created ownership 2: 50%');
-
-  // Create mortgage
-  const mortgage = await prisma.mortgage.upsert({
-    where: { id: 'mortgage-1' },
-    update: {},
-    create: {
-      id: 'mortgage-1',
-      propertyId: property1.id,
-      accountId: account.id,
-      bank: 'בנק הפועלים',
-      loanAmount: 1500000,
-      interestRate: 3.5,
-      monthlyPayment: 6500,
-      startDate: new Date('2020-01-01'),
-      endDate: new Date('2040-01-01'),
-      status: 'ACTIVE',
-    },
-  });
-  console.log('✅ Created mortgage:', mortgage.bank);
-
-  // Create mortgage payments
-  await prisma.mortgagePayment.createMany({
-    data: [
-      {
-        mortgageId: mortgage.id,
-        accountId: account.id,
-        paymentDate: new Date('2024-01-01'),
-        amount: 6500,
-        principal: 2500,
-        interest: 4000,
-      },
-      {
-        mortgageId: mortgage.id,
-        accountId: account.id,
-        paymentDate: new Date('2024-02-01'),
-        amount: 6500,
-        principal: 2550,
-        interest: 3950,
-      },
-      {
-        mortgageId: mortgage.id,
-        accountId: account.id,
-        paymentDate: new Date('2024-03-01'),
-        amount: 6500,
-        principal: 2600,
-        interest: 3900,
-      },
-    ],
-  });
-  console.log('✅ Created 3 mortgage payments');
-
-  // Create valuations
-  await prisma.propertyValuation.createMany({
-    data: [
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        valuationDate: new Date('2020-01-01'),
-        estimatedValue: 2000000,
-        valuationType: 'APPRAISAL',
-        notes: 'הערכה ראשונית',
-      },
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        valuationDate: new Date('2022-01-01'),
-        estimatedValue: 2300000,
-        valuationType: 'MARKET',
-        notes: 'הערכת שוק',
-      },
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        valuationDate: new Date('2024-01-01'),
+  // ============================================
+  // 4. Property (5-6 properties) - complete data
+  // ============================================
+  const properties = await Promise.all([
+    prisma.property.create({
+      data: {
+        address: 'רחוב הרצל 10, תל אביב',
+        fileNumber: 'TLV-001',
+        type: 'RESIDENTIAL',
+        status: 'OWNED',
+        country: 'Israel',
+        city: 'תל אביב',
+        totalArea: 120.5,
+        landArea: 150.0,
         estimatedValue: 2500000,
-        valuationType: 'MARKET',
-        notes: 'הערכה עדכנית',
+        lastValuationDate: new Date('2024-01-15'),
+        gush: '6543',
+        helka: '123',
+        isMortgaged: true,
+        floors: 4,
+        totalUnits: 2,
+        parkingSpaces: 1,
+        balconySizeSqm: 12.5,
+        storageSizeSqm: 8.0,
+        parkingType: 'REGULAR',
+        purchasePrice: 2000000,
+        purchaseDate: new Date('2020-06-15'),
+        acquisitionMethod: 'PURCHASE',
+        estimatedRent: 8500,
+        rentalIncome: 8000,
+        projectedValue: 2600000,
+        saleProjectedTax: 156000,
+        constructionYear: 1995,
+        lastRenovationYear: 2022,
+        propertyCondition: 'GOOD',
+        landType: 'URBAN',
+        isPartialOwnership: false,
+        propertyManager: 'מנהל נכסים תל אביב',
+        managementFees: 500,
+        managementFeeFrequency: 'MONTHLY',
+        taxAmount: 800,
+        taxFrequency: 'MONTHLY',
+        notes: 'דירת מגורים מרווחת',
       },
-    ],
-  });
-  console.log('✅ Created 3 valuations');
+    }),
+    prisma.property.create({
+      data: {
+        address: 'רחוב רוטשילד 45, תל אביב',
+        fileNumber: 'TLV-002',
+        type: 'COMMERCIAL',
+        status: 'OWNED',
+        country: 'Israel',
+        city: 'תל אביב',
+        totalArea: 200.0,
+        landArea: 180.0,
+        estimatedValue: 4500000,
+        lastValuationDate: new Date('2024-02-01'),
+        gush: '6544',
+        helka: '45',
+        isMortgaged: true,
+        floors: 2,
+        totalUnits: 1,
+        parkingSpaces: 2,
+        balconySizeSqm: 20.0,
+        storageSizeSqm: 15.0,
+        parkingType: 'CONSECUTIVE',
+        purchasePrice: 3800000,
+        purchaseDate: new Date('2019-03-20'),
+        acquisitionMethod: 'PURCHASE',
+        estimatedRent: 18000,
+        rentalIncome: 17500,
+        projectedValue: 4800000,
+        saleProjectedTax: 288000,
+        constructionYear: 1988,
+        propertyCondition: 'FAIR',
+        landType: 'URBAN',
+        isPartialOwnership: false,
+        notes: 'משרדים במרכז תל אביב',
+      },
+    }),
+    prisma.property.create({
+      data: {
+        address: 'רחוב דיזנגוף 88, תל אביב',
+        fileNumber: 'TLV-003',
+        type: 'RESIDENTIAL',
+        status: 'OWNED',
+        country: 'Israel',
+        city: 'תל אביב',
+        totalArea: 95.0,
+        landArea: 0,
+        estimatedValue: 1800000,
+        gush: '6545',
+        helka: '78',
+        isMortgaged: false,
+        floors: 3,
+        totalUnits: 1,
+        parkingSpaces: 0,
+        balconySizeSqm: 8.0,
+        storageSizeSqm: 4.0,
+        parkingType: 'REGULAR',
+        purchasePrice: 1500000,
+        purchaseDate: new Date('2021-11-01'),
+        acquisitionMethod: 'PURCHASE',
+        estimatedRent: 5500,
+        rentalIncome: 5300,
+        constructionYear: 2010,
+        propertyCondition: 'EXCELLENT',
+        landType: 'URBAN',
+        isPartialOwnership: false,
+        notes: 'דירת 3 חדרים',
+      },
+    }),
+    prisma.property.create({
+      data: {
+        address: 'רחוב בן יהודה 15, ירושלים',
+        fileNumber: 'JLM-001',
+        type: 'RESIDENTIAL',
+        status: 'IN_CONSTRUCTION',
+        country: 'Israel',
+        city: 'ירושלים',
+        totalArea: 0,
+        landArea: 250.0,
+        estimatedValue: 3200000,
+        gush: '1234',
+        helka: '56',
+        isMortgaged: true,
+        floors: 5,
+        totalUnits: 4,
+        parkingSpaces: 4,
+        balconySizeSqm: 0,
+        storageSizeSqm: 0,
+        parkingType: 'REGULAR',
+        purchasePrice: 2800000,
+        purchaseDate: new Date('2022-05-10'),
+        acquisitionMethod: 'PURCHASE',
+        estimatedRent: 22000,
+        constructionYear: 0,
+        propertyCondition: 'NEEDS_RENOVATION',
+        landType: 'URBAN',
+        isPartialOwnership: false,
+        notes: 'בניין בבנייה',
+      },
+    }),
+    prisma.property.create({
+      data: {
+        address: 'רחוב הנביאים 33, חיפה',
+        fileNumber: 'HAI-001',
+        type: 'RESIDENTIAL',
+        status: 'OWNED',
+        country: 'Israel',
+        city: 'חיפה',
+        totalArea: 85.0,
+        landArea: 120.0,
+        estimatedValue: 1400000,
+        lastValuationDate: new Date('2023-09-01'),
+        gush: '7890',
+        helka: '12',
+        isMortgaged: false,
+        floors: 2,
+        totalUnits: 1,
+        parkingSpaces: 1,
+        balconySizeSqm: 6.0,
+        storageSizeSqm: 3.0,
+        parkingType: 'REGULAR',
+        purchasePrice: 1200000,
+        purchaseDate: new Date('2018-08-15'),
+        acquisitionMethod: 'INHERITANCE',
+        estimatedRent: 4200,
+        rentalIncome: 4000,
+        constructionYear: 1975,
+        lastRenovationYear: 2019,
+        propertyCondition: 'GOOD',
+        landType: 'URBAN',
+        isPartialOwnership: true,
+        sharedOwnershipPercentage: 50,
+        notes: 'דירת מגורים - מחצית בשותפות',
+      },
+    }),
+    prisma.property.create({
+      data: {
+        address: 'שדרות רוטשילד 100, רמת גן',
+        fileNumber: 'RG-001',
+        type: 'MIXED_USE',
+        status: 'INVESTMENT',
+        country: 'Israel',
+        city: 'רמת גן',
+        totalArea: 300.0,
+        landArea: 350.0,
+        estimatedValue: 5500000,
+        lastValuationDate: new Date('2024-03-01'),
+        gush: '9012',
+        helka: '34',
+        isMortgaged: true,
+        floors: 6,
+        totalUnits: 6,
+        parkingSpaces: 6,
+        balconySizeSqm: 60.0,
+        storageSizeSqm: 30.0,
+        parkingType: 'CONSECUTIVE',
+        purchasePrice: 4800000,
+        purchaseDate: new Date('2017-01-20'),
+        acquisitionMethod: 'PURCHASE',
+        estimatedRent: 28000,
+        rentalIncome: 26500,
+        projectedValue: 6000000,
+        saleProjectedTax: 360000,
+        constructionYear: 1992,
+        lastRenovationYear: 2020,
+        propertyCondition: 'GOOD',
+        landType: 'URBAN',
+        isPartialOwnership: false,
+        managementCompany: 'מנהלת נכסים בע"מ',
+        managementFees: 2000,
+        managementFeeFrequency: 'MONTHLY',
+        notes: 'בניין משולב מגורים ומסחר',
+      },
+    }),
+  ]);
+  console.log('✅ Created 6 properties');
 
-  // Create expenses
-  await prisma.propertyExpense.createMany({
-    data: [
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        expenseDate: new Date('2024-01-15'),
-        amount: 5000,
-        type: 'MAINTENANCE',
-        category: 'תיקונים',
-        description: 'תיקון צנרת',
-      },
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        expenseDate: new Date('2024-02-10'),
-        amount: 3000,
-        type: 'TAX',
-        category: 'מסים',
-        description: 'ארנונה',
-      },
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        expenseDate: new Date('2024-03-05'),
-        amount: 1500,
-        type: 'INSURANCE',
-        category: 'ביטוח',
-        description: 'ביטוח דירה',
-      },
-    ],
-  });
-  console.log('✅ Created 3 expenses');
-
-  // Create income
-  await prisma.propertyIncome.createMany({
-    data: [
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        incomeDate: new Date('2024-01-01'),
-        amount: 8000,
-        type: 'RENT',
-        description: 'שכר דירה חודשי',
-      },
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        incomeDate: new Date('2024-02-01'),
-        amount: 8000,
-        type: 'RENT',
-        description: 'שכר דירה חודשי',
-      },
-      {
-        propertyId: property1.id,
-        accountId: account.id,
-        incomeDate: new Date('2024-03-01'),
-        amount: 8000,
-        type: 'RENT',
-        description: 'שכר דירה חודשי',
-      },
-    ],
-  });
-  console.log('✅ Created 3 income records');
-
-  // Create plot info for Israeli property
-  const plotInfo = await prisma.plotInfo.upsert({
-    where: { propertyId: property1.id },
-    update: {},
-    create: {
-      propertyId: property1.id,
-      accountId: account.id,
-      gush: '6543',
-      chelka: '123',
-      subChelka: 'א',
-      registryOffice: 'תל אביב',
+  // ============================================
+  // 5. PlanningProcessState (2-3 states) - 1:1 with some properties
+  // ============================================
+  await prisma.planningProcessState.create({
+    data: {
+      propertyId: properties[3].id, // Jerusalem - IN_CONSTRUCTION
+      stateType: 'תוכנית בניין עיר',
+      developerName: 'חברת הבנייה ירושלים בע"מ',
+      projectedSizeAfter: '450 מ"ר',
+      lastUpdateDate: new Date('2024-01-15'),
+      notes: 'בשלב אישור הוועדה המקומית',
     },
   });
-  console.log('✅ Created plot info:', `גוש ${plotInfo.gush} חלקה ${plotInfo.chelka}`);
-
-  // Create units
-  const unit1 = await prisma.unit.upsert({
-    where: { id: 'unit-1' },
-    update: {},
-    create: {
-      id: 'unit-1',
-      propertyId: property1.id,
-      accountId: account.id,
-      apartmentNumber: 'דירה 1',
-      floor: 2,
-      roomCount: 3,
+  await prisma.planningProcessState.create({
+    data: {
+      propertyId: properties[5].id, // Ramat Gan - INVESTMENT
+      stateType: 'היתר בניה',
+      developerName: 'קבוצת הנדסה',
+      projectedSizeAfter: '320 מ"ר',
+      lastUpdateDate: new Date('2023-06-20'),
+      notes: 'הרחבת מרפסות מאושרת',
     },
   });
-  console.log('✅ Created unit 1:', unit1.apartmentNumber);
-
-  const unit2 = await prisma.unit.upsert({
-    where: { id: 'unit-2' },
-    update: {},
-    create: {
-      id: 'unit-2',
-      propertyId: property1.id,
-      accountId: account.id,
-      apartmentNumber: 'דירה 2',
-      floor: 3,
-      roomCount: 4,
+  await prisma.planningProcessState.create({
+    data: {
+      propertyId: properties[1].id, // Rothschild commercial
+      stateType: 'שינוי ייעוד',
+      developerName: null,
+      projectedSizeAfter: '220 מ"ר',
+      lastUpdateDate: new Date('2024-02-28'),
+      notes: 'בדיקה לשינוי ייעוד לקומה 2',
     },
   });
-  console.log('✅ Created unit 2:', unit2.apartmentNumber);
+  console.log('✅ Created 3 planning process states');
 
-  // Create tenants
-  const tenant1 = await prisma.tenant.upsert({
-    where: { id: 'tenant-1' },
-    update: {},
-    create: {
-      id: 'tenant-1',
-      accountId: account.id,
-      name: 'דוד מזרחי',
-      email: 'david@example.com',
-      phone: '054-1111111',
-    },
-  });
-  console.log('✅ Created tenant 1:', tenant1.name);
+  // ============================================
+  // 6. UtilityInfo (all properties)
+  // ============================================
+  await Promise.all([
+    prisma.utilityInfo.create({ data: { propertyId: properties[0].id, vaadBayitName: 'ועד בית הרצל 10', waterMeterNumber: 'WM-001-2020', electricityMeterNumber: 'EM-001-2020', arnonaAccountNumber: 'ARN-TLV-12345', electricityAccountNumber: 'IEC-987654', waterAccountNumber: 'MEK-456789', notes: 'כל החשבונות פעילים' } }),
+    prisma.utilityInfo.create({ data: { propertyId: properties[1].id, vaadBayitName: 'ועד בית רוטשילד 45', waterMeterNumber: 'WM-002-2019', electricityMeterNumber: 'EM-002-2019', arnonaAccountNumber: 'ARN-TLV-23456', electricityAccountNumber: 'IEC-876543', waterAccountNumber: 'MEK-345678', notes: 'חשבון עסקי' } }),
+    prisma.utilityInfo.create({ data: { propertyId: properties[2].id, vaadBayitName: 'ועד בית דיזנגוף 88', waterMeterNumber: 'WM-003-2021', electricityMeterNumber: 'EM-003-2021', arnonaAccountNumber: 'ARN-TLV-34567', electricityAccountNumber: 'IEC-765432', waterAccountNumber: 'MEK-234567', notes: null } }),
+    prisma.utilityInfo.create({ data: { propertyId: properties[3].id, vaadBayitName: null, waterMeterNumber: null, electricityMeterNumber: null, arnonaAccountNumber: 'ARN-JLM-45678', electricityAccountNumber: null, waterAccountNumber: null, notes: 'חשבונות יופעלו עם סיום הבנייה' } }),
+    prisma.utilityInfo.create({ data: { propertyId: properties[4].id, vaadBayitName: 'ועד בית הנביאים 33', waterMeterNumber: 'WM-005-2018', electricityMeterNumber: 'EM-005-2018', arnonaAccountNumber: 'ARN-HAI-56789', electricityAccountNumber: 'IEC-543210', waterAccountNumber: 'MEK-123456', notes: 'דירה בחיפה' } }),
+    prisma.utilityInfo.create({ data: { propertyId: properties[5].id, vaadBayitName: 'ועד בית רוטשילד 100 רמת גן', waterMeterNumber: 'WM-006-2017', electricityMeterNumber: 'EM-006-2017', arnonaAccountNumber: 'ARN-RG-67890', electricityAccountNumber: 'IEC-432109', waterAccountNumber: 'MEK-012345', notes: 'בניין משולב' } }),
+  ]);
+  console.log('✅ Created 6 utility info records (all properties)');
 
-  const tenant2 = await prisma.tenant.upsert({
-    where: { id: 'tenant-2' },
-    update: {},
-    create: {
-      id: 'tenant-2',
-      accountId: account.id,
-      name: 'רחל אברהם',
-      email: 'rachel@example.com',
-      phone: '053-2222222',
-    },
-  });
-  console.log('✅ Created tenant 2:', tenant2.name);
+  // ============================================
+  // 7. Ownership (7-10 ownerships) - Owner ↔ Property
+  // ============================================
+  await Promise.all([
+    prisma.ownership.create({ data: { propertyId: properties[0].id, ownerId: owners[0].id, ownershipPercentage: 50, ownershipType: 'REAL', managementFee: 250, familyDivision: false, startDate: new Date('2020-06-15'), notes: 'שותפות עם שרה' } }),
+    prisma.ownership.create({ data: { propertyId: properties[0].id, ownerId: owners[1].id, ownershipPercentage: 50, ownershipType: 'REAL', managementFee: 250, familyDivision: false, startDate: new Date('2020-06-15'), notes: 'שותפות עם יוסי' } }),
+    prisma.ownership.create({ data: { propertyId: properties[1].id, ownerId: owners[2].id, ownershipPercentage: 100, ownershipType: 'REAL', managementFee: 800, familyDivision: false, startDate: new Date('2019-03-20'), notes: 'בעלות מלאה של החברה' } }),
+    prisma.ownership.create({ data: { propertyId: properties[2].id, ownerId: owners[1].id, ownershipPercentage: 100, ownershipType: 'REAL', managementFee: 200, familyDivision: false, startDate: new Date('2021-11-01'), notes: 'דירה בשותפות משפחתית' } }),
+    prisma.ownership.create({ data: { propertyId: properties[3].id, ownerId: owners[3].id, ownershipPercentage: 100, ownershipType: 'REAL', managementFee: 0, familyDivision: false, startDate: new Date('2022-05-10'), notes: 'בניין בבנייה' } }),
+    prisma.ownership.create({ data: { propertyId: properties[4].id, ownerId: owners[0].id, ownershipPercentage: 50, ownershipType: 'REAL', managementFee: 100, familyDivision: true, startDate: new Date('2018-08-15'), notes: 'חלוקה משפחתית - חצי מהדירה' } }),
+    prisma.ownership.create({ data: { propertyId: properties[4].id, ownerId: owners[1].id, ownershipPercentage: 50, ownershipType: 'REAL', managementFee: 100, familyDivision: true, startDate: new Date('2018-08-15'), notes: 'חלוקה משפחתית - חצי מהדירה' } }),
+    prisma.ownership.create({ data: { propertyId: properties[5].id, ownerId: owners[2].id, ownershipPercentage: 70, ownershipType: 'REAL', managementFee: 1400, familyDivision: false, startDate: new Date('2017-01-20'), notes: 'שותפות עם משה' } }),
+    prisma.ownership.create({ data: { propertyId: properties[5].id, ownerId: owners[3].id, ownershipPercentage: 30, ownershipType: 'LEGAL', managementFee: 600, familyDivision: false, startDate: new Date('2017-01-20'), notes: 'בעלות משפטית' } }),
+  ]);
+  console.log('✅ Created 9 ownerships');
 
-  // Create leases
-  await prisma.lease.createMany({
-    data: [
-      {
-        unitId: unit1.id,
-        tenantId: tenant1.id,
-        accountId: account.id,
+  // ============================================
+  // 8. Mortgage (3-4) - some with mortgageOwnerId, some without (loan)
+  // ============================================
+  const mortgages = await Promise.all([
+    prisma.mortgage.create({
+      data: {
+        propertyId: properties[0].id,
+        bank: 'בנק הפועלים',
+        loanAmount: 1500000,
+        interestRate: 3.5,
+        monthlyPayment: 6500,
+        earlyRepaymentPenalty: 25000,
+        bankAccountId: bankAccounts[0].id,
+        mortgageOwnerId: persons[0].id,
+        payerId: persons[1].id,
+        startDate: new Date('2020-06-15'),
+        endDate: new Date('2040-06-15'),
+        status: 'ACTIVE',
+        linkedProperties: [properties[0].id],
+        notes: 'משכנתא ראשית - יוסי בעלים, שרה משלמת',
+      },
+    }),
+    prisma.mortgage.create({
+      data: {
+        propertyId: properties[1].id,
+        bank: 'בנק לאומי',
+        loanAmount: 2000000,
+        interestRate: 4.2,
+        monthlyPayment: 9800,
+        earlyRepaymentPenalty: 45000,
+        bankAccountId: bankAccounts[3].id,
+        mortgageOwnerId: null, // Company owns - no Person
+        payerId: persons[0].id,
+        startDate: new Date('2019-03-20'),
+        endDate: new Date('2039-03-20'),
+        status: 'ACTIVE',
+        linkedProperties: [properties[1].id],
+        notes: 'משכנתא עסקית',
+      },
+    }),
+    prisma.mortgage.create({
+      data: {
+        propertyId: null, // Loan - not tied to property
+        bank: 'בנק דיסקונט',
+        loanAmount: 300000,
+        interestRate: 8.5,
+        monthlyPayment: 3500,
+        earlyRepaymentPenalty: 5000,
+        bankAccountId: bankAccounts[2].id,
+        mortgageOwnerId: null, // Loan - no mortgage owner
+        payerId: persons[6].id,
+        startDate: new Date('2023-01-01'),
+        endDate: new Date('2033-01-01'),
+        status: 'ACTIVE',
+        linkedProperties: [],
+        notes: 'הלוואה פרטית - לא קשורה לנכס',
+      },
+    }),
+    prisma.mortgage.create({
+      data: {
+        propertyId: properties[3].id,
+        bank: 'בנק מזרחי טפחות',
+        loanAmount: 2200000,
+        interestRate: 3.8,
+        monthlyPayment: 10500,
+        earlyRepaymentPenalty: 35000,
+        bankAccountId: bankAccounts[2].id,
+        mortgageOwnerId: persons[4].id,
+        payerId: persons[4].id,
+        startDate: new Date('2022-05-10'),
+        endDate: new Date('2042-05-10'),
+        status: 'ACTIVE',
+        linkedProperties: [properties[3].id],
+        notes: 'משכנתא לבנייה - משה בעלים ומשלם',
+      },
+    }),
+  ]);
+  console.log('✅ Created 4 mortgages (3 with property, 1 loan)');
+
+  // ============================================
+  // 9. RentalAgreement (4-5) - Property + Person tenant
+  // ============================================
+  const rentalAgreements = await Promise.all([
+    prisma.rentalAgreement.create({
+      data: {
+        propertyId: properties[0].id,
+        tenantId: persons[2].id,
+        monthlyRent: 8000,
         startDate: new Date('2024-01-01'),
-        endDate: new Date('2025-01-01'),
-        monthlyRent: 4000,
-        paymentTo: 'יוסי כהן',
+        endDate: new Date('2025-12-31'),
         status: 'ACTIVE',
+        hasExtensionOption: true,
+        extensionUntilDate: new Date('2026-12-31'),
+        extensionMonthlyRent: 8500,
+        notes: 'דוד מזרחי - דירה ראשית',
       },
-      {
-        unitId: unit2.id,
-        tenantId: tenant2.id,
-        accountId: account.id,
+    }),
+    prisma.rentalAgreement.create({
+      data: {
+        propertyId: properties[1].id,
+        tenantId: persons[2].id,
+        monthlyRent: 17500,
+        startDate: new Date('2023-06-01'),
+        endDate: new Date('2025-05-31'),
+        status: 'ACTIVE',
+        hasExtensionOption: false,
+        notes: 'משרדים - דוד מזרחי',
+      },
+    }),
+    prisma.rentalAgreement.create({
+      data: {
+        propertyId: properties[2].id,
+        tenantId: persons[3].id,
+        monthlyRent: 5300,
         startDate: new Date('2024-02-01'),
-        endDate: new Date('2025-02-01'),
-        monthlyRent: 5000,
-        paymentTo: 'שרה לוי',
+        endDate: new Date('2025-01-31'),
         status: 'ACTIVE',
+        hasExtensionOption: true,
+        extensionUntilDate: new Date('2026-01-31'),
+        extensionMonthlyRent: 5550,
+        notes: 'רחל אברהם - דירת 3 חדרים',
       },
+    }),
+    prisma.rentalAgreement.create({
+      data: {
+        propertyId: properties[4].id,
+        tenantId: persons[5].id,
+        monthlyRent: 4000,
+        startDate: new Date('2023-09-01'),
+        endDate: new Date('2024-08-31'),
+        status: 'EXPIRED',
+        hasExtensionOption: false,
+        notes: 'מרים גולדשטיין - חוזה שפג',
+      },
+    }),
+    prisma.rentalAgreement.create({
+      data: {
+        propertyId: properties[5].id,
+        tenantId: persons[3].id,
+        monthlyRent: 12000,
+        startDate: new Date('2025-03-01'),
+        endDate: new Date('2026-02-28'),
+        status: 'FUTURE',
+        hasExtensionOption: true,
+        extensionUntilDate: new Date('2027-02-28'),
+        extensionMonthlyRent: 12600,
+        notes: 'רחל - דירה בבניין רמת גן',
+      },
+    }),
+  ]);
+  console.log('✅ Created 5 rental agreements');
+
+  // ============================================
+  // 10. PropertyEvent (10-15) - all 4 types
+  // ============================================
+
+  // PlanningProcessEvent (2-3)
+  await prisma.propertyEvent.createMany({
+    data: [
+      { propertyId: properties[3].id, eventType: 'PlanningProcessEvent', eventDate: new Date('2024-01-10'), description: 'אישור תוכנית בניין עיר', planningStage: 'אישור הוועדה', developerName: 'חברת הבנייה ירושלים', projectedSizeAfter: '450 מ"ר' },
+      { propertyId: properties[5].id, eventType: 'PlanningProcessEvent', eventDate: new Date('2023-06-15'), description: 'הרחבת מרפסות', planningStage: 'היתר מאושר', developerName: 'קבוצת הנדסה', projectedSizeAfter: '320 מ"ר' },
+      { propertyId: properties[1].id, eventType: 'PlanningProcessEvent', eventDate: new Date('2024-02-20'), description: 'בדיקת שינוי ייעוד', planningStage: 'בבדיקה', developerName: null, projectedSizeAfter: '220 מ"ר' },
     ],
   });
-  console.log('✅ Created 2 leases');
+
+  // PropertyDamageEvent (2-3) - separate from ExpenseEvent
+  const damageEvent1 = await prisma.propertyEvent.create({
+    data: {
+      propertyId: properties[0].id,
+      eventType: 'PropertyDamageEvent',
+      eventDate: new Date('2024-03-01'),
+      description: 'נזק לצנרת - הצפה בדירה',
+      damageType: 'צנרת',
+      estimatedDamageCost: 8500,
+      estimatedValue: null,
+    },
+  });
+  await prisma.propertyEvent.createMany({
+    data: [
+      { propertyId: properties[2].id, eventType: 'PropertyDamageEvent', eventDate: new Date('2024-01-15'), description: 'נזק למזגן', damageType: 'מערכות', estimatedDamageCost: 3200 },
+      { propertyId: properties[4].id, eventType: 'PropertyDamageEvent', eventDate: new Date('2023-11-20'), description: 'סדק בקיר', damageType: 'מבנה', estimatedDamageCost: 5000 },
+    ],
+  });
+
+  // ExpenseEvent (3-4) - one can link to damage for repair
+  const expenseEvent1 = await prisma.propertyEvent.create({
+    data: {
+      propertyId: properties[0].id,
+      eventType: 'ExpenseEvent',
+      eventDate: new Date('2024-03-15'),
+      description: 'תיקון צנרת לאחר נזק',
+      expenseType: 'REPAIRS',
+      amount: 8200,
+      affectsPropertyValue: false,
+      paidToAccountId: bankAccounts[0].id,
+    },
+  });
+  await prisma.propertyEvent.createMany({
+    data: [
+      { propertyId: properties[0].id, eventType: 'ExpenseEvent', eventDate: new Date('2024-01-05'), description: 'ארנונה', expenseType: 'TAX', amount: 800, affectsPropertyValue: false },
+      { propertyId: properties[0].id, eventType: 'ExpenseEvent', eventDate: new Date('2024-02-10'), description: 'ביטוח נכס', expenseType: 'INSURANCE', amount: 1200, affectsPropertyValue: false },
+      { propertyId: properties[1].id, eventType: 'ExpenseEvent', eventDate: new Date('2024-01-20'), description: 'אגרת ועמ', expenseType: 'MANAGEMENT_FEE', amount: 600, affectsPropertyValue: false },
+      { propertyId: properties[4].id, eventType: 'ExpenseEvent', eventDate: new Date('2023-12-01'), description: 'תיקון סדק בקיר', expenseType: 'REPAIRS', amount: 4800, affectsPropertyValue: true },
+    ],
+  });
+
+  // Link PropertyDamageEvent to ExpenseEvent
+  await prisma.propertyEvent.update({
+    where: { id: damageEvent1.id },
+    data: { expenseId: expenseEvent1.id },
+  });
+
+  // RentalPaymentRequestEvent (4-5)
+  await prisma.propertyEvent.createMany({
+    data: [
+      { propertyId: properties[0].id, eventType: 'RentalPaymentRequestEvent', eventDate: new Date('2024-01-01'), rentalAgreementId: rentalAgreements[0].id, month: 1, year: 2024, amountDue: 8000, paymentDate: new Date('2024-01-05'), paymentStatus: 'PAID' },
+      { propertyId: properties[0].id, eventType: 'RentalPaymentRequestEvent', eventDate: new Date('2024-02-01'), rentalAgreementId: rentalAgreements[0].id, month: 2, year: 2024, amountDue: 8000, paymentDate: new Date('2024-02-03'), paymentStatus: 'PAID' },
+      { propertyId: properties[0].id, eventType: 'RentalPaymentRequestEvent', eventDate: new Date('2024-03-01'), rentalAgreementId: rentalAgreements[0].id, month: 3, year: 2024, amountDue: 8000, paymentDate: null, paymentStatus: 'PENDING' },
+      { propertyId: properties[2].id, eventType: 'RentalPaymentRequestEvent', eventDate: new Date('2024-02-01'), rentalAgreementId: rentalAgreements[2].id, month: 2, year: 2024, amountDue: 5300, paymentDate: new Date('2024-02-10'), paymentStatus: 'PAID' },
+      { propertyId: properties[2].id, eventType: 'RentalPaymentRequestEvent', eventDate: new Date('2024-03-01'), rentalAgreementId: rentalAgreements[2].id, month: 3, year: 2024, amountDue: 5300, paymentDate: new Date('2024-03-01'), paymentStatus: 'PAID' },
+    ],
+  });
+  console.log('✅ Created 15 property events (Planning, Damage, Expense, RentalPayment)');
 
   console.log('\n🎉 Seed completed successfully!');
   console.log('\n📊 Summary:');
-  console.log('- 1 Account');
-  console.log('- 1 User');
-  console.log('- 2 Properties (with Phase 4 fields)');
-  console.log('- 2 Owners');
-  console.log('- 2 Ownerships (50% + 50% = 100%)');
-  console.log('- 1 Mortgage with 3 payments');
-  console.log('- 3 Valuations');
-  console.log('- 3 Expenses');
-  console.log('- 3 Income records');
-  console.log('- 1 Plot Info (Gush/Chelka)');
-  console.log('- 2 Units');
-  console.log('- 2 Tenants');
-  console.log('- 2 Leases');
-  console.log('\n🔑 Test credentials:');
-  console.log('Email: test@example.com');
-  console.log('Account ID: test-account-1');
+  console.log('- 7 Persons');
+  console.log('- 4 Owners');
+  console.log('- 4 Bank Accounts');
+  console.log('- 6 Properties');
+  console.log('- 3 Planning Process States');
+  console.log('- 6 Utility Info records');
+  console.log('- 9 Ownerships');
+  console.log('- 4 Mortgages');
+  console.log('- 5 Rental Agreements');
+  console.log('- 15 Property Events');
 }
 
 main()

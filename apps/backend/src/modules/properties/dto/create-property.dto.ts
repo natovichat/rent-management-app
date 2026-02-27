@@ -1,21 +1,22 @@
 import {
   IsString,
   IsOptional,
-  IsNotEmpty,
   IsEnum,
-  IsNumber,
-  IsDateString,
-  IsUUID,
   IsBoolean,
   IsInt,
+  IsNumber,
+  IsDateString,
+  MinLength,
+  MaxLength,
   Min,
   Max,
-  IsPositive,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   PropertyType,
   PropertyStatus,
+  ParkingType,
   AcquisitionMethod,
   LegalStatus,
   PropertyCondition,
@@ -24,535 +25,531 @@ import {
   TaxFrequency,
   EstimationSource,
 } from '@prisma/client';
-import { Type, Transform } from 'class-transformer';
 
+export const PROPERTY_TYPES = Object.values(PropertyType);
+export const PROPERTY_STATUSES = Object.values(PropertyStatus);
+export const PARKING_TYPES = Object.values(ParkingType);
+export const ACQUISITION_METHODS = Object.values(AcquisitionMethod);
+export const LEGAL_STATUSES = Object.values(LegalStatus);
+export const PROPERTY_CONDITIONS = Object.values(PropertyCondition);
+export const LAND_TYPES = Object.values(LandType);
+export const MANAGEMENT_FEE_FREQUENCIES = Object.values(ManagementFeeFrequency);
+export const TAX_FREQUENCIES = Object.values(TaxFrequency);
+export const ESTIMATION_SOURCES = Object.values(EstimationSource);
+
+/**
+ * DTO for creating a new Property
+ */
 export class CreatePropertyDto {
   @ApiProperty({
-    description: 'Account ID (for multi-account support)',
-    example: '00000000-0000-0000-0000-000000000001',
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  accountId?: string;
-
-  @ApiProperty({
-    description: 'כתובת הנכס',
-    example: 'רחוב הרצל 10, תל אביב',
+    description: 'Property address (required)',
+    example: 'רחוב הרצל 15, תל אביב',
+    minLength: 5,
   })
   @IsString()
-  @IsNotEmpty()
+  @MinLength(5, { message: 'address must be at least 5 characters' })
+  @MaxLength(500)
   address: string;
 
-  @ApiProperty({
-    description: 'מספר תיק',
+  @ApiPropertyOptional({
+    description: 'File number',
     example: '12345',
-    required: false,
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(50)
   fileNumber?: string;
 
-  @ApiProperty({
-    description: 'גוש',
-    example: '6158',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  gush?: string;
-
-  @ApiProperty({
-    description: 'חלקה',
-    example: '371',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  helka?: string;
-
-  @ApiProperty({
-    description: 'האם הנכס משועבד',
-    example: false,
-    required: false,
-    default: false,
-  })
-  @IsBoolean()
-  @IsOptional()
-  isMortgaged?: boolean;
-
-  @ApiProperty({
-    description: 'סוג הנכס',
+  @ApiPropertyOptional({
+    description: 'Property type',
     enum: PropertyType,
-    required: false,
   })
-  @IsEnum(PropertyType)
   @IsOptional()
+  @IsEnum(PropertyType, {
+    message: `type must be one of: ${PROPERTY_TYPES.join(', ')}`,
+  })
   type?: PropertyType;
 
-  @ApiProperty({
-    description: 'סטטוס הנכס',
+  @ApiPropertyOptional({
+    description: 'Property status',
     enum: PropertyStatus,
-    required: false,
   })
-  @IsEnum(PropertyStatus)
   @IsOptional()
+  @IsEnum(PropertyStatus, {
+    message: `status must be one of: ${PROPERTY_STATUSES.join(', ')}`,
+  })
   status?: PropertyStatus;
 
-  @ApiProperty({
-    description: 'מדינה',
-    example: 'Israel',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Country',
     default: 'Israel',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
   country?: string;
 
-  @ApiProperty({
-    description: 'עיר',
+  @ApiPropertyOptional({
+    description: 'City',
     example: 'תל אביב',
-    required: false,
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(100)
   city?: string;
 
-  @ApiProperty({
-    description: 'שטח כולל (מ"ר)',
+  @ApiPropertyOptional({
+    description: 'Total area in sqm',
     example: 120.5,
-    required: false,
   })
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
   @Type(() => Number)
+  @IsNumber()
+  @Min(0)
   totalArea?: number;
 
-  @ApiProperty({
-    description: 'שטח קרקע (מ"ר)',
+  @ApiPropertyOptional({
+    description: 'Land area in sqm',
     example: 200.0,
-    required: false,
   })
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
   @Type(() => Number)
+  @IsNumber()
+  @Min(0)
   landArea?: number;
 
-  @ApiProperty({
-    description: 'שווי משוער (₪)',
-    example: 2500000,
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Estimated value',
+    example: 1500000,
   })
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
   @Type(() => Number)
+  @IsNumber()
+  @Min(0)
   estimatedValue?: number;
 
-  @ApiProperty({
-    description: 'תאריך הערכת שווי אחרונה',
-    example: '2024-01-15T00:00:00.000Z',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Last valuation date',
+    example: '2024-01-15',
   })
-  @IsDateString()
   @IsOptional()
+  @IsDateString()
   lastValuationDate?: string;
 
-  @ApiProperty({
-    description: 'מזהה חברת השקעה',
-    example: 'uuid-string',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Gush (plot registry)',
+    example: '123',
   })
-  @IsUUID()
   @IsOptional()
-  investmentCompanyId?: string;
-
-  @ApiProperty({
-    description: 'הערות',
-    required: false,
-  })
   @IsString()
-  @IsOptional()
-  notes?: string;
+  @MaxLength(50)
+  gush?: string;
 
-  // Area & Dimensions
-  @ApiProperty({
-    description: 'מספר קומות',
-    example: 3,
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Helka (parcel)',
+    example: '45',
   })
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Transform(({ value }) => (value === '' || value === null ? undefined : Number(value)))
-  floors?: number;
-
-  @ApiProperty({
-    description: 'מספר יחידות כולל',
-    example: 12,
-    required: false,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Transform(({ value }) => (value === '' || value === null ? undefined : Number(value)))
-  totalUnits?: number;
-
-  @ApiProperty({
-    description: 'מספר מקומות חניה',
-    example: 5,
-    required: false,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Transform(({ value }) => (value === '' || value === null ? undefined : Number(value)))
-  parkingSpaces?: number;
-
-  // Financial
-  @ApiProperty({
-    description: 'מחיר רכישה (₪)',
-    example: 2000000,
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  @Type(() => Number)
-  acquisitionPrice?: number;
-
-  @ApiProperty({
-    description: 'תאריך רכישה',
-    example: '2020-01-15T00:00:00.000Z',
-    required: false,
-  })
-  @IsDateString()
-  @IsOptional()
-  acquisitionDate?: string;
-
-  @ApiProperty({
-    description: 'שיטת רכישה',
-    enum: AcquisitionMethod,
-    required: false,
-  })
-  @IsEnum(AcquisitionMethod, {
-    message: 'שיטת רכישה חייבת להיות אחת מהערכים: PURCHASE, INHERITANCE, GIFT, EXCHANGE, OTHER',
-  })
-  @IsOptional()
-  acquisitionMethod?: AcquisitionMethod;
-
-  @ApiProperty({
-    description: 'הכנסה משכירות (₪ לחודש)',
-    example: 5000,
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(0)
-  @Type(() => Number)
-  rentalIncome?: number;
-
-  @ApiProperty({
-    description: 'שווי צפוי (₪)',
-    example: 3000000,
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  @IsPositive()
-  @Type(() => Number)
-  projectedValue?: number;
-
-  // Legal & Registry
-  @ApiProperty({
-    description: 'מספר קדסטרלי',
-    example: '12345-67',
-    required: false,
-  })
   @IsString()
-  @IsOptional()
-  cadastralNumber?: string;
+  @MaxLength(50)
+  helka?: string;
 
-  @ApiProperty({
-    description: 'מספר זהות מס',
-    example: '123456789',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  taxId?: string;
-
-  @ApiProperty({
-    description: 'תאריך רישום',
-    example: '2020-01-15T00:00:00.000Z',
-    required: false,
-  })
-  @IsDateString()
-  @IsOptional()
-  registrationDate?: string;
-
-  @ApiProperty({
-    description: 'סטטוס משפטי',
-    enum: LegalStatus,
-    required: false,
-  })
-  @IsEnum(LegalStatus, {
-    message: 'סטטוס משפטי חייב להיות אחד מהערכים: REGISTERED, IN_REGISTRATION, DISPUTED, CLEAR',
-  })
-  @IsOptional()
-  legalStatus?: LegalStatus;
-
-  // Property Details
-  @ApiProperty({
-    description: 'שנת בנייה',
-    example: 2010,
-    required: false,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1800)
-  @Max(2100)
-  @Type(() => Number)
-  constructionYear?: number;
-
-  @ApiProperty({
-    description: 'שנת שיפוץ אחרונה',
-    example: 2020,
-    required: false,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1800)
-  @Max(2100)
-  @Type(() => Number)
-  lastRenovationYear?: number;
-
-  @ApiProperty({
-    description: 'מספר היתר בנייה',
-    example: '12345/2020',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  buildingPermitNumber?: string;
-
-  @ApiProperty({
-    description: 'מצב הנכס',
-    enum: PropertyCondition,
-    required: false,
-  })
-  @IsEnum(PropertyCondition, {
-    message: 'מצב הנכס חייב להיות אחד מהערכים: EXCELLENT, GOOD, FAIR, NEEDS_RENOVATION',
-  })
-  @IsOptional()
-  propertyCondition?: PropertyCondition;
-
-  // Land Information
-  @ApiProperty({
-    description: 'סוג קרקע',
-    enum: LandType,
-    required: false,
-  })
-  @IsEnum(LandType, {
-    message: 'סוג קרקע חייב להיות אחד מהערכים: URBAN, AGRICULTURAL, INDUSTRIAL, MIXED',
-  })
-  @IsOptional()
-  landType?: LandType;
-
-  @ApiProperty({
-    description: 'ייעוד קרקע',
-    example: 'מגורים',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  landDesignation?: string;
-
-  // Ownership
-  @ApiProperty({
-    description: 'האם בעלות חלקית',
-    example: false,
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Whether property is mortgaged',
     default: false,
   })
-  @IsBoolean()
   @IsOptional()
-  isPartialOwnership?: boolean;
+  @IsBoolean()
+  isMortgaged?: boolean;
 
-  @ApiProperty({
-    description: 'אחוז בעלות משותפת (0-100)',
-    example: 50.5,
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Number of floors',
+    example: 3,
   })
   @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  floors?: number;
+
+  @ApiPropertyOptional({
+    description: 'Total number of units',
+    example: 4,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  totalUnits?: number;
+
+  @ApiPropertyOptional({
+    description: 'Number of parking spaces',
+    example: 2,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  parkingSpaces?: number;
+
+  @ApiPropertyOptional({
+    description: 'Balcony size in sqm',
+    example: 15.5,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  balconySizeSqm?: number;
+
+  @ApiPropertyOptional({
+    description: 'Storage size in sqm',
+    example: 8.0,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  storageSizeSqm?: number;
+
+  @ApiPropertyOptional({
+    description: 'Parking type',
+    enum: ParkingType,
+  })
+  @IsOptional()
+  @IsEnum(ParkingType, {
+    message: `parkingType must be one of: ${PARKING_TYPES.join(', ')}`,
+  })
+  parkingType?: ParkingType;
+
+  @ApiPropertyOptional({
+    description: 'Purchase price',
+    example: 1200000,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  purchasePrice?: number;
+
+  @ApiPropertyOptional({
+    description: 'Purchase date',
+    example: '2020-06-01',
+  })
+  @IsOptional()
+  @IsDateString()
+  purchaseDate?: string;
+
+  @ApiPropertyOptional({
+    description: 'Acquisition method',
+    enum: AcquisitionMethod,
+  })
+  @IsOptional()
+  @IsEnum(AcquisitionMethod, {
+    message: `acquisitionMethod must be one of: ${ACQUISITION_METHODS.join(', ')}`,
+  })
+  acquisitionMethod?: AcquisitionMethod;
+
+  @ApiPropertyOptional({
+    description: 'Estimated monthly rent',
+    example: 5000,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  estimatedRent?: number;
+
+  @ApiPropertyOptional({
+    description: 'Rental income',
+    example: 4800,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  rentalIncome?: number;
+
+  @ApiPropertyOptional({
+    description: 'Projected value',
+    example: 1600000,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  projectedValue?: number;
+
+  @ApiPropertyOptional({
+    description: 'Sale projected tax',
+    example: 120000,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  saleProjectedTax?: number;
+
+  @ApiPropertyOptional({
+    description: 'Cadastral number',
+    example: '123-456-789',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  cadastralNumber?: string;
+
+  @ApiPropertyOptional({
+    description: 'Tax ID',
+    example: '123456789',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  taxId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Registration date',
+    example: '2020-07-15',
+  })
+  @IsOptional()
+  @IsDateString()
+  registrationDate?: string;
+
+  @ApiPropertyOptional({
+    description: 'Legal status',
+    enum: LegalStatus,
+  })
+  @IsOptional()
+  @IsEnum(LegalStatus, {
+    message: `legalStatus must be one of: ${LEGAL_STATUSES.join(', ')}`,
+  })
+  legalStatus?: LegalStatus;
+
+  @ApiPropertyOptional({
+    description: 'Construction year',
+    example: 1995,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1800)
+  @Max(2100)
+  constructionYear?: number;
+
+  @ApiPropertyOptional({
+    description: 'Last renovation year',
+    example: 2020,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1800)
+  @Max(2100)
+  lastRenovationYear?: number;
+
+  @ApiPropertyOptional({
+    description: 'Building permit number',
+    example: 'BP-2020-123',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  buildingPermitNumber?: string;
+
+  @ApiPropertyOptional({
+    description: 'Property condition',
+    enum: PropertyCondition,
+  })
+  @IsOptional()
+  @IsEnum(PropertyCondition, {
+    message: `propertyCondition must be one of: ${PROPERTY_CONDITIONS.join(', ')}`,
+  })
+  propertyCondition?: PropertyCondition;
+
+  @ApiPropertyOptional({
+    description: 'Land type',
+    enum: LandType,
+  })
+  @IsOptional()
+  @IsEnum(LandType, {
+    message: `landType must be one of: ${LAND_TYPES.join(', ')}`,
+  })
+  landType?: LandType;
+
+  @ApiPropertyOptional({
+    description: 'Land designation',
+    example: 'Residential',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  landDesignation?: string;
+
+  @ApiPropertyOptional({
+    description: 'Partial ownership flag',
+    default: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  isPartialOwnership?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Shared ownership percentage',
+    example: 50.5,
+  })
+  @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
   @Max(100)
-  @Type(() => Number)
   sharedOwnershipPercentage?: number;
 
-  // Sale Information
-  @ApiProperty({
-    description: 'האם נמכר',
-    example: false,
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Sold flag',
     default: false,
   })
-  @IsBoolean()
   @IsOptional()
+  @IsBoolean()
   isSold?: boolean;
 
-  @ApiProperty({
-    description: 'תאריך מכירה',
-    example: '2023-06-15T00:00:00.000Z',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Sale date',
+    example: '2024-01-01',
   })
-  @IsDateString()
   @IsOptional()
+  @IsDateString()
   saleDate?: string;
 
-  @ApiProperty({
-    description: 'מחיר מכירה (₪)',
-    example: 3000000,
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Sale price',
+    example: 1400000,
   })
   @IsOptional()
-  @IsNumber()
-  @IsPositive()
   @Type(() => Number)
+  @IsNumber()
+  @Min(0)
   salePrice?: number;
 
-  // Management
-  @ApiProperty({
-    description: 'מנהל נכס',
-    example: 'יוסי כהן',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Property manager name',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   propertyManager?: string;
 
-  @ApiProperty({
-    description: 'חברת ניהול',
-    example: 'חברת ניהול בע"מ',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Management company name',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(255)
   managementCompany?: string;
 
-  @ApiProperty({
-    description: 'דמי ניהול (₪)',
+  @ApiPropertyOptional({
+    description: 'Management fees amount',
     example: 500,
-    required: false,
   })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
-  @Type(() => Number)
   managementFees?: number;
 
-  @ApiProperty({
-    description: 'תדירות תשלום דמי ניהול',
+  @ApiPropertyOptional({
+    description: 'Management fee frequency',
     enum: ManagementFeeFrequency,
-    required: false,
-  })
-  @IsEnum(ManagementFeeFrequency, {
-    message: 'תדירות תשלום דמי ניהול חייבת להיות אחת מהערכים: MONTHLY, QUARTERLY, ANNUAL',
   })
   @IsOptional()
+  @IsEnum(ManagementFeeFrequency, {
+    message: `managementFeeFrequency must be one of: ${MANAGEMENT_FEE_FREQUENCIES.join(', ')}`,
+  })
   managementFeeFrequency?: ManagementFeeFrequency;
 
-  // Financial Obligations
-  @ApiProperty({
-    description: 'סכום מס (₪)',
-    example: 1200,
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Tax amount',
+    example: 3000,
   })
   @IsOptional()
+  @Type(() => Number)
   @IsNumber()
   @Min(0)
-  @Type(() => Number)
   taxAmount?: number;
 
-  @ApiProperty({
-    description: 'תדירות תשלום מס',
+  @ApiPropertyOptional({
+    description: 'Tax frequency',
     enum: TaxFrequency,
-    required: false,
-  })
-  @IsEnum(TaxFrequency, {
-    message: 'תדירות תשלום מס חייבת להיות אחת מהערכים: MONTHLY, QUARTERLY, ANNUAL',
   })
   @IsOptional()
+  @IsEnum(TaxFrequency, {
+    message: `taxFrequency must be one of: ${TAX_FREQUENCIES.join(', ')}`,
+  })
   taxFrequency?: TaxFrequency;
 
-  @ApiProperty({
-    description: 'תאריך תשלום מס אחרון',
-    example: '2024-01-15T00:00:00.000Z',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Last tax payment date',
+    example: '2024-01-15',
   })
-  @IsDateString()
   @IsOptional()
+  @IsDateString()
   lastTaxPayment?: string;
 
-  // Insurance
-  @ApiProperty({
-    description: 'פרטי ביטוח',
-    example: 'ביטוח מבנה ומקיף',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Insurance details',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(1000)
   insuranceDetails?: string;
 
-  @ApiProperty({
-    description: 'תאריך תפוגת ביטוח',
-    example: '2025-12-31T00:00:00.000Z',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Insurance expiry date',
+    example: '2025-12-31',
   })
-  @IsDateString()
   @IsOptional()
+  @IsDateString()
   insuranceExpiry?: string;
 
-  // Utilities & Infrastructure
-  @ApiProperty({
-    description: 'ייעוד (תכנון)',
-    example: 'מגורים',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Zoning information',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(500)
   zoning?: string;
 
-  @ApiProperty({
-    description: 'תשתיות',
-    example: 'חשמל, מים, ביוב, גז',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Utilities information',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(500)
   utilities?: string;
 
-  @ApiProperty({
-    description: 'הגבלות',
-    example: 'אין הגבלות',
-    required: false,
+  @ApiPropertyOptional({
+    description: 'Restrictions',
   })
-  @IsString()
   @IsOptional()
+  @IsString()
+  @MaxLength(500)
   restrictions?: string;
 
-  // Valuation
-  @ApiProperty({
-    description: 'מקור הערכת שווי',
+  @ApiPropertyOptional({
+    description: 'Estimation source',
     enum: EstimationSource,
-    required: false,
-  })
-  @IsEnum(EstimationSource, {
-    message: 'מקור הערכת שווי חייב להיות אחד מהערכים: PROFESSIONAL_APPRAISAL, MARKET_ESTIMATE, TAX_ASSESSMENT, OWNER_ESTIMATE',
   })
   @IsOptional()
+  @IsEnum(EstimationSource, {
+    message: `estimationSource must be one of: ${ESTIMATION_SOURCES.join(', ')}`,
+  })
   estimationSource?: EstimationSource;
+
+  @ApiPropertyOptional({
+    description: 'Additional notes',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  notes?: string;
 }

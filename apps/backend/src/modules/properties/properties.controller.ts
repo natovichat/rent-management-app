@@ -7,481 +7,183 @@ import {
   Param,
   Delete,
   Query,
-  ParseIntPipe,
-  DefaultValuePipe,
-  UseInterceptors,
-  UploadedFile,
-  Res,
-  Header,
-  Request,
-  BadRequestException,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
+  ApiParam,
   ApiQuery,
-  ApiConsumes,
-  ApiBody,
 } from '@nestjs/swagger';
-import { Response } from 'express';
 import { PropertiesService } from './properties.service';
-import { PropertiesCsvService, PreviewRow } from './properties-csv.service';
+import { MortgagesService } from '../mortgages/mortgages.service';
+import { RentalAgreementsService } from '../rental-agreements/rental-agreements.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { PropertyResponseDto } from './dto/property-response.dto';
-import { FindAllPropertiesDto } from './dto/find-all-properties.dto';
-import { PropertyType, PropertyStatus } from '@prisma/client';
-import { OwnershipsService } from '../ownerships/ownerships.service';
-import { CreateOwnershipDto } from '../ownerships/dto/create-ownership.dto';
-// Hardcoded test account ID - authentication removed for simplification
-const HARDCODED_ACCOUNT_ID = 'test-account-1';
+import { QueryPropertyDto } from './dto/query-property.dto';
+import { PropertyEntity } from './entities/property.entity';
 
 @ApiTags('properties')
 @Controller('properties')
 export class PropertiesController {
   constructor(
     private readonly propertiesService: PropertiesService,
-    private readonly csvService: PropertiesCsvService,
-    private readonly ownershipsService: OwnershipsService,
+    private readonly mortgagesService: MortgagesService,
+    private readonly rentalAgreementsService: RentalAgreementsService,
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'יצירת נכס חדש' })
+  @ApiOperation({ summary: 'Create a new property' })
   @ApiResponse({
     status: 201,
-    description: 'הנכס נוצר בהצלחה',
-    type: PropertyResponseDto,
-  })
-  create(@Body() createPropertyDto: CreatePropertyDto, @Request() req: any) {
-    console.log('[PropertiesController] req.headers:', req.headers);
-    console.log('[PropertiesController] createPropertyDto.accountId:', createPropertyDto.accountId);
-    
-    // Priority: X-Account-Id header > DTO > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || createPropertyDto.accountId || HARDCODED_ACCOUNT_ID;
-    
-    // Remove accountId from DTO before passing to service (service expects it as separate parameter)
-    const { accountId, ...dtoWithoutAccountId } = createPropertyDto;
-    
-    // #region agent log
-    fetch('http://127.0.0.1:7244/ingest/5f8ed50f-0709-4648-bb8f-261a88441c96',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'properties.controller.ts:60',message:'Controller received create request',data:{accountId:effectiveAccountId,dtoKeys:Object.keys(dtoWithoutAccountId),dtoSample:{address:dtoWithoutAccountId.address,type:dtoWithoutAccountId.type,status:dtoWithoutAccountId.status,totalArea:dtoWithoutAccountId.totalArea,floors:dtoWithoutAccountId.floors,totalUnits:dtoWithoutAccountId.totalUnits,parkingSpaces:dtoWithoutAccountId.parkingSpaces}},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'A,B'})}).catch(()=>{});
-    // #endregion
-    console.log('[PropertiesController] About to call service.create()');
-    console.log('[PropertiesController] effectiveAccountId:', effectiveAccountId);
-    console.log('[PropertiesController] DTO:', dtoWithoutAccountId);
-    return this.propertiesService.create(effectiveAccountId, dtoWithoutAccountId);
-  }
-
-  @Get()
-  @ApiOperation({ summary: 'קבלת כל הנכסים' })
-  @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiQuery({ name: 'search', required: false, type: String })
-  @ApiQuery({ name: 'type', required: false, enum: PropertyType, isArray: true })
-  @ApiQuery({ name: 'status', required: false, enum: PropertyStatus, isArray: true })
-  @ApiQuery({ name: 'city', required: false, type: String })
-  @ApiQuery({ name: 'country', required: false, type: String })
-  @ApiQuery({ name: 'isMortgaged', required: false, type: Boolean })
-  @ApiQuery({ name: 'accountId', required: false, type: String, description: 'Account ID for filtering (multi-account support)' })
-  @ApiQuery({ name: 'minEstimatedValue', required: false, type: Number })
-  @ApiQuery({ name: 'maxEstimatedValue', required: false, type: Number })
-  @ApiQuery({ name: 'minTotalArea', required: false, type: Number })
-  @ApiQuery({ name: 'maxTotalArea', required: false, type: Number })
-  @ApiQuery({ name: 'minLandArea', required: false, type: Number })
-  @ApiQuery({ name: 'maxLandArea', required: false, type: Number })
-  @ApiQuery({ name: 'createdFrom', required: false, type: String })
-  @ApiQuery({ name: 'createdTo', required: false, type: String })
-  @ApiQuery({ name: 'valuationFrom', required: false, type: String })
-  @ApiQuery({ name: 'valuationTo', required: false, type: String })
-  @ApiResponse({
-    status: 200,
-    description: 'רשימת נכסים',
-  })
-  findAll(
-    @Request() req: any,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('search') search?: string,
-    @Query('type') type?: PropertyType | PropertyType[] | string,
-    @Query('status') status?: PropertyStatus | PropertyStatus[] | string,
-    @Query('city') city?: string,
-    @Query('country') country?: string,
-    @Query('isMortgaged') isMortgaged?: string,
-    @Query('accountId') accountId?: string,
-    @Query('minEstimatedValue') minEstimatedValue?: string,
-    @Query('maxEstimatedValue') maxEstimatedValue?: string,
-    @Query('minTotalArea') minTotalArea?: string,
-    @Query('maxTotalArea') maxTotalArea?: string,
-    @Query('minLandArea') minLandArea?: string,
-    @Query('maxLandArea') maxLandArea?: string,
-    @Query('createdFrom') createdFrom?: string,
-    @Query('createdTo') createdTo?: string,
-    @Query('valuationFrom') valuationFrom?: string,
-    @Query('valuationTo') valuationTo?: string,
-  ) {
-    // Parse array query parameters (handle comma-separated strings)
-    const parseArrayParam = <T>(
-      param: T | T[] | string | undefined,
-    ): T | T[] | undefined => {
-      if (!param) return undefined;
-      if (Array.isArray(param)) return param as T[];
-      if (typeof param === 'string' && param.includes(',')) {
-        return param.split(',') as T[];
-      }
-      return param as T;
-    };
-
-    const parsedType = parseArrayParam<PropertyType>(type);
-    const parsedStatus = parseArrayParam<PropertyStatus>(status);
-
-    // Parse isMortgaged string to boolean
-    const isMortgagedBoolean =
-      isMortgaged !== undefined
-        ? isMortgaged === 'true' || isMortgaged === '1'
-        : undefined;
-
-    // Priority: X-Account-Id header > query parameter > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || accountId || HARDCODED_ACCOUNT_ID;
-
-    // Parse advanced filter parameters
-    const minEstimatedValueNum = minEstimatedValue
-      ? parseFloat(minEstimatedValue)
-      : undefined;
-    const maxEstimatedValueNum = maxEstimatedValue
-      ? parseFloat(maxEstimatedValue)
-      : undefined;
-    const minTotalAreaNum = minTotalArea ? parseFloat(minTotalArea) : undefined;
-    const maxTotalAreaNum = maxTotalArea ? parseFloat(maxTotalArea) : undefined;
-    const minLandAreaNum = minLandArea ? parseFloat(minLandArea) : undefined;
-    const maxLandAreaNum = maxLandArea ? parseFloat(maxLandArea) : undefined;
-
-    return this.propertiesService.findAll(
-      effectiveAccountId,
-      page,
-      limit,
-      search,
-      parsedType,
-      parsedStatus,
-      city,
-      country,
-      isMortgagedBoolean,
-      minEstimatedValueNum,
-      maxEstimatedValueNum,
-      minTotalAreaNum,
-      maxTotalAreaNum,
-      minLandAreaNum,
-      maxLandAreaNum,
-      createdFrom,
-      createdTo,
-      valuationFrom,
-      valuationTo,
-    );
-  }
-
-  @Get('statistics')
-  @ApiOperation({ summary: 'קבלת סטטיסטיקות נכסים' })
-  getStatistics(@Request() req: any) {
-    // Priority: X-Account-Id header > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    return this.propertiesService.getStatistics(effectiveAccountId);
-  }
-
-  @Get('portfolio/summary')
-  @ApiOperation({ summary: 'קבלת סיכום תיק נכסים' })
-  @ApiResponse({
-    status: 200,
-    description: 'סיכום תיק נכסים כולל סטטיסטיקות מפורטות',
-    schema: {
-      type: 'object',
-      properties: {
-        totalProperties: { type: 'number' },
-        totalUnits: { type: 'number' },
-        activeLeases: { type: 'number' },
-        occupancyRate: { type: 'number' },
-        totalEstimatedValue: { type: 'number' },
-        totalMortgageDebt: { type: 'number' },
-        netEquity: { type: 'number' },
-        totalArea: { type: 'number' },
-        landArea: { type: 'number' },
-        propertiesByType: { type: 'object' },
-        propertiesByStatus: { type: 'object' },
-      },
-    },
-  })
-  getPortfolioSummary(@Request() req: any) {
-    // Priority: X-Account-Id header > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    return this.propertiesService.getPortfolioSummary(effectiveAccountId);
-  }
-
-  @Get('portfolio/distribution')
-  @ApiOperation({ summary: 'קבלת התפלגות נכסים לפי סוג וסטטוס' })
-  @ApiResponse({
-    status: 200,
-    description: 'התפלגות נכסים לפי סוג וסטטוס',
-  })
-  getPortfolioDistribution(@Request() req: any) {
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    return this.propertiesService.getPortfolioDistribution(effectiveAccountId);
-  }
-
-  @Get('portfolio/valuation-history')
-  @ApiOperation({ summary: 'קבלת היסטוריית הערכות נכסים' })
-  @ApiQuery({ name: 'startDate', required: false, type: String })
-  @ApiQuery({ name: 'endDate', required: false, type: String })
-  @ApiResponse({
-    status: 200,
-    description: 'היסטוריית הערכות נכסים',
-  })
-  getValuationHistory(
-    @Request() req: any,
-    @Query('startDate') startDate?: string,
-    @Query('endDate') endDate?: string,
-  ) {
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    return this.propertiesService.getValuationHistory(
-      effectiveAccountId,
-      startDate ? new Date(startDate) : undefined,
-      endDate ? new Date(endDate) : undefined,
-    );
-  }
-
-  @Get(':id/ownerships')
-  @ApiOperation({ summary: 'קבלת כל הבעלויות של נכס' })
-  @ApiResponse({
-    status: 200,
-    description: 'רשימת בעלויות',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'נכס לא נמצא',
-  })
-  getPropertyOwnerships(
-    @Param('id') propertyId: string,
-    @Request() req: any,
-  ) {
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    return this.ownershipsService.findAllByProperty(propertyId, effectiveAccountId);
-  }
-
-  @Post(':id/ownerships')
-  @ApiOperation({ summary: 'יצירת בעלות חדשה לנכס' })
-  @ApiResponse({
-    status: 201,
-    description: 'הבעלות נוצרה בהצלחה',
+    description: 'Property created successfully',
+    type: PropertyEntity,
   })
   @ApiResponse({
     status: 400,
-    description: 'סך כל אחוזי הבעלות חייב להיות 100%',
+    description: 'Validation error - invalid input',
+  })
+  create(@Body() createPropertyDto: CreatePropertyDto) {
+    return this.propertiesService.create(createPropertyDto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'List properties with pagination, search and filter' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Items per page' })
+  @ApiQuery({ name: 'search', required: false, type: String, description: 'Search by address, city, country' })
+  @ApiQuery({ name: 'type', required: false, enum: ['RESIDENTIAL', 'COMMERCIAL', 'LAND', 'MIXED_USE'], description: 'Filter by type' })
+  @ApiQuery({ name: 'status', required: false, enum: ['OWNED', 'IN_CONSTRUCTION', 'IN_PURCHASE', 'SOLD', 'INVESTMENT'], description: 'Filter by status' })
+  @ApiQuery({ name: 'city', required: false, type: String, description: 'Filter by city' })
+  @ApiQuery({ name: 'country', required: false, type: String, description: 'Filter by country' })
+  @ApiResponse({
+    status: 200,
+    description: 'Paginated list of properties',
+    schema: {
+      type: 'object',
+      properties: {
+        data: { type: 'array', items: { $ref: '#/components/schemas/PropertyEntity' } },
+        meta: {
+          type: 'object',
+          properties: {
+            page: { type: 'number', example: 1 },
+            limit: { type: 'number', example: 10 },
+            total: { type: 'number', example: 25 },
+            totalPages: { type: 'number', example: 3 },
+          },
+        },
+      },
+    },
+  })
+  findAll(@Query() query: QueryPropertyDto) {
+    return this.propertiesService.findAll(query);
+  }
+
+  @Get(':propertyId/mortgages')
+  @ApiOperation({ summary: 'Get mortgages for a property' })
+  @ApiParam({ name: 'propertyId', description: 'Property UUID' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of mortgages for the property (direct or linked)',
+    schema: {
+      type: 'array',
+      items: { $ref: '#/components/schemas/MortgageEntity' },
+    },
   })
   @ApiResponse({
     status: 404,
-    description: 'נכס או בעלים לא נמצאו',
+    description: 'Property not found',
   })
-  createPropertyOwnership(
-    @Param('id') propertyId: string,
-    @Body() createOwnershipDto: Omit<CreateOwnershipDto, 'propertyId'>,
-    @Request() req: any,
-  ) {
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    // Add propertyId from URL to the DTO
-    const fullDto: CreateOwnershipDto = {
-      ...createOwnershipDto,
-      propertyId,
-    };
-    return this.ownershipsService.create(fullDto, effectiveAccountId);
+  findMortgagesByProperty(@Param('propertyId') propertyId: string) {
+    return this.mortgagesService.findByProperty(propertyId);
+  }
+
+  @Get(':propertyId/rental-agreements')
+  @ApiOperation({ summary: 'Get rental agreements for a property' })
+  @ApiParam({ name: 'propertyId', description: 'Property UUID' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of rental agreements for the property',
+    schema: {
+      type: 'array',
+      items: { $ref: '#/components/schemas/RentalAgreementEntity' },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Property not found',
+  })
+  findRentalAgreementsByProperty(@Param('propertyId') propertyId: string) {
+    return this.rentalAgreementsService.findByProperty(propertyId);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'קבלת נכס לפי מזהה' })
+  @ApiOperation({ summary: 'Get property by ID' })
+  @ApiParam({ name: 'id', description: 'Property UUID' })
+  @ApiQuery({
+    name: 'include',
+    required: false,
+    type: String,
+    description: 'Include relations: planningProcessState, utilityInfo (comma-separated)',
+  })
   @ApiResponse({
     status: 200,
-    description: 'פרטי נכס',
-    type: PropertyResponseDto,
+    description: 'Property found',
+    type: PropertyEntity,
   })
-  @ApiResponse({ status: 404, description: 'נכס לא נמצא' })
+  @ApiResponse({
+    status: 404,
+    description: 'Property not found',
+  })
   findOne(
-    @Request() req: any,
     @Param('id') id: string,
-    @Query('accountId') accountId?: string,
+    @Query('include') include?: string,
   ) {
-    // Priority: X-Account-Id header > query parameter > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || accountId || HARDCODED_ACCOUNT_ID;
-    return this.propertiesService.findOne(id, effectiveAccountId);
+    return this.propertiesService.findOne(id, include);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'עדכון נכס' })
+  @ApiOperation({ summary: 'Update property' })
+  @ApiParam({ name: 'id', description: 'Property UUID' })
   @ApiResponse({
     status: 200,
-    description: 'הנכס עודכן בהצלחה',
-    type: PropertyResponseDto,
+    description: 'Property updated successfully',
+    type: PropertyEntity,
   })
-  @ApiResponse({ status: 404, description: 'נכס לא נמצא' })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Property not found',
+  })
   update(
     @Param('id') id: string,
     @Body() updatePropertyDto: UpdatePropertyDto,
-    @Request() req: any,
   ) {
-    // Priority: X-Account-Id header > DTO > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || (updatePropertyDto as any).accountId || HARDCODED_ACCOUNT_ID;
-    
-    // Remove accountId from DTO before passing to service
-    const { accountId, ...dtoWithoutAccountId } = updatePropertyDto as any;
-    
-    return this.propertiesService.update(id, effectiveAccountId, dtoWithoutAccountId);
+    return this.propertiesService.update(id, updatePropertyDto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'מחיקת נכס' })
-  @ApiResponse({ status: 200, description: 'הנכס נמחק בהצלחה' })
-  @ApiResponse({ status: 404, description: 'נכס לא נמצא' })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete property' })
+  @ApiParam({ name: 'id', description: 'Property UUID' })
   @ApiResponse({
-    status: 403,
-    description: 'לא ניתן למחוק נכס עם יחידות קיימות',
-  })
-  remove(@Param('id') id: string, @Request() req: any) {
-    // Priority: X-Account-Id header > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    return this.propertiesService.remove(id, effectiveAccountId);
-  }
-
-  @Get('csv/example')
-  @ApiOperation({ summary: 'הורדת קובץ CSV לדוגמה' })
-  @ApiResponse({ status: 200, description: 'קובץ CSV לדוגמה' })
-  @Header('Content-Type', 'text/csv; charset=utf-8')
-  @Header('Content-Disposition', 'attachment; filename="properties-example.csv"')
-  downloadExampleCsv(@Res() res: Response) {
-    const csv = this.csvService.generateExampleCsv();
-    res.send(csv);
-  }
-
-  @Get('csv/export')
-  @ApiOperation({ summary: 'ייצוא נכסים לקובץ CSV' })
-  @ApiResponse({ status: 200, description: 'קובץ CSV עם כל הנכסים' })
-  @Header('Content-Type', 'text/csv; charset=utf-8')
-  @Header('Content-Disposition', 'attachment; filename="properties-export.csv"')
-  async exportToCsv(@Res() res: Response, @Request() req: any) {
-    // Priority: X-Account-Id header > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    const csv = await this.csvService.exportPropertiesToCsv(effectiveAccountId);
-    res.send(csv);
-  }
-
-  @Post('csv/preview')
-  @ApiOperation({ summary: 'תצוגה מקדימה של ייבוא נכסים מקובץ CSV' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-    },
+    status: 204,
+    description: 'Property deleted successfully',
   })
   @ApiResponse({
-    status: 200,
-    description: 'תצוגה מקדימה עם שגיאות אימות',
-  })
-  @UseInterceptors(FileInterceptor('file'))
-  async previewCsvImport(
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<{ valid: boolean; rows: PreviewRow[]; summary: { total: number; valid: number; invalid: number } }> {
-    if (!file) {
-      throw new BadRequestException('No file uploaded');
-    }
-
-    return this.csvService.validateCsvPreview(file.buffer);
-  }
-
-  @Post('csv/import')
-  @ApiOperation({ summary: 'ייבוא נכסים מקובץ CSV' })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-        skipErrors: {
-          type: 'boolean',
-          default: true,
-        },
-      },
-    },
+    status: 404,
+    description: 'Property not found',
   })
   @ApiResponse({
-    status: 200,
-    description: 'תוצאות הייבוא',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'number' },
-        failed: { type: 'number' },
-        errors: { type: 'array', items: { type: 'string' } },
-      },
-    },
+    status: 409,
+    description: 'Conflict - property has ownerships, mortgages, or rental agreements',
   })
-  @UseInterceptors(FileInterceptor('file'))
-  async importFromCsv(
-    @UploadedFile() file: Express.Multer.File,
-    @Body('skipErrors') skipErrors: boolean = true,
-    @Request() req: any,
-  ) {
-    if (!file) {
-      throw new BadRequestException('No file uploaded');
-    }
-
-    // Priority: X-Account-Id header > hardcoded
-    const headerAccountId = req.headers['x-account-id'];
-    const effectiveAccountId = headerAccountId || HARDCODED_ACCOUNT_ID;
-    return this.csvService.importPropertiesFromCsv(effectiveAccountId, file.buffer, skipErrors);
-  }
-
-  @Delete('test/cleanup')
-  @ApiOperation({ 
-    summary: 'מחיקת כל נתוני הטסט (TEST ONLY)',
-    description: 'מוחק את כל הנכסים של חשבון הטסט. ⚠️ משמש רק לטסטי E2E!'
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'נתונים נמחקו בהצלחה',
-    schema: {
-      type: 'object',
-      properties: {
-        deletedCount: { type: 'number' },
-        message: { type: 'string' },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 403,
-    description: 'ניתן למחוק רק נתוני חשבון טסט',
-  })
-  async deleteTestData() {
-    // Only allow deletion for test account
-    const result = await this.propertiesService.deleteAllForAccount(HARDCODED_ACCOUNT_ID);
-    return {
-      ...result,
-      message: `Deleted ${result.deletedCount} properties for test account`,
-    };
+  async remove(@Param('id') id: string) {
+    await this.propertiesService.remove(id);
   }
 }
