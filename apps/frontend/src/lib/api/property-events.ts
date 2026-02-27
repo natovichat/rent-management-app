@@ -1,8 +1,25 @@
 import { api } from '../api';
 
-export type PropertyEventType = 'PLANNING_PROCESS' | 'PROPERTY_DAMAGE' | 'EXPENSE' | 'RENTAL_PAYMENT_REQUEST';
-export type ExpenseEventType = 'REPAIR' | 'MAINTENANCE' | 'IMPROVEMENT' | 'TAX' | 'INSURANCE' | 'UTILITY' | 'MANAGEMENT_FEE' | 'OTHER';
+// ─── Enums (match Prisma exactly) ─────────────────────────────────────────────
+
+export type PropertyEventType =
+  | 'PlanningProcessEvent'
+  | 'PropertyDamageEvent'
+  | 'ExpenseEvent'
+  | 'RentalPaymentRequestEvent';
+
+export type ExpenseEventType =
+  | 'MANAGEMENT_FEE'
+  | 'REPAIRS'
+  | 'MAINTENANCE'
+  | 'TAX'
+  | 'INSURANCE'
+  | 'UTILITIES'
+  | 'OTHER';
+
 export type RentalPaymentStatus = 'PENDING' | 'PAID' | 'OVERDUE';
+
+// ─── Core interface ────────────────────────────────────────────────────────────
 
 export interface PropertyEvent {
   id: string;
@@ -10,40 +27,46 @@ export interface PropertyEvent {
   eventType: PropertyEventType;
   eventDate: string;
   description?: string;
-  notes?: string;
   createdAt: string;
-  updatedAt: string;
-  // Type-specific fields
+
+  // PlanningProcessEvent fields
   planningStage?: string;
   developerName?: string;
-  projectedSizeAfter?: number;
+  projectedSizeAfter?: string;
+
+  // PropertyDamageEvent fields
   damageType?: string;
-  estimatedDamageCost?: number;
+  estimatedDamageCost?: number | string;
   expenseId?: string;
+
+  // ExpenseEvent fields
   expenseType?: ExpenseEventType;
-  amount?: number;
-  paidToAccount?: string;
+  amount?: number | string;
+  paidToAccountId?: string;
   affectsPropertyValue?: boolean;
+
+  // RentalPaymentRequestEvent fields
   rentalAgreementId?: string;
   month?: number;
   year?: number;
+  amountDue?: number | string;
   paymentDate?: string;
   paymentStatus?: RentalPaymentStatus;
 }
 
+// ─── Create DTOs ──────────────────────────────────────────────────────────────
+
 export interface CreatePlanningProcessEventDto {
   eventDate: string;
   description?: string;
-  notes?: string;
   planningStage?: string;
   developerName?: string;
-  projectedSizeAfter?: number;
+  projectedSizeAfter?: string;
 }
 
 export interface CreatePropertyDamageEventDto {
   eventDate: string;
   description?: string;
-  notes?: string;
   damageType?: string;
   estimatedDamageCost?: number;
   expenseId?: string;
@@ -52,28 +75,26 @@ export interface CreatePropertyDamageEventDto {
 export interface CreateExpenseEventDto {
   eventDate: string;
   description?: string;
-  notes?: string;
   expenseType: ExpenseEventType;
   amount: number;
-  paidToAccount?: string;
+  paidToAccountId?: string;
   affectsPropertyValue?: boolean;
 }
 
 export interface CreateRentalPaymentRequestEventDto {
   eventDate: string;
   description?: string;
-  notes?: string;
   rentalAgreementId: string;
   month: number;
   year: number;
-  amount: number;
+  amountDue: number;
   paymentDate?: string;
-  paymentStatus: RentalPaymentStatus;
+  paymentStatus?: RentalPaymentStatus;
 }
 
 export interface PropertyEventsResponse {
   data: PropertyEvent[];
-  meta?: {
+  meta: {
     total: number;
     page: number;
     limit: number;
@@ -81,46 +102,30 @@ export interface PropertyEventsResponse {
   };
 }
 
-/**
- * Property Event API service.
- * Polymorphic events with 4 types.
- */
+// ─── API service ──────────────────────────────────────────────────────────────
+
 export const propertyEventsApi = {
-  /**
-   * Get all events for a property.
-   */
   getPropertyEvents: async (
     propertyId: string,
-    page: number = 1,
-    limit: number = 10,
+    page = 1,
+    limit = 20,
     eventType?: PropertyEventType,
   ): Promise<PropertyEventsResponse> => {
-    const params = new URLSearchParams({
-      page: page.toString(),
-      limit: limit.toString(),
-    });
-
-    if (eventType) {
-      params.append('eventType', eventType);
-    }
-
+    const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+    if (eventType) params.append('eventType', eventType);
     const response = await api.get<PropertyEventsResponse>(
       `/properties/${propertyId}/events?${params}`,
     );
     return response.data;
   },
 
-  /**
-   * Get a single event by ID.
-   */
   getPropertyEvent: async (propertyId: string, eventId: string): Promise<PropertyEvent> => {
-    const response = await api.get<PropertyEvent>(`/properties/${propertyId}/events/${eventId}`);
+    const response = await api.get<PropertyEvent>(
+      `/properties/${propertyId}/events/${eventId}`,
+    );
     return response.data;
   },
 
-  /**
-   * Create a planning process event.
-   */
   createPlanningProcessEvent: async (
     propertyId: string,
     data: CreatePlanningProcessEventDto,
@@ -132,9 +137,6 @@ export const propertyEventsApi = {
     return response.data;
   },
 
-  /**
-   * Create a property damage event.
-   */
   createPropertyDamageEvent: async (
     propertyId: string,
     data: CreatePropertyDamageEventDto,
@@ -146,9 +148,6 @@ export const propertyEventsApi = {
     return response.data;
   },
 
-  /**
-   * Create an expense event.
-   */
   createExpenseEvent: async (
     propertyId: string,
     data: CreateExpenseEventDto,
@@ -160,9 +159,6 @@ export const propertyEventsApi = {
     return response.data;
   },
 
-  /**
-   * Create a rental payment request event.
-   */
   createRentalPaymentRequestEvent: async (
     propertyId: string,
     data: CreateRentalPaymentRequestEventDto,
@@ -174,9 +170,6 @@ export const propertyEventsApi = {
     return response.data;
   },
 
-  /**
-   * Update an event.
-   */
   updatePropertyEvent: async (
     propertyId: string,
     eventId: string,
@@ -189,9 +182,6 @@ export const propertyEventsApi = {
     return response.data;
   },
 
-  /**
-   * Delete an event.
-   */
   deletePropertyEvent: async (propertyId: string, eventId: string): Promise<void> => {
     await api.delete(`/properties/${propertyId}/events/${eventId}`);
   },

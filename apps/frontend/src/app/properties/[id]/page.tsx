@@ -14,15 +14,21 @@ import {
   Skeleton,
   Alert,
   Dialog,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
+import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import {
   ArrowForward as ArrowBackIcon,
   Edit as EditIcon,
   Apartment as ApartmentIcon,
+  Event as EventIcon,
 } from '@mui/icons-material';
 import { propertiesApi } from '@/lib/api/properties';
 import PropertyForm from '@/components/properties/PropertyForm';
 import UtilityInfoSection from '@/components/properties/UtilityInfoSection';
+import PropertyEventsSection from '@/components/property-events/PropertyEventsSection';
 
 // ─── Label maps ────────────────────────────────────────────────────────────────
 
@@ -354,6 +360,29 @@ export default function PropertyDetailsPage() {
         {/* Utility Info Accordion */}
         <Grid item xs={12}>
           <UtilityInfoSection propertyId={id} defaultExpanded />
+        </Grid>
+
+        {/* Property Events Accordion */}
+        <Grid item xs={12}>
+          <Accordion
+            defaultExpanded
+            sx={{
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 1,
+              '&:before': { display: 'none' },
+            }}
+          >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <EventIcon color="primary" />
+                <Typography fontWeight={700}>אירועי הנכס</Typography>
+              </Box>
+            </AccordionSummary>
+            <AccordionDetails sx={{ pt: 0 }}>
+              <PropertyEventsSection propertyId={id} />
+            </AccordionDetails>
+          </Accordion>
         </Grid>
       </Grid>
 
