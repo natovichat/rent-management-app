@@ -28,6 +28,7 @@ import {
 import { propertiesApi } from '@/lib/api/properties';
 import PropertyForm from '@/components/properties/PropertyForm';
 import UtilityInfoSection from '@/components/properties/UtilityInfoSection';
+import PlanningProcessStateSection from '@/components/properties/PlanningProcessStateSection';
 import PropertyEventsSection from '@/components/property-events/PropertyEventsSection';
 
 // ─── Label maps ────────────────────────────────────────────────────────────────
@@ -360,6 +361,11 @@ export default function PropertyDetailsPage() {
         {/* Utility Info Accordion */}
         <Grid item xs={12}>
           <UtilityInfoSection propertyId={id} defaultExpanded />
+        </Grid>
+
+        {/* Planning Process State Accordion */}
+        <Grid item xs={12}>
+          <PlanningProcessStateSection propertyId={id} />
         </Grid>
 
         {/* Property Events Accordion */}
