@@ -4,6 +4,7 @@ import {
   Box,
   Card,
   CardContent,
+  Chip,
   Container,
   Grid,
   Paper,
@@ -15,6 +16,8 @@ import {
   TableHead,
   TableRow,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   AccountBalance as BankIcon,
@@ -31,7 +34,11 @@ import {
 } from '@/lib/api/properties';
 import { personsApi } from '@/lib/api/persons';
 import { mortgagesApi } from '@/lib/api/mortgages';
-import { rentalAgreementsApi, type RentalAgreement } from '@/lib/api/leases';
+import {
+  rentalAgreementsApi,
+  type RentalAgreement,
+  type RentalAgreementStatus,
+} from '@/lib/api/leases';
 import { bankAccountsApi } from '@/lib/api/bank-accounts';
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
@@ -47,6 +54,20 @@ const PROPERTY_STATUS_LABELS: Record<string, string> = {
   IN_PURCHASE: 'ברכישה',
   SOLD: 'נמכר',
   INVESTMENT: 'השקעה',
+};
+
+const LEASE_STATUS_LABELS: Record<RentalAgreementStatus, string> = {
+  FUTURE: 'עתידי',
+  ACTIVE: 'פעיל',
+  EXPIRED: 'פג תוקף',
+  TERMINATED: 'בוטל',
+};
+
+const LEASE_STATUS_COLORS: Record<RentalAgreementStatus, 'success' | 'info' | 'warning' | 'error' | 'default'> = {
+  FUTURE: 'info',
+  ACTIVE: 'success',
+  EXPIRED: 'warning',
+  TERMINATED: 'error',
 };
 
 function SummaryCard({
@@ -146,9 +167,17 @@ export default function DashboardPage() {
     errorRentalAgreements ||
     errorBankAccounts;
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
-    <Container maxWidth="xl" sx={{ py: 4, direction: 'rtl' }}>
-      <Typography variant="h4" component="h1" gutterBottom sx={{ textAlign: 'right' }}>
+    <Container maxWidth="xl" sx={{ py: 4, px: { xs: 1, md: 3 }, direction: 'rtl' }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        sx={{ textAlign: 'right', fontSize: { xs: '1.25rem', md: '1.5rem' } }}
+      >
         לוח בקרה
       </Typography>
 

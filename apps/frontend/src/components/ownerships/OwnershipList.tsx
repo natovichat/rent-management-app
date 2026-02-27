@@ -8,21 +8,27 @@ import {
   GridActionsCellItem,
 } from '@mui/x-data-grid';
 import {
+  Alert,
   Box,
   Button,
+  Card,
+  CardActions,
+  CardContent,
   Dialog,
-  DialogTitle,
+  DialogActions,
   DialogContent,
   DialogContentText,
-  DialogActions,
-  Typography,
+  DialogTitle,
+  IconButton,
   Snackbar,
-  Alert,
+  Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Add as AddIcon,
-  Edit as EditIcon,
   Delete as DeleteIcon,
+  Edit as EditIcon,
 } from '@mui/icons-material';
 import {
   ownershipsApi,
@@ -40,6 +46,12 @@ const OWNERSHIP_TYPE_LABELS: Record<string, string> = {
   LEGAL: 'משפטית',
 };
 
+const MOBILE_OWNERSHIP_TYPE_LABELS: Record<string, string> = {
+  ...OWNERSHIP_TYPE_LABELS,
+  REAL: 'ממשי',
+  LEGAL: 'משפטי',
+};
+
 const formatDate = (dateString: string | null | undefined): string => {
   if (!dateString) return '-';
   return new Date(dateString).toLocaleDateString('he-IL');
@@ -51,7 +63,54 @@ const formatPercentage = (value: number | string | undefined): string => {
   return `${num}%`;
 };
 
+function MobileOwnershipCard({
+  ownership,
+  onEdit,
+  onDelete,
+}: {
+  ownership: Ownership;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const ownershipTypeLabel =
+    MOBILE_OWNERSHIP_TYPE_LABELS[ownership.ownershipType] ??
+    OWNERSHIP_TYPE_LABELS[ownership.ownershipType] ??
+    ownership.ownershipType;
+
+  return (
+    <Card sx={{ mb: 1.5, borderRadius: 2 }} variant="outlined">
+      <CardContent sx={{ pb: 0 }}>
+        <Typography variant="subtitle1" fontWeight={600}>
+          {ownership.property?.address ?? '—'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {ownership.person?.name ?? '—'}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {formatPercentage(ownership.ownershipPercentage)} בעלות
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {ownershipTypeLabel}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          התחלה: {formatDate(ownership.startDate)}
+        </Typography>
+      </CardContent>
+      <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+        <IconButton size="small" onClick={onEdit}>
+          <EditIcon />
+        </IconButton>
+        <IconButton size="small" color="error" onClick={onDelete}>
+          <DeleteIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
+  );
+}
+
 export default function OwnershipList() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
@@ -222,37 +281,66 @@ export default function OwnershipList() {
         </Button>
       </Box>
 
-      <Box sx={{ height: 600, width: '100%' }}>
-        <DataGrid
-          rows={ownerships}
-          columns={columns}
-          loading={isLoading}
-          pagination
-          paginationMode="server"
-          rowCount={meta?.total ?? 0}
-          pageSizeOptions={[10, 20, 50]}
-          paginationModel={{
-            page: page - 1,
-            pageSize,
-          }}
-          onPaginationModelChange={(model) => {
-            setPage(model.page + 1);
-            setPageSize(model.pageSize);
-          }}
-          sx={{
-            direction: 'rtl',
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-            },
-            '& .MuiDataGrid-cell': {
+      {isMobile ? (
+        <Box>
+          {isLoading ? (
+            <Box sx={{ py: 4, textAlign: 'center' }}>
+              <Typography color="text.secondary">טוען...</Typography>
+            </Box>
+          ) : ownerships.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
+              אין בעלויות
+            </Typography>
+          ) : (
+            ownerships.map((ownership) => (
+              <MobileOwnershipCard
+                key={ownership.id}
+                ownership={ownership}
+                onEdit={() => {
+                  setSelectedOwnership(ownership);
+                  setOpenForm(true);
+                }}
+                onDelete={() => {
+                  setOwnershipToDelete(ownership);
+                  setDeleteDialogOpen(true);
+                }}
+              />
+            ))
+          )}
+        </Box>
+      ) : (
+        <Box sx={{ height: 600, width: '100%' }}>
+          <DataGrid
+            rows={ownerships}
+            columns={columns}
+            loading={isLoading}
+            pagination
+            paginationMode="server"
+            rowCount={meta?.total ?? 0}
+            pageSizeOptions={[10, 20, 50]}
+            paginationModel={{
+              page: page - 1,
+              pageSize,
+            }}
+            onPaginationModelChange={(model) => {
+              setPage(model.page + 1);
+              setPageSize(model.pageSize);
+            }}
+            sx={{
               direction: 'rtl',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              direction: 'rtl',
-            },
-          }}
-        />
-      </Box>
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              },
+              '& .MuiDataGrid-cell': {
+                direction: 'rtl',
+              },
+              '& .MuiDataGrid-columnHeader': {
+                direction: 'rtl',
+              },
+            }}
+          />
+        </Box>
+      )}
 
       {/* Create/Edit Form Dialog */}
       <Dialog

@@ -19,6 +19,14 @@ import {
   Typography,
   Alert,
   Snackbar,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  CardActions,
+  Stack,
+  Chip,
+  IconButton,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -35,7 +43,59 @@ const formatDate = (dateString: string): string => {
   return new Date(dateString).toLocaleDateString('he-IL');
 };
 
+const TYPE_LABELS: Record<string, string> = {
+  INDIVIDUAL: 'יחיד',
+  COMPANY: 'חברה',
+  PARTNERSHIP: 'שותפות',
+};
+
+interface MobilePersonCardProps {
+  item: Person;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+function MobilePersonCard({ item, onEdit, onDelete }: MobilePersonCardProps) {
+  return (
+    <Card sx={{ mb: 1.5, borderRadius: 2 }} variant="outlined">
+      <CardContent sx={{ pb: 0 }}>
+        <Stack spacing={1}>
+          <Typography variant="subtitle1" fontWeight={600}>
+            {item.name}
+          </Typography>
+          <Chip
+            label={TYPE_LABELS[item.type] || item.type || '-'}
+            size="small"
+            variant="outlined"
+            sx={{ alignSelf: 'flex-start' }}
+          />
+          {item.email && (
+            <Typography variant="body2" color="text.secondary">
+              {item.email}
+            </Typography>
+          )}
+          {item.phone && (
+            <Typography variant="body2" color="text.secondary">
+              {item.phone}
+            </Typography>
+          )}
+        </Stack>
+      </CardContent>
+      <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+        <IconButton size="small" onClick={onEdit} aria-label="עריכה">
+          <EditIcon />
+        </IconButton>
+        <IconButton size="small" onClick={onDelete} aria-label="מחיקה" color="error">
+          <DeleteIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
+  );
+}
+
 export default function PersonList() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -83,12 +143,6 @@ export default function PersonList() {
       });
     },
   });
-
-  const TYPE_LABELS: Record<string, string> = {
-    INDIVIDUAL: 'יחיד',
-    COMPANY: 'חברה',
-    PARTNERSHIP: 'שותפות',
-  };
 
   const columns: GridColDef<Person>[] = [
     {
@@ -215,41 +269,73 @@ export default function PersonList() {
         </Button>
       </Box>
 
-      <Box sx={{ height: 600, width: '100%' }}>
-        <DataGrid
-          rows={persons}
-          columns={columns}
-          loading={isLoading}
-          sx={{
-            direction: 'rtl',
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      <Box sx={{ height: isMobile ? 'auto' : 600, width: '100%' }}>
+        {isMobile ? (
+          <Box>
+            {isLoading ? (
+              <Typography color="text.secondary" textAlign="center" py={4}>
+                טוען...
+              </Typography>
+            ) : (
+              <>
+                {(data?.data || []).map((item) => (
+                  <MobilePersonCard
+                    key={item.id}
+                    item={item}
+                    onEdit={() => {
+                      setSelectedPerson(item);
+                      setOpenForm(true);
+                    }}
+                    onDelete={() => {
+                      setPersonToDelete(item);
+                      setDeleteDialogOpen(true);
+                    }}
+                  />
+                ))}
+                {(!data?.data || data.data.length === 0) && (
+                  <Typography color="text.secondary" textAlign="center" py={4}>
+                    אין נתונים להצגה
+                  </Typography>
+                )}
+              </>
+            )}
+          </Box>
+        ) : (
+          <DataGrid
+            rows={persons}
+            columns={columns}
+            loading={isLoading}
+            sx={{
               direction: 'rtl',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              direction: 'rtl',
-              '& .MuiDataGrid-columnHeaderTitle': {
-                textAlign: 'right',
-                width: '100%',
-                paddingRight: '8px',
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                direction: 'rtl',
               },
-            },
-            '& .MuiDataGrid-cell': {
-              direction: 'rtl',
-              textAlign: 'right',
-              paddingRight: '16px',
-            },
-          }}
-          paginationMode="server"
-          rowCount={data?.meta?.total || 0}
-          paginationModel={{ page: page - 1, pageSize }}
-          onPaginationModelChange={(model) => {
-            setPage(model.page + 1);
-            setPageSize(model.pageSize);
-          }}
-          pageSizeOptions={[10, 25, 50, 100]}
-          getRowId={(row) => row.id}
-        />
+              '& .MuiDataGrid-columnHeader': {
+                direction: 'rtl',
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  textAlign: 'right',
+                  width: '100%',
+                  paddingRight: '8px',
+                },
+              },
+              '& .MuiDataGrid-cell': {
+                direction: 'rtl',
+                textAlign: 'right',
+                paddingRight: '16px',
+              },
+            }}
+            paginationMode="server"
+            rowCount={data?.meta?.total || 0}
+            paginationModel={{ page: page - 1, pageSize }}
+            onPaginationModelChange={(model) => {
+              setPage(model.page + 1);
+              setPageSize(model.pageSize);
+            }}
+            pageSizeOptions={[10, 25, 50, 100]}
+            getRowId={(row) => row.id}
+          />
+        )}
       </Box>
 
       <Dialog

@@ -21,6 +21,12 @@ import {
   InputLabel,
   Select,
   Snackbar,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  CardActions,
+  Stack,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -63,18 +69,72 @@ const getStatusLabel = (status: MortgageStatus) => {
     case 'PAID_OFF':
       return 'שולם';
     case 'REFINANCED':
-      return 'מימון מחדש';
+      return 'מומן מחדש';
     case 'DEFAULTED':
-      return 'ברירת מחדל';
+      return 'בפיגור';
     default:
       return status;
   }
 };
 
+const formatCurrency = (value: string | number | undefined) =>
+  value != null ? `₪${Number(value).toLocaleString()}` : '-';
+
+const formatDate = (dateString: string | undefined) =>
+  dateString ? new Date(dateString).toLocaleDateString('he-IL') : '-';
+
+interface MobileMortgageCardProps {
+  item: Mortgage;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+function MobileMortgageCard({ item, onEdit, onDelete }: MobileMortgageCardProps) {
+  return (
+    <Card sx={{ mb: 1.5, borderRadius: 2 }} variant="outlined">
+      <CardContent sx={{ pb: 0 }}>
+        <Stack spacing={1}>
+          <Typography variant="subtitle1" fontWeight={600}>
+            {item.bank}
+          </Typography>
+          <Typography variant="body2">
+            סכום הלוואה: {formatCurrency(item.loanAmount)}
+          </Typography>
+          <Typography variant="body2">
+            תשלום חודשי: {formatCurrency(item.monthlyPayment)}
+          </Typography>
+          <Typography variant="body2">
+            ריבית: {item.interestRate != null ? `${Number(item.interestRate).toFixed(2)}%` : '-'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {formatDate(item.startDate)} – {formatDate(item.endDate ?? undefined)}
+          </Typography>
+          <Chip
+            label={getStatusLabel(item.status)}
+            color={getStatusColor(item.status) as any}
+            size="small"
+            sx={{ alignSelf: 'flex-start' }}
+          />
+        </Stack>
+      </CardContent>
+      <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+        <IconButton size="small" onClick={onEdit} aria-label="עריכה">
+          <EditIcon />
+        </IconButton>
+        <IconButton size="small" onClick={onDelete} aria-label="מחיקה" color="error">
+          <DeleteIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
+  );
+}
+
 /**
  * Component for displaying and managing the list of mortgages.
  */
 export default function MortgageList() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const router = useRouter();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -324,42 +384,74 @@ export default function MortgageList() {
         onClear={() => setFilters({})}
       />
 
-      {/* DataGrid */}
-      <Box sx={{ height: 600, width: '100%' }}>
-        <DataGrid
-          rows={mortgages}
-          columns={columns}
-          loading={isLoading}
-          sx={{
-            direction: 'rtl',
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      {/* DataGrid / Mobile Cards */}
+      <Box sx={{ height: isMobile ? 'auto' : 600, width: '100%' }}>
+        {isMobile ? (
+          <Box>
+            {isLoading ? (
+              <Typography color="text.secondary" textAlign="center" py={4}>
+                טוען...
+              </Typography>
+            ) : (
+              <>
+                {(data?.data || []).map((item) => (
+                  <MobileMortgageCard
+                    key={item.id}
+                    item={item}
+                    onEdit={() => {
+                      setSelectedMortgage(item);
+                      setOpenDialog(true);
+                    }}
+                    onDelete={() => {
+                      setMortgageToDelete(item);
+                      setDeleteDialogOpen(true);
+                    }}
+                  />
+                ))}
+                {(!data?.data || data.data.length === 0) && (
+                  <Typography color="text.secondary" textAlign="center" py={4}>
+                    אין נתונים להצגה
+                  </Typography>
+                )}
+              </>
+            )}
+          </Box>
+        ) : (
+          <DataGrid
+            rows={mortgages}
+            columns={columns}
+            loading={isLoading}
+            sx={{
               direction: 'rtl',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              direction: 'rtl',
-              '& .MuiDataGrid-columnHeaderTitle': {
-                textAlign: 'right',
-                width: '100%',
-                paddingRight: '8px',
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                direction: 'rtl',
               },
-            },
-            '& .MuiDataGrid-cell': {
-              direction: 'rtl',
-              textAlign: 'right',
-              paddingRight: '16px',
-            },
-          }}
-          paginationMode="server"
-          rowCount={data?.meta?.total || 0}
-          paginationModel={{ page: page - 1, pageSize }}
-          onPaginationModelChange={(model) => {
-            setPage(model.page + 1);
-            setPageSize(model.pageSize);
-          }}
-          pageSizeOptions={[10, 25, 50, 100]}
-          getRowId={(row) => row.id}
-        />
+              '& .MuiDataGrid-columnHeader': {
+                direction: 'rtl',
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  textAlign: 'right',
+                  width: '100%',
+                  paddingRight: '8px',
+                },
+              },
+              '& .MuiDataGrid-cell': {
+                direction: 'rtl',
+                textAlign: 'right',
+                paddingRight: '16px',
+              },
+            }}
+            paginationMode="server"
+            rowCount={data?.meta?.total || 0}
+            paginationModel={{ page: page - 1, pageSize }}
+            onPaginationModelChange={(model) => {
+              setPage(model.page + 1);
+              setPageSize(model.pageSize);
+            }}
+            pageSizeOptions={[10, 25, 50, 100]}
+            getRowId={(row) => row.id}
+          />
+        )}
       </Box>
 
       {/* Create/Edit Dialog */}

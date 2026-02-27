@@ -18,10 +18,11 @@ import {
   useTheme,
   useMediaQuery,
   Tooltip,
+  BottomNavigation,
+  BottomNavigationAction,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
-  Home as HomeIcon,
   Dashboard as DashboardIcon,
   Apartment as ApartmentIcon,
   Handshake as HandshakeIcon,
@@ -30,6 +31,7 @@ import {
   AccountBalanceWallet as AccountBalanceWalletIcon,
   Description as DescriptionIcon,
   Tag as TagIcon,
+  Home as HomeIcon,
 } from '@mui/icons-material';
 
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || 'dev';
@@ -37,6 +39,14 @@ const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || 'dev';
 const SIDEBAR_OPEN_KEY = 'appShell-sidebarOpen';
 const DRAWER_WIDTH_OPEN = 260;
 const DRAWER_WIDTH_CLOSED = 72;
+
+const BOTTOM_NAV_ITEMS = [
+  { label: 'לוח בקרה', href: '/dashboard', icon: <DashboardIcon /> },
+  { label: 'נכסים', href: '/properties', icon: <ApartmentIcon /> },
+  { label: 'חוזים', href: '/leases', icon: <DescriptionIcon /> },
+  { label: 'משכנתאות', href: '/mortgages', icon: <AccountBalanceIcon /> },
+  { label: 'אנשים', href: '/persons', icon: <GroupIcon /> },
+] as const;
 
 interface NavItem {
   label: string;
@@ -77,15 +87,22 @@ const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
+function getBottomNavValue(pathname: string): string {
+  if (pathname === '/dashboard') return '/dashboard';
+  if (pathname.startsWith('/properties')) return '/properties';
+  if (pathname.startsWith('/leases')) return '/leases';
+  if (pathname.startsWith('/mortgages')) return '/mortgages';
+  if (pathname.startsWith('/persons')) return '/persons';
+  return '';
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [sidebarOpen, setSidebarOpenState] = useState(true);
-  const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Load sidebar state from localStorage (client-side only)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem(SIDEBAR_OPEN_KEY);
@@ -101,17 +118,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   const handleDrawerToggle = () => {
-    if (isMobile) {
-      setMobileOpen(!mobileOpen);
-    } else {
-      setSidebarOpen(!sidebarOpen);
-    }
-  };
-
-  const handleNavClick = () => {
-    if (isMobile) {
-      setMobileOpen(false);
-    }
+    setSidebarOpen(!sidebarOpen);
   };
 
   const isActive = (href: string) => {
@@ -124,7 +131,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const drawerContent = (
     <Box
       sx={{
-        width: isMobile ? DRAWER_WIDTH_OPEN : sidebarOpen ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED,
+        width: sidebarOpen ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED,
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
@@ -137,81 +144,80 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     >
       <Box sx={{ flex: 1, overflowY: 'auto', py: 2, display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ flex: 1 }}>
-        {NAV_GROUPS.map((group) => (
-          <Box key={group.label} sx={{ mb: 2 }}>
-            {sidebarOpen && (
-              <Typography
-                variant="caption"
-                sx={{
-                  px: 2,
-                  py: 1,
-                  display: 'block',
-                  color: 'text.secondary',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: 1,
-                }}
-              >
-                {group.label}
-              </Typography>
-            )}
-            <List disablePadding>
-              {group.items.map((item) => {
-                const active = isActive(item.href);
-                const listItem = (
-                  <ListItem key={item.href} disablePadding sx={{ px: 1 }}>
-                    <ListItemButton
-                      component={Link}
-                      href={item.href}
-                      onClick={handleNavClick}
-                      selected={active}
-                      sx={{
-                        borderRadius: 1,
-                        justifyContent: sidebarOpen ? 'flex-start' : 'center',
-                        px: sidebarOpen ? 2 : 1.5,
-                        '&.Mui-selected': {
-                          backgroundColor: 'primary.main',
-                          color: 'primary.contrastText',
-                          '&:hover': {
-                            backgroundColor: 'primary.dark',
-                          },
-                          '& .MuiListItemIcon-root': {
-                            color: 'primary.contrastText',
-                          },
-                        },
-                      }}
-                    >
-                      <ListItemIcon
+          {NAV_GROUPS.map((group) => (
+            <Box key={group.label} sx={{ mb: 2 }}>
+              {sidebarOpen && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    px: 2,
+                    py: 1,
+                    display: 'block',
+                    color: 'text.secondary',
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                  }}
+                >
+                  {group.label}
+                </Typography>
+              )}
+              <List disablePadding>
+                {group.items.map((item) => {
+                  const active = isActive(item.href);
+                  const listItem = (
+                    <ListItem key={item.href} disablePadding sx={{ px: 1 }}>
+                      <ListItemButton
+                        component={Link}
+                        href={item.href}
+                        selected={active}
                         sx={{
-                          minWidth: sidebarOpen ? 40 : 0,
-                          mr: sidebarOpen ? 2 : 0,
-                          color: active ? 'inherit' : 'action.active',
+                          borderRadius: 1,
+                          justifyContent: sidebarOpen ? 'flex-start' : 'center',
+                          px: sidebarOpen ? 2 : 1.5,
+                          '&.Mui-selected': {
+                            backgroundColor: 'primary.main',
+                            color: 'primary.contrastText',
+                            '&:hover': {
+                              backgroundColor: 'primary.dark',
+                            },
+                            '& .MuiListItemIcon-root': {
+                              color: 'primary.contrastText',
+                            },
+                          },
                         }}
                       >
-                        {item.icon}
-                      </ListItemIcon>
-                      {sidebarOpen && (
-                        <ListItemText
-                          primary={item.label}
-                          primaryTypographyProps={{
-                            fontWeight: active ? 600 : 400,
+                        <ListItemIcon
+                          sx={{
+                            minWidth: sidebarOpen ? 40 : 0,
+                            mr: sidebarOpen ? 2 : 0,
+                            color: active ? 'inherit' : 'action.active',
                           }}
-                        />
-                      )}
-                    </ListItemButton>
-                  </ListItem>
-                );
-                return sidebarOpen ? (
-                  listItem
-                ) : (
-                  <Tooltip key={item.href} title={item.label} placement="left">
-                    {listItem}
-                  </Tooltip>
-                );
-              })}
-            </List>
-          </Box>
-        ))}
+                        >
+                          {item.icon}
+                        </ListItemIcon>
+                        {sidebarOpen && (
+                          <ListItemText
+                            primary={item.label}
+                            primaryTypographyProps={{
+                              fontWeight: active ? 600 : 400,
+                            }}
+                          />
+                        )}
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                  return sidebarOpen ? (
+                    listItem
+                  ) : (
+                    <Tooltip key={item.href} title={item.label} placement="left">
+                      {listItem}
+                    </Tooltip>
+                  );
+                })}
+              </List>
+            </Box>
+          ))}
         </Box>
         {/* Version badge at bottom of sidebar */}
         <Box
@@ -251,11 +257,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         sx={{
           width: {
             xs: '100%',
-            md: `calc(100% - ${sidebarOpen && !isMobile ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED}px)`,
+            md: `calc(100% - ${sidebarOpen ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED}px)`,
           },
           mr: {
             xs: 0,
-            md: sidebarOpen && !isMobile ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED,
+            md: sidebarOpen ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED,
           },
           transition: theme.transitions.create(['margin', 'width'], {
             easing: theme.transitions.easing.sharp,
@@ -264,23 +270,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }}
       >
         <Toolbar>
+          {/* Hamburger - desktop only (no drawer on mobile) */}
           <IconButton
             color="inherit"
             aria-label="תפריט"
             edge="start"
             onClick={handleDrawerToggle}
-            sx={{ mr: 1 }}
+            sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
           >
             <MenuIcon />
           </IconButton>
           <HomeIcon sx={{ mr: 1.5 }} />
-          <Typography variant="h6" component="h1" noWrap sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h6"
+            component="h1"
+            noWrap
+            sx={{
+              flexGrow: 1,
+              fontSize: { xs: '1rem', md: '1.25rem' },
+            }}
+          >
             מערכת ניהול נכסים
           </Typography>
+          {/* Version badge - hidden on mobile */}
           <Tooltip title={`גרסה ${APP_VERSION}`}>
             <Box
               sx={{
-                display: 'flex',
+                display: { xs: 'none', md: 'flex' },
                 alignItems: 'center',
                 gap: 0.5,
                 px: 1.5,
@@ -299,7 +315,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Toolbar>
       </AppBar>
 
-      {/* Sidebar - Desktop: permanent drawer on RIGHT (RTL) */}
+      {/* Sidebar - Desktop only (no mobile drawer) */}
       {!isMobile && (
         <Drawer
           variant="permanent"
@@ -327,33 +343,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Drawer>
       )}
 
-      {/* Sidebar - Mobile: temporary overlay drawer */}
-      {isMobile && (
-        <Drawer
-          variant="temporary"
-          anchor="right"
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-          ModalProps={{ keepMounted: true }}
-          sx={{
-            '& .MuiDrawer-paper': {
-              width: DRAWER_WIDTH_OPEN,
-              boxSizing: 'border-box',
-              mt: '64px',
-              height: 'calc(100vh - 64px)',
-            },
-          }}
-        >
-          {drawerContent}
-        </Drawer>
-      )}
-
       {/* Main content */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
+          p: { xs: 1.5, sm: 2, md: 3 },
+          pb: { xs: '72px', md: 0 },
           mt: '64px',
           minHeight: 'calc(100vh - 64px)',
           backgroundColor: 'background.default',
@@ -361,6 +357,42 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       >
         {children}
       </Box>
+
+      {/* Bottom Navigation - Mobile only */}
+      {isMobile && (
+        <BottomNavigation
+          value={getBottomNavValue(pathname)}
+          showLabels
+          sx={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 56,
+            zIndex: theme.zIndex.appBar,
+            borderTop: 1,
+            borderColor: 'divider',
+            backgroundColor: 'background.paper',
+          }}
+        >
+          {BOTTOM_NAV_ITEMS.map((item) => (
+            <BottomNavigationAction
+              key={item.href}
+              component={Link}
+              href={item.href}
+              value={item.href}
+              label={item.label}
+              icon={item.icon}
+              sx={{
+                minWidth: 0,
+                '& .MuiBottomNavigationAction-label': {
+                  fontSize: '0.75rem',
+                },
+              }}
+            />
+          ))}
+        </BottomNavigation>
+      )}
     </Box>
   );
 }

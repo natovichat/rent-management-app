@@ -17,6 +17,13 @@ import {
   MenuItem,
   Snackbar,
   Alert,
+  useTheme,
+  useMediaQuery,
+  Card,
+  CardContent,
+  CardActions,
+  Stack,
+  IconButton,
 } from '@mui/material';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
@@ -65,10 +72,55 @@ const getStatusLabel = (status: RentalAgreementStatus) => {
   }
 };
 
+interface MobileLeaseCardProps {
+  item: RentalAgreement;
+  onEdit: () => void;
+  onDelete: () => void;
+}
+
+function MobileLeaseCard({ item, onEdit, onDelete }: MobileLeaseCardProps) {
+  return (
+    <Card sx={{ mb: 1.5, borderRadius: 2 }} variant="outlined">
+      <CardContent sx={{ pb: 0 }}>
+        <Stack spacing={1}>
+          <Typography variant="subtitle1" fontWeight={600}>
+            {item.property?.address || '-'}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            שוכר: {item.tenant?.name || '-'}
+          </Typography>
+          <Typography variant="body2">
+            שכ&quot;ד חודשי: {formatCurrency(item.monthlyRent ?? 0)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {formatDate(item.startDate ?? '')} – {formatDate(item.endDate ?? '')}
+          </Typography>
+          <Chip
+            label={getStatusLabel(item.status)}
+            color={getStatusColor(item.status) as any}
+            size="small"
+            sx={{ alignSelf: 'flex-start' }}
+          />
+        </Stack>
+      </CardContent>
+      <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+        <IconButton size="small" onClick={onEdit} aria-label="עריכה">
+          <EditIcon />
+        </IconButton>
+        <IconButton size="small" onClick={onDelete} aria-label="מחיקה" color="error">
+          <DeleteIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
+  );
+}
+
 /**
  * Component for displaying and managing the list of rental agreements (leases).
  */
 export default function LeaseList() {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -256,41 +308,73 @@ export default function LeaseList() {
         </Box>
       </Box>
 
-      <Box sx={{ height: 600, width: '100%' }}>
-        <DataGrid
-          rows={leases}
-          columns={columns}
-          loading={isLoading}
-          sx={{
-            direction: 'rtl',
-            '& .MuiDataGrid-columnHeaders': {
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+      <Box sx={{ height: isMobile ? 'auto' : 600, width: '100%' }}>
+        {isMobile ? (
+          <Box>
+            {isLoading ? (
+              <Typography color="text.secondary" textAlign="center" py={4}>
+                טוען...
+              </Typography>
+            ) : (
+              <>
+                {(data?.data || []).map((item) => (
+                  <MobileLeaseCard
+                key={item.id}
+                item={item}
+                onEdit={() => {
+                  setSelectedLease(item);
+                  setOpenDialog(true);
+                }}
+                onDelete={() => {
+                  setLeaseToDelete(item);
+                  setDeleteDialogOpen(true);
+                }}
+              />
+                ))}
+                {(!data?.data || data.data.length === 0) && (
+                  <Typography color="text.secondary" textAlign="center" py={4}>
+                    אין נתונים להצגה
+                  </Typography>
+                )}
+              </>
+            )}
+          </Box>
+        ) : (
+          <DataGrid
+            rows={leases}
+            columns={columns}
+            loading={isLoading}
+            sx={{
               direction: 'rtl',
-            },
-            '& .MuiDataGrid-columnHeader': {
-              direction: 'rtl',
-              '& .MuiDataGrid-columnHeaderTitle': {
-                textAlign: 'right',
-                width: '100%',
-                paddingRight: '8px',
+              '& .MuiDataGrid-columnHeaders': {
+                backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                direction: 'rtl',
               },
-            },
-            '& .MuiDataGrid-cell': {
-              direction: 'rtl',
-              textAlign: 'right',
-              paddingRight: '16px',
-            },
-          }}
-          paginationMode="server"
-          rowCount={data?.meta?.total || 0}
-          paginationModel={{ page: page - 1, pageSize }}
-          onPaginationModelChange={(model) => {
-            setPage(model.page + 1);
-            setPageSize(model.pageSize);
-          }}
-          pageSizeOptions={[10, 25, 50, 100]}
-          getRowId={(row) => row.id}
-        />
+              '& .MuiDataGrid-columnHeader': {
+                direction: 'rtl',
+                '& .MuiDataGrid-columnHeaderTitle': {
+                  textAlign: 'right',
+                  width: '100%',
+                  paddingRight: '8px',
+                },
+              },
+              '& .MuiDataGrid-cell': {
+                direction: 'rtl',
+                textAlign: 'right',
+                paddingRight: '16px',
+              },
+            }}
+            paginationMode="server"
+            rowCount={data?.meta?.total || 0}
+            paginationModel={{ page: page - 1, pageSize }}
+            onPaginationModelChange={(model) => {
+              setPage(model.page + 1);
+              setPageSize(model.pageSize);
+            }}
+            pageSizeOptions={[10, 25, 50, 100]}
+            getRowId={(row) => row.id}
+          />
+        )}
       </Box>
 
       <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>

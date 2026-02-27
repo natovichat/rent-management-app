@@ -22,6 +22,13 @@ import {
   Snackbar,
   Link,
   Chip,
+  Card,
+  CardContent,
+  CardActions,
+  Stack,
+  IconButton,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -38,6 +45,83 @@ import PropertyForm from './PropertyForm';
 import PropertyCsvActions from './PropertyCsvActions';
 import PropertyFilterPanel from './PropertyFilterPanel';
 import ActiveFiltersChips from './ActiveFiltersChips';
+
+const PROPERTY_TYPE_LABELS: Record<string, string> = {
+  RESIDENTIAL: 'מגורים',
+  COMMERCIAL: 'מסחרי',
+  LAND: 'קרקע',
+  MIXED_USE: 'מעורב',
+};
+
+const PROPERTY_STATUS_LABELS: Record<string, string> = {
+  OWNED: 'בבעלות',
+  IN_CONSTRUCTION: 'בבנייה',
+  IN_PURCHASE: 'ברכישה',
+  SOLD: 'נמכר',
+  INVESTMENT: 'השקעה',
+};
+
+interface MobilePropertyCardProps {
+  property: Property;
+  onView: (id: string) => void;
+  onEdit: (property: Property) => void;
+  onDelete: (property: Property) => void;
+}
+
+function MobilePropertyCard({ property, onView, onEdit, onDelete }: MobilePropertyCardProps) {
+  const typeLabel = property.type ? PROPERTY_TYPE_LABELS[property.type] || property.type : null;
+  const statusLabel = property.status ? PROPERTY_STATUS_LABELS[property.status] || property.status : null;
+
+  return (
+    <Card sx={{ mb: 1.5, borderRadius: 2 }}>
+      <CardContent sx={{ '&:last-child': { pb: 1 } }}>
+        <Typography
+          component={Link}
+          variant="h6"
+          sx={{
+            cursor: 'pointer',
+            textDecoration: 'none',
+            color: 'primary.main',
+            '&:hover': { textDecoration: 'underline' },
+            display: 'block',
+            mb: 1,
+          }}
+          onClick={() => onView(property.id)}
+        >
+          {property.address || 'ללא כתובת'}
+        </Typography>
+        <Stack direction="row" spacing={1} flexWrap="wrap" gap={0.5} sx={{ mb: 1 }}>
+          {typeLabel && <Chip label={typeLabel} size="small" />}
+          {statusLabel && <Chip label={statusLabel} size="small" color="default" variant="outlined" />}
+        </Stack>
+        {property.fileNumber && (
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+            מספר תיק: {property.fileNumber}
+          </Typography>
+        )}
+        {property.isMortgaged && (
+          <Box sx={{ mb: 0.5 }}>
+            <Chip label="משועבד" size="small" color="warning" variant="outlined" />
+          </Box>
+        )}
+        <Typography variant="body2" color="text.secondary">
+          תאריך יצירה: {property.createdAt ? new Date(property.createdAt).toLocaleDateString('he-IL') : '-'}
+        </Typography>
+      </CardContent>
+      <CardActions sx={{ justifyContent: 'flex-end', px: 2, pt: 0 }}>
+        <IconButton size="small" onClick={() => onView(property.id)} aria-label="צפייה">
+          <VisibilityIcon />
+        </IconButton>
+        <IconButton size="small" onClick={() => onEdit(property)} aria-label="עריכה">
+          <EditIcon />
+        </IconButton>
+        <IconButton size="small" onClick={() => onDelete(property)} color="error" aria-label="מחיקה">
+          <DeleteIcon />
+        </IconButton>
+      </CardActions>
+    </Card>
+  );
+}
 
 /**
  * PropertyList component - Displays properties in a DataGrid with RTL support.
@@ -63,6 +147,8 @@ export default function PropertyList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
@@ -206,6 +292,12 @@ export default function PropertyList() {
     queryKey: ['properties', page, pageSize, apiFilters],
     queryFn: () => propertiesApi.getAll(page, pageSize, apiFilters),
   });
+
+  // Filtered rows for DataGrid (hoisted here to avoid conditional hook call in JSX)
+  const filteredRows = useMemo(() => {
+    const allRows = data?.data || [];
+    return allRows.filter(p => !deletedPropertyIds.has(p.id));
+  }, [data?.data, deletedPropertyIds]);
 
   // Clear deleted IDs when data changes (new fetch means deletions are reflected server-side)
   useEffect(() => {
@@ -490,8 +582,9 @@ export default function PropertyList() {
       <Box
         sx={{
           display: 'flex',
+          flexDirection: isMobile ? 'column' : 'row',
           justifyContent: 'space-between',
-          alignItems: 'center',
+          alignItems: isMobile ? 'stretch' : 'center',
           mb: 3,
           gap: 2,
           direction: 'rtl',
@@ -504,20 +597,21 @@ export default function PropertyList() {
             setSearch(e.target.value);
             setPage(1); // Reset to first page on search
           }}
-          sx={{ width: 300 }}
+          sx={{ width: isMobile ? '100%' : 300 }}
           size="small"
+          fullWidth={isMobile}
         />
         <Box sx={{ display: 'flex', gap: 1 }}>
           <PropertyCsvActions />
           <Button
             variant="contained"
-            startIcon={<AddIcon />}
+            startIcon={isMobile ? undefined : <AddIcon />}
             onClick={() => {
               setSelectedProperty(null);
               setOpenForm(true);
             }}
           >
-            נכס חדש
+            {isMobile ? <AddIcon /> : 'הוסף נכס'}
           </Button>
         </Box>
       </Box>
@@ -543,29 +637,77 @@ export default function PropertyList() {
         </Alert>
       )}
 
-      {/* Data Grid */}
-      <Box sx={{ height: 600, width: '100%' }}>
-        <DataGrid
-          key={`properties-grid-${page}-${data?.meta.total || 0}-${data?.data?.length || 0}-${deletedPropertyIds.size}`}
-          rows={useMemo(() => {
-            const allRows = data?.data || [];
-            // Filter out deleted properties for immediate UI update
-            return allRows.filter(p => !deletedPropertyIds.has(p.id));
-          }, [data?.data, deletedPropertyIds])}
-          rowCount={Math.max(0, (data?.meta.total || 0) - deletedPropertyIds.size)}
-          columns={columns}
-          loading={isLoading}
-          paginationMode="server"
-          paginationModel={{ page: page - 1, pageSize }}
-          onPaginationModelChange={(model) => {
-            setPage(model.page + 1);
-            setPageSize(model.pageSize);
-          }}
-          pageSizeOptions={[10, 25, 50, 100]}
-          disableRowSelectionOnClick
-          // disableColumnReorder removed (not supported in this DataGrid version)
-        />
-      </Box>
+      {/* Data Grid (desktop) / Mobile Card List */}
+      {isMobile ? (
+        <Box sx={{ width: '100%' }}>
+          {isLoading ? (
+            <Typography sx={{ py: 4, textAlign: 'center' }}>טוען...</Typography>
+          ) : (
+            <>
+              {(data?.data || [])
+                .filter((p) => !deletedPropertyIds.has(p.id))
+                .map((property) => (
+                  <MobilePropertyCard
+                    key={property.id}
+                    property={property}
+                    onView={(id) => router.push(`/properties/${id}`)}
+                    onEdit={(p) => {
+                      setSelectedProperty(p);
+                      setOpenForm(true);
+                    }}
+                    onDelete={handleDeleteClick}
+                  />
+                ))}
+              {(!data?.data?.length || data.data.every((p) => deletedPropertyIds.has(p.id))) && !isLoading && (
+                <Typography sx={{ py: 4, textAlign: 'center', color: 'text.secondary' }}>
+                  לא נמצאו נכסים
+                </Typography>
+              )}
+              {/* Mobile pagination - simple prev/next */}
+              {data?.meta && data.meta.total > pageSize && (
+                <Stack direction="row" justifyContent="center" gap={1} sx={{ mt: 2, mb: 2 }}>
+                  <Button
+                    size="small"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  >
+                    הקודם
+                  </Button>
+                  <Typography variant="body2" sx={{ alignSelf: 'center' }}>
+                    {page} / {Math.ceil((data.meta.total - deletedPropertyIds.size) / pageSize) || 1}
+                  </Typography>
+                  <Button
+                    size="small"
+                    disabled={page >= Math.ceil((data.meta.total - deletedPropertyIds.size) / pageSize)}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    הבא
+                  </Button>
+                </Stack>
+              )}
+            </>
+          )}
+        </Box>
+      ) : (
+        <Box sx={{ height: 600, width: '100%' }}>
+          <DataGrid
+            key={`properties-grid-${page}-${data?.meta.total || 0}-${data?.data?.length || 0}-${deletedPropertyIds.size}`}
+            rows={filteredRows}
+            rowCount={Math.max(0, (data?.meta.total || 0) - deletedPropertyIds.size)}
+            columns={columns}
+            loading={isLoading}
+            paginationMode="server"
+            paginationModel={{ page: page - 1, pageSize }}
+            onPaginationModelChange={(model) => {
+              setPage(model.page + 1);
+              setPageSize(model.pageSize);
+            }}
+            pageSizeOptions={[10, 25, 50, 100]}
+            disableRowSelectionOnClick
+            // disableColumnReorder removed (not supported in this DataGrid version)
+          />
+        </Box>
+      )}
 
       {/* Form Dialog */}
       <Dialog
