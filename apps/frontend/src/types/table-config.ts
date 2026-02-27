@@ -3,9 +3,7 @@
  */
 export const ENTITY_TYPES = [
   'properties',
-  'tenants',
   'leases',
-  'units',
   'expenses',
   'income',
   'owners',
@@ -21,9 +19,7 @@ export type EntityType = (typeof ENTITY_TYPES)[number];
  */
 export const ENTITY_DISPLAY_NAMES: Record<EntityType, string> = {
   properties: 'נכסים',
-  tenants: 'דיירים',
   leases: 'שכירויות',
-  units: 'יחידות',
   expenses: 'הוצאות',
   income: 'הכנסות',
   owners: 'בעלים',

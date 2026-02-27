@@ -14,9 +14,7 @@ import {
 } from '@mui/material';
 import {
   Home as HomeIcon,
-  Apartment as ApartmentIcon,
   Business as BusinessIcon,
-  People as PeopleIcon,
   Description as LeaseIcon,
   AccountBalance as BankIcon,
   AccountBalanceWallet as MortgageIcon,
@@ -47,22 +45,10 @@ const navigationOptions: NavigationOption[] = [
     path: '/properties',
   },
   {
-    value: 'units',
-    label: 'יחידות',
-    icon: <ApartmentIcon />,
-    path: '/units',
-  },
-  {
     value: 'leases',
     label: 'שכירויות',
     icon: <LeaseIcon />,
     path: '/leases',
-  },
-  {
-    value: 'tenants',
-    label: 'דיירים',
-    icon: <PeopleIcon />,
-    path: '/tenants',
   },
   {
     value: 'owners',

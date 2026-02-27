@@ -284,16 +284,6 @@ export const COLUMN_GROUPS: Record<string, Array<{ label: string; fields: string
       fields: ['notes', 'createdAt', 'updatedAt'],
     },
   ],
-  tenants: [
-    {
-      label: 'מידע אישי',
-      fields: ['name', 'email', 'phone', 'idNumber', 'dateOfBirth'],
-    },
-    {
-      label: 'כללי',
-      fields: ['notes', 'createdAt', 'updatedAt'],
-    },
-  ],
   leases: [
     {
       label: 'מידע בסיסי',
