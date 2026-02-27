@@ -29,6 +29,9 @@ import { propertiesApi } from '@/lib/api/properties';
 import PropertyForm from '@/components/properties/PropertyForm';
 import UtilityInfoSection from '@/components/properties/UtilityInfoSection';
 import PlanningProcessStateSection from '@/components/properties/PlanningProcessStateSection';
+import PropertyOwnershipsSection from '@/components/properties/PropertyOwnershipsSection';
+import PropertyLeasesSection from '@/components/properties/PropertyLeasesSection';
+import PropertyMortgagesSection from '@/components/properties/PropertyMortgagesSection';
 import PropertyEventsSection from '@/components/property-events/PropertyEventsSection';
 
 // ─── Label maps ────────────────────────────────────────────────────────────────
@@ -366,6 +369,21 @@ export default function PropertyDetailsPage() {
         {/* Planning Process State Accordion */}
         <Grid item xs={12}>
           <PlanningProcessStateSection propertyId={id} />
+        </Grid>
+
+        {/* Ownerships Accordion */}
+        <Grid item xs={12}>
+          <PropertyOwnershipsSection propertyId={id} />
+        </Grid>
+
+        {/* Leases Accordion */}
+        <Grid item xs={12}>
+          <PropertyLeasesSection propertyId={id} />
+        </Grid>
+
+        {/* Mortgages Accordion */}
+        <Grid item xs={12}>
+          <PropertyMortgagesSection propertyId={id} />
         </Grid>
 
         {/* Property Events Accordion */}

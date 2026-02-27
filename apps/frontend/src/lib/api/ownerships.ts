@@ -45,6 +45,8 @@ export interface CreateOwnershipDto {
   ownershipType: OwnershipType;
   startDate: string;
   endDate?: string;
+  managementFee?: number;
+  familyDivision?: boolean;
   notes?: string;
 }
 
