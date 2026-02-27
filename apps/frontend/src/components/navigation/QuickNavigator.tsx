@@ -51,10 +51,10 @@ const navigationOptions: NavigationOption[] = [
     path: '/leases',
   },
   {
-    value: 'owners',
-    label: 'בעלים',
+    value: 'persons',
+    label: 'אנשים',
     icon: <BusinessIcon />,
-    path: '/owners',
+    path: '/persons',
   },
   {
     value: 'mortgages',

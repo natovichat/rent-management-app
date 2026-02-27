@@ -1,11 +1,11 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { OwnershipType } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
-import { OwnerEntity } from '../../owners/entities/owner.entity';
+import { PersonEntity } from '../../persons/entities/person.entity';
 import { PropertyEntity } from '../../properties/entities/property.entity';
 
 /**
- * Ownership entity for Swagger documentation (M:N junction between Owner and Property)
+ * Ownership entity for Swagger documentation (M:N junction between Person and Property)
  */
 export class OwnershipEntity {
   @ApiProperty({
@@ -21,10 +21,10 @@ export class OwnershipEntity {
   propertyId: string;
 
   @ApiProperty({
-    description: 'Owner ID',
+    description: 'Person ID',
     example: '550e8400-e29b-41d4-a716-446655440002',
   })
-  ownerId: string;
+  personId: string;
 
   @ApiProperty({
     description: 'Ownership percentage (0-100)',
@@ -80,10 +80,10 @@ export class OwnershipEntity {
   updatedAt: Date;
 
   @ApiPropertyOptional({
-    description: 'Owner details (included when requested)',
-    type: OwnerEntity,
+    description: 'Person details (included when requested)',
+    type: PersonEntity,
   })
-  owner?: OwnerEntity;
+  person?: PersonEntity;
 
   @ApiPropertyOptional({
     description: 'Property details (included when requested)',

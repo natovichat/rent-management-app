@@ -1,0 +1,153 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - generic [ref=e2]:
+    - banner [ref=e3]:
+      - generic [ref=e4]:
+        - button "תפריט" [ref=e5] [cursor=pointer]:
+          - img [ref=e6]
+        - img [ref=e8]
+        - heading "מערכת ניהול נכסים" [level=1] [ref=e10]
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e16]: ראשי
+        - list [ref=e17]:
+          - listitem [ref=e18]:
+            - link "לוח בקרה" [ref=e19] [cursor=pointer]:
+              - /url: /dashboard
+              - img [ref=e21]
+              - generic [ref=e24]: לוח בקרה
+      - generic [ref=e25]:
+        - generic [ref=e26]: נכסים
+        - list [ref=e27]:
+          - listitem [ref=e28]:
+            - link "נכסים" [ref=e29] [cursor=pointer]:
+              - /url: /properties
+              - img [ref=e31]
+              - generic [ref=e34]: נכסים
+          - listitem [ref=e35]:
+            - link "בעלות" [ref=e36] [cursor=pointer]:
+              - /url: /ownerships
+              - img [ref=e38]
+              - generic [ref=e41]: בעלות
+      - generic [ref=e42]:
+        - generic [ref=e43]: אנשים
+        - list [ref=e44]:
+          - listitem [ref=e45]:
+            - link "בעלים" [ref=e46] [cursor=pointer]:
+              - /url: /owners
+              - img [ref=e48]
+              - generic [ref=e51]: בעלים
+          - listitem [ref=e52]:
+            - link "אנשים" [ref=e53] [cursor=pointer]:
+              - /url: /persons
+              - img [ref=e55]
+              - generic [ref=e58]: אנשים
+      - generic [ref=e59]:
+        - generic [ref=e60]: פיננסים
+        - list [ref=e61]:
+          - listitem [ref=e62]:
+            - link "משכנתאות" [ref=e63] [cursor=pointer]:
+              - /url: /mortgages
+              - img [ref=e65]
+              - generic [ref=e68]: משכנתאות
+          - listitem [ref=e69]:
+            - link "חשבונות בנק" [ref=e70] [cursor=pointer]:
+              - /url: /bank-accounts
+              - img [ref=e72]
+              - generic [ref=e75]: חשבונות בנק
+          - listitem [ref=e76]:
+            - link "חוזי שכירות" [ref=e77] [cursor=pointer]:
+              - /url: /leases
+              - img [ref=e79]
+              - generic [ref=e82]: חוזי שכירות
+    - main [ref=e83]:
+      - generic [ref=e84]:
+        - heading "לוח בקרה" [level=1] [ref=e85]
+        - generic [ref=e86]:
+          - generic [ref=e89]:
+            - img [ref=e91]
+            - paragraph [ref=e93]: נכסים
+            - generic [ref=e94]: "8"
+          - generic [ref=e97]:
+            - img [ref=e99]
+            - paragraph [ref=e101]: בעלים
+            - generic [ref=e102]: "5"
+          - generic [ref=e105]:
+            - img [ref=e107]
+            - paragraph [ref=e109]: אנשים
+            - generic [ref=e110]: "7"
+          - generic [ref=e113]:
+            - img [ref=e115]
+            - paragraph [ref=e117]: משכנתאות
+            - generic [ref=e118]: "4"
+          - generic [ref=e121]:
+            - img [ref=e123]
+            - paragraph [ref=e125]: חוזי שכירות
+            - generic [ref=e126]: "3"
+          - generic [ref=e129]:
+            - img [ref=e131]
+            - paragraph [ref=e133]: חשבונות בנק
+            - generic [ref=e134]: "4"
+        - generic [ref=e135]:
+          - generic [ref=e137]:
+            - heading "נכסים אחרונים" [level=6] [ref=e138]
+            - table [ref=e140]:
+              - rowgroup [ref=e141]:
+                - row "כתובת סוג סטטוס" [ref=e142]:
+                  - columnheader "כתובת" [ref=e143]
+                  - columnheader "סוג" [ref=e144]
+                  - columnheader "סטטוס" [ref=e145]
+              - rowgroup [ref=e146]:
+                - row "אביעד מגורים בבנייה" [ref=e147] [cursor=pointer]:
+                  - cell "אביעד" [ref=e148]
+                  - cell "מגורים" [ref=e149]
+                  - cell "בבנייה" [ref=e150]
+                - row "הכגכג מסחרי בבנייה" [ref=e151] [cursor=pointer]:
+                  - cell "הכגכג" [ref=e152]
+                  - cell "מסחרי" [ref=e153]
+                  - cell "בבנייה" [ref=e154]
+                - row "רחוב בן יהודה 15, ירושלים מגורים בבנייה" [ref=e155] [cursor=pointer]:
+                  - cell "רחוב בן יהודה 15, ירושלים" [ref=e156]
+                  - cell "מגורים" [ref=e157]
+                  - cell "בבנייה" [ref=e158]
+                - row "רחוב דיזנגוף 88, תל אביב מגורים בבעלות" [ref=e159] [cursor=pointer]:
+                  - cell "רחוב דיזנגוף 88, תל אביב" [ref=e160]
+                  - cell "מגורים" [ref=e161]
+                  - cell "בבעלות" [ref=e162]
+                - row "רחוב הנביאים 33, חיפה מגורים בבעלות" [ref=e163] [cursor=pointer]:
+                  - cell "רחוב הנביאים 33, חיפה" [ref=e164]
+                  - cell "מגורים" [ref=e165]
+                  - cell "בבעלות" [ref=e166]
+          - generic [ref=e168]:
+            - heading "חוזי שכירות פעילים" [level=6] [ref=e169]
+            - table [ref=e171]:
+              - rowgroup [ref=e172]:
+                - row "נכס שכירות חודשית" [ref=e173]:
+                  - columnheader "נכס" [ref=e174]
+                  - columnheader "שכירות חודשית" [ref=e175]
+              - rowgroup [ref=e176]:
+                - row "רחוב הרצל 10, תל אביב ₪8000" [ref=e177] [cursor=pointer]:
+                  - cell "רחוב הרצל 10, תל אביב" [ref=e178]
+                  - cell "₪8000" [ref=e179]
+                - row "רחוב רוטשילד 45, תל אביב ₪17500" [ref=e180] [cursor=pointer]:
+                  - cell "רחוב רוטשילד 45, תל אביב" [ref=e181]
+                  - cell "₪17500" [ref=e182]
+                - row "רחוב דיזנגוף 88, תל אביב ₪5300" [ref=e183] [cursor=pointer]:
+                  - cell "רחוב דיזנגוף 88, תל אביב" [ref=e184]
+                  - cell "₪5300" [ref=e185]
+        - generic [ref=e186]:
+          - heading "סיכום" [level=6] [ref=e187]
+          - generic [ref=e188]:
+            - generic [ref=e190]:
+              - paragraph [ref=e191]: סה״כ נכסים
+              - heading "8" [level=5] [ref=e192]
+            - generic [ref=e194]:
+              - paragraph [ref=e195]: חוזי שכירות פעילים
+              - heading "3" [level=5] [ref=e196]
+            - generic [ref=e198]:
+              - paragraph [ref=e199]: משכנתאות פעילות
+              - heading "4" [level=5] [ref=e200]
+  - alert [ref=e201]
+```

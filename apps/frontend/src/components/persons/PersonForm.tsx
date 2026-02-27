@@ -1,22 +1,40 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
-import { Box, Button, TextField, Alert } from '@mui/material';
+import {
+  Box,
+  Button,
+  TextField,
+  Alert,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+} from '@mui/material';
 import {
   Person,
   CreatePersonDto,
+  PersonType,
   personsApi,
 } from '@/lib/api/persons';
 import { useQueryClient } from '@tanstack/react-query';
 
+const PERSON_TYPE_OPTIONS: { value: PersonType; label: string }[] = [
+  { value: 'INDIVIDUAL', label: 'יחיד' },
+  { value: 'COMPANY', label: 'חברה' },
+  { value: 'PARTNERSHIP', label: 'שותפות' },
+];
+
 const personSchema = z.object({
   name: z.string().min(1, 'שם הוא שדה חובה'),
+  type: z.enum(['INDIVIDUAL', 'COMPANY', 'PARTNERSHIP']).optional(),
   idNumber: z.string().optional(),
   email: z.string().email('כתובת אימייל לא תקינה').optional().or(z.literal('')),
   phone: z.string().optional(),
+  address: z.string().optional(),
   notes: z.string().optional(),
 });
 
@@ -40,14 +58,17 @@ export default function PersonForm({
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<PersonFormData>({
     resolver: zodResolver(personSchema),
     defaultValues: {
       name: person?.name || '',
+      type: person?.type || 'INDIVIDUAL',
       idNumber: person?.idNumber || '',
       email: person?.email || '',
       phone: person?.phone || '',
+      address: person?.address || '',
       notes: person?.notes || '',
     },
   });
@@ -87,8 +108,25 @@ export default function PersonForm({
         autoFocus
       />
 
+      <Controller
+        name="type"
+        control={control}
+        render={({ field }) => (
+          <FormControl fullWidth>
+            <InputLabel>סוג</InputLabel>
+            <Select {...field} label="סוג" value={field.value || 'INDIVIDUAL'}>
+              {PERSON_TYPE_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      />
+
       <TextField
-        label="תעודת זהות"
+        label="תעודת זהות / ח.פ."
         {...register('idNumber')}
         error={!!errors.idNumber}
         helperText={errors.idNumber?.message}
@@ -109,6 +147,14 @@ export default function PersonForm({
         {...register('phone')}
         error={!!errors.phone}
         helperText={errors.phone?.message}
+        fullWidth
+      />
+
+      <TextField
+        label="כתובת"
+        {...register('address')}
+        error={!!errors.address}
+        helperText={errors.address?.message}
         fullWidth
       />
 

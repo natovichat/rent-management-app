@@ -1,11 +1,15 @@
 import { api } from '../api';
 
+export type PersonType = 'INDIVIDUAL' | 'COMPANY' | 'PARTNERSHIP';
+
 export interface Person {
   id: string;
   name: string;
+  type: PersonType;
   idNumber?: string;
   email?: string;
   phone?: string;
+  address?: string;
   notes?: string;
   createdAt: string;
   updatedAt: string;
@@ -13,9 +17,11 @@ export interface Person {
 
 export interface CreatePersonDto {
   name: string;
+  type?: PersonType;
   idNumber?: string;
   email?: string;
   phone?: string;
+  address?: string;
   notes?: string;
 }
 
@@ -33,16 +39,18 @@ export interface PersonsResponse {
 
 /**
  * Person API service.
- * Persons represent individuals (mortgage owners, payers, tenants).
+ * Persons are the universal entity representing individuals, companies, and partnerships.
+ * They can act as property owners, tenants, mortgage holders, etc.
  */
 export const personsApi = {
   /**
-   * Get all persons with pagination and search.
+   * Get all persons with pagination, search, and type filter.
    */
   getPersons: async (
     page: number = 1,
     limit: number = 10,
     search?: string,
+    type?: PersonType,
   ): Promise<PersonsResponse> => {
     const params = new URLSearchParams({
       page: page.toString(),
@@ -51,6 +59,9 @@ export const personsApi = {
 
     if (search) {
       params.append('search', search);
+    }
+    if (type) {
+      params.append('type', type);
     }
 
     const response = await api.get<PersonsResponse>(`/persons?${params}`);
@@ -86,6 +97,14 @@ export const personsApi = {
    */
   deletePerson: async (id: string): Promise<void> => {
     await api.delete(`/persons/${id}`);
+  },
+
+  /**
+   * Get all ownerships for a person (as property owner).
+   */
+  getPersonOwnerships: async (id: string): Promise<any[]> => {
+    const response = await api.get<any[]>(`/persons/${id}/ownerships`);
+    return response.data;
   },
 
   /**

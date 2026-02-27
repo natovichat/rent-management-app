@@ -25,12 +25,14 @@ import {
   Dashboard as DashboardIcon,
   Apartment as ApartmentIcon,
   Handshake as HandshakeIcon,
-  Person as PersonIcon,
   Group as GroupIcon,
   AccountBalance as AccountBalanceIcon,
   AccountBalanceWallet as AccountBalanceWalletIcon,
   Description as DescriptionIcon,
+  Tag as TagIcon,
 } from '@mui/icons-material';
+
+const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || 'dev';
 
 const SIDEBAR_OPEN_KEY = 'appShell-sidebarOpen';
 const DRAWER_WIDTH_OPEN = 260;
@@ -62,7 +64,6 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'אנשים',
     items: [
-      { label: 'בעלים', href: '/owners', icon: <PersonIcon /> },
       { label: 'אנשים', href: '/persons', icon: <GroupIcon /> },
     ],
   },
@@ -134,7 +135,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ flex: 1, overflowY: 'auto', py: 2 }}>
+      <Box sx={{ flex: 1, overflowY: 'auto', py: 2, display: 'flex', flexDirection: 'column' }}>
+        <Box sx={{ flex: 1 }}>
         {NAV_GROUPS.map((group) => (
           <Box key={group.label} sx={{ mb: 2 }}>
             {sidebarOpen && (
@@ -210,6 +212,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </List>
           </Box>
         ))}
+        </Box>
+        {/* Version badge at bottom of sidebar */}
+        <Box
+          sx={{
+            px: 2,
+            py: 1.5,
+            borderTop: 1,
+            borderColor: 'divider',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: sidebarOpen ? 'flex-start' : 'center',
+            gap: 1,
+          }}
+        >
+          {sidebarOpen ? (
+            <Typography
+              variant="caption"
+              sx={{ color: 'text.disabled', fontSize: '0.7rem' }}
+            >
+              גרסה {APP_VERSION}
+            </Typography>
+          ) : (
+            <Tooltip title={`גרסה ${APP_VERSION}`} placement="left">
+              <TagIcon sx={{ fontSize: 16, color: 'text.disabled' }} />
+            </Tooltip>
+          )}
+        </Box>
       </Box>
     </Box>
   );
@@ -248,6 +277,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Typography variant="h6" component="h1" noWrap sx={{ flexGrow: 1 }}>
             מערכת ניהול נכסים
           </Typography>
+          <Tooltip title={`גרסה ${APP_VERSION}`}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.5,
+                px: 1.5,
+                py: 0.5,
+                borderRadius: 2,
+                backgroundColor: 'rgba(255,255,255,0.15)',
+                cursor: 'default',
+              }}
+            >
+              <TagIcon sx={{ fontSize: 14, opacity: 0.9 }} />
+              <Typography variant="caption" sx={{ fontWeight: 600, letterSpacing: 0.5 }}>
+                {APP_VERSION}
+              </Typography>
+            </Box>
+          </Tooltip>
         </Toolbar>
       </AppBar>
 

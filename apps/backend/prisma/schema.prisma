@@ -12,37 +12,14 @@ datasource db {
 }
 
 // ============================================
-// Person (Individuals for mortgages and tenants)
+// Person (Universal entity: individuals, companies, tenants, owners, etc.)
 // ============================================
 
 model Person {
-  id       String  @id @default(uuid())
+  id       String     @id @default(uuid())
   name     String
-  idNumber String? @map("id_number")
-  email    String?
-  phone    String?
-  notes    String?
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-
-  mortgageOwnerOf Mortgage[]        @relation("MortgageOwner")
-  mortgagePayerOf Mortgage[]        @relation("MortgagePayer")
-  tenantsOf       RentalAgreement[] @relation("RentalTenant")
-
-  @@index([name])
-  @@map("persons")
-}
-
-// ============================================
-// Owner (Property ownership - separate from Person)
-// ============================================
-
-model Owner {
-  id       String    @id @default(uuid())
-  name     String
-  idNumber String?   @map("id_number")
-  type     OwnerType
+  type     PersonType @default(INDIVIDUAL)
+  idNumber String?    @map("id_number")
   email    String?
   phone    String?
   address  String?
@@ -51,13 +28,17 @@ model Owner {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  ownerships Ownership[]
+  mortgageOwnerOf Mortgage[]        @relation("MortgageOwner")
+  mortgagePayerOf Mortgage[]        @relation("MortgagePayer")
+  tenantsOf       RentalAgreement[] @relation("RentalTenant")
+  ownershipsOf    Ownership[]
 
   @@index([name])
-  @@map("owners")
+  @@index([type])
+  @@map("persons")
 }
 
-enum OwnerType {
+enum PersonType {
   INDIVIDUAL
   COMPANY
   PARTNERSHIP
@@ -325,7 +306,7 @@ model UtilityInfo {
 model Ownership {
   id                  String        @id @default(uuid())
   propertyId          String        @map("property_id")
-  ownerId             String        @map("owner_id")
+  personId            String        @map("person_id")
   ownershipPercentage Decimal       @map("ownership_percentage") @db.Decimal(5, 2)
   ownershipType       OwnershipType @map("ownership_type")
   managementFee       Decimal?      @map("management_fee") @db.Decimal(10, 2)
@@ -338,10 +319,10 @@ model Ownership {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  owner    Owner    @relation(fields: [ownerId], references: [id], onDelete: Restrict)
+  person   Person   @relation(fields: [personId], references: [id], onDelete: Restrict)
 
   @@index([propertyId])
-  @@index([ownerId])
+  @@index([personId])
   @@map("ownerships")
 }
 

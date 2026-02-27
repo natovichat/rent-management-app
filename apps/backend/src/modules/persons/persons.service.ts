@@ -17,19 +17,25 @@ export class PersonsService {
     return this.prisma.person.create({
       data: {
         name: dto.name,
+        type: dto.type ?? undefined,
         idNumber: dto.idNumber ?? undefined,
         email: dto.email ?? undefined,
         phone: dto.phone ?? undefined,
+        address: dto.address ?? undefined,
         notes: dto.notes ?? undefined,
       },
     });
   }
 
   async findAll(query: QueryPersonDto) {
-    const { page = 1, limit = 10, search } = query;
+    const { page = 1, limit = 10, search, type } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.PersonWhereInput = {};
+
+    if (type) {
+      where.type = type;
+    }
 
     if (search?.trim()) {
       where.OR = [
@@ -79,9 +85,11 @@ export class PersonsService {
       where: { id },
       data: {
         ...(dto.name !== undefined && { name: dto.name }),
+        ...(dto.type !== undefined && { type: dto.type }),
         ...(dto.idNumber !== undefined && { idNumber: dto.idNumber }),
         ...(dto.email !== undefined && { email: dto.email }),
         ...(dto.phone !== undefined && { phone: dto.phone }),
+        ...(dto.address !== undefined && { address: dto.address }),
         ...(dto.notes !== undefined && { notes: dto.notes }),
       },
     });
@@ -94,6 +102,7 @@ export class PersonsService {
         mortgageOwnerOf: { take: 1 },
         mortgagePayerOf: { take: 1 },
         tenantsOf: { take: 1 },
+        ownershipsOf: { take: 1 },
       },
     });
 
@@ -104,12 +113,14 @@ export class PersonsService {
     const hasMortgageOwner = person.mortgageOwnerOf.length > 0;
     const hasMortgagePayer = person.mortgagePayerOf.length > 0;
     const hasRentalAgreements = person.tenantsOf.length > 0;
+    const hasOwnerships = person.ownershipsOf.length > 0;
 
-    if (hasMortgageOwner || hasMortgagePayer || hasRentalAgreements) {
+    if (hasMortgageOwner || hasMortgagePayer || hasRentalAgreements || hasOwnerships) {
       const relations: string[] = [];
       if (hasMortgageOwner) relations.push('mortgages (as owner)');
       if (hasMortgagePayer) relations.push('mortgages (as payer)');
       if (hasRentalAgreements) relations.push('rental agreements');
+      if (hasOwnerships) relations.push('property ownerships');
       throw new ConflictException(
         `Cannot delete person: has related ${relations.join(', ')}`,
       );

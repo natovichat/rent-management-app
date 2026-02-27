@@ -5,7 +5,7 @@ export type OwnershipType = 'FULL' | 'PARTIAL' | 'PARTNERSHIP' | 'COMPANY' | 'RE
 export interface Ownership {
   id: string;
   propertyId: string;
-  ownerId: string;
+  personId: string;
   ownershipPercentage: number | string;
   ownershipType: OwnershipType;
   managementFee?: number | string | null;
@@ -20,10 +20,10 @@ export interface Ownership {
     address: string;
     fileNumber?: string;
   };
-  owner?: {
+  person?: {
     id: string;
     name: string;
-    type: 'INDIVIDUAL' | 'COMPANY' | 'PARTNERSHIP';
+    type?: 'INDIVIDUAL' | 'COMPANY' | 'PARTNERSHIP';
     email?: string;
     phone?: string;
   };
@@ -40,7 +40,7 @@ export interface OwnershipsResponse {
 }
 
 export interface CreateOwnershipDto {
-  ownerId: string;
+  personId: string;
   ownershipPercentage: number;
   ownershipType: OwnershipType;
   startDate: string;

@@ -9,12 +9,12 @@ import { UpdateOwnershipDto } from './dto/update-ownership.dto';
 import { OwnershipType, Prisma } from '@prisma/client';
 
 const OWNERSHIP_INCLUDE = {
-  owner: true,
+  person: true,
   property: true,
 } as const;
 
 /**
- * Service for managing ownerships (M:N junction between Owner and Property)
+ * Service for managing ownerships (M:N junction between Person and Property)
  */
 @Injectable()
 export class OwnershipsService {
@@ -25,7 +25,7 @@ export class OwnershipsService {
    */
   async create(propertyId: string, dto: CreateOwnershipDto) {
     await this.ensurePropertyExists(propertyId);
-    await this.ensureOwnerExists(dto.ownerId);
+    await this.ensurePersonExists(dto.personId);
 
     if (dto.ownershipPercentage < 0 || dto.ownershipPercentage > 100) {
       throw new BadRequestException(
@@ -36,7 +36,7 @@ export class OwnershipsService {
     return this.prisma.ownership.create({
       data: {
         propertyId,
-        ownerId: dto.ownerId,
+        personId: dto.personId,
         ownershipPercentage: dto.ownershipPercentage,
         ownershipType: dto.ownershipType as OwnershipType,
         startDate: new Date(dto.startDate),
@@ -50,7 +50,7 @@ export class OwnershipsService {
   }
 
   /**
-   * Find all ownerships with pagination (includes property and owner)
+   * Find all ownerships with pagination (includes property and person)
    */
   async findAll(page: number = 1, limit: number = 20) {
     const skip = (page - 1) * limit;
@@ -77,7 +77,7 @@ export class OwnershipsService {
   }
 
   /**
-   * Find all ownerships for a property (includes owner details)
+   * Find all ownerships for a property (includes person details)
    */
   async findByProperty(propertyId: string) {
     await this.ensurePropertyExists(propertyId);
@@ -90,13 +90,13 @@ export class OwnershipsService {
   }
 
   /**
-   * Find all ownerships for an owner (includes property details)
+   * Find all ownerships for a person (includes property details)
    */
-  async findByOwner(ownerId: string) {
-    await this.ensureOwnerExists(ownerId);
+  async findByPerson(personId: string) {
+    await this.ensurePersonExists(personId);
 
     return this.prisma.ownership.findMany({
-      where: { ownerId },
+      where: { personId },
       include: OWNERSHIP_INCLUDE,
       orderBy: { startDate: 'desc' },
     });
@@ -139,7 +139,7 @@ export class OwnershipsService {
       0,
     );
 
-    const isValid = Math.abs(totalPercentage - 100) < 0.01; // Allow floating point tolerance
+    const isValid = Math.abs(totalPercentage - 100) < 0.01;
     const message = isValid
       ? `Total ownership is ${totalPercentage.toFixed(2)}%`
       : `Total ownership is ${totalPercentage.toFixed(2)}% (expected 100%)`;
@@ -157,8 +157,8 @@ export class OwnershipsService {
   async update(id: string, dto: UpdateOwnershipDto) {
     await this.findOne(id);
 
-    if (dto.ownerId !== undefined) {
-      await this.ensureOwnerExists(dto.ownerId);
+    if (dto.personId !== undefined) {
+      await this.ensurePersonExists(dto.personId);
     }
 
     if (
@@ -171,7 +171,7 @@ export class OwnershipsService {
     }
 
     const data: Prisma.OwnershipUpdateInput = {};
-    if (dto.ownerId !== undefined) data.owner = { connect: { id: dto.ownerId } };
+    if (dto.personId !== undefined) data.person = { connect: { id: dto.personId } };
     if (dto.ownershipPercentage !== undefined)
       data.ownershipPercentage = dto.ownershipPercentage;
     if (dto.ownershipType !== undefined)
@@ -214,13 +214,13 @@ export class OwnershipsService {
     }
   }
 
-  private async ensureOwnerExists(ownerId: string, message?: string) {
-    const owner = await this.prisma.owner.findUnique({
-      where: { id: ownerId },
+  private async ensurePersonExists(personId: string, message?: string) {
+    const person = await this.prisma.person.findUnique({
+      where: { id: personId },
     });
-    if (!owner) {
+    if (!person) {
       throw new NotFoundException(
-        message ?? `Owner with id ${ownerId} not found`,
+        message ?? `Person with id ${personId} not found`,
       );
     }
   }

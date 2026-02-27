@@ -84,6 +84,12 @@ export default function PersonList() {
     },
   });
 
+  const TYPE_LABELS: Record<string, string> = {
+    INDIVIDUAL: 'יחיד',
+    COMPANY: 'חברה',
+    PARTNERSHIP: 'שותפות',
+  };
+
   const columns: GridColDef<Person>[] = [
     {
       field: 'name',
@@ -92,6 +98,14 @@ export default function PersonList() {
       minWidth: 200,
       align: 'right',
       headerAlign: 'right',
+    },
+    {
+      field: 'type',
+      headerName: 'סוג',
+      width: 110,
+      align: 'right',
+      headerAlign: 'right',
+      valueFormatter: (params) => TYPE_LABELS[params.value] || params.value || '-',
     },
     {
       field: 'idNumber',

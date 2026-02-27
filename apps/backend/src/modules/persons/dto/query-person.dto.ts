@@ -2,15 +2,17 @@ import {
   IsOptional,
   IsString,
   IsInt,
+  IsEnum,
   Min,
   Max,
   MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { PersonType } from '@prisma/client';
 
 /**
- * DTO for querying persons with pagination and search
+ * DTO for querying persons with pagination, search, and type filter
  */
 export class QueryPersonDto {
   @ApiPropertyOptional({
@@ -45,4 +47,13 @@ export class QueryPersonDto {
   @IsString()
   @MaxLength(100)
   search?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filter by person type',
+    enum: PersonType,
+    example: PersonType.INDIVIDUAL,
+  })
+  @IsOptional()
+  @IsEnum(PersonType)
+  type?: PersonType;
 }

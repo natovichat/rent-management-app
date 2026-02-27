@@ -16,15 +16,15 @@ import { OwnershipType } from '@prisma/client';
 export const OWNERSHIP_TYPES = Object.values(OwnershipType);
 
 /**
- * DTO for creating a new Ownership (M:N junction between Owner and Property)
+ * DTO for creating a new Ownership (M:N junction between Person and Property)
  */
 export class CreateOwnershipDto {
   @ApiProperty({
-    description: 'Owner UUID',
+    description: 'Person UUID (owner of the property)',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  @IsUUID('4', { message: 'ownerId must be a valid UUID' })
-  ownerId: string;
+  @IsUUID('4', { message: 'personId must be a valid UUID' })
+  personId: string;
 
   @ApiProperty({
     description: 'Ownership percentage (0-100)',

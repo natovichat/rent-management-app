@@ -110,13 +110,13 @@ export default function OwnershipList() {
       valueGetter: (params) => params.row.property?.address || '-',
     },
     {
-      field: 'owner',
-      headerName: 'בעלים',
+      field: 'person',
+      headerName: 'אדם',
       flex: 1,
       minWidth: 150,
       align: 'right',
       headerAlign: 'right',
-      valueGetter: (params) => params.row.owner?.name || '-',
+      valueGetter: (params) => params.row.person?.name || '-',
     },
     {
       field: 'ownershipPercentage',

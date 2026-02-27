@@ -21,11 +21,11 @@ import {
   UpdateOwnershipDto,
 } from '@/lib/api/ownerships';
 import { propertiesApi } from '@/lib/api/properties';
-import { ownersApi } from '@/lib/api/owners';
+import { personsApi } from '@/lib/api/persons';
 
 const ownershipSchema = z.object({
   propertyId: z.string().min(1, 'נכס הוא שדה חובה'),
-  ownerId: z.string().min(1, 'בעלים הוא שדה חובה'),
+  personId: z.string().min(1, 'אדם הוא שדה חובה'),
   ownershipPercentage: z
     .number()
     .min(0, 'אחוז בעלות חייב להיות בין 0 ל-100')
@@ -40,7 +40,6 @@ const ownershipSchema = z.object({
 
 type OwnershipFormData = z.infer<typeof ownershipSchema>;
 
-// Backend schema uses REAL and LEGAL
 const OWNERSHIP_TYPE_OPTIONS: { value: 'REAL' | 'LEGAL'; label: string }[] = [
   { value: 'REAL', label: 'חקרי' },
   { value: 'LEGAL', label: 'משפטית' },
@@ -66,12 +65,12 @@ export default function OwnershipForm({
     queryKey: ['properties-list'],
     queryFn: () => propertiesApi.getProperties(1, 100),
   });
-  const { data: ownersData } = useQuery({
-    queryKey: ['owners-list'],
-    queryFn: () => ownersApi.getOwners(1, 100),
+  const { data: personsData } = useQuery({
+    queryKey: ['persons-list'],
+    queryFn: () => personsApi.getPersons(1, 100),
   });
   const properties = propertiesData?.data || [];
-  const owners = ownersData?.data || [];
+  const persons = personsData?.data || [];
 
   const {
     register,
@@ -83,7 +82,7 @@ export default function OwnershipForm({
     resolver: zodResolver(ownershipSchema),
     defaultValues: {
       propertyId: ownership?.propertyId || '',
-      ownerId: ownership?.ownerId || '',
+      personId: ownership?.personId || '',
       ownershipPercentage: ownership
         ? Number(ownership.ownershipPercentage)
         : 0,
@@ -125,7 +124,7 @@ export default function OwnershipForm({
 
   const onSubmit = (data: OwnershipFormData) => {
     const payload = {
-      ownerId: data.ownerId,
+      personId: data.personId,
       ownershipPercentage: data.ownershipPercentage,
       ownershipType: data.ownershipType,
       startDate: data.startDate,
@@ -171,16 +170,16 @@ export default function OwnershipForm({
         </Select>
       </FormControl>
 
-      <FormControl fullWidth required error={!!errors.ownerId}>
-        <InputLabel>בעלים *</InputLabel>
+      <FormControl fullWidth required error={!!errors.personId}>
+        <InputLabel>אדם *</InputLabel>
         <Select
-          value={watch('ownerId')}
-          onChange={(e) => setValue('ownerId', e.target.value)}
-          label="בעלים *"
+          value={watch('personId')}
+          onChange={(e) => setValue('personId', e.target.value)}
+          label="אדם *"
         >
-          {owners.map((o) => (
-            <MenuItem key={o.id} value={o.id}>
-              {o.name}
+          {persons.map((p) => (
+            <MenuItem key={p.id} value={p.id}>
+              {p.name}
             </MenuItem>
           ))}
         </Select>

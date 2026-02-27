@@ -232,6 +232,7 @@ describe('PersonsService', () => {
         mortgageOwnerOf: [],
         mortgagePayerOf: [],
         tenantsOf: [],
+        ownershipsOf: [],
       });
       mockPrismaService.person.delete.mockResolvedValue(mockPerson);
 
@@ -258,6 +259,7 @@ describe('PersonsService', () => {
         mortgageOwnerOf: [{ id: 'mortgage-1' }],
         mortgagePayerOf: [],
         tenantsOf: [],
+        ownershipsOf: [],
       });
 
       await expect(service.remove(mockPerson.id)).rejects.toThrow(
@@ -275,6 +277,7 @@ describe('PersonsService', () => {
         mortgageOwnerOf: [],
         mortgagePayerOf: [{ id: 'mortgage-1' }],
         tenantsOf: [],
+        ownershipsOf: [],
       });
 
       await expect(service.remove(mockPerson.id)).rejects.toThrow(
@@ -292,6 +295,7 @@ describe('PersonsService', () => {
         mortgageOwnerOf: [],
         mortgagePayerOf: [],
         tenantsOf: [{ id: 'agreement-1' }],
+        ownershipsOf: [],
       });
 
       await expect(service.remove(mockPerson.id)).rejects.toThrow(

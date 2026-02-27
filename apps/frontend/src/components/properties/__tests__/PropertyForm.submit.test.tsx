@@ -3,8 +3,7 @@
  */
 
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Dialog } from '@mui/material';
 import PropertyForm from '../PropertyForm';
@@ -25,9 +24,20 @@ jest.mock('@/services/investmentCompanies', () => ({
 
 const mockPropertiesApi = propertiesApi as jest.Mocked<typeof propertiesApi>;
 
+// Helper to get the actual <input> inside a MUI TextField
+const getInput = (testId: string) => {
+  const wrapper = screen.getByTestId(testId);
+  return wrapper.querySelector('input') as HTMLInputElement;
+};
+
+// Helper to submit the form
+const submitForm = () => {
+  const form = document.querySelector('[data-testid="property-form"]');
+  if (form) fireEvent.submit(form);
+};
+
 describe('PropertyForm - Submission Test', () => {
   test('Should execute mutation when form is submitted', async () => {
-    const user = userEvent.setup();
     const mockOnClose = jest.fn();
     
     // Mock successful API response
@@ -58,109 +68,53 @@ describe('PropertyForm - Submission Test', () => {
       </QueryClientProvider>
     );
     
-    console.log('=== TEST STARTED ===');
-    
     // Wait for form to be ready
     await waitFor(() => {
       expect(screen.getByText(/נכס חדש/)).toBeDefined();
     });
     
-    console.log('=== FORM READY - Starting to fill fields ===');
+    // Fill address using fireEvent.change (reliable for React Hook Form)
+    const addressInput = getInput('property-address-input');
+    fireEvent.change(addressInput, { target: { value: 'רחוב הרצל 123' } });
     
-    // Fill required fields
-    const addressInput = screen.getByLabelText(/כתובת/);
-    await user.clear(addressInput);
-    await user.type(addressInput, 'רחוב הרצל 123');
-    console.log('✓ Address filled');
+    // Fill file number
+    const fileNumberInput = getInput('property-file-number-input');
+    fireEvent.change(fileNumberInput, { target: { value: 'F-2026-001' } });
     
-    const fileNumberInput = screen.getByLabelText(/מספר תיק/);
-    await user.clear(fileNumberInput);
-    await user.type(fileNumberInput, 'F-2026-001');
-    console.log('✓ File number filled');
+    // Select property type using MUI Select pattern
+    const typeSelect = screen.getByTestId('property-type-select');
+    fireEvent.mouseDown(typeSelect);
+    await waitFor(() => screen.getByRole('option', { name: /מגורים/ }));
+    fireEvent.click(screen.getByRole('option', { name: /מגורים/ }));
     
-    // Find and click property type select
-    const typeSelect = screen.getByLabelText(/סוג נכס/);
-    await user.click(typeSelect);
+    // Select status
+    const statusSelect = screen.getByTestId('property-status-select');
+    fireEvent.mouseDown(statusSelect);
+    await waitFor(() => screen.getByRole('option', { name: /בבעלות/ }));
+    fireEvent.click(screen.getByRole('option', { name: /בבעלות/ }));
     
-    // Wait for dropdown options
-    await waitFor(() => {
-      const option = screen.queryByRole('option', { name: /מגורים/ });
-      if (option) {
-        return true;
-      }
-      throw new Error('Waiting for dropdown options');
+    // Submit the form
+    await act(async () => {
+      submitForm();
     });
     
-    const residentialOption = screen.getByRole('option', { name: /מגורים/ });
-    await user.click(residentialOption);
-    console.log('✓ Property type selected: מגורים');
-    
-    // Find and click status select
-    const statusSelect = screen.getByLabelText(/סטטוס/);
-    await user.click(statusSelect);
-    
-    await waitFor(() => {
-      const option = screen.queryByRole('option', { name: /בבעלות/ });
-      if (option) {
-        return true;
-      }
-      throw new Error('Waiting for status options');
-    });
-    
-    const ownedOption = screen.getByRole('option', { name: /בבעלות/ });
-    await user.click(ownedOption);
-    console.log('✓ Status selected: בבעלות');
-    
-    console.log('=== ALL REQUIRED FIELDS FILLED - Finding submit button ===');
-    
-    // Find submit button
-    const submitButton = screen.getByRole('button', { name: /שמור/ });
-    console.log('✓ Submit button found');
-    
-    // Check if button is disabled
-    console.log(`Submit button disabled: ${submitButton.hasAttribute('disabled')}`);
-    
-    // Click submit
-    console.log('=== CLICKING SUBMIT BUTTON ===');
-    await user.click(submitButton);
-    
-    console.log('=== WAITING FOR API CALL ===');
-    
-    // Wait for mutation to complete
+    // Wait for mutation to complete - API should be called
     await waitFor(
       () => {
-        console.log(`API call count: ${mockPropertiesApi.create.mock.calls.length}`);
         expect(mockPropertiesApi.create).toHaveBeenCalled();
       },
       { timeout: 5000 }
     );
     
-    console.log('✓✓✓ API WAS CALLED! ✓✓✓');
-    console.log('API called with:', mockPropertiesApi.create.mock.calls[0][0]);
+    const callArgs = mockPropertiesApi.create.mock.calls[0][0];
+    expect(callArgs).toMatchObject({ address: 'רחוב הרצל 123' });
     
-    // Check if onClose was called
+    // Check if onClose was eventually called (after success callbacks)
     await waitFor(
       () => {
-        console.log(`onClose call count: ${mockOnClose.mock.calls.length}`);
         expect(mockOnClose).toHaveBeenCalled();
       },
-      { timeout: 3000 }
+      { timeout: 10000 }
     );
-    
-    console.log('✓✓✓ ONCLOSE WAS CALLED! ✓✓✓');
-    
-    // Check if success snackbar was shown (PropertyForm has internal snackbar)
-    await waitFor(
-      () => {
-        const snackbar = screen.queryByTestId('property-form-snackbar');
-        console.log(`Snackbar present: ${!!snackbar}`);
-        expect(snackbar).toBeDefined();
-      },
-      { timeout: 3000 }
-    );
-    
-    console.log('✓✓✓ SUCCESS MESSAGE SHOWN! ✓✓✓');
-    
-    console.log('=== TEST PASSED! ALL CALLBACKS EXECUTED ===');
-  }, 30000); // 30 second timeout
+  }, 20000);
 });

@@ -41,7 +41,7 @@ export class PropertyOwnershipsController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Property or owner not found',
+    description: 'Property or person not found',
   })
   create(
     @Param('propertyId') propertyId: string,
@@ -55,7 +55,7 @@ export class PropertyOwnershipsController {
   @ApiParam({ name: 'propertyId', description: 'Property UUID' })
   @ApiResponse({
     status: 200,
-    description: 'List of ownerships with owner details',
+    description: 'List of ownerships with person details',
     schema: {
       type: 'array',
       items: { $ref: '#/components/schemas/OwnershipEntity' },
@@ -87,13 +87,13 @@ export class PropertyOwnershipsController {
 }
 
 @ApiTags('ownerships')
-@Controller('owners/:ownerId/ownerships')
-export class OwnerOwnershipsController {
+@Controller('persons/:personId/ownerships')
+export class PersonOwnershipsController {
   constructor(private readonly ownershipsService: OwnershipsService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List ownerships for an owner' })
-  @ApiParam({ name: 'ownerId', description: 'Owner UUID' })
+  @ApiOperation({ summary: 'List ownerships for a person' })
+  @ApiParam({ name: 'personId', description: 'Person UUID' })
   @ApiResponse({
     status: 200,
     description: 'List of ownerships with property details',
@@ -104,10 +104,10 @@ export class OwnerOwnershipsController {
   })
   @ApiResponse({
     status: 404,
-    description: 'Owner not found',
+    description: 'Person not found',
   })
-  findByOwner(@Param('ownerId') ownerId: string) {
-    return this.ownershipsService.findByOwner(ownerId);
+  findByPerson(@Param('personId') personId: string) {
+    return this.ownershipsService.findByPerson(personId);
   }
 }
 
@@ -120,7 +120,7 @@ export class OwnershipsController {
   @ApiOperation({ summary: 'List all ownerships with pagination' })
   @ApiResponse({
     status: 200,
-    description: 'Paginated list of ownerships with property and owner details',
+    description: 'Paginated list of ownerships with property and person details',
     schema: {
       type: 'object',
       properties: {

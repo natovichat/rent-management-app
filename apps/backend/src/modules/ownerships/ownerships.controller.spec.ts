@@ -3,7 +3,7 @@ import { INestApplication, ValidationPipe, NotFoundException } from '@nestjs/com
 import * as request from 'supertest';
 import {
   PropertyOwnershipsController,
-  OwnerOwnershipsController,
+  PersonOwnershipsController,
   OwnershipsController,
 } from './ownerships.controller';
 import { OwnershipsService } from './ownerships.service';
@@ -12,13 +12,13 @@ import { UpdateOwnershipDto } from './dto/update-ownership.dto';
 import { OwnershipType } from '@prisma/client';
 
 const mockPropertyId = '550e8400-e29b-41d4-a716-446655440001';
-const mockOwnerId = '550e8400-e29b-41d4-a716-446655440002';
+const mockPersonId = '550e8400-e29b-41d4-a716-446655440002';
 const mockOwnershipId = '550e8400-e29b-41d4-a716-446655440003';
 
 const mockOwnership = {
   id: mockOwnershipId,
   propertyId: mockPropertyId,
-  ownerId: mockOwnerId,
+  personId: mockPersonId,
   ownershipPercentage: 50,
   ownershipType: OwnershipType.REAL,
   managementFee: 500,
@@ -28,7 +28,7 @@ const mockOwnership = {
   notes: 'Test notes',
   createdAt: new Date(),
   updatedAt: new Date(),
-  owner: { id: mockOwnerId, name: 'John Doe', type: 'INDIVIDUAL' },
+  person: { id: mockPersonId, name: 'John Doe', type: 'INDIVIDUAL' },
   property: { id: mockPropertyId, address: '123 Main St' },
 };
 
@@ -38,7 +38,7 @@ describe('OwnershipsController', () => {
   const mockOwnershipsService = {
     create: jest.fn(),
     findByProperty: jest.fn(),
-    findByOwner: jest.fn(),
+    findByPerson: jest.fn(),
     findOne: jest.fn(),
     validateTotalOwnership: jest.fn(),
     update: jest.fn(),
@@ -49,7 +49,7 @@ describe('OwnershipsController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [
         PropertyOwnershipsController,
-        OwnerOwnershipsController,
+        PersonOwnershipsController,
         OwnershipsController,
       ],
       providers: [
@@ -80,7 +80,7 @@ describe('OwnershipsController', () => {
 
   describe('POST /properties/:propertyId/ownerships', () => {
     const createDto: CreateOwnershipDto = {
-      ownerId: mockOwnerId,
+      personId: mockPersonId,
       ownershipPercentage: 50,
       ownershipType: OwnershipType.REAL,
       startDate: '2025-01-01',
@@ -98,7 +98,7 @@ describe('OwnershipsController', () => {
       expect(response.body).toMatchObject({
         id: mockOwnershipId,
         propertyId: mockPropertyId,
-        ownerId: mockOwnerId,
+        personId: mockPersonId,
         ownershipPercentage: 50,
         ownershipType: OwnershipType.REAL,
       });
@@ -117,10 +117,10 @@ describe('OwnershipsController', () => {
       expect(mockOwnershipsService.create).not.toHaveBeenCalled();
     });
 
-    it('should return 400 when ownerId is invalid UUID', async () => {
+    it('should return 400 when personId is invalid UUID', async () => {
       await request(app.getHttpServer())
         .post(`/properties/${mockPropertyId}/ownerships`)
-        .send({ ...createDto, ownerId: 'invalid' })
+        .send({ ...createDto, personId: 'invalid' })
         .expect(400);
 
       expect(mockOwnershipsService.create).not.toHaveBeenCalled();
@@ -129,7 +129,7 @@ describe('OwnershipsController', () => {
     it('should return 400 when required fields are missing', async () => {
       await request(app.getHttpServer())
         .post(`/properties/${mockPropertyId}/ownerships`)
-        .send({ ownerId: mockOwnerId })
+        .send({ personId: mockPersonId })
         .expect(400);
 
       expect(mockOwnershipsService.create).not.toHaveBeenCalled();
@@ -148,7 +148,7 @@ describe('OwnershipsController', () => {
       expect(response.body[0]).toMatchObject({
         id: mockOwnershipId,
         propertyId: mockPropertyId,
-        ownerId: mockOwnerId,
+        personId: mockPersonId,
         ownershipPercentage: 50,
         ownershipType: OwnershipType.REAL,
       });
@@ -200,32 +200,32 @@ describe('OwnershipsController', () => {
     });
   });
 
-  describe('GET /owners/:ownerId/ownerships', () => {
-    it('should return ownerships for owner', async () => {
-      mockOwnershipsService.findByOwner.mockResolvedValue([mockOwnership]);
+  describe('GET /persons/:personId/ownerships', () => {
+    it('should return ownerships for person', async () => {
+      mockOwnershipsService.findByPerson.mockResolvedValue([mockOwnership]);
 
       const response = await request(app.getHttpServer())
-        .get(`/owners/${mockOwnerId}/ownerships`)
+        .get(`/persons/${mockPersonId}/ownerships`)
         .expect(200);
 
       expect(response.body).toHaveLength(1);
       expect(response.body[0]).toMatchObject({
         id: mockOwnershipId,
         propertyId: mockPropertyId,
-        ownerId: mockOwnerId,
+        personId: mockPersonId,
       });
-      expect(mockOwnershipsService.findByOwner).toHaveBeenCalledWith(
-        mockOwnerId,
+      expect(mockOwnershipsService.findByPerson).toHaveBeenCalledWith(
+        mockPersonId,
       );
     });
 
-    it('should return 404 when owner not found', async () => {
-      mockOwnershipsService.findByOwner.mockRejectedValue(
-        new NotFoundException('Owner not found'),
+    it('should return 404 when person not found', async () => {
+      mockOwnershipsService.findByPerson.mockRejectedValue(
+        new NotFoundException('Person not found'),
       );
 
       await request(app.getHttpServer())
-        .get(`/owners/${mockOwnerId}/ownerships`)
+        .get(`/persons/${mockPersonId}/ownerships`)
         .expect(404);
     });
   });
@@ -241,7 +241,7 @@ describe('OwnershipsController', () => {
       expect(response.body).toMatchObject({
         id: mockOwnershipId,
         propertyId: mockPropertyId,
-        ownerId: mockOwnerId,
+        personId: mockPersonId,
       });
       expect(mockOwnershipsService.findOne).toHaveBeenCalledWith(
         mockOwnershipId,

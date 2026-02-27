@@ -21,7 +21,6 @@ import {
   Description as ContractIcon,
   Groups as GroupsIcon,
   Home as HomeIcon,
-  Person as PersonIcon,
   CreditCard as MortgageIcon,
 } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
@@ -30,7 +29,6 @@ import {
   propertiesApi,
   type Property,
 } from '@/lib/api/properties';
-import { ownersApi } from '@/lib/api/owners';
 import { personsApi } from '@/lib/api/persons';
 import { mortgagesApi } from '@/lib/api/mortgages';
 import { rentalAgreementsApi, type RentalAgreement } from '@/lib/api/leases';
@@ -102,11 +100,6 @@ export default function DashboardPage() {
     queryFn: () => propertiesApi.getProperties(1, 1),
   });
 
-  const { data: ownersData, isLoading: loadingOwners, isError: errorOwners } = useQuery({
-    queryKey: ['dashboard-owners'],
-    queryFn: () => ownersApi.getOwners(1, 1),
-  });
-
   const { data: personsData, isLoading: loadingPersons, isError: errorPersons } = useQuery({
     queryKey: ['dashboard-persons'],
     queryFn: () => personsApi.getPersons(1, 1),
@@ -139,7 +132,6 @@ export default function DashboardPage() {
 
   const properties = propertiesData?.data ?? [];
   const propertiesTotal = propertiesCountData?.meta?.total ?? 0;
-  const ownersTotal = ownersData?.meta?.total ?? 0;
   const personsTotal = personsData?.meta?.total ?? 0;
   const mortgagesTotal = mortgagesData?.meta?.total ?? 0;
   const activeMortgagesCount = activeMortgagesData?.meta?.total ?? 0;
@@ -149,7 +141,6 @@ export default function DashboardPage() {
 
   const hasError =
     errorProperties ||
-    errorOwners ||
     errorPersons ||
     errorMortgages ||
     errorRentalAgreements ||
@@ -178,15 +169,6 @@ export default function DashboardPage() {
             icon={HomeIcon}
             loading={loadingProperties}
             error={errorProperties}
-          />
-        </Grid>
-        <Grid item xs={6} sm={4} md={2}>
-          <SummaryCard
-            title="בעלים"
-            count={ownersTotal}
-            icon={PersonIcon}
-            loading={loadingOwners}
-            error={errorOwners}
           />
         </Grid>
         <Grid item xs={6} sm={4} md={2}>

@@ -62,10 +62,10 @@ const OWNERSHIP_TYPE_COLORS: Record<OwnershipType, 'success' | 'primary' | 'seco
   LEGAL: 'default',
 };
 
-interface Owner {
+interface PersonOption {
   id: string;
   name: string;
-  type: 'INDIVIDUAL' | 'COMPANY' | 'PARTNERSHIP';
+  type?: 'INDIVIDUAL' | 'COMPANY' | 'PARTNERSHIP';
   email?: string;
   phone?: string;
 }
@@ -81,7 +81,7 @@ function OwnershipRow({
   onDelete: (id: string) => void;
   deleting: boolean;
 }) {
-  const owner = ownership.owner;
+  const owner = ownership.person;
   const pct = typeof ownership.ownershipPercentage === 'string'
     ? parseFloat(ownership.ownershipPercentage)
     : ownership.ownershipPercentage;
@@ -167,7 +167,7 @@ function AddOwnershipDialog({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const [ownerId, setOwnerId] = useState('');
+  const [personId, setPersonId] = useState('');
   const [ownershipType, setOwnershipType] = useState<OwnershipType>('FULL');
   const [percentage, setPercentage] = useState('100');
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
@@ -187,18 +187,18 @@ function AddOwnershipDialog({
     enabled: open,
   });
 
-  const persons: Owner[] = personsData?.data ?? personsData ?? [];
+  const persons: PersonOption[] = personsData?.data ?? personsData ?? [];
 
   async function handleSubmit() {
-    if (!ownerId || !percentage || !startDate) {
-      setError('יש למלא בעלים, אחוז ותאריך התחלה');
+    if (!personId || !percentage || !startDate) {
+      setError('יש למלא אדם, אחוז ותאריך התחלה');
       return;
     }
     setSubmitting(true);
     setError('');
     try {
       const dto: CreateOwnershipDto = {
-        ownerId,
+        personId,
         ownershipPercentage: parseFloat(percentage),
         ownershipType,
         startDate,
@@ -210,7 +210,7 @@ function AddOwnershipDialog({
       onSuccess();
       onClose();
       // Reset
-      setOwnerId(''); setPercentage('100'); setStartDate(new Date().toISOString().split('T')[0]);
+      setPersonId(''); setPercentage('100'); setStartDate(new Date().toISOString().split('T')[0]);
       setEndDate(''); setManagementFee(''); setNotes(''); setFamilyDivision(false);
     } catch {
       setError('שגיאה ביצירת הבעלות');
@@ -227,9 +227,9 @@ function AddOwnershipDialog({
           {error && <Alert severity="error">{error}</Alert>}
 
           <FormControl fullWidth>
-            <InputLabel>בעלים *</InputLabel>
-            <Select value={ownerId} onChange={e => setOwnerId(e.target.value)} label="בעלים *">
-              {persons.map((p: Owner) => (
+            <InputLabel>אדם *</InputLabel>
+            <Select value={personId} onChange={e => setPersonId(e.target.value)} label="אדם *">
+              {persons.map((p: PersonOption) => (
                 <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
               ))}
             </Select>

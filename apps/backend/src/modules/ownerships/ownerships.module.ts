@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { OwnershipsService } from './ownerships.service';
 import {
   PropertyOwnershipsController,
-  OwnerOwnershipsController,
+  PersonOwnershipsController,
   OwnershipsController,
 } from './ownerships.controller';
 import { PrismaModule } from '../../database/prisma.module';
@@ -11,7 +11,7 @@ import { PrismaModule } from '../../database/prisma.module';
   imports: [PrismaModule],
   controllers: [
     PropertyOwnershipsController,
-    OwnerOwnershipsController,
+    PersonOwnershipsController,
     OwnershipsController,
   ],
   providers: [OwnershipsService],

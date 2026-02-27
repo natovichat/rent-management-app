@@ -10,13 +10,13 @@ import { UpdateOwnershipDto } from './dto/update-ownership.dto';
 import { OwnershipType } from '@prisma/client';
 
 const mockPropertyId = '550e8400-e29b-41d4-a716-446655440001';
-const mockOwnerId = '550e8400-e29b-41d4-a716-446655440002';
+const mockPersonId = '550e8400-e29b-41d4-a716-446655440002';
 const mockOwnershipId = '550e8400-e29b-41d4-a716-446655440003';
 
 const mockOwnership = {
   id: mockOwnershipId,
   propertyId: mockPropertyId,
-  ownerId: mockOwnerId,
+  personId: mockPersonId,
   ownershipPercentage: 50,
   ownershipType: OwnershipType.REAL,
   managementFee: 500,
@@ -26,7 +26,7 @@ const mockOwnership = {
   notes: 'Test notes',
   createdAt: new Date(),
   updatedAt: new Date(),
-  owner: { id: mockOwnerId, name: 'John Doe', type: 'INDIVIDUAL' },
+  person: { id: mockPersonId, name: 'John Doe', type: 'INDIVIDUAL' },
   property: { id: mockPropertyId, address: '123 Main St' },
 };
 
@@ -45,7 +45,7 @@ describe('OwnershipsService', () => {
     property: {
       findUnique: jest.fn(),
     },
-    owner: {
+    person: {
       findUnique: jest.fn(),
     },
   };
@@ -67,7 +67,7 @@ describe('OwnershipsService', () => {
     jest.clearAllMocks();
 
     mockPrisma.property.findUnique.mockResolvedValue({ id: mockPropertyId });
-    mockPrisma.owner.findUnique.mockResolvedValue({ id: mockOwnerId });
+    mockPrisma.person.findUnique.mockResolvedValue({ id: mockPersonId });
   });
 
   it('should be defined', () => {
@@ -76,7 +76,7 @@ describe('OwnershipsService', () => {
 
   describe('create', () => {
     const createDto: CreateOwnershipDto = {
-      ownerId: mockOwnerId,
+      personId: mockPersonId,
       ownershipPercentage: 50,
       ownershipType: OwnershipType.REAL,
       startDate: '2025-01-01',
@@ -91,13 +91,13 @@ describe('OwnershipsService', () => {
       expect(mockPrisma.property.findUnique).toHaveBeenCalledWith({
         where: { id: mockPropertyId },
       });
-      expect(mockPrisma.owner.findUnique).toHaveBeenCalledWith({
-        where: { id: mockOwnerId },
+      expect(mockPrisma.person.findUnique).toHaveBeenCalledWith({
+        where: { id: mockPersonId },
       });
       expect(mockPrisma.ownership.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           propertyId: mockPropertyId,
-          ownerId: mockOwnerId,
+          personId: mockPersonId,
           ownershipPercentage: 50,
           ownershipType: OwnershipType.REAL,
           familyDivision: false,
@@ -119,15 +119,15 @@ describe('OwnershipsService', () => {
       expect(mockPrisma.ownership.create).not.toHaveBeenCalled();
     });
 
-    it('should throw NotFoundException when owner does not exist', async () => {
-      mockPrisma.owner.findUnique.mockResolvedValue(null);
+    it('should throw NotFoundException when person does not exist', async () => {
+      mockPrisma.person.findUnique.mockResolvedValue(null);
 
       await expect(
         service.create(mockPropertyId, createDto),
       ).rejects.toThrow(NotFoundException);
       await expect(
         service.create(mockPropertyId, createDto),
-      ).rejects.toThrow(/Owner.*not found/);
+      ).rejects.toThrow(/Person.*not found/);
       expect(mockPrisma.ownership.create).not.toHaveBeenCalled();
     });
 
@@ -204,27 +204,27 @@ describe('OwnershipsService', () => {
     });
   });
 
-  describe('findByOwner', () => {
-    it('should return ownerships for owner', async () => {
+  describe('findByPerson', () => {
+    it('should return ownerships for person', async () => {
       mockPrisma.ownership.findMany.mockResolvedValue([mockOwnership]);
 
-      const result = await service.findByOwner(mockOwnerId);
+      const result = await service.findByPerson(mockPersonId);
 
-      expect(mockPrisma.owner.findUnique).toHaveBeenCalledWith({
-        where: { id: mockOwnerId },
+      expect(mockPrisma.person.findUnique).toHaveBeenCalledWith({
+        where: { id: mockPersonId },
       });
       expect(mockPrisma.ownership.findMany).toHaveBeenCalledWith({
-        where: { ownerId: mockOwnerId },
+        where: { personId: mockPersonId },
         include: expect.any(Object),
         orderBy: { startDate: 'desc' },
       });
       expect(result).toEqual([mockOwnership]);
     });
 
-    it('should throw NotFoundException when owner does not exist', async () => {
-      mockPrisma.owner.findUnique.mockResolvedValue(null);
+    it('should throw NotFoundException when person does not exist', async () => {
+      mockPrisma.person.findUnique.mockResolvedValue(null);
 
-      await expect(service.findByOwner(mockOwnerId)).rejects.toThrow(
+      await expect(service.findByPerson(mockPersonId)).rejects.toThrow(
         NotFoundException,
       );
       expect(mockPrisma.ownership.findMany).not.toHaveBeenCalled();
@@ -352,15 +352,15 @@ describe('OwnershipsService', () => {
       expect(mockPrisma.ownership.update).not.toHaveBeenCalled();
     });
 
-    it('should verify owner exists when updating ownerId', async () => {
+    it('should verify person exists when updating personId', async () => {
       mockPrisma.ownership.findUnique.mockResolvedValue(mockOwnership);
-      mockPrisma.owner.findUnique.mockResolvedValue({ id: 'new-owner-id' });
+      mockPrisma.person.findUnique.mockResolvedValue({ id: 'new-person-id' });
       mockPrisma.ownership.update.mockResolvedValue(mockOwnership);
 
-      await service.update(mockOwnershipId, { ownerId: 'new-owner-id' });
+      await service.update(mockOwnershipId, { personId: 'new-person-id' });
 
-      expect(mockPrisma.owner.findUnique).toHaveBeenCalledWith({
-        where: { id: 'new-owner-id' },
+      expect(mockPrisma.person.findUnique).toHaveBeenCalledWith({
+        where: { id: 'new-person-id' },
       });
     });
   });

@@ -4,7 +4,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import configuration from './config/configuration';
 
 import { PrismaModule } from './database/prisma.module';
-import { OwnersModule } from './modules/owners/owners.module';
 import { BankAccountsModule } from './modules/bank-accounts/bank-accounts.module';
 import { PersonsModule } from './modules/persons/persons.module';
 import { UtilityInfoModule } from './modules/utility-info/utility-info.module';
@@ -24,7 +23,6 @@ import { PropertyEventsModule } from './modules/property-events/property-events.
     }),
     ScheduleModule.forRoot(),
     PrismaModule,
-    OwnersModule,
     BankAccountsModule,
     PersonsModule,
     UtilityInfoModule,

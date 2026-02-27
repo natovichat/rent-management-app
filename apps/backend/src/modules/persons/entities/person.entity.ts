@@ -1,7 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PersonType } from '@prisma/client';
 
 /**
- * Person entity for Swagger documentation
+ * Person entity for Swagger documentation (universal entity for individuals and companies)
  */
 export class PersonEntity {
   @ApiProperty({
@@ -11,13 +12,20 @@ export class PersonEntity {
   id: string;
 
   @ApiProperty({
-    description: 'Person full name',
+    description: 'Person or company full name',
     example: 'יוסי כהן',
   })
   name: string;
 
+  @ApiProperty({
+    description: 'Entity type',
+    enum: PersonType,
+    example: PersonType.INDIVIDUAL,
+  })
+  type: PersonType;
+
   @ApiPropertyOptional({
-    description: 'Israeli ID number (תעודת זהות)',
+    description: 'Israeli ID number (תעודת זהות / ח.פ.)',
     example: '123456789',
   })
   idNumber?: string | null;
@@ -33,6 +41,12 @@ export class PersonEntity {
     example: '050-1234567',
   })
   phone?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Physical address',
+    example: '123 Main St, Tel Aviv',
+  })
+  address?: string | null;
 
   @ApiPropertyOptional({
     description: 'Additional notes',
