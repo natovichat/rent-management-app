@@ -38,6 +38,7 @@ RUN useradd --system --uid 1001 -g nodejs nestjs
 
 COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/dist ./dist
 COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/package.json ./
+COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/tsconfig.json ./tsconfig.json
 COPY --from=builder --chown=nestjs:nodejs /app/apps/backend/prisma ./prisma
 COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
 
