@@ -57,7 +57,6 @@ Desktop.ini
 *.sublime-workspace
 
 # Prisma
-apps/backend/prisma/migrations/
 
 # Temporary files
 *.tmp
