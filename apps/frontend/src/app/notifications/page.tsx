@@ -2,8 +2,6 @@
 
 import { Container, Typography, Box } from '@mui/material';
 import NotificationList from '@/components/notifications/NotificationList';
-import QuickNavigator from '@/components/navigation/QuickNavigator';
-
 /**
  * Notifications page.
  * 
@@ -24,9 +22,6 @@ export default function NotificationsPage() {
           <Typography variant="body1" color="text.secondary">
             ניהול התראות ומעקב אירועים
           </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
         </Box>
       </Box>
 

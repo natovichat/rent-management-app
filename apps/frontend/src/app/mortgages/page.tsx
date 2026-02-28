@@ -2,8 +2,6 @@
 
 import { Container, Typography, Box } from '@mui/material';
 import MortgageList from '@/components/mortgages/MortgageList';
-import QuickNavigator from '@/components/navigation/QuickNavigator';
-
 /**
  * Mortgages management page.
  * 
@@ -24,9 +22,6 @@ export default function MortgagesPage() {
           <Typography variant="body1" color="text.secondary">
             ניהול משכנתאות, צפייה בפרטים וסינון
           </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
         </Box>
       </Box>
 

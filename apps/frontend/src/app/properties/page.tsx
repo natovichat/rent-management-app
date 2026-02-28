@@ -8,8 +8,6 @@ import {
   CircularProgress,
 } from '@mui/material';
 import PropertyList from '@/components/properties/PropertyList';
-import QuickNavigator from '@/components/navigation/QuickNavigator';
-
 /**
  * Properties page for managing properties.
  * 
@@ -29,9 +27,6 @@ export default function PropertiesPage() {
           <Typography variant="body1" color="text.secondary">
             ניהול נכסים, יחידות דיור וחוזים
           </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
         </Box>
       </Box>
 

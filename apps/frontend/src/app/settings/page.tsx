@@ -14,7 +14,6 @@ import AccountTab from '@/components/settings/AccountTab';
 import PreferencesTab from '@/components/settings/PreferencesTab';
 import SessionsTab from '@/components/settings/SessionsTab';
 import UserManagementTab from '@/components/settings/UserManagementTab';
-import QuickNavigator from '@/components/navigation/QuickNavigator';
 import { getUserProfile } from '@/lib/auth';
 
 export default function SettingsPage() {
@@ -51,9 +50,6 @@ export default function SettingsPage() {
           <Typography variant="body1" color="text.secondary">
             ניהול פרופיל, הגדרות חשבון והעדפות
           </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
         </Box>
       </Box>
 

@@ -2,8 +2,6 @@
 
 import { Container, Typography, Box } from '@mui/material';
 import BankAccountList from '@/components/bank-accounts/BankAccountList';
-import QuickNavigator from '@/components/navigation/QuickNavigator';
-
 /**
  * Bank Accounts management page.
  * 
@@ -25,9 +23,6 @@ export default function BankAccountsPage() {
           <Typography variant="body1" color="text.secondary">
             ניהול חשבונות בנק, צפייה בפרטים וסינון
           </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
         </Box>
       </Box>
 

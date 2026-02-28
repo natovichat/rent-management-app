@@ -40,8 +40,6 @@ type MortgageStatus = 'ACTIVE' | 'PAID_OFF' | 'REFINANCED' | 'DEFAULTED';
 import MortgageForm from './MortgageForm';
 import GenericCsvImport from '../import/GenericCsvImport';
 import MortgageFilterPanel from './MortgageFilterPanel';
-import QuickNavigator from '@/components/navigation/QuickNavigator';
-
 /**
  * Get status color for mortgage.
  */
@@ -347,7 +345,6 @@ export default function MortgageList() {
         </Typography>
         {!isMobile && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <QuickNavigator label="מעבר לטבלה" size="small" width={200} />
             <Box sx={{ display: 'flex', gap: 1 }}>
               <GenericCsvImport
                 importType="mortgages"
