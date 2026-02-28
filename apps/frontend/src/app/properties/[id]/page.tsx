@@ -486,16 +486,16 @@ export default function PropertyDetailsPage() {
       </Dialog>
 
       {/* Delete confirmation dialog */}
-      <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} maxWidth="xs" fullWidth>
+      <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ direction: 'rtl' }}>מחיקת נכס</DialogTitle>
         <DialogContent sx={{ direction: 'rtl' }}>
           <Typography>
             האם אתה בטוח שברצונך למחוק את הנכס{' '}
             <strong>{property?.address}</strong>?
           </Typography>
-          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
-            פעולה זו היא בלתי הפיכה. כל הנתונים הקשורים לנכס יימחקו.
-          </Typography>
+          <Alert severity="warning" sx={{ mt: 2 }}>
+            הנכס יימחק לצמיתות יחד עם כל המידע הקשור אליו, כולל הבעלויות, המשכנתאות, חוזי השכירות והאירועים. פעולה זו לא ניתנת לביטול.
+          </Alert>
         </DialogContent>
         <DialogActions sx={{ direction: 'rtl', px: 3, pb: 2 }}>
           <Button onClick={() => setDeleteOpen(false)} variant="outlined">

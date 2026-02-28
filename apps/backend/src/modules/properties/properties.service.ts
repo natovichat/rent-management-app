@@ -1,7 +1,6 @@
 import {
   Injectable,
   NotFoundException,
-  ConflictException,
 } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
@@ -300,38 +299,26 @@ export class PropertiesService {
    * Remove a property. Fails if property has ownerships, mortgages, or rental agreements.
    */
   async remove(id: string) {
-    const property = await this.prisma.property.findUnique({
-      where: { id },
-      include: {
-        ownerships: true,
-        mortgages: true,
-        rentalAgreements: true,
-      },
-    });
+    const property = await this.prisma.property.findUnique({ where: { id } });
 
     if (!property) {
       throw new NotFoundException(`Property with id ${id} not found`);
     }
 
-    const relations: string[] = [];
-    if (property.ownerships.length > 0) {
-      relations.push(`${property.ownerships.length} ownership(s)`);
-    }
-    if (property.mortgages.length > 0) {
-      relations.push(`${property.mortgages.length} mortgage(s)`);
-    }
-    if (property.rentalAgreements.length > 0) {
-      relations.push(`${property.rentalAgreements.length} rental agreement(s)`);
-    }
+    // Delete all related data in the correct order within a transaction
+    await this.prisma.$transaction(async (tx) => {
+      // 1. Delete property events (some may reference rental agreements)
+      await tx.propertyEvent.deleteMany({ where: { propertyId: id } });
 
-    if (relations.length > 0) {
-      throw new ConflictException(
-        `Cannot delete property: has ${relations.join(', ')}. Remove relations first.`,
-      );
-    }
+      // 2. Delete rental agreements (onDelete: Restrict — must be removed manually)
+      await tx.rentalAgreement.deleteMany({ where: { propertyId: id } });
 
-    await this.prisma.property.delete({
-      where: { id },
+      // 3. Delete mortgages tied to this property (onDelete: SetNull by default)
+      await tx.mortgage.deleteMany({ where: { propertyId: id } });
+
+      // 4. Delete the property itself.
+      //    Ownerships, PlanningProcessState, UtilityInfo cascade automatically.
+      await tx.property.delete({ where: { id } });
     });
   }
 }

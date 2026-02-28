@@ -742,10 +742,10 @@ export default function PropertyList() {
         <DialogTitle>מחיקת נכס</DialogTitle>
         <DialogContent>
           <Typography>
-            האם אתה בטוח שברצונך למחוק את הנכס "{propertyToDelete?.address}"?
+            האם אתה בטוח שברצונך למחוק את הנכס <strong>"{propertyToDelete?.address}"</strong>?
           </Typography>
           <Alert severity="warning" sx={{ mt: 2 }}>
-            פעולה זו לא ניתנת לביטול. הנכס יימחק לצמיתות.
+            הנכס יימחק לצמיתות יחד עם כל המידע הקשור אליו, כולל הבעלויות, המשכנתאות, חוזי השכירות והאירועים. פעולה זו לא ניתנת לביטול.
           </Alert>
         </DialogContent>
         <DialogActions>
