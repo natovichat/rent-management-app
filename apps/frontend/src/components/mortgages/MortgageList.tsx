@@ -189,45 +189,6 @@ export default function MortgageList() {
 
   const columns: GridColDef[] = [
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'פעולות',
-      width: 150,
-      align: 'left',
-      headerAlign: 'left',
-      getActions: (params) => {
-        const actions = [
-          <GridActionsCellItem
-            key="view"
-            icon={<VisibilityIcon />}
-            label="צפייה"
-            onClick={() => {
-              router.push(`/mortgages/${params.id}`);
-            }}
-          />,
-          <GridActionsCellItem
-            key="edit"
-            icon={<EditIcon />}
-            label="עריכה"
-            onClick={() => {
-              setSelectedMortgage(params.row);
-              setOpenDialog(true);
-            }}
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={<DeleteIcon />}
-            label="מחיקה"
-            onClick={() => {
-              setMortgageToDelete(params.row);
-              setDeleteDialogOpen(true);
-            }}
-          />,
-        ];
-        return actions;
-      },
-    },
-    {
       field: 'property',
       headerName: 'נכס',
       flex: 1,
@@ -317,6 +278,45 @@ export default function MortgageList() {
           size="small"
         />
       ),
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'פעולות',
+      width: 150,
+      align: 'left',
+      headerAlign: 'left',
+      getActions: (params) => {
+        const actions = [
+          <GridActionsCellItem
+            key="view"
+            icon={<VisibilityIcon />}
+            label="צפייה"
+            onClick={() => {
+              router.push(`/mortgages/${params.id}`);
+            }}
+          />,
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditIcon />}
+            label="עריכה"
+            onClick={() => {
+              setSelectedMortgage(params.row);
+              setOpenDialog(true);
+            }}
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteIcon />}
+            label="מחיקה"
+            onClick={() => {
+              setMortgageToDelete(params.row);
+              setDeleteDialogOpen(true);
+            }}
+          />,
+        ];
+        return actions;
+      },
     },
   ];
 

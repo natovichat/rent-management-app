@@ -147,34 +147,6 @@ export default function PersonList() {
 
   const columns: GridColDef<Person>[] = [
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'פעולות',
-      width: 150,
-      align: 'left',
-      headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedPerson(params.row);
-            setOpenForm(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setPersonToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
-    },
-    {
       field: 'name',
       headerName: 'שם',
       flex: 1,
@@ -219,6 +191,34 @@ export default function PersonList() {
       align: 'right',
       headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
+    },
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'פעולות',
+      width: 150,
+      align: 'left',
+      headerAlign: 'left',
+      getActions: (params) => [
+        <GridActionsCellItem
+          key="edit"
+          icon={<EditIcon />}
+          label="עריכה"
+          onClick={() => {
+            setSelectedPerson(params.row);
+            setOpenForm(true);
+          }}
+        />,
+        <GridActionsCellItem
+          key="delete"
+          icon={<DeleteIcon />}
+          label="מחיקה"
+          onClick={() => {
+            setPersonToDelete(params.row);
+            setDeleteDialogOpen(true);
+          }}
+        />,
+      ],
     },
   ];
 
