@@ -88,7 +88,8 @@ function MortgageRow({
         '&:hover': { bgcolor: 'action.hover' },
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      {/* Top row: icon + name + delete */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <BankIcon sx={{ color: 'text.secondary', flexShrink: 0 }} />
 
         <Box sx={{ flex: 1, minWidth: 0 }}>
@@ -101,44 +102,37 @@ function MortgageRow({
           </Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-          <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="body2" fontWeight={700} color="primary">
-              ₪{amount.toLocaleString('he-IL')}
-            </Typography>
-            {monthly && (
-              <Typography variant="caption" color="text.secondary">
-                ₪{monthly.toLocaleString('he-IL')}/חודש
-              </Typography>
-            )}
-          </Box>
-
-          {rate && (
-            <Chip
-              label={`${rate}%`}
-              size="small"
-              variant="outlined"
-              color="warning"
-            />
-          )}
-
-          <Chip
-            label={STATUS_LABELS[mortgage.status as MortgageStatus] ?? mortgage.status}
-            size="small"
-            color={STATUS_COLORS[mortgage.status as MortgageStatus] ?? 'default'}
-          />
-        </Box>
-
         <Tooltip title="מחיקת משכנתא">
           <IconButton
             size="small"
             color="error"
             onClick={() => onDelete(mortgage.id)}
             disabled={deleting}
+            sx={{ flexShrink: 0 }}
           >
             {deleting ? <CircularProgress size={16} /> : <DeleteIcon fontSize="small" />}
           </IconButton>
         </Tooltip>
+      </Box>
+
+      {/* Bottom row: amount + chips */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, flexWrap: 'wrap', mt: 0.5, pr: 4 }}>
+        <Typography variant="body2" fontWeight={700} color="primary">
+          ₪{amount.toLocaleString('he-IL')}
+        </Typography>
+        {monthly && (
+          <Typography variant="caption" color="text.secondary">
+            · ₪{monthly.toLocaleString('he-IL')}/חודש
+          </Typography>
+        )}
+        {rate && (
+          <Chip label={`${rate}%`} size="small" variant="outlined" color="warning" />
+        )}
+        <Chip
+          label={STATUS_LABELS[mortgage.status as MortgageStatus] ?? mortgage.status}
+          size="small"
+          color={STATUS_COLORS[mortgage.status as MortgageStatus] ?? 'default'}
+        />
       </Box>
 
       {progress !== null && mortgage.status === 'ACTIVE' && (

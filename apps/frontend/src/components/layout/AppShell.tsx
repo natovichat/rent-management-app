@@ -348,6 +348,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         component="main"
         sx={{
           flexGrow: 1,
+          minWidth: 0,
+          overflowX: 'hidden',
           p: { xs: 1.5, sm: 2, md: 3 },
           pb: { xs: '72px', md: 0 },
           mt: '64px',

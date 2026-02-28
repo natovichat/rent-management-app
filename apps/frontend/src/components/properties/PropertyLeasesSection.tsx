@@ -79,31 +79,44 @@ function LeaseRow({
   return (
     <Box
       sx={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 2,
         py: 1.5,
         px: 1,
         borderRadius: 1,
         '&:hover': { bgcolor: 'action.hover' },
       }}
     >
-      <Avatar sx={{ bgcolor: 'secondary.light', width: 36, height: 36 }}>
-        <PersonIcon sx={{ fontSize: 18 }} />
-      </Avatar>
+      {/* Top row: avatar + name/dates + delete */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Avatar sx={{ bgcolor: 'secondary.light', width: 36, height: 36, flexShrink: 0 }}>
+          <PersonIcon sx={{ fontSize: 18 }} />
+        </Avatar>
 
-      <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="body2" fontWeight={600} noWrap>
-          {tenant?.name ?? 'שוכר לא ידוע'}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
-          {new Date(lease.startDate).toLocaleDateString('he-IL')}
-          {' – '}
-          {new Date(lease.endDate).toLocaleDateString('he-IL')}
-        </Typography>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="body2" fontWeight={600} noWrap>
+            {tenant?.name ?? 'שוכר לא ידוע'}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            {new Date(lease.startDate).toLocaleDateString('he-IL')}
+            {' – '}
+            {new Date(lease.endDate).toLocaleDateString('he-IL')}
+          </Typography>
+        </Box>
+
+        <Tooltip title="מחיקת חוזה">
+          <IconButton
+            size="small"
+            color="error"
+            onClick={() => onDelete(lease.id)}
+            disabled={deleting}
+            sx={{ flexShrink: 0 }}
+          >
+            {deleting ? <CircularProgress size={16} /> : <DeleteIcon fontSize="small" />}
+          </IconButton>
+        </Tooltip>
       </Box>
 
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
+      {/* Bottom row: chips */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap', mt: 0.5, pr: 5 }}>
         <Chip
           label={`₪${rent.toLocaleString('he-IL')}/חודש`}
           size="small"
@@ -120,17 +133,6 @@ function LeaseRow({
           <Chip label="אופציה" size="small" variant="outlined" color="info" />
         )}
       </Box>
-
-      <Tooltip title="מחיקת חוזה">
-        <IconButton
-          size="small"
-          color="error"
-          onClick={() => onDelete(lease.id)}
-          disabled={deleting}
-        >
-          {deleting ? <CircularProgress size={16} /> : <DeleteIcon fontSize="small" />}
-        </IconButton>
-      </Tooltip>
     </Box>
   );
 }
