@@ -12,6 +12,32 @@ datasource db {
 }
 
 // ============================================
+// User (Authentication & Authorization)
+// ============================================
+
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  googleId    String?   @unique @map("google_id")
+  name        String?
+  picture     String?
+  role        UserRole  @default(MEMBER)
+  isActive    Boolean   @default(true) @map("is_active")
+  lastLoginAt DateTime? @map("last_login_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([email])
+  @@index([googleId])
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  MEMBER
+}
+
+// ============================================
 // Person (Universal entity: individuals, companies, tenants, owners, etc.)
 // ============================================
 

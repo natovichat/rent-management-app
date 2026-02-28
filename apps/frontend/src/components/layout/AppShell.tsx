@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   Box,
   Drawer,
@@ -20,6 +20,10 @@ import {
   Tooltip,
   BottomNavigation,
   BottomNavigationAction,
+  Avatar,
+  Menu,
+  MenuItem,
+  Divider,
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -32,7 +36,16 @@ import {
   Description as DescriptionIcon,
   Tag as TagIcon,
   Home as HomeIcon,
+  Logout as LogoutIcon,
+  Settings as SettingsIcon,
+  Person as PersonIcon,
 } from '@mui/icons-material';
+import {
+  getUserProfile,
+  logout,
+  isAuthenticated,
+  type UserProfile,
+} from '@/lib/auth';
 
 const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || 'dev';
 
@@ -73,15 +86,17 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'אנשים',
-    items: [
-      { label: 'אנשים', href: '/persons', icon: <GroupIcon /> },
-    ],
+    items: [{ label: 'אנשים', href: '/persons', icon: <GroupIcon /> }],
   },
   {
     label: 'פיננסים',
     items: [
       { label: 'משכנתאות', href: '/mortgages', icon: <AccountBalanceIcon /> },
-      { label: 'חשבונות בנק', href: '/bank-accounts', icon: <AccountBalanceWalletIcon /> },
+      {
+        label: 'חשבונות בנק',
+        href: '/bank-accounts',
+        icon: <AccountBalanceWalletIcon />,
+      },
       { label: 'חוזי שכירות', href: '/leases', icon: <DescriptionIcon /> },
     ],
   },
@@ -98,10 +113,17 @@ function getBottomNavValue(pathname: string): string {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [sidebarOpen, setSidebarOpenState] = useState(true);
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
+
+  // Public pages that don't need auth check or AppShell chrome
+  const isPublicPage =
+    pathname.startsWith('/login') || pathname.startsWith('/auth/');
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -109,6 +131,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       setSidebarOpenState(saved !== 'false');
     }
   }, []);
+
+  useEffect(() => {
+    // Load user profile from localStorage
+    const profile = getUserProfile();
+    setUser(profile);
+
+    // Redirect to login if not authenticated and not on a public page
+    if (!isPublicPage && !isAuthenticated()) {
+      router.push('/login');
+    }
+  }, [pathname, isPublicPage, router]);
 
   const setSidebarOpen = (open: boolean) => {
     setSidebarOpenState(open);
@@ -122,11 +155,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   };
 
   const isActive = (href: string) => {
-    if (href === '/dashboard') {
-      return pathname === '/dashboard';
-    }
+    if (href === '/dashboard') return pathname === '/dashboard';
     return pathname.startsWith(href);
   };
+
+  const handleUserMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setUserMenuAnchor(event.currentTarget);
+  };
+
+  const handleUserMenuClose = () => {
+    setUserMenuAnchor(null);
+  };
+
+  const handleLogout = () => {
+    handleUserMenuClose();
+    logout();
+  };
+
+  // Don't render AppShell chrome on public pages
+  if (isPublicPage) {
+    return <>{children}</>;
+  }
+
+  const userInitial = user?.name
+    ? user.name.charAt(0).toUpperCase()
+    : user?.email
+      ? user.email.charAt(0).toUpperCase()
+      : '?';
 
   const drawerContent = (
     <Box
@@ -142,7 +197,15 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         overflowX: 'hidden',
       }}
     >
-      <Box sx={{ flex: 1, overflowY: 'auto', py: 2, display: 'flex', flexDirection: 'column' }}>
+      <Box
+        sx={{
+          flex: 1,
+          overflowY: 'auto',
+          py: 2,
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
         <Box sx={{ flex: 1 }}>
           {NAV_GROUPS.map((group) => (
             <Box key={group.label} sx={{ mb: 2 }}>
@@ -178,9 +241,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                           '&.Mui-selected': {
                             backgroundColor: 'primary.main',
                             color: 'primary.contrastText',
-                            '&:hover': {
-                              backgroundColor: 'primary.dark',
-                            },
+                            '&:hover': { backgroundColor: 'primary.dark' },
                             '& .MuiListItemIcon-root': {
                               color: 'primary.contrastText',
                             },
@@ -219,7 +280,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             </Box>
           ))}
         </Box>
-        {/* Version badge at bottom of sidebar */}
+        {/* Version badge */}
         <Box
           sx={{
             px: 2,
@@ -270,7 +331,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }}
       >
         <Toolbar>
-          {/* Hamburger - desktop only (no drawer on mobile) */}
+          {/* Hamburger - desktop only */}
           <IconButton
             color="inherit"
             aria-label="תפריט"
@@ -285,14 +346,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             variant="h6"
             component="h1"
             noWrap
-            sx={{
-              flexGrow: 1,
-              fontSize: { xs: '1rem', md: '1.25rem' },
-            }}
+            sx={{ flexGrow: 1, fontSize: { xs: '1rem', md: '1.25rem' } }}
           >
             מערכת ניהול נכסים
           </Typography>
-          {/* Version badge - hidden on mobile */}
+
+          {/* Version badge - desktop only */}
           <Tooltip title={`גרסה ${APP_VERSION}`}>
             <Box
               sx={{
@@ -304,18 +363,118 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 borderRadius: 2,
                 backgroundColor: 'rgba(255,255,255,0.15)',
                 cursor: 'default',
+                mr: 1,
               }}
             >
               <TagIcon sx={{ fontSize: 14, opacity: 0.9 }} />
-              <Typography variant="caption" sx={{ fontWeight: 600, letterSpacing: 0.5 }}>
+              <Typography
+                variant="caption"
+                sx={{ fontWeight: 600, letterSpacing: 0.5 }}
+              >
                 {APP_VERSION}
               </Typography>
             </Box>
           </Tooltip>
+
+          {/* User Avatar + Menu */}
+          <Tooltip title={user?.name || user?.email || 'משתמש'}>
+            <IconButton
+              onClick={handleUserMenuOpen}
+              size="small"
+              sx={{ ml: 0.5 }}
+            >
+              {user?.picture ? (
+                <Avatar
+                  src={user.picture}
+                  alt={user.name || user.email}
+                  sx={{ width: 34, height: 34 }}
+                />
+              ) : (
+                <Avatar
+                  sx={{
+                    width: 34,
+                    height: 34,
+                    bgcolor: 'rgba(255,255,255,0.25)',
+                    fontSize: '0.9rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {userInitial}
+                </Avatar>
+              )}
+            </IconButton>
+          </Tooltip>
+
+          {/* User Dropdown Menu */}
+          <Menu
+            anchorEl={userMenuAnchor}
+            open={Boolean(userMenuAnchor)}
+            onClose={handleUserMenuClose}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            PaperProps={{ sx: { minWidth: 200, mt: 0.5 } }}
+          >
+            {user && (
+              <Box sx={{ px: 2, py: 1.5 }}>
+                <Typography variant="body2" fontWeight={600} noWrap>
+                  {user.name || user.email}
+                </Typography>
+                {user.name && (
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {user.email}
+                  </Typography>
+                )}
+                {user.role === 'ADMIN' && (
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      display: 'block',
+                      color: 'primary.main',
+                      fontWeight: 600,
+                    }}
+                  >
+                    מנהל מערכת
+                  </Typography>
+                )}
+              </Box>
+            )}
+            <Divider />
+            <MenuItem
+              onClick={() => {
+                handleUserMenuClose();
+                router.push('/settings');
+              }}
+            >
+              <ListItemIcon>
+                <SettingsIcon fontSize="small" />
+              </ListItemIcon>
+              הגדרות
+            </MenuItem>
+            {user?.role === 'ADMIN' && (
+              <MenuItem
+                onClick={() => {
+                  handleUserMenuClose();
+                  router.push('/settings#users');
+                }}
+              >
+                <ListItemIcon>
+                  <PersonIcon fontSize="small" />
+                </ListItemIcon>
+                ניהול משתמשים
+              </MenuItem>
+            )}
+            <Divider />
+            <MenuItem onClick={handleLogout} sx={{ color: 'error.main' }}>
+              <ListItemIcon>
+                <LogoutIcon fontSize="small" sx={{ color: 'error.main' }} />
+              </ListItemIcon>
+              התנתק
+            </MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
 
-      {/* Sidebar - Desktop only (no mobile drawer) */}
+      {/* Sidebar - Desktop only */}
       {!isMobile && (
         <Drawer
           variant="permanent"
@@ -387,9 +546,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               icon={item.icon}
               sx={{
                 minWidth: 0,
-                '& .MuiBottomNavigationAction-label': {
-                  fontSize: '0.75rem',
-                },
+                '& .MuiBottomNavigationAction-label': { fontSize: '0.75rem' },
               }}
             />
           ))}

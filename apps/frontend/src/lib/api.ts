@@ -1,29 +1,16 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: (process.env.NEXT_PUBLIC_API_URL || 'https://rent-app-backend-6s337cqx6a-uc.a.run.app') + '/api',
+  baseURL:
+    (process.env.NEXT_PUBLIC_API_URL ||
+      'https://rent-app-backend-6s337cqx6a-uc.a.run.app') + '/api',
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// ============================================================================
-// AUTOMATIC ACCOUNT ID INJECTION
-// ============================================================================
-// This interceptor automatically adds accountId to all API requests from localStorage
-// No need to manually pass accountId anymore - it's handled globally!
-// ============================================================================
-
-const ACCOUNT_STORAGE_KEY = 'selectedAccountId';
-
 /**
- * Request interceptor - Automatically add accountId and auth token to requests.
- * 
- * - Adds accountId as X-Account-Id header for ALL requests (for development mode)
- * - Adds JWT token as Authorization header for auth endpoints
- * 
- * The backend JWT guard reads X-Account-Id header for authentication bypass in development mode.
- * This eliminates the need to manually pass accountId in every API call.
+ * Request interceptor - Add JWT token to ALL requests.
  */
 api.interceptors.request.use(
   (config) => {
@@ -31,24 +18,32 @@ api.interceptors.request.use(
       return config;
     }
 
-    // Add accountId as header for ALL requests (development mode)
-    const accountId = localStorage.getItem(ACCOUNT_STORAGE_KEY);
-    if (accountId) {
-      config.headers['X-Account-Id'] = accountId;
-    }
-
-    // Add JWT token for auth endpoints
     const token = localStorage.getItem('auth_token');
     if (token) {
-      // For auth endpoints, use JWT token
-      if (config.url?.startsWith('/auth')) {
-        config.headers['Authorization'] = `Bearer ${token}`;
-      }
+      config.headers['Authorization'] = `Bearer ${token}`;
     }
 
     return config;
   },
+  (error) => Promise.reject(error),
+);
+
+/**
+ * Response interceptor - Redirect to login on 401 Unauthorized.
+ */
+api.interceptors.response.use(
+  (response) => response,
   (error) => {
+    if (
+      error.response?.status === 401 &&
+      typeof window !== 'undefined' &&
+      !window.location.pathname.startsWith('/login') &&
+      !window.location.pathname.startsWith('/auth')
+    ) {
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('auth_user');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
-  }
+  },
 );

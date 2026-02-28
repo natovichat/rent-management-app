@@ -2,17 +2,22 @@
 
 import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Container, Box, CircularProgress, Typography, Alert } from '@mui/material';
-import { handleCallback } from '@/lib/auth';
+import {
+  Container,
+  Box,
+  CircularProgress,
+  Typography,
+  Alert,
+  Button,
+} from '@mui/material';
+import { handleCallback, setUserProfile } from '@/lib/auth';
 
 /**
  * OAuth callback page that handles Google OAuth redirect.
- * 
- * Flow:
- * 1. Receives authorization code from Google
- * 2. Exchanges code for JWT token via backend API
- * 3. Stores token in localStorage
- * 4. Redirects to dashboard
+ *
+ * Two possible flows:
+ * 1. Backend redirects here with ?token=<jwt> (preferred - backend handles code exchange)
+ * 2. Receives ?code= from Google directly and exchanges via backend API
  */
 function AuthCallbackContent() {
   const router = useRouter();
@@ -23,13 +28,38 @@ function AuthCallbackContent() {
   useEffect(() => {
     const processCallback = async () => {
       try {
-        // Get authorization code from URL
+        // Flow 1: Backend already exchanged the code and redirected with token
+        const token = searchParams.get('token');
+        if (token) {
+          handleCallback(token);
+
+          // Fetch user profile using the new token
+          const API_URL =
+            process.env.NEXT_PUBLIC_API_URL ||
+            'https://rent-app-backend-6s337cqx6a-uc.a.run.app';
+          const profileResponse = await fetch(`${API_URL}/api/auth/me`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (profileResponse.ok) {
+            const profile = await profileResponse.json();
+            setUserProfile(profile);
+          }
+
+          router.push('/dashboard');
+          return;
+        }
+
+        // Flow 2: Direct Google redirect with code (fallback)
         const code = searchParams.get('code');
         const errorParam = searchParams.get('error');
 
-        // Handle OAuth errors
         if (errorParam) {
-          setError(`שגיאת אימות: ${errorParam}`);
+          if (errorParam === 'access_denied') {
+            setError('הגישה נדחתה. האימייל שלך אינו מורשה.');
+          } else {
+            setError(`שגיאת אימות: ${errorParam}`);
+          }
           setLoading(false);
           return;
         }
@@ -40,33 +70,35 @@ function AuthCallbackContent() {
           return;
         }
 
-        // Exchange code for token via backend API
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-        const response = await fetch(`${API_URL}/auth/google/callback?code=${code}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
+        // Exchange code via backend
+        const API_URL =
+          process.env.NEXT_PUBLIC_API_URL ||
+          'https://rent-app-backend-6s337cqx6a-uc.a.run.app';
+        const response = await fetch(
+          `${API_URL}/api/auth/google/callback?code=${code}`,
+          { method: 'GET' },
+        );
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || 'שגיאה באימות');
+          throw new Error(
+            errorData.message || 'שגיאה באימות. ייתכן שהאימייל שלך אינו מורשה.',
+          );
         }
 
         const data = await response.json();
-        
-        // Store token
         if (data.token) {
           handleCallback(data.token);
-          
-          // Redirect to dashboard
           router.push('/dashboard');
         } else {
           throw new Error('טוקן לא התקבל מהשרת');
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'שגיאה לא ידועה');
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'שגיאה לא ידועה אירעה. נסה שוב.',
+        );
         setLoading(false);
       }
     };
@@ -84,26 +116,30 @@ function AuthCallbackContent() {
           alignItems: 'center',
           justifyContent: 'center',
           gap: 3,
+          direction: 'rtl',
         }}
       >
         {loading && (
           <>
             <CircularProgress size={60} />
-            <Typography variant="body1">
-              מאמת את ההתחברות...
-            </Typography>
+            <Typography variant="body1">מאמת את ההתחברות...</Typography>
           </>
         )}
-        
+
         {error && (
           <Alert severity="error" sx={{ width: '100%' }}>
-            {error}
-            <br />
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              <a href="/" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                חזור לעמוד הבית
-              </a>
+            <Typography variant="body1" gutterBottom>
+              {error}
             </Typography>
+            <Button
+              variant="outlined"
+              color="error"
+              size="small"
+              onClick={() => router.push('/login')}
+              sx={{ mt: 1 }}
+            >
+              חזור להתחברות
+            </Button>
           </Alert>
         )}
       </Box>
@@ -113,25 +149,25 @@ function AuthCallbackContent() {
 
 export default function AuthCallbackPage() {
   return (
-    <Suspense fallback={
-      <Container maxWidth="sm">
-        <Box
-          sx={{
-            minHeight: '100vh',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 3,
-          }}
-        >
-          <CircularProgress size={60} />
-          <Typography variant="body1">
-            מאמת את ההתחברות...
-          </Typography>
-        </Box>
-      </Container>
-    }>
+    <Suspense
+      fallback={
+        <Container maxWidth="sm">
+          <Box
+            sx={{
+              minHeight: '100vh',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 3,
+            }}
+          >
+            <CircularProgress size={60} />
+            <Typography variant="body1">מאמת את ההתחברות...</Typography>
+          </Box>
+        </Container>
+      }
+    >
       <AuthCallbackContent />
     </Suspense>
   );

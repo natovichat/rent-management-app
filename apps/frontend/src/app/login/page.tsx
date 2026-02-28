@@ -1,68 +1,40 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import {
   Container,
   Box,
   Typography,
-  TextField,
   Button,
   Paper,
   Alert,
   CircularProgress,
+  Divider,
 } from '@mui/material';
-import { setAuthToken } from '@/lib/auth';
-import { api } from '@/lib/api';
+import GoogleIcon from '@mui/icons-material/Google';
+import HomeIcon from '@mui/icons-material/Home';
+import { login } from '@/lib/auth';
 
 /**
- * Login page - Dev authentication.
- * 
- * Uses dev-login endpoint for quick testing without Google OAuth.
+ * Login page - Google OAuth authentication.
  */
 export default function LoginPage() {
-  const router = useRouter();
-  const [email, setEmail] = useState('test@example.com');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGoogleLogin = () => {
     setError('');
     setLoading(true);
-
     try {
-      const response = await fetch('http://localhost:3001/auth/dev-login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        throw new Error('שגיאה בהתחברות');
-      }
-
-      const data = await response.json();
-      
-      // Save token
-      setAuthToken(data.token);
-      
-      // Save user info
-      localStorage.setItem('user', JSON.stringify(data.user));
-      
-      // Redirect to properties
-      router.push('/properties');
+      login();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'שגיאה בהתחברות');
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="xs">
       <Box
         sx={{
           minHeight: '100vh',
@@ -71,60 +43,79 @@ export default function LoginPage() {
           justifyContent: 'center',
         }}
       >
-        <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
-          <Typography variant="h4" component="h1" gutterBottom align="center">
-            התחברות
-          </Typography>
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            align="center"
-            sx={{ mb: 3 }}
+        <Paper
+          elevation={4}
+          sx={{
+            p: { xs: 3, sm: 5 },
+            width: '100%',
+            borderRadius: 3,
+            textAlign: 'center',
+          }}
+        >
+          {/* Logo / Icon */}
+          <Box
+            sx={{
+              width: 72,
+              height: 72,
+              borderRadius: '50%',
+              bgcolor: 'primary.main',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mx: 'auto',
+              mb: 3,
+            }}
           >
-            התחברות לבדיקות
+            <HomeIcon sx={{ color: 'white', fontSize: 36 }} />
+          </Box>
+
+          <Typography variant="h5" fontWeight={700} gutterBottom>
+            מערכת ניהול נכסים
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+            התחבר עם חשבון Google שלך כדי להמשיך
           </Typography>
 
+          <Divider sx={{ mb: 3 }} />
+
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2, textAlign: 'right' }}>
               {error}
             </Alert>
           )}
 
-          <form onSubmit={handleLogin}>
-            <TextField
-              fullWidth
-              label="אימייל"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              margin="normal"
-              required
-              disabled={loading}
-              placeholder="test@example.com"
-            />
+          <Button
+            fullWidth
+            variant="outlined"
+            size="large"
+            startIcon={loading ? <CircularProgress size={20} /> : <GoogleIcon />}
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            sx={{
+              py: 1.5,
+              borderRadius: 2,
+              fontSize: '1rem',
+              fontWeight: 600,
+              borderColor: '#4285F4',
+              color: '#4285F4',
+              '&:hover': {
+                borderColor: '#4285F4',
+                bgcolor: 'rgba(66, 133, 244, 0.06)',
+              },
+            }}
+          >
+            {loading ? 'מתחבר...' : 'התחבר עם Google'}
+          </Button>
 
-            <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              type="submit"
-              disabled={loading}
-              sx={{ mt: 3 }}
-            >
-              {loading ? <CircularProgress size={24} /> : 'התחבר'}
-            </Button>
-          </form>
-
-          <Box sx={{ mt: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
-            <Typography variant="caption" color="text.secondary">
-              <strong>משתמשי בדיקה:</strong>
-              <br />• test@example.com
-              <br />• newuser@example.com
-              <br />
-              <br />
-              או הזן כל אימייל כדי ליצור חשבון חדש אוטומטית.
-            </Typography>
-          </Box>
+          <Typography
+            variant="caption"
+            color="text.secondary"
+            sx={{ display: 'block', mt: 3 }}
+          >
+            הגישה מוגבלת למשתמשים מאושרים בלבד.
+            <br />
+            לבקשת גישה, פנה למנהל המערכת.
+          </Typography>
         </Paper>
       </Box>
     </Container>

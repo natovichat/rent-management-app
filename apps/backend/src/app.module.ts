@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
+import { APP_GUARD } from '@nestjs/core';
 import configuration from './config/configuration';
 
 import { PrismaModule } from './database/prisma.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { BankAccountsModule } from './modules/bank-accounts/bank-accounts.module';
 import { PersonsModule } from './modules/persons/persons.module';
 import { UtilityInfoModule } from './modules/utility-info/utility-info.module';
@@ -23,6 +27,8 @@ import { PropertyEventsModule } from './modules/property-events/property-events.
     }),
     ScheduleModule.forRoot(),
     PrismaModule,
+    AuthModule,
+    UsersModule,
     BankAccountsModule,
     PersonsModule,
     UtilityInfoModule,
@@ -34,6 +40,11 @@ import { PropertyEventsModule } from './modules/property-events/property-events.
     PropertyEventsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
