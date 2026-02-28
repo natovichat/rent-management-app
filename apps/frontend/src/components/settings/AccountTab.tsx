@@ -1,117 +1,41 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Box,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
-import { authApi } from '@/lib/api/auth';
-import { useAccount } from '@/contexts/AccountContext';
+import { Box, Typography, Alert, Divider } from '@mui/material';
+import { getUserProfile } from '@/lib/auth';
 
 /**
- * AccountTab component - US8.2: Update Account Settings
+ * AccountTab - shows account info.
  */
 export default function AccountTab() {
-  const queryClient = useQueryClient();
-  const { accounts, selectedAccountId } = useAccount();
-  const [accountName, setAccountName] = useState('');
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Get current account
-  const currentAccount = accounts.find((a) => a.id === selectedAccountId);
-
-  useEffect(() => {
-    if (currentAccount) {
-      setAccountName(currentAccount.name);
-    }
-  }, [currentAccount]);
-
-  // Check if user is owner
-  const { data: profile } = useQuery({
-    queryKey: ['userProfile'],
-    queryFn: () => authApi.getProfile(),
-  });
-
-  const isOwner = profile?.role === 'OWNER';
-
-  // Update account mutation
-  const updateMutation = useMutation({
-    mutationFn: (newName: string) => authApi.updateAccount(newName),
-    onSuccess: () => {
-      setSuccess(true);
-      setError(null);
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
-      setTimeout(() => setSuccess(false), 3000);
-    },
-    onError: (err: any) => {
-      if (err.response?.status === 403) {
-        setError('רק בעלי חשבון יכולים לעדכן את הגדרות החשבון');
-      } else {
-        setError(err.response?.data?.message || 'שגיאה בעדכון החשבון');
-      }
-      setSuccess(false);
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!accountName.trim()) {
-      setError('שם החשבון הוא שדה חובה');
-      return;
-    }
-    updateMutation.mutate(accountName.trim());
-  };
-
-  if (!isOwner) {
-    return (
-      <Alert severity="info">
-        רק בעלי חשבון יכולים לעדכן את הגדרות החשבון
-      </Alert>
-    );
-  }
+  const profile = getUserProfile();
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 500 }}>
+    <Box sx={{ maxWidth: 500, direction: 'rtl' }}>
       <Typography variant="h6" gutterBottom>
-        הגדרות חשבון
+        פרטי חשבון
       </Typography>
 
-      {success && (
-        <Alert severity="success" sx={{ mb: 2 }}>
-          שם החשבון עודכן בהצלחה
-        </Alert>
-      )}
+      <Alert severity="info" sx={{ mb: 3 }}>
+        החשבון מנוהל דרך Google OAuth. לשינוי פרטים כמו שם ותמונה, עדכן את פרופיל ה-Google שלך.
+      </Alert>
 
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
+      <Divider sx={{ mb: 2 }} />
 
-      <TextField
-        label="שם החשבון"
-        value={accountName}
-        onChange={(e) => setAccountName(e.target.value)}
-        fullWidth
-        required
-        margin="normal"
-        autoFocus
-      />
-
-      <Box sx={{ mt: 3, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={updateMutation.isPending}
-        >
-          {updateMutation.isPending ? 'שומר...' : 'שמור שינויים'}
-        </Button>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+        <Box>
+          <Typography variant="caption" color="text.secondary">אימייל</Typography>
+          <Typography variant="body1">{profile?.email || '—'}</Typography>
+        </Box>
+        <Box>
+          <Typography variant="caption" color="text.secondary">שם מלא</Typography>
+          <Typography variant="body1">{profile?.name || '—'}</Typography>
+        </Box>
+        <Box>
+          <Typography variant="caption" color="text.secondary">תפקיד</Typography>
+          <Typography variant="body1">
+            {profile?.role === 'ADMIN' ? 'מנהל מערכת' : 'משתמש'}
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );

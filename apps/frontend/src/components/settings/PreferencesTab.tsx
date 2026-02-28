@@ -1,88 +1,66 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
-  TextField,
   Button,
   Typography,
   Alert,
-  CircularProgress,
   MenuItem,
+  TextField,
 } from '@mui/material';
-import { authApi } from '@/lib/api/auth';
+
+const PREFS_KEY = 'user_preferences';
+
+interface Preferences {
+  language: string;
+  dateFormat: string;
+  currency: string;
+}
+
+const defaults: Preferences = {
+  language: 'he',
+  dateFormat: 'DD/MM/YYYY',
+  currency: 'ILS',
+};
+
+function loadPrefs(): Preferences {
+  if (typeof window === 'undefined') return defaults;
+  try {
+    const raw = localStorage.getItem(PREFS_KEY);
+    return raw ? { ...defaults, ...JSON.parse(raw) } : defaults;
+  } catch {
+    return defaults;
+  }
+}
 
 /**
- * PreferencesTab component - US8.3, US8.4: View and Update User Preferences
+ * PreferencesTab - stores display preferences in localStorage.
  */
 export default function PreferencesTab() {
-  const queryClient = useQueryClient();
-  const [preferences, setPreferences] = useState({
-    language: 'he',
-    dateFormat: 'DD/MM/YYYY',
-    currency: 'ILS',
-    theme: 'light',
-  });
+  const [preferences, setPreferences] = useState<Preferences>(defaults);
   const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch current preferences
-  const { data: currentPreferences, isLoading } = useQuery({
-    queryKey: ['userPreferences'],
-    queryFn: () => authApi.getPreferences(),
-  });
-
-  // Update preferences when data loads
   useEffect(() => {
-    if (currentPreferences) {
-      setPreferences(currentPreferences);
-    }
-  }, [currentPreferences]);
-
-  // Update preferences mutation
-  const updateMutation = useMutation({
-    mutationFn: (prefs: typeof preferences) => authApi.updatePreferences(prefs),
-    onSuccess: () => {
-      setSuccess(true);
-      setError(null);
-      queryClient.invalidateQueries({ queryKey: ['userPreferences'] });
-      setTimeout(() => setSuccess(false), 3000);
-    },
-    onError: (err: any) => {
-      setError(err.response?.data?.message || 'שגיאה בעדכון ההעדפות');
-      setSuccess(false);
-    },
-  });
+    setPreferences(loadPrefs());
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    updateMutation.mutate(preferences);
+    localStorage.setItem(PREFS_KEY, JSON.stringify(preferences));
+    setSuccess(true);
+    setTimeout(() => setSuccess(false), 3000);
   };
 
-  if (isLoading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 500 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 500, direction: 'rtl' }}>
       <Typography variant="h6" gutterBottom>
-        העדפות משתמש
+        העדפות תצוגה
       </Typography>
 
       {success && (
         <Alert severity="success" sx={{ mb: 2 }}>
           ההעדפות נשמרו בהצלחה
-        </Alert>
-      )}
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
         </Alert>
       )}
 
@@ -95,7 +73,7 @@ export default function PreferencesTab() {
         margin="normal"
       >
         <MenuItem value="he">עברית</MenuItem>
-        <MenuItem value="en">אנגלית</MenuItem>
+        <MenuItem value="en">English</MenuItem>
       </TextField>
 
       <TextField
@@ -124,25 +102,9 @@ export default function PreferencesTab() {
         <MenuItem value="EUR">€ אירו (EUR)</MenuItem>
       </TextField>
 
-      <TextField
-        select
-        label="ערכת נושא"
-        value={preferences.theme}
-        onChange={(e) => setPreferences({ ...preferences, theme: e.target.value })}
-        fullWidth
-        margin="normal"
-      >
-        <MenuItem value="light">בהיר</MenuItem>
-        <MenuItem value="dark">כהה</MenuItem>
-      </TextField>
-
-      <Box sx={{ mt: 3, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-        <Button
-          type="submit"
-          variant="contained"
-          disabled={updateMutation.isPending}
-        >
-          {updateMutation.isPending ? 'שומר...' : 'שמור העדפות'}
+      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-start' }}>
+        <Button type="submit" variant="contained">
+          שמור העדפות
         </Button>
       </Box>
     </Box>

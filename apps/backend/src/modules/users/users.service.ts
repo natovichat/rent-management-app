@@ -134,6 +134,14 @@ export class UsersService {
     return this.prisma.user.update({ where: { id }, data: { role } });
   }
 
+  async updateName(id: string, name: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('משתמש לא נמצא');
+    }
+    return this.prisma.user.update({ where: { id }, data: { name } });
+  }
+
   async remove(id: string): Promise<void> {
     const user = await this.prisma.user.findUnique({ where: { id } });
     if (!user) {

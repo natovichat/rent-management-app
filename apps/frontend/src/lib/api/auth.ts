@@ -3,28 +3,10 @@ import { api } from '../api';
 export interface UserProfile {
   id: string;
   email: string;
-  name: string;
-  role: 'OWNER' | 'USER';
-  accountId: string;
-  account?: {
-    id: string;
-    name: string;
-    status: string;
-  };
-}
-
-export interface UserPreferences {
-  language: string;
-  dateFormat: string;
-  currency: string;
-  theme: string;
-}
-
-export interface UpdatePreferencesDto {
-  language?: string;
-  dateFormat?: string;
-  currency?: string;
-  theme?: string;
+  name: string | null;
+  picture: string | null;
+  role: 'ADMIN' | 'MEMBER';
+  isActive: boolean;
 }
 
 export interface Session {
@@ -38,19 +20,19 @@ export interface Session {
 
 /**
  * Auth API service.
- * Handles user profile, account settings, preferences, and sessions.
+ * Handles user profile and sessions.
  */
 export const authApi = {
   /**
    * Get current user profile.
    */
   getProfile: async (): Promise<UserProfile> => {
-    const response = await api.get<UserProfile>('/auth/profile');
+    const response = await api.get<UserProfile>('/auth/me');
     return response.data;
   },
 
   /**
-   * Update user profile (name only).
+   * Update current user display name.
    */
   updateProfile: async (name: string): Promise<UserProfile> => {
     const response = await api.patch<UserProfile>('/auth/profile', { name });
@@ -58,31 +40,8 @@ export const authApi = {
   },
 
   /**
-   * Update account settings (OWNER only).
-   */
-  updateAccount: async (name: string): Promise<{ id: string; name: string; status: string }> => {
-    const response = await api.patch('/auth/account', { name });
-    return response.data;
-  },
-
-  /**
-   * Get user preferences.
-   */
-  getPreferences: async (): Promise<UserPreferences> => {
-    const response = await api.get<UserPreferences>('/auth/preferences');
-    return response.data;
-  },
-
-  /**
-   * Update user preferences.
-   */
-  updatePreferences: async (preferences: UpdatePreferencesDto): Promise<UserPreferences> => {
-    const response = await api.put<UserPreferences>('/auth/preferences', preferences);
-    return response.data;
-  },
-
-  /**
    * Get active sessions.
+   * JWT is stateless — returns the current session only.
    */
   getSessions: async (): Promise<Session[]> => {
     const response = await api.get<Session[]>('/auth/sessions');
@@ -91,6 +50,7 @@ export const authApi = {
 
   /**
    * Logout from all devices except current.
+   * JWT is stateless — removes client token; other sessions expire naturally.
    */
   logoutAll: async (): Promise<{ success: boolean }> => {
     const response = await api.post<{ success: boolean }>('/auth/logout-all');
