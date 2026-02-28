@@ -47,17 +47,20 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Handle Google OAuth callback' })
   googleAuthCallback(@Req() req: any, @Res() res: Response) {
-    const user = req.user;
-    if (!user) {
-      throw new UnauthorizedException('האימות נכשל');
-    }
-
-    const token = this.authService.generateJwt(user);
     const frontendUrl =
       this.configService.get<string>('frontendUrl') || 'http://localhost:3001';
 
-    // Redirect to frontend with token
-    res.redirect(`${frontendUrl}/auth/callback?token=${token}`);
+    try {
+      const user = req.user;
+      if (!user) {
+        return res.redirect(`${frontendUrl}/auth/error?reason=unauthorized`);
+      }
+
+      const token = this.authService.generateJwt(user);
+      return res.redirect(`${frontendUrl}/auth/callback?token=${token}`);
+    } catch {
+      return res.redirect(`${frontendUrl}/auth/error?reason=server_error`);
+    }
   }
 
   @Get('me')

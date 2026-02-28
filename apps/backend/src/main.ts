@@ -8,13 +8,19 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  // Swagger documentation
-  const config = new DocumentBuilder()
-    .setTitle('Rent Application API')
-    .setVersion('1.0')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  // Remove technology fingerprinting header
+  app.getHttpAdapter().getInstance().disable('x-powered-by');
+
+  // Swagger only in non-production environments
+  if (process.env.NODE_ENV !== 'production') {
+    const config = new DocumentBuilder()
+      .setTitle('Rent Application API')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+  }
 
   // Enable CORS
   app.enableCors({
@@ -26,12 +32,13 @@ async function bootstrap() {
         'https://rent-management-app.vercel.app',
         'https://rent-management-app-frontend.vercel.app',
       ];
-      
+
       // Allow any Vercel preview deployment
       if (!origin || allowedOrigins.includes(origin) || origin.match(/\.vercel\.app$/)) {
         callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'));
+        // Return false (not an Error) to avoid unhandled 500 — Express will send proper CORS rejection
+        callback(null, false);
       }
     },
     credentials: true,

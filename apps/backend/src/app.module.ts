@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import configuration from './config/configuration';
 
 import { PrismaModule } from './database/prisma.module';
@@ -25,6 +26,18 @@ import { PropertyEventsModule } from './modules/property-events/property-events.
       load: [configuration],
       envFilePath: ['.env.local', '.env'],
     }),
+    ThrottlerModule.forRoot([
+      {
+        name: 'short',
+        ttl: 1000,   // 1 second window
+        limit: 10,   // max 10 requests per second
+      },
+      {
+        name: 'medium',
+        ttl: 60000,  // 1 minute window
+        limit: 100,  // max 100 requests per minute
+      },
+    ]),
     ScheduleModule.forRoot(),
     PrismaModule,
     AuthModule,
@@ -41,6 +54,10 @@ import { PropertyEventsModule } from './modules/property-events/property-events.
   ],
   controllers: [],
   providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
