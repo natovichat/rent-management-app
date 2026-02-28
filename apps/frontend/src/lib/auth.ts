@@ -37,7 +37,7 @@ const getApiBaseUrl = (): string => {
 export const login = (): void => {
   if (typeof window === 'undefined') return;
   const apiUrl = getApiBaseUrl();
-  window.location.href = `${apiUrl}/auth/google`;
+  window.location.href = `${apiUrl}/api/auth/google`;
 };
 
 /**
