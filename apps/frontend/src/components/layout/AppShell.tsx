@@ -315,18 +315,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <AppBar
         position="fixed"
         sx={{
-          width: {
-            xs: '100%',
-            md: `calc(100% - ${sidebarOpen ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED}px)`,
-          },
-          mr: {
-            xs: 0,
-            md: sidebarOpen ? DRAWER_WIDTH_OPEN : DRAWER_WIDTH_CLOSED,
-          },
-          transition: theme.transitions.create(['margin', 'width'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
+          width: '100%',
+          // NOTE: AppBar is always full-width.
+          // The sidebar has mt:'64px' (starts below AppBar), so no overlap occurs.
+          // Adjusting width caused an RTL bug: MUI's stylis-rtl flips `mr`→`ml`,
+          // which left a 260px invisible gap on the top-left in desktop RTL mode.
         }}
       >
         <Toolbar>
