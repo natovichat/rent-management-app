@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
   Typography,
@@ -14,6 +14,10 @@ import {
   Skeleton,
   Alert,
   Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Snackbar,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -24,6 +28,7 @@ import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material';
 import {
   ArrowForward as ArrowBackIcon,
   Edit as EditIcon,
+  Delete as DeleteIcon,
   Apartment as ApartmentIcon,
   Event as EventIcon,
 } from '@mui/icons-material';
@@ -100,15 +105,32 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function PropertyDetailsPage() {
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const id = params.id as string;
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+    open: false, message: '', severity: 'success',
+  });
 
   const { data: property, isLoading, error, refetch } = useQuery({
     queryKey: ['property', id],
     queryFn: () => propertiesApi.getProperty(id),
     enabled: !!id,
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => propertiesApi.deleteProperty(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+      router.push('/properties');
+    },
+    onError: () => {
+      setDeleteOpen(false);
+      setSnackbar({ open: true, message: 'שגיאה במחיקת הנכס. ייתכן שיש נתונים מקושרים.', severity: 'error' });
+    },
   });
 
   if (isLoading) {
@@ -180,25 +202,48 @@ export default function PropertyDetailsPage() {
           )}
         </Box>
 
-        {isMobile ? (
-          <IconButton
-            color="primary"
-            size="small"
-            onClick={() => setEditOpen(true)}
-            sx={{ flexShrink: 0, border: '1px solid', borderColor: 'primary.main' }}
-          >
-            <EditIcon fontSize="small" />
-          </IconButton>
-        ) : (
-          <Button
-            startIcon={<EditIcon />}
-            variant="contained"
-            size="small"
-            onClick={() => setEditOpen(true)}
-          >
-            עריכת נכס
-          </Button>
-        )}
+        <Box sx={{ display: 'flex', gap: 0.5, flexShrink: 0 }}>
+          {isMobile ? (
+            <>
+              <IconButton
+                color="primary"
+                size="small"
+                onClick={() => setEditOpen(true)}
+                sx={{ border: '1px solid', borderColor: 'primary.main' }}
+              >
+                <EditIcon fontSize="small" />
+              </IconButton>
+              <IconButton
+                color="error"
+                size="small"
+                onClick={() => setDeleteOpen(true)}
+                sx={{ border: '1px solid', borderColor: 'error.main' }}
+              >
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </>
+          ) : (
+            <>
+              <Button
+                startIcon={<EditIcon />}
+                variant="contained"
+                size="small"
+                onClick={() => setEditOpen(true)}
+              >
+                עריכת נכס
+              </Button>
+              <Button
+                startIcon={<DeleteIcon />}
+                variant="outlined"
+                color="error"
+                size="small"
+                onClick={() => setDeleteOpen(true)}
+              >
+                מחיקת נכס
+              </Button>
+            </>
+          )}
+        </Box>
       </Box>
 
       {/* ── Sections grid ── */}
@@ -439,6 +484,45 @@ export default function PropertyDetailsPage() {
           }}
         />
       </Dialog>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteOpen} onClose={() => setDeleteOpen(false)} maxWidth="xs" fullWidth>
+        <DialogTitle sx={{ direction: 'rtl' }}>מחיקת נכס</DialogTitle>
+        <DialogContent sx={{ direction: 'rtl' }}>
+          <Typography>
+            האם אתה בטוח שברצונך למחוק את הנכס{' '}
+            <strong>{property?.address}</strong>?
+          </Typography>
+          <Typography variant="body2" color="error" sx={{ mt: 1 }}>
+            פעולה זו היא בלתי הפיכה. כל הנתונים הקשורים לנכס יימחקו.
+          </Typography>
+        </DialogContent>
+        <DialogActions sx={{ direction: 'rtl', px: 3, pb: 2 }}>
+          <Button onClick={() => setDeleteOpen(false)} variant="outlined">
+            ביטול
+          </Button>
+          <Button
+            onClick={() => deleteMutation.mutate()}
+            variant="contained"
+            color="error"
+            disabled={deleteMutation.isPending}
+          >
+            {deleteMutation.isPending ? 'מוחק...' : 'מחק נכס'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Error snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={5000}
+        onClose={() => setSnackbar(s => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert severity={snackbar.severity} onClose={() => setSnackbar(s => ({ ...s, open: false }))}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
