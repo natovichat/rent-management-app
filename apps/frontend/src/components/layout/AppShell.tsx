@@ -26,7 +26,6 @@ import {
   Divider,
 } from '@mui/material';
 import {
-  Menu as MenuIcon,
   Dashboard as DashboardIcon,
   Apartment as ApartmentIcon,
   Handshake as HandshakeIcon,
@@ -331,16 +330,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         }}
       >
         <Toolbar>
-          {/* Hamburger - desktop only */}
-          <IconButton
-            color="inherit"
-            aria-label="תפריט"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 1, display: { xs: 'none', md: 'flex' } }}
-          >
-            <MenuIcon />
-          </IconButton>
           <HomeIcon sx={{ mr: 1.5 }} />
           <Typography
             variant="h6"
