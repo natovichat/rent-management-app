@@ -167,6 +167,34 @@ export default function LeaseList() {
 
   const columns: GridColDef<RentalAgreement>[] = [
     {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'פעולות',
+      width: 150,
+      align: 'left',
+      headerAlign: 'left',
+      getActions: (params) => [
+        <GridActionsCellItem
+          key="edit"
+          icon={<EditIcon />}
+          label="עריכה"
+          onClick={() => {
+            setSelectedLease(params.row);
+            setOpenDialog(true);
+          }}
+        />,
+        <GridActionsCellItem
+          key="delete"
+          icon={<DeleteIcon />}
+          label="מחיקה"
+          onClick={() => {
+            setLeaseToDelete(params.row);
+            setDeleteDialogOpen(true);
+          }}
+        />,
+      ],
+    },
+    {
       field: 'property',
       headerName: 'נכס',
       flex: 1,
@@ -221,34 +249,6 @@ export default function LeaseList() {
           size="small"
         />
       ),
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'פעולות',
-      width: 150,
-      align: 'left',
-      headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedLease(params.row);
-            setOpenDialog(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setLeaseToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
     },
   ];
 

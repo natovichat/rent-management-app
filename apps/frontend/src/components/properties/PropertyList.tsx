@@ -472,8 +472,8 @@ export default function PropertyList() {
       generatedColumns.push(gushHelkaColumn);
     }
     
-    // Add actions column at the end
-    generatedColumns.push({
+    // Add actions column at the beginning (first = rightmost in RTL)
+    generatedColumns.unshift({
       field: 'actions',
       type: 'actions',
       headerName: 'פעולות',

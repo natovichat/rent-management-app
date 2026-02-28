@@ -194,6 +194,31 @@ export default function NotificationList() {
 
   const columns: GridColDef<Notification>[] = useMemo(() => [
     {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'פעולות',
+      width: 150,
+      align: 'left',
+      headerAlign: 'left',
+      getActions: (params) => [
+        <GridActionsCellItem
+          key="view"
+          icon={<VisibilityIcon />}
+          label="צפייה"
+          onClick={() => handleViewDetails(params.row)}
+        />,
+        ...(params.row.status === 'FAILED' ? [
+          <GridActionsCellItem
+            key="retry"
+            icon={<RetryIcon />}
+            label="שליחה מחדש"
+            onClick={() => handleRetry(params.row.id)}
+            disabled={retryMutation.isPending}
+          />,
+        ] : []),
+      ],
+    },
+    {
       field: 'propertyAddress',
       headerName: 'נכס',
       flex: 1,
@@ -277,31 +302,6 @@ export default function NotificationList() {
         if (!params.value) return 'לא נשלח';
         return new Date(params.value).toLocaleDateString('he-IL');
       },
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'פעולות',
-      width: 150,
-      align: 'left',
-      headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="view"
-          icon={<VisibilityIcon />}
-          label="צפייה"
-          onClick={() => handleViewDetails(params.row)}
-        />,
-        ...(params.row.status === 'FAILED' ? [
-          <GridActionsCellItem
-            key="retry"
-            icon={<RetryIcon />}
-            label="שליחה מחדש"
-            onClick={() => handleRetry(params.row.id)}
-            disabled={retryMutation.isPending}
-          />,
-        ] : []),
-      ],
     },
   ], [router, retryMutation.isPending]);
 

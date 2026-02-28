@@ -161,6 +161,34 @@ export default function OwnershipList() {
 
   const columns: GridColDef<Ownership>[] = [
     {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'פעולות',
+      width: 150,
+      align: 'left',
+      headerAlign: 'left',
+      getActions: (params) => [
+        <GridActionsCellItem
+          key="edit"
+          icon={<EditIcon />}
+          label="עריכה"
+          onClick={() => {
+            setSelectedOwnership(params.row);
+            setOpenForm(true);
+          }}
+        />,
+        <GridActionsCellItem
+          key="delete"
+          icon={<DeleteIcon />}
+          label="מחיקה"
+          onClick={() => {
+            setOwnershipToDelete(params.row);
+            setDeleteDialogOpen(true);
+          }}
+        />,
+      ],
+    },
+    {
       field: 'property',
       headerName: 'נכס',
       flex: 1,
@@ -210,34 +238,6 @@ export default function OwnershipList() {
       align: 'right',
       headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'פעולות',
-      width: 150,
-      align: 'left',
-      headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedOwnership(params.row);
-            setOpenForm(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setOwnershipToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
     },
   ];
 

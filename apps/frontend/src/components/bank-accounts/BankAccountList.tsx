@@ -194,6 +194,45 @@ export default function BankAccountList() {
 
   const columns: GridColDef<BankAccount>[] = [
     {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'פעולות',
+      width: 200,
+      align: 'left',
+      headerAlign: 'left',
+      getActions: (params) => [
+        <GridActionsCellItem
+          key="toggle"
+          icon={<EditIcon />}
+          label={params.row.isActive ? 'השבת' : 'הפעל'}
+          onClick={() => {
+            toggleActiveMutation.mutate({
+              id: params.row.id,
+              isActive: !params.row.isActive,
+            });
+          }}
+        />,
+        <GridActionsCellItem
+          key="edit"
+          icon={<EditIcon />}
+          label="עריכה"
+          onClick={() => {
+            setSelectedAccount(params.row);
+            setOpenForm(true);
+          }}
+        />,
+        <GridActionsCellItem
+          key="delete"
+          icon={<DeleteIcon />}
+          label="מחיקה"
+          onClick={() => {
+            setAccountToDelete(params.row);
+            setDeleteDialogOpen(true);
+          }}
+        />,
+      ],
+    },
+    {
       field: 'bankName',
       headerName: 'שם בנק',
       flex: 1,
@@ -258,45 +297,6 @@ export default function BankAccountList() {
       align: 'right',
       headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value),
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'פעולות',
-      width: 200,
-      align: 'left',
-      headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="toggle"
-          icon={<EditIcon />}
-          label={params.row.isActive ? 'השבת' : 'הפעל'}
-          onClick={() => {
-            toggleActiveMutation.mutate({
-              id: params.row.id,
-              isActive: !params.row.isActive,
-            });
-          }}
-        />,
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedAccount(params.row);
-            setOpenForm(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setAccountToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
     },
   ];
 
