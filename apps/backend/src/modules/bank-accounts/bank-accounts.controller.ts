@@ -123,21 +123,21 @@ export class BankAccountsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete bank account' })
+  @ApiOperation({ summary: 'Soft-delete bank account' })
   @ApiParam({ name: 'id', description: 'Bank account UUID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Bank account deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Bank account not found',
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'Conflict - bank account has linked mortgages',
-  })
+  @ApiResponse({ status: 204, description: 'Bank account soft-deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Bank account not found' })
+  @ApiResponse({ status: 409, description: 'Conflict - bank account has linked active mortgages' })
   async remove(@Param('id') id: string) {
     await this.bankAccountsService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted bank account (admin only)' })
+  @ApiParam({ name: 'id', description: 'Bank account UUID' })
+  @ApiResponse({ status: 200, description: 'Bank account restored successfully' })
+  @ApiResponse({ status: 404, description: 'Deleted bank account not found' })
+  restore(@Param('id') id: string) {
+    return this.bankAccountsService.restore(id);
   }
 }

@@ -34,7 +34,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import RestoreIcon from '@mui/icons-material/RestoreFromTrash';
 import { mortgagesApi, Mortgage, MortgageFilters } from '@/lib/api/mortgages';
+import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
+import { getUserProfile } from '@/lib/auth';
 
 type MortgageStatus = 'ACTIVE' | 'PAID_OFF' | 'REFINANCED' | 'DEFAULTED';
 import MortgageForm from './MortgageForm';
@@ -136,6 +139,8 @@ export default function MortgageList() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { showDeleted } = useShowDeleted();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
@@ -151,16 +156,24 @@ export default function MortgageList() {
     severity: 'success' | 'error';
   }>({ open: false, message: '', severity: 'success' });
 
+  useEffect(() => {
+    const profile = getUserProfile();
+    setIsAdmin(profile?.role === 'ADMIN');
+  }, []);
+
   // Reset to page 1 when filters or search change
   useEffect(() => {
     setPage(1);
   }, [filters, debouncedSearch]);
 
+  const includeDeleted = isAdmin && showDeleted;
+
   // Build filters object for API call (use debounced search value)
   const apiFilters: MortgageFilters = useMemo(() => ({
     ...filters,
     ...(debouncedSearch && { search: debouncedSearch }),
-  }), [filters, debouncedSearch]);
+    ...(includeDeleted && { includeDeleted: true }),
+  }), [filters, debouncedSearch, includeDeleted]);
 
   // Fetch all mortgages
   const { data, isLoading } = useQuery({
@@ -184,6 +197,17 @@ export default function MortgageList() {
         ? 'לא ניתן למחוק משכנתא עם תשלומים'
         : 'שגיאה במחיקת משכנתא';
       setSnackbar({ open: true, message, severity: 'error' });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: mortgagesApi.restoreMortgage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['mortgages'] });
+      setSnackbar({ open: true, message: 'משכנתא שוחזרה בהצלחה', severity: 'success' });
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה בשחזור משכנתא', severity: 'error' });
     },
   });
 
@@ -287,7 +311,18 @@ export default function MortgageList() {
       align: 'left',
       headerAlign: 'left',
       getActions: (params) => {
-        const actions = [
+        const isDeleted = !!params.row.deletedAt;
+        if (isDeleted && isAdmin) {
+          return [
+            <GridActionsCellItem
+              key="restore"
+              icon={<RestoreIcon />}
+              label="שחזר"
+              onClick={() => restoreMutation.mutate(params.row.id)}
+            />,
+          ];
+        }
+        return [
           <GridActionsCellItem
             key="view"
             icon={<VisibilityIcon />}
@@ -315,7 +350,6 @@ export default function MortgageList() {
             }}
           />,
         ];
-        return actions;
       },
     },
   ];
@@ -440,6 +474,12 @@ export default function MortgageList() {
                 textAlign: 'right',
                 paddingRight: '16px',
               },
+              '& .row-deleted': {
+                color: 'text.disabled',
+                textDecoration: 'line-through',
+                bgcolor: 'action.hover',
+                opacity: 0.6,
+              },
             }}
             paginationMode="server"
             rowCount={data?.meta?.total || 0}
@@ -450,6 +490,7 @@ export default function MortgageList() {
             }}
             pageSizeOptions={[10, 25, 50, 100]}
             getRowId={(row) => row.id}
+            getRowClassName={(params) => params.row.deletedAt ? 'row-deleted' : ''}
           />
         )}
       </Box>

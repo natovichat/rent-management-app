@@ -12,6 +12,7 @@ export interface BankAccount {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 export interface CreateBankAccountDto {
@@ -30,9 +31,15 @@ export const bankAccountsApi = {
   /**
    * Get all bank accounts with pagination and optional isActive filter
    */
-  getBankAccounts: async (page = 1, limit = 20, isActive?: boolean): Promise<{ data: BankAccount[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
+  getBankAccounts: async (
+    page = 1,
+    limit = 20,
+    isActive?: boolean,
+    includeDeleted?: boolean,
+  ): Promise<{ data: BankAccount[]; meta: { total: number; page: number; limit: number; totalPages: number } }> => {
     const params: Record<string, unknown> = { page, limit };
     if (isActive !== undefined) params.isActive = isActive;
+    if (includeDeleted) params.includeDeleted = 'true';
     const response = await api.get('/bank-accounts', { params });
     return response.data;
   },
@@ -66,6 +73,11 @@ export const bankAccountsApi = {
    */
   deleteBankAccount: async (id: string): Promise<void> => {
     await api.delete(`/bank-accounts/${id}`);
+  },
+
+  restoreBankAccount: async (id: string): Promise<BankAccount> => {
+    const response = await api.patch<BankAccount>(`/bank-accounts/${id}/restore`);
+    return response.data;
   },
 
   /**

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useDebounce } from 'use-debounce';
 import {
@@ -34,11 +34,14 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
+  RestoreFromTrash as RestoreIcon,
 } from '@mui/icons-material';
 import {
   bankAccountsApi,
   BankAccount,
 } from '@/lib/api/bank-accounts';
+import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
+import { getUserProfile } from '@/lib/auth';
 import BankAccountForm from './BankAccountForm';
 
 const ACCOUNT_TYPE_LABELS: Record<string, string> = {
@@ -116,6 +119,8 @@ export default function BankAccountList() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
+  const { showDeleted } = useShowDeleted();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [search, setSearch] = useState('');
   const [debouncedSearch] = useDebounce(search, 300);
   const [activeOnly, setActiveOnly] = useState(false);
@@ -129,10 +134,17 @@ export default function BankAccountList() {
     severity: 'success' | 'error';
   }>({ open: false, message: '', severity: 'success' });
 
+  useEffect(() => {
+    const profile = getUserProfile();
+    setIsAdmin(profile?.role === 'ADMIN');
+  }, []);
+
+  const includeDeleted = isAdmin && showDeleted;
+
   // Fetch bank accounts
   const { data, isLoading } = useQuery({
-    queryKey: ['bank-accounts', activeOnly],
-    queryFn: () => bankAccountsApi.getBankAccounts(1, 100, activeOnly ? true : undefined),
+    queryKey: ['bank-accounts', activeOnly, includeDeleted],
+    queryFn: () => bankAccountsApi.getBankAccounts(1, 100, activeOnly ? true : undefined, includeDeleted),
   });
 
   const allAccounts = data?.data || [];
@@ -168,6 +180,17 @@ export default function BankAccountList() {
         message: error.response?.data?.message || 'שגיאה במחיקת חשבון בנק',
         severity: 'error',
       });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: (id: string) => bankAccountsApi.restoreBankAccount(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bank-accounts'] });
+      setSnackbar({ open: true, message: 'חשבון בנק שוחזר בהצלחה', severity: 'success' });
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה בשחזור חשבון בנק', severity: 'error' });
     },
   });
 
@@ -266,37 +289,50 @@ export default function BankAccountList() {
       width: 200,
       align: 'left',
       headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="toggle"
-          icon={<EditIcon />}
-          label={params.row.isActive ? 'השבת' : 'הפעל'}
-          onClick={() => {
-            toggleActiveMutation.mutate({
-              id: params.row.id,
-              isActive: !params.row.isActive,
-            });
-          }}
-        />,
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedAccount(params.row);
-            setOpenForm(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setAccountToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
+      getActions: (params) => {
+        const isDeleted = !!params.row.deletedAt;
+        if (isDeleted && isAdmin) {
+          return [
+            <GridActionsCellItem
+              key="restore"
+              icon={<RestoreIcon />}
+              label="שחזר"
+              onClick={() => restoreMutation.mutate(params.row.id)}
+            />,
+          ];
+        }
+        return [
+          <GridActionsCellItem
+            key="toggle"
+            icon={<EditIcon />}
+            label={params.row.isActive ? 'השבת' : 'הפעל'}
+            onClick={() => {
+              toggleActiveMutation.mutate({
+                id: params.row.id,
+                isActive: !params.row.isActive,
+              });
+            }}
+          />,
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditIcon />}
+            label="עריכה"
+            onClick={() => {
+              setSelectedAccount(params.row);
+              setOpenForm(true);
+            }}
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteIcon />}
+            label="מחיקה"
+            onClick={() => {
+              setAccountToDelete(params.row);
+              setDeleteDialogOpen(true);
+            }}
+          />,
+        ];
+      },
     },
   ];
 
@@ -420,7 +456,14 @@ export default function BankAccountList() {
                 textAlign: 'right',
                 paddingRight: '16px',
               },
+              '& .row-deleted': {
+                color: 'text.disabled',
+                textDecoration: 'line-through',
+                bgcolor: 'action.hover',
+                opacity: 0.6,
+              },
             }}
+            getRowClassName={(params) => params.row.deletedAt ? 'row-deleted' : ''}
             initialState={{
               pagination: {
                 paginationModel: { pageSize: 25 },

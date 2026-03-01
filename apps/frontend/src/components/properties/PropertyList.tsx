@@ -37,11 +37,14 @@ import {
   Delete as DeleteIcon,
   Visibility as VisibilityIcon,
   AccountBalance as AccountBalanceIcon,
+  RestoreFromTrash as RestoreIcon,
 } from '@mui/icons-material';
 import { propertiesApi, Property, PropertyFilters } from '@/services/properties';
 import { useConfiguredColumns } from '@/lib/hooks/useConfiguredColumns';
 import { useTableConfiguration } from '@/lib/hooks/useTableConfigurations';
 import { generatePropertyColumns } from '@/lib/utils/generateColumns';
+import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
+import { getUserProfile } from '@/lib/auth';
 import PropertyForm from './PropertyForm';
 import PropertyCsvActions from './PropertyCsvActions';
 import PropertyFilterPanel from './PropertyFilterPanel';
@@ -150,6 +153,8 @@ export default function PropertyList() {
   const queryClient = useQueryClient();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { showDeleted } = useShowDeleted();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
@@ -167,6 +172,11 @@ export default function PropertyList() {
     message: string;
     severity: 'success' | 'error';
   }>({ open: false, message: '', severity: 'success' });
+
+  useEffect(() => {
+    const profile = getUserProfile();
+    setIsAdmin(profile?.role === 'ADMIN');
+  }, []);
 
   const isInitializingFromUrl = useRef(true);
 
@@ -286,12 +296,25 @@ export default function PropertyList() {
   const apiFilters: PropertyFilters = useMemo(() => ({
     ...filters,
     ...(debouncedSearch && { search: debouncedSearch }),
-  }), [filters, debouncedSearch]);
+    ...(isAdmin && showDeleted && { includeDeleted: true }),
+  }), [filters, debouncedSearch, isAdmin, showDeleted]);
 
   // Fetch properties with filters
   const { data, isLoading, error } = useQuery({
     queryKey: ['properties', page, pageSize, apiFilters],
     queryFn: () => propertiesApi.getAll(page, pageSize, apiFilters),
+  });
+
+  // Restore mutation (admin only)
+  const restoreMutation = useMutation({
+    mutationFn: propertiesApi.restore,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+      setSnackbar({ open: true, message: 'הנכס שוחזר בהצלחה ✓', severity: 'success' });
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה בשחזור הנכס', severity: 'error' });
+    },
   });
 
   // Filtered rows for DataGrid (hoisted here to avoid conditional hook call in JSX)
@@ -477,41 +500,54 @@ export default function PropertyList() {
       field: 'actions',
       type: 'actions',
       headerName: 'פעולות',
-      width: 150,
+      width: 160,
       align: 'left',
       headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="view"
-          icon={<VisibilityIcon />}
-          label="צפייה"
-          onClick={() => {
-            console.log('View button clicked for property:', params.row.id);
-            router.push(`/properties/${params.row.id}`);
-          }}
-          showInMenu={false}
-        />,
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedProperty(params.row);
-            setOpenForm(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => handleDeleteClick(params.row)}
-        />,
-      ],
+      getActions: (params) => {
+        const isDeleted = !!params.row.deletedAt;
+        if (isDeleted && isAdmin) {
+          return [
+            <GridActionsCellItem
+              key="restore"
+              icon={<RestoreIcon />}
+              label="שחזר"
+              onClick={() => restoreMutation.mutate(params.row.id)}
+              showInMenu={false}
+            />,
+          ];
+        }
+        return [
+          <GridActionsCellItem
+            key="view"
+            icon={<VisibilityIcon />}
+            label="צפייה"
+            onClick={() => {
+              router.push(`/properties/${params.row.id}`);
+            }}
+            showInMenu={false}
+          />,
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditIcon />}
+            label="עריכה"
+            onClick={() => {
+              setSelectedProperty(params.row);
+              setOpenForm(true);
+            }}
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteIcon />}
+            label="מחיקה"
+            onClick={() => handleDeleteClick(params.row)}
+          />,
+        ];
+      },
     } as GridColDef<Property>);
     
     console.log('🔍 allColumns generated count:', generatedColumns.length);
     return generatedColumns;
-  }, [router]); // End of allColumns useMemo
+  }, [router, isAdmin, restoreMutation]); // End of allColumns useMemo
 
   // Get configured columns based on user settings (applies visibility and ordering from database)
   const columns = useConfiguredColumns('properties', allColumns);
@@ -690,7 +726,16 @@ export default function PropertyList() {
           )}
         </Box>
       ) : (
-        <Box sx={{ height: 600, width: '100%' }}>
+        <Box sx={{
+          height: 600,
+          width: '100%',
+          '& .row-deleted': {
+            color: 'text.disabled',
+            textDecoration: 'line-through',
+            bgcolor: 'action.hover',
+            opacity: 0.6,
+          },
+        }}>
           <DataGrid
             key={`properties-grid-${page}-${data?.meta.total || 0}-${data?.data?.length || 0}-${deletedPropertyIds.size}`}
             rows={filteredRows}
@@ -705,6 +750,7 @@ export default function PropertyList() {
             }}
             pageSizeOptions={[10, 25, 50, 100]}
             disableRowSelectionOnClick
+            getRowClassName={(params) => params.row.deletedAt ? 'row-deleted' : ''}
             // disableColumnReorder removed (not supported in this DataGrid version)
           />
         </Box>
@@ -745,7 +791,7 @@ export default function PropertyList() {
             האם אתה בטוח שברצונך למחוק את הנכס <strong>"{propertyToDelete?.address}"</strong>?
           </Typography>
           <Alert severity="warning" sx={{ mt: 2 }}>
-            הנכס יימחק לצמיתות יחד עם כל המידע הקשור אליו, כולל הבעלויות, המשכנתאות, חוזי השכירות והאירועים. פעולה זו לא ניתנת לביטול.
+            הנכס יסומן כמחוק יחד עם הבעלויות, המשכנתאות, חוזי השכירות והאירועים הקשורים אליו. מנהל מערכת יכול לשחזר אותו בהגדרות.
           </Alert>
         </DialogContent>
         <DialogActions>

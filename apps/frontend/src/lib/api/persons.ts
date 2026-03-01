@@ -13,6 +13,7 @@ export interface Person {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
 }
 
 export interface CreatePersonDto {
@@ -51,6 +52,7 @@ export const personsApi = {
     limit: number = 10,
     search?: string,
     type?: PersonType,
+    includeDeleted?: boolean,
   ): Promise<PersonsResponse> => {
     const params = new URLSearchParams({
       page: page.toString(),
@@ -62,6 +64,9 @@ export const personsApi = {
     }
     if (type) {
       params.append('type', type);
+    }
+    if (includeDeleted) {
+      params.append('includeDeleted', 'true');
     }
 
     const response = await api.get<PersonsResponse>(`/persons?${params}`);
@@ -93,10 +98,18 @@ export const personsApi = {
   },
 
   /**
-   * Delete a person.
+   * Soft-delete a person.
    */
   deletePerson: async (id: string): Promise<void> => {
     await api.delete(`/persons/${id}`);
+  },
+
+  /**
+   * Restore a soft-deleted person.
+   */
+  restorePerson: async (id: string): Promise<Person> => {
+    const response = await api.patch<Person>(`/persons/${id}/restore`);
+    return response.data;
   },
 
   /**

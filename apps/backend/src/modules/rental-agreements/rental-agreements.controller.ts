@@ -117,17 +117,20 @@ export class RentalAgreementsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete rental agreement' })
+  @ApiOperation({ summary: 'Soft-delete rental agreement' })
   @ApiParam({ name: 'id', description: 'Rental agreement UUID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Rental agreement deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Rental agreement not found',
-  })
+  @ApiResponse({ status: 204, description: 'Rental agreement soft-deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Rental agreement not found' })
   async remove(@Param('id') id: string) {
     await this.rentalAgreementsService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted rental agreement (admin only)' })
+  @ApiParam({ name: 'id', description: 'Rental agreement UUID' })
+  @ApiResponse({ status: 200, description: 'Rental agreement restored successfully' })
+  @ApiResponse({ status: 404, description: 'Deleted rental agreement not found' })
+  restore(@Param('id') id: string) {
+    return this.rentalAgreementsService.restore(id);
   }
 }

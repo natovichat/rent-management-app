@@ -52,17 +52,23 @@ export class OwnershipsService {
   /**
    * Find all ownerships with pagination (includes property and person)
    */
-  async findAll(page: number = 1, limit: number = 20) {
+  async findAll(page: number = 1, limit: number = 20, includeDeleted = false) {
     const skip = (page - 1) * limit;
+
+    const where: Prisma.OwnershipWhereInput = {};
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     const [ownerships, total] = await Promise.all([
       this.prisma.ownership.findMany({
+        where,
         skip,
         take: limit,
         include: OWNERSHIP_INCLUDE,
         orderBy: { startDate: 'desc' },
       }),
-      this.prisma.ownership.count(),
+      this.prisma.ownership.count({ where }),
     ]);
 
     return {
@@ -79,11 +85,16 @@ export class OwnershipsService {
   /**
    * Find all ownerships for a property (includes person details)
    */
-  async findByProperty(propertyId: string) {
+  async findByProperty(propertyId: string, includeDeleted = false) {
     await this.ensurePropertyExists(propertyId);
 
+    const where: Prisma.OwnershipWhereInput = { propertyId };
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
+
     return this.prisma.ownership.findMany({
-      where: { propertyId },
+      where,
       include: OWNERSHIP_INCLUDE,
       orderBy: { startDate: 'desc' },
     });
@@ -92,11 +103,16 @@ export class OwnershipsService {
   /**
    * Find all ownerships for a person (includes property details)
    */
-  async findByPerson(personId: string) {
+  async findByPerson(personId: string, includeDeleted = false) {
     await this.ensurePersonExists(personId);
 
+    const where: Prisma.OwnershipWhereInput = { personId };
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
+
     return this.prisma.ownership.findMany({
-      where: { personId },
+      where,
       include: OWNERSHIP_INCLUDE,
       orderBy: { startDate: 'desc' },
     });
@@ -105,9 +121,12 @@ export class OwnershipsService {
   /**
    * Find one ownership by ID
    */
-  async findOne(id: string) {
-    const ownership = await this.prisma.ownership.findUnique({
-      where: { id },
+  async findOne(id: string, includeDeleted = false) {
+    const ownership = await this.prisma.ownership.findFirst({
+      where: {
+        id,
+        ...(!includeDeleted && { deletedAt: null }),
+      },
       include: OWNERSHIP_INCLUDE,
     });
 
@@ -129,6 +148,7 @@ export class OwnershipsService {
     const activeOwnerships = await this.prisma.ownership.findMany({
       where: {
         propertyId,
+        deletedAt: null,
         OR: [{ endDate: null }, { endDate: { gt: now } }],
       },
       select: { ownershipPercentage: true },
@@ -193,19 +213,40 @@ export class OwnershipsService {
   }
 
   /**
-   * Remove an ownership
+   * Soft-delete an ownership
    */
   async remove(id: string) {
     await this.findOne(id);
 
-    await this.prisma.ownership.delete({
+    return this.prisma.ownership.update({
       where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  /**
+   * Restore a soft-deleted ownership
+   */
+  async restore(id: string) {
+    const ownership = await this.prisma.ownership.findFirst({
+      where: { id, deletedAt: { not: null } },
+      include: OWNERSHIP_INCLUDE,
+    });
+
+    if (!ownership) {
+      throw new NotFoundException(`Deleted ownership with id ${id} not found`);
+    }
+
+    return this.prisma.ownership.update({
+      where: { id },
+      data: { deletedAt: null },
+      include: OWNERSHIP_INCLUDE,
     });
   }
 
   private async ensurePropertyExists(propertyId: string, message?: string) {
-    const property = await this.prisma.property.findUnique({
-      where: { id: propertyId },
+    const property = await this.prisma.property.findFirst({
+      where: { id: propertyId, deletedAt: null },
     });
     if (!property) {
       throw new NotFoundException(
@@ -215,8 +256,8 @@ export class OwnershipsService {
   }
 
   private async ensurePersonExists(personId: string, message?: string) {
-    const person = await this.prisma.person.findUnique({
-      where: { id: personId },
+    const person = await this.prisma.person.findFirst({
+      where: { id: personId, deletedAt: null },
     });
     if (!person) {
       throw new NotFoundException(

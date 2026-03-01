@@ -169,21 +169,20 @@ export class PropertiesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete property' })
+  @ApiOperation({ summary: 'Soft-delete property (cascades to related records)' })
   @ApiParam({ name: 'id', description: 'Property UUID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Property deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Property not found',
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'Conflict - property has ownerships, mortgages, or rental agreements',
-  })
+  @ApiResponse({ status: 204, description: 'Property soft-deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Property not found' })
   async remove(@Param('id') id: string) {
     await this.propertiesService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted property (admin only)' })
+  @ApiParam({ name: 'id', description: 'Property UUID' })
+  @ApiResponse({ status: 200, description: 'Property restored successfully' })
+  @ApiResponse({ status: 404, description: 'Deleted property not found' })
+  restore(@Param('id') id: string) {
+    return this.propertiesService.restore(id);
   }
 }

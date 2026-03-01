@@ -27,6 +27,7 @@ export interface Mortgage {
   notes?: string | null;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   payments?: MortgagePayment[];
   property?: {
     id: string;
@@ -113,6 +114,7 @@ export interface MortgageFilters {
   maxLoanAmount?: number;
   minInterestRate?: number;
   maxInterestRate?: number;
+  includeDeleted?: boolean;
 }
 
 /**
@@ -155,6 +157,9 @@ export const mortgagesApi = {
     }
     if (filters?.maxInterestRate !== undefined) {
       params.append('maxInterestRate', filters.maxInterestRate.toString());
+    }
+    if (filters?.includeDeleted) {
+      params.append('includeDeleted', 'true');
     }
 
     const response = await api.get<MortgagesResponse>(`/mortgages?${params}`);
@@ -199,10 +204,18 @@ export const mortgagesApi = {
   },
 
   /**
-   * Delete a mortgage.
+   * Soft-delete a mortgage.
    */
   deleteMortgage: async (id: string): Promise<void> => {
     await api.delete(`/mortgages/${id}`);
+  },
+
+  /**
+   * Restore a soft-deleted mortgage.
+   */
+  restoreMortgage: async (id: string): Promise<Mortgage> => {
+    const response = await api.patch<Mortgage>(`/mortgages/${id}/restore`);
+    return response.data;
   },
 
   /**

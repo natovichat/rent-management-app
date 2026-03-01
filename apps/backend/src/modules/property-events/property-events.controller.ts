@@ -184,18 +184,28 @@ export class PropertyEventsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete property event' })
+  @ApiOperation({ summary: 'Soft-delete property event' })
   @ApiParam({ name: 'propertyId', description: 'Property UUID' })
   @ApiParam({ name: 'id', description: 'Event UUID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Property event deleted',
-  })
+  @ApiResponse({ status: 204, description: 'Property event soft-deleted' })
   @ApiResponse({ status: 404, description: 'Event not found' })
   async remove(
     @Param('propertyId') propertyId: string,
     @Param('id') id: string,
   ) {
     await this.propertyEventsService.remove(propertyId, id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted property event (admin only)' })
+  @ApiParam({ name: 'propertyId', description: 'Property UUID' })
+  @ApiParam({ name: 'id', description: 'Event UUID' })
+  @ApiResponse({ status: 200, description: 'Property event restored successfully' })
+  @ApiResponse({ status: 404, description: 'Deleted event not found' })
+  restore(
+    @Param('propertyId') propertyId: string,
+    @Param('id') id: string,
+  ) {
+    return this.propertyEventsService.restore(propertyId, id);
   }
 }

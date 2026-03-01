@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DataGrid,
@@ -30,12 +30,15 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
+  RestoreFromTrash as RestoreIcon,
 } from '@mui/icons-material';
 import {
   ownershipsApi,
   Ownership,
   OwnershipType,
 } from '@/lib/api/ownerships';
+import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
+import { getUserProfile } from '@/lib/auth';
 import OwnershipForm from './OwnershipForm';
 
 const OWNERSHIP_TYPE_LABELS: Record<string, string> = {
@@ -113,6 +116,8 @@ export default function OwnershipList() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
+  const { showDeleted } = useShowDeleted();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [openForm, setOpenForm] = useState(false);
@@ -128,9 +133,16 @@ export default function OwnershipList() {
     severity: 'success' | 'error';
   }>({ open: false, message: '', severity: 'success' });
 
+  useEffect(() => {
+    const profile = getUserProfile();
+    setIsAdmin(profile?.role === 'ADMIN');
+  }, []);
+
+  const includeDeleted = isAdmin && showDeleted;
+
   const { data, isLoading } = useQuery({
-    queryKey: ['ownerships', page, pageSize],
-    queryFn: () => ownershipsApi.getOwnerships(page, pageSize),
+    queryKey: ['ownerships', page, pageSize, includeDeleted],
+    queryFn: () => ownershipsApi.getOwnerships(page, pageSize, includeDeleted),
   });
 
   const ownerships = data?.data || [];
@@ -156,6 +168,17 @@ export default function OwnershipList() {
           err.response?.data?.message || 'שגיאה במחיקת בעלות',
         severity: 'error',
       });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: (id: string) => ownershipsApi.restoreOwnership(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['ownerships'] });
+      setSnackbar({ open: true, message: 'בעלות שוחזרה בהצלחה', severity: 'success' });
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה בשחזור בעלות', severity: 'error' });
     },
   });
 
@@ -218,26 +241,39 @@ export default function OwnershipList() {
       width: 150,
       align: 'left',
       headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedOwnership(params.row);
-            setOpenForm(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setOwnershipToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
+      getActions: (params) => {
+        const isDeleted = !!params.row.deletedAt;
+        if (isDeleted && isAdmin) {
+          return [
+            <GridActionsCellItem
+              key="restore"
+              icon={<RestoreIcon />}
+              label="שחזר"
+              onClick={() => restoreMutation.mutate(params.row.id)}
+            />,
+          ];
+        }
+        return [
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditIcon />}
+            label="עריכה"
+            onClick={() => {
+              setSelectedOwnership(params.row);
+              setOpenForm(true);
+            }}
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteIcon />}
+            label="מחיקה"
+            onClick={() => {
+              setOwnershipToDelete(params.row);
+              setDeleteDialogOpen(true);
+            }}
+          />,
+        ];
+      },
     },
   ];
 
@@ -338,7 +374,14 @@ export default function OwnershipList() {
               '& .MuiDataGrid-columnHeader': {
                 direction: 'rtl',
               },
+              '& .row-deleted': {
+                color: 'text.disabled',
+                textDecoration: 'line-through',
+                bgcolor: 'action.hover',
+                opacity: 0.6,
+              },
             }}
+            getRowClassName={(params) => params.row.deletedAt ? 'row-deleted' : ''}
           />
         </Box>
       )}

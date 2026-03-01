@@ -30,7 +30,6 @@ export class PropertyEventsService {
 
   /**
    * Create a PlanningProcessEvent.
-   * eventType = PlanningProcessEvent (set here, not in DTO).
    */
   async createPlanningProcess(
     propertyId: string,
@@ -56,7 +55,6 @@ export class PropertyEventsService {
 
   /**
    * Create a PropertyDamageEvent.
-   * eventType = PropertyDamageEvent (set here, not in DTO).
    */
   async createPropertyDamage(
     propertyId: string,
@@ -86,7 +84,6 @@ export class PropertyEventsService {
 
   /**
    * Create an ExpenseEvent.
-   * eventType = ExpenseEvent (set here, not in DTO).
    */
   async createExpense(propertyId: string, dto: CreateExpenseEventDto) {
     await this.ensurePropertyExists(propertyId);
@@ -114,7 +111,6 @@ export class PropertyEventsService {
 
   /**
    * Create a RentalPaymentRequestEvent.
-   * eventType = RentalPaymentRequestEvent (set here, not in DTO).
    */
   async createRentalPaymentRequest(
     propertyId: string,
@@ -148,10 +144,14 @@ export class PropertyEventsService {
   async findByProperty(propertyId: string, query: QueryPropertyEventDto) {
     await this.ensurePropertyExists(propertyId);
 
-    const { page = 1, limit = 10, eventType } = query;
+    const { page = 1, limit = 10, eventType, includeDeleted } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.PropertyEventWhereInput = { propertyId };
+
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     if (eventType) {
       where.eventType = eventType;
@@ -182,9 +182,13 @@ export class PropertyEventsService {
   /**
    * Find one event by property and event ID.
    */
-  async findOne(propertyId: string, eventId: string) {
+  async findOne(propertyId: string, eventId: string, includeDeleted = false) {
     const event = await this.prisma.propertyEvent.findFirst({
-      where: { id: eventId, propertyId },
+      where: {
+        id: eventId,
+        propertyId,
+        ...(!includeDeleted && { deletedAt: null }),
+      },
       include: propertyEventInclude,
     });
 
@@ -283,19 +287,43 @@ export class PropertyEventsService {
   }
 
   /**
-   * Remove an event.
+   * Soft-delete a property event.
    */
   async remove(propertyId: string, eventId: string) {
     await this.findOne(propertyId, eventId);
 
-    return this.prisma.propertyEvent.delete({
+    return this.prisma.propertyEvent.update({
       where: { id: eventId },
+      data: { deletedAt: new Date() },
+      include: propertyEventInclude,
+    });
+  }
+
+  /**
+   * Restore a soft-deleted property event.
+   */
+  async restore(propertyId: string, eventId: string) {
+    const event = await this.prisma.propertyEvent.findFirst({
+      where: { id: eventId, propertyId, deletedAt: { not: null } },
+      include: propertyEventInclude,
+    });
+
+    if (!event) {
+      throw new NotFoundException(
+        `Deleted property event with ID ${eventId} not found for property ${propertyId}`,
+      );
+    }
+
+    return this.prisma.propertyEvent.update({
+      where: { id: eventId },
+      data: { deletedAt: null },
+      include: propertyEventInclude,
     });
   }
 
   private async ensurePropertyExists(propertyId: string) {
-    const property = await this.prisma.property.findUnique({
-      where: { id: propertyId },
+    const property = await this.prisma.property.findFirst({
+      where: { id: propertyId, deletedAt: null },
     });
     if (!property) {
       throw new NotFoundException(
@@ -313,6 +341,7 @@ export class PropertyEventsService {
         id: expenseId,
         propertyId,
         eventType: PropertyEventType.ExpenseEvent,
+        deletedAt: null,
       },
     });
     if (!expense) {
@@ -323,8 +352,8 @@ export class PropertyEventsService {
   }
 
   private async ensureBankAccountExists(accountId: string) {
-    const account = await this.prisma.bankAccount.findUnique({
-      where: { id: accountId },
+    const account = await this.prisma.bankAccount.findFirst({
+      where: { id: accountId, deletedAt: null },
     });
     if (!account) {
       throw new BadRequestException(
@@ -338,7 +367,7 @@ export class PropertyEventsService {
     propertyId: string,
   ) {
     const agreement = await this.prisma.rentalAgreement.findFirst({
-      where: { id: rentalAgreementId, propertyId },
+      where: { id: rentalAgreementId, propertyId, deletedAt: null },
     });
     if (!agreement) {
       throw new BadRequestException(

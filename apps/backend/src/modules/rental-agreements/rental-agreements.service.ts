@@ -59,10 +59,14 @@ export class RentalAgreementsService {
    * Find all rental agreements with pagination and filters.
    */
   async findAll(query: QueryRentalAgreementDto) {
-    const { page = 1, limit = 20, status, propertyId, tenantId } = query;
+    const { page = 1, limit = 20, status, propertyId, tenantId, includeDeleted } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.RentalAgreementWhereInput = {};
+
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     if (status) {
       where.status = status;
@@ -99,9 +103,12 @@ export class RentalAgreementsService {
   /**
    * Find a rental agreement by ID with property and tenant.
    */
-  async findOne(id: string) {
-    const agreement = await this.prisma.rentalAgreement.findUnique({
-      where: { id },
+  async findOne(id: string, includeDeleted = false) {
+    const agreement = await this.prisma.rentalAgreement.findFirst({
+      where: {
+        id,
+        ...(!includeDeleted && { deletedAt: null }),
+      },
       include: rentalAgreementInclude,
     });
 
@@ -117,9 +124,9 @@ export class RentalAgreementsService {
   /**
    * Find rental agreements by property ID.
    */
-  async findByProperty(propertyId: string) {
-    const property = await this.prisma.property.findUnique({
-      where: { id: propertyId },
+  async findByProperty(propertyId: string, includeDeleted = false) {
+    const property = await this.prisma.property.findFirst({
+      where: { id: propertyId, deletedAt: null },
     });
 
     if (!property) {
@@ -128,8 +135,13 @@ export class RentalAgreementsService {
       );
     }
 
+    const where: Prisma.RentalAgreementWhereInput = { propertyId };
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
+
     return this.prisma.rentalAgreement.findMany({
-      where: { propertyId },
+      where,
       orderBy: { createdAt: 'desc' },
       include: rentalAgreementInclude,
     });
@@ -138,9 +150,9 @@ export class RentalAgreementsService {
   /**
    * Find rental agreements by tenant (Person) ID.
    */
-  async findByTenant(tenantId: string) {
-    const person = await this.prisma.person.findUnique({
-      where: { id: tenantId },
+  async findByTenant(tenantId: string, includeDeleted = false) {
+    const person = await this.prisma.person.findFirst({
+      where: { id: tenantId, deletedAt: null },
     });
 
     if (!person) {
@@ -149,8 +161,13 @@ export class RentalAgreementsService {
       );
     }
 
+    const where: Prisma.RentalAgreementWhereInput = { tenantId };
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
+
     return this.prisma.rentalAgreement.findMany({
-      where: { tenantId },
+      where,
       orderBy: { createdAt: 'desc' },
       include: rentalAgreementInclude,
     });
@@ -200,13 +217,37 @@ export class RentalAgreementsService {
   }
 
   /**
-   * Delete a rental agreement.
+   * Soft-delete a rental agreement.
    */
   async remove(id: string) {
     await this.findOne(id);
 
-    return this.prisma.rentalAgreement.delete({
+    return this.prisma.rentalAgreement.update({
       where: { id },
+      data: { deletedAt: new Date() },
+      include: rentalAgreementInclude,
+    });
+  }
+
+  /**
+   * Restore a soft-deleted rental agreement.
+   */
+  async restore(id: string) {
+    const agreement = await this.prisma.rentalAgreement.findFirst({
+      where: { id, deletedAt: { not: null } },
+      include: rentalAgreementInclude,
+    });
+
+    if (!agreement) {
+      throw new NotFoundException(
+        `Deleted rental agreement with ID ${id} not found`,
+      );
+    }
+
+    return this.prisma.rentalAgreement.update({
+      where: { id },
+      data: { deletedAt: null },
+      include: rentalAgreementInclude,
     });
   }
 
@@ -214,8 +255,8 @@ export class RentalAgreementsService {
    * Validate create DTO: property and tenant exist, endDate after startDate, monthlyRent > 0.
    */
   private async validateCreateDto(dto: CreateRentalAgreementDto) {
-    const property = await this.prisma.property.findUnique({
-      where: { id: dto.propertyId },
+    const property = await this.prisma.property.findFirst({
+      where: { id: dto.propertyId, deletedAt: null },
     });
     if (!property) {
       throw new BadRequestException(
@@ -223,8 +264,8 @@ export class RentalAgreementsService {
       );
     }
 
-    const person = await this.prisma.person.findUnique({
-      where: { id: dto.tenantId },
+    const person = await this.prisma.person.findFirst({
+      where: { id: dto.tenantId, deletedAt: null },
     });
     if (!person) {
       throw new BadRequestException(
@@ -252,8 +293,8 @@ export class RentalAgreementsService {
    */
   private async validateUpdateDto(dto: UpdateRentalAgreementDto) {
     if (dto.propertyId) {
-      const property = await this.prisma.property.findUnique({
-        where: { id: dto.propertyId },
+      const property = await this.prisma.property.findFirst({
+        where: { id: dto.propertyId, deletedAt: null },
       });
       if (!property) {
         throw new BadRequestException(
@@ -263,8 +304,8 @@ export class RentalAgreementsService {
     }
 
     if (dto.tenantId) {
-      const person = await this.prisma.person.findUnique({
-        where: { id: dto.tenantId },
+      const person = await this.prisma.person.findFirst({
+        where: { id: dto.tenantId, deletedAt: null },
       });
       if (!person) {
         throw new BadRequestException(

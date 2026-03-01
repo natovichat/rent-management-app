@@ -16,6 +16,7 @@ export interface RentalAgreement {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   property?: {
     id: string;
     address: string;
@@ -58,6 +59,7 @@ export interface RentalAgreementFilters {
   status?: RentalAgreementStatus;
   propertyId?: string;
   tenantId?: string;
+  includeDeleted?: boolean;
 }
 
 /**
@@ -85,6 +87,9 @@ export const rentalAgreementsApi = {
     }
     if (filters?.tenantId) {
       params.append('tenantId', filters.tenantId);
+    }
+    if (filters?.includeDeleted) {
+      params.append('includeDeleted', 'true');
     }
 
     const response = await api.get<RentalAgreementsResponse>(`/rental-agreements?${params}`);
@@ -116,10 +121,18 @@ export const rentalAgreementsApi = {
   },
 
   /**
-   * Delete a rental agreement.
+   * Soft-delete a rental agreement.
    */
   deleteRentalAgreement: async (id: string): Promise<void> => {
     await api.delete(`/rental-agreements/${id}`);
+  },
+
+  /**
+   * Restore a soft-deleted rental agreement.
+   */
+  restoreRentalAgreement: async (id: string): Promise<RentalAgreement> => {
+    const response = await api.patch<RentalAgreement>(`/rental-agreements/${id}/restore`);
+    return response.data;
   },
 };
 

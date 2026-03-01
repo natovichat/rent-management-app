@@ -33,11 +33,14 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  RestoreFromTrash as RestoreIcon,
 } from '@mui/icons-material';
 import {
   personsApi,
   Person,
 } from '@/lib/api/persons';
+import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
+import { getUserProfile } from '@/lib/auth';
 import PersonForm from './PersonForm';
 
 const formatDate = (dateString: string): string => {
@@ -98,6 +101,8 @@ export default function PersonList() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
+  const { showDeleted } = useShowDeleted();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
@@ -112,14 +117,21 @@ export default function PersonList() {
     severity: 'success' | 'error';
   }>({ open: false, message: '', severity: 'success' });
 
+  useEffect(() => {
+    const profile = getUserProfile();
+    setIsAdmin(profile?.role === 'ADMIN');
+  }, []);
+
   // Reset to page 1 when search changes
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch]);
 
+  const includeDeleted = isAdmin && showDeleted;
+
   const { data, isLoading } = useQuery({
-    queryKey: ['persons', page, pageSize, debouncedSearch],
-    queryFn: () => personsApi.getPersons(page, pageSize, debouncedSearch || undefined),
+    queryKey: ['persons', page, pageSize, debouncedSearch, includeDeleted],
+    queryFn: () => personsApi.getPersons(page, pageSize, debouncedSearch || undefined, undefined, includeDeleted),
   });
 
   const persons = data?.data || [];
@@ -142,6 +154,17 @@ export default function PersonList() {
         message: error.response?.data?.message || 'שגיאה במחיקת אדם',
         severity: 'error',
       });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: (id: string) => personsApi.restorePerson(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['persons'] });
+      setSnackbar({ open: true, message: 'אדם שוחזר בהצלחה', severity: 'success' });
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה בשחזור האדם', severity: 'error' });
     },
   });
 
@@ -199,26 +222,39 @@ export default function PersonList() {
       width: 150,
       align: 'left',
       headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedPerson(params.row);
-            setOpenForm(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setPersonToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
+      getActions: (params) => {
+        const isDeleted = !!params.row.deletedAt;
+        if (isDeleted && isAdmin) {
+          return [
+            <GridActionsCellItem
+              key="restore"
+              icon={<RestoreIcon />}
+              label="שחזר"
+              onClick={() => restoreMutation.mutate(params.row.id)}
+            />,
+          ];
+        }
+        return [
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditIcon />}
+            label="עריכה"
+            onClick={() => {
+              setSelectedPerson(params.row);
+              setOpenForm(true);
+            }}
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteIcon />}
+            label="מחיקה"
+            onClick={() => {
+              setPersonToDelete(params.row);
+              setDeleteDialogOpen(true);
+            }}
+          />,
+        ];
+      },
     },
   ];
 
@@ -325,6 +361,12 @@ export default function PersonList() {
                 textAlign: 'right',
                 paddingRight: '16px',
               },
+              '& .row-deleted': {
+                color: 'text.disabled',
+                textDecoration: 'line-through',
+                bgcolor: 'action.hover',
+                opacity: 0.6,
+              },
             }}
             paginationMode="server"
             rowCount={data?.meta?.total || 0}
@@ -335,6 +377,7 @@ export default function PersonList() {
             }}
             pageSizeOptions={[10, 25, 50, 100]}
             getRowId={(row) => row.id}
+            getRowClassName={(params) => params.row.deletedAt ? 'row-deleted' : ''}
           />
         )}
       </Box>

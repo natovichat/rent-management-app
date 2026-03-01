@@ -75,10 +75,14 @@ export class MortgagesService {
    * Find all mortgages with pagination and filters.
    */
   async findAll(query: QueryMortgageDto) {
-    const { page = 1, limit = 20, status, propertyId } = query;
+    const { page = 1, limit = 20, status, propertyId, includeDeleted } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.MortgageWhereInput = {};
+
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     if (status) {
       where.status = status;
@@ -115,9 +119,12 @@ export class MortgagesService {
   /**
    * Find a mortgage by ID with relations.
    */
-  async findOne(id: string) {
-    const mortgage = await this.prisma.mortgage.findUnique({
-      where: { id },
+  async findOne(id: string, includeDeleted = false) {
+    const mortgage = await this.prisma.mortgage.findFirst({
+      where: {
+        id,
+        ...(!includeDeleted && { deletedAt: null }),
+      },
       include: mortgageInclude,
     });
 
@@ -131,22 +138,27 @@ export class MortgagesService {
   /**
    * Find mortgages by property ID (direct or linked).
    */
-  async findByProperty(propertyId: string) {
-    const property = await this.prisma.property.findUnique({
-      where: { id: propertyId },
+  async findByProperty(propertyId: string, includeDeleted = false) {
+    const property = await this.prisma.property.findFirst({
+      where: { id: propertyId, deletedAt: null },
     });
 
     if (!property) {
       throw new NotFoundException(`Property with ID ${propertyId} not found`);
     }
 
+    const where: Prisma.MortgageWhereInput = {
+      OR: [
+        { propertyId },
+        { linkedProperties: { has: propertyId } },
+      ],
+    };
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
+
     return this.prisma.mortgage.findMany({
-      where: {
-        OR: [
-          { propertyId },
-          { linkedProperties: { has: propertyId } },
-        ],
-      },
+      where,
       orderBy: { createdAt: 'desc' },
       include: mortgageInclude,
     });
@@ -202,13 +214,35 @@ export class MortgagesService {
   }
 
   /**
-   * Delete a mortgage.
+   * Soft-delete a mortgage.
    */
   async remove(id: string) {
     await this.findOne(id);
 
-    return this.prisma.mortgage.delete({
+    return this.prisma.mortgage.update({
       where: { id },
+      data: { deletedAt: new Date() },
+      include: mortgageInclude,
+    });
+  }
+
+  /**
+   * Restore a soft-deleted mortgage.
+   */
+  async restore(id: string) {
+    const mortgage = await this.prisma.mortgage.findFirst({
+      where: { id, deletedAt: { not: null } },
+      include: mortgageInclude,
+    });
+
+    if (!mortgage) {
+      throw new NotFoundException(`Deleted mortgage with ID ${id} not found`);
+    }
+
+    return this.prisma.mortgage.update({
+      where: { id },
+      data: { deletedAt: null },
+      include: mortgageInclude,
     });
   }
 
@@ -219,8 +253,8 @@ export class MortgagesService {
     dto: CreateMortgageDto | UpdateMortgageDto,
   ) {
     if (dto.propertyId) {
-      const property = await this.prisma.property.findUnique({
-        where: { id: dto.propertyId },
+      const property = await this.prisma.property.findFirst({
+        where: { id: dto.propertyId, deletedAt: null },
       });
       if (!property) {
         throw new BadRequestException(
@@ -230,8 +264,8 @@ export class MortgagesService {
     }
 
     if (dto.bankAccountId) {
-      const bankAccount = await this.prisma.bankAccount.findUnique({
-        where: { id: dto.bankAccountId },
+      const bankAccount = await this.prisma.bankAccount.findFirst({
+        where: { id: dto.bankAccountId, deletedAt: null },
       });
       if (!bankAccount) {
         throw new BadRequestException(
@@ -241,8 +275,8 @@ export class MortgagesService {
     }
 
     if (dto.mortgageOwnerId) {
-      const person = await this.prisma.person.findUnique({
-        where: { id: dto.mortgageOwnerId },
+      const person = await this.prisma.person.findFirst({
+        where: { id: dto.mortgageOwnerId, deletedAt: null },
       });
       if (!person) {
         throw new BadRequestException(
@@ -252,8 +286,8 @@ export class MortgagesService {
     }
 
     if (dto.payerId) {
-      const person = await this.prisma.person.findUnique({
-        where: { id: dto.payerId },
+      const person = await this.prisma.person.findFirst({
+        where: { id: dto.payerId, deletedAt: null },
       });
       if (!person) {
         throw new BadRequestException(
@@ -264,8 +298,8 @@ export class MortgagesService {
 
     if (dto.linkedProperties?.length) {
       for (const propId of dto.linkedProperties) {
-        const property = await this.prisma.property.findUnique({
-          where: { id: propId },
+        const property = await this.prisma.property.findFirst({
+          where: { id: propId, deletedAt: null },
         });
         if (!property) {
           throw new BadRequestException(

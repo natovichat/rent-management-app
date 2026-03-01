@@ -143,10 +143,11 @@ export class OwnershipsController {
   findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('includeDeleted') includeDeleted?: string,
   ) {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
-    return this.ownershipsService.findAll(pageNum, limitNum);
+    return this.ownershipsService.findAll(pageNum, limitNum, includeDeleted === 'true');
   }
 
   @Get(':id')
@@ -190,17 +191,20 @@ export class OwnershipsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete ownership' })
+  @ApiOperation({ summary: 'Soft-delete ownership' })
   @ApiParam({ name: 'id', description: 'Ownership UUID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Ownership deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Ownership not found',
-  })
+  @ApiResponse({ status: 204, description: 'Ownership soft-deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Ownership not found' })
   async remove(@Param('id') id: string) {
     await this.ownershipsService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted ownership (admin only)' })
+  @ApiParam({ name: 'id', description: 'Ownership UUID' })
+  @ApiResponse({ status: 200, description: 'Ownership restored successfully' })
+  @ApiResponse({ status: 404, description: 'Deleted ownership not found' })
+  restore(@Param('id') id: string) {
+    return this.ownershipsService.restore(id);
   }
 }

@@ -52,6 +52,7 @@ export interface PropertyEvent {
   amountDue?: number | string;
   paymentDate?: string;
   paymentStatus?: RentalPaymentStatus;
+  deletedAt?: string | null;
 }
 
 // ─── Create DTOs ──────────────────────────────────────────────────────────────
@@ -110,9 +111,11 @@ export const propertyEventsApi = {
     page = 1,
     limit = 20,
     eventType?: PropertyEventType,
+    includeDeleted?: boolean,
   ): Promise<PropertyEventsResponse> => {
     const params = new URLSearchParams({ page: String(page), limit: String(limit) });
     if (eventType) params.append('eventType', eventType);
+    if (includeDeleted) params.append('includeDeleted', 'true');
     const response = await api.get<PropertyEventsResponse>(
       `/properties/${propertyId}/events?${params}`,
     );
@@ -184,5 +187,12 @@ export const propertyEventsApi = {
 
   deletePropertyEvent: async (propertyId: string, eventId: string): Promise<void> => {
     await api.delete(`/properties/${propertyId}/events/${eventId}`);
+  },
+
+  restorePropertyEvent: async (propertyId: string, eventId: string): Promise<PropertyEvent> => {
+    const response = await api.patch<PropertyEvent>(
+      `/properties/${propertyId}/events/${eventId}/restore`,
+    );
+    return response.data;
   },
 };

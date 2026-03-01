@@ -132,21 +132,21 @@ export class PersonsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete person' })
+  @ApiOperation({ summary: 'Soft-delete person' })
   @ApiParam({ name: 'id', description: 'Person UUID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Person deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Person not found',
-  })
-  @ApiResponse({
-    status: 409,
-    description: 'Conflict - person has mortgages or rental agreements, cannot delete',
-  })
+  @ApiResponse({ status: 204, description: 'Person soft-deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Person not found' })
+  @ApiResponse({ status: 409, description: 'Conflict - person has active mortgages or rental agreements' })
   async remove(@Param('id') id: string) {
     await this.personsService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted person (admin only)' })
+  @ApiParam({ name: 'id', description: 'Person UUID' })
+  @ApiResponse({ status: 200, description: 'Person restored successfully' })
+  @ApiResponse({ status: 404, description: 'Deleted person not found' })
+  restore(@Param('id') id: string) {
+    return this.personsService.restore(id);
   }
 }

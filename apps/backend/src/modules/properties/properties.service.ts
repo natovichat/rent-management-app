@@ -215,10 +215,14 @@ export class PropertiesService {
    * Find all properties with pagination, search and filters
    */
   async findAll(query: QueryPropertyDto) {
-    const { page = 1, limit = 10, search, type, status, city, country } = query;
+    const { page = 1, limit = 10, search, type, status, city, country, includeDeleted } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.PropertyWhereInput = {};
+
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     if (type) {
       where.type = type as PropertyType;
@@ -267,11 +271,14 @@ export class PropertiesService {
   /**
    * Find one property by ID with optional relations
    */
-  async findOne(id: string, includeStr?: string) {
+  async findOne(id: string, includeStr?: string, includeDeleted = false) {
     const include = this.parseInclude(includeStr);
 
-    const property = await this.prisma.property.findUnique({
-      where: { id },
+    const property = await this.prisma.property.findFirst({
+      where: {
+        id,
+        ...(!includeDeleted && { deletedAt: null }),
+      },
       include,
     });
 
@@ -296,29 +303,89 @@ export class PropertiesService {
   }
 
   /**
-   * Remove a property. Fails if property has ownerships, mortgages, or rental agreements.
+   * Soft-delete a property and cascade to related records.
    */
   async remove(id: string) {
-    const property = await this.prisma.property.findUnique({ where: { id } });
+    const property = await this.prisma.property.findFirst({
+      where: { id, deletedAt: null },
+    });
 
     if (!property) {
       throw new NotFoundException(`Property with id ${id} not found`);
     }
 
-    // Delete all related data in the correct order within a transaction
+    const now = new Date();
+
     await this.prisma.$transaction(async (tx) => {
-      // 1. Delete property events (some may reference rental agreements)
-      await tx.propertyEvent.deleteMany({ where: { propertyId: id } });
+      await tx.propertyEvent.updateMany({
+        where: { propertyId: id, deletedAt: null },
+        data: { deletedAt: now },
+      });
 
-      // 2. Delete rental agreements (onDelete: Restrict — must be removed manually)
-      await tx.rentalAgreement.deleteMany({ where: { propertyId: id } });
+      await tx.rentalAgreement.updateMany({
+        where: { propertyId: id, deletedAt: null },
+        data: { deletedAt: now },
+      });
 
-      // 3. Delete mortgages tied to this property (onDelete: SetNull by default)
-      await tx.mortgage.deleteMany({ where: { propertyId: id } });
+      await tx.mortgage.updateMany({
+        where: { propertyId: id, deletedAt: null },
+        data: { deletedAt: now },
+      });
 
-      // 4. Delete the property itself.
-      //    Ownerships, PlanningProcessState, UtilityInfo cascade automatically.
-      await tx.property.delete({ where: { id } });
+      await tx.ownership.updateMany({
+        where: { propertyId: id, deletedAt: null },
+        data: { deletedAt: now },
+      });
+
+      await tx.property.update({
+        where: { id },
+        data: { deletedAt: now },
+      });
     });
+  }
+
+  /**
+   * Restore a soft-deleted property and its cascade-deleted relations.
+   */
+  async restore(id: string) {
+    const property = await this.prisma.property.findFirst({
+      where: { id, deletedAt: { not: null } },
+    });
+
+    if (!property) {
+      throw new NotFoundException(`Deleted property with id ${id} not found`);
+    }
+
+    const deletedAt = property.deletedAt!;
+
+    await this.prisma.$transaction(async (tx) => {
+      // Restore relations that were deleted at the same time as the property
+      await tx.propertyEvent.updateMany({
+        where: { propertyId: id, deletedAt },
+        data: { deletedAt: null },
+      });
+
+      await tx.rentalAgreement.updateMany({
+        where: { propertyId: id, deletedAt },
+        data: { deletedAt: null },
+      });
+
+      await tx.mortgage.updateMany({
+        where: { propertyId: id, deletedAt },
+        data: { deletedAt: null },
+      });
+
+      await tx.ownership.updateMany({
+        where: { propertyId: id, deletedAt },
+        data: { deletedAt: null },
+      });
+
+      await tx.property.update({
+        where: { id },
+        data: { deletedAt: null },
+      });
+    });
+
+    return this.prisma.property.findUnique({ where: { id } });
   }
 }

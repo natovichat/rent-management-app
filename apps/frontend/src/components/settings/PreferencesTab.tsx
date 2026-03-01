@@ -8,7 +8,12 @@ import {
   Alert,
   MenuItem,
   TextField,
+  Divider,
+  FormControlLabel,
+  Switch,
 } from '@mui/material';
+import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
+import { getUserProfile } from '@/lib/auth';
 
 const PREFS_KEY = 'user_preferences';
 
@@ -36,13 +41,18 @@ function loadPrefs(): Preferences {
 
 /**
  * PreferencesTab - stores display preferences in localStorage.
+ * Admin-only: includes a toggle to show soft-deleted entities.
  */
 export default function PreferencesTab() {
   const [preferences, setPreferences] = useState<Preferences>(defaults);
   const [success, setSuccess] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const { showDeleted, setShowDeleted } = useShowDeleted();
 
   useEffect(() => {
     setPreferences(loadPrefs());
+    const profile = getUserProfile();
+    setIsAdmin(profile?.role === 'ADMIN');
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -101,6 +111,41 @@ export default function PreferencesTab() {
         <MenuItem value="USD">$ דולר (USD)</MenuItem>
         <MenuItem value="EUR">€ אירו (EUR)</MenuItem>
       </TextField>
+
+      {isAdmin && (
+        <>
+          <Divider sx={{ my: 3 }} />
+          <Typography variant="h6" gutterBottom>
+            הגדרות מנהל
+          </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              py: 1,
+            }}
+          >
+            <Box>
+              <Typography variant="body1">הצג ישויות שנמחקו</Typography>
+              <Typography variant="body2" color="text.secondary">
+                הצג רשומות שנמחקו (מחיקה רכה) בכל הרשימות עם אפשרות שחזור
+              </Typography>
+            </Box>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={showDeleted}
+                  onChange={(e) => setShowDeleted(e.target.checked)}
+                  color="warning"
+                />
+              }
+              label=""
+              sx={{ ml: 0 }}
+            />
+          </Box>
+        </>
+      )}
 
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-start' }}>
         <Button type="submit" variant="contained">

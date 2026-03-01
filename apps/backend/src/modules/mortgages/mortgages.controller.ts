@@ -114,17 +114,20 @@ export class MortgagesController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete mortgage' })
+  @ApiOperation({ summary: 'Soft-delete mortgage' })
   @ApiParam({ name: 'id', description: 'Mortgage UUID' })
-  @ApiResponse({
-    status: 204,
-    description: 'Mortgage deleted successfully',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Mortgage not found',
-  })
+  @ApiResponse({ status: 204, description: 'Mortgage soft-deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Mortgage not found' })
   async remove(@Param('id') id: string) {
     await this.mortgagesService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @ApiOperation({ summary: 'Restore a soft-deleted mortgage (admin only)' })
+  @ApiParam({ name: 'id', description: 'Mortgage UUID' })
+  @ApiResponse({ status: 200, description: 'Mortgage restored successfully' })
+  @ApiResponse({ status: 404, description: 'Deleted mortgage not found' })
+  restore(@Param('id') id: string) {
+    return this.mortgagesService.restore(id);
   }
 }

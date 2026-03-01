@@ -15,6 +15,7 @@ export interface Ownership {
   notes?: string | null;
   createdAt: string;
   updatedAt: string;
+  deletedAt?: string | null;
   property?: {
     id: string;
     address: string;
@@ -62,10 +63,11 @@ export const ownershipsApi = {
   getOwnerships: async (
     page = 1,
     limit = 20,
+    includeDeleted?: boolean,
   ): Promise<OwnershipsResponse> => {
-    const response = await api.get<OwnershipsResponse>('/ownerships', {
-      params: { page, limit },
-    });
+    const params: Record<string, unknown> = { page, limit };
+    if (includeDeleted) params.includeDeleted = 'true';
+    const response = await api.get<OwnershipsResponse>('/ownerships', { params });
     return response.data;
   },
 
@@ -110,9 +112,17 @@ export const ownershipsApi = {
   },
 
   /**
-   * Delete an ownership.
+   * Soft-delete an ownership.
    */
   deleteOwnership: async (id: string): Promise<void> => {
     await api.delete(`/ownerships/${id}`);
+  },
+
+  /**
+   * Restore a soft-deleted ownership.
+   */
+  restoreOwnership: async (id: string): Promise<Ownership> => {
+    const response = await api.patch<Ownership>(`/ownerships/${id}/restore`);
+    return response.data;
   },
 };

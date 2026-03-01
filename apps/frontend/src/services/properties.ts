@@ -14,6 +14,7 @@ export interface Property {
   id: string;
   address: string;
   fileNumber?: string;
+  deletedAt?: string | null;
   type?: PropertyType;
   status?: PropertyStatus;
   country?: string;
@@ -221,6 +222,8 @@ export interface PropertyFilters {
   city?: string;
   country?: string;
   isMortgaged?: boolean;
+  // Soft-delete admin filter
+  includeDeleted?: boolean;
   // Advanced filters - Value ranges
   minEstimatedValue?: number;
   maxEstimatedValue?: number;
@@ -289,6 +292,11 @@ export const propertiesApi = {
     // Add isMortgaged filter
     if (filters?.isMortgaged !== undefined) {
       params.append('isMortgaged', filters.isMortgaged.toString());
+    }
+
+    // Admin: include soft-deleted records
+    if (filters?.includeDeleted) {
+      params.append('includeDeleted', 'true');
     }
 
     // Add advanced filters - Value ranges
@@ -368,12 +376,20 @@ export const propertiesApi = {
   },
 
   /**
-   * Delete a property.
+   * Soft-delete a property.
    * 
    * Note: accountId is automatically added by the API interceptor.
    */
   delete: async (id: string): Promise<void> => {
     await api.delete(`/properties/${id}`);
+  },
+
+  /**
+   * Restore a soft-deleted property (admin only).
+   */
+  restore: async (id: string): Promise<Property> => {
+    const response = await api.patch(`/properties/${id}/restore`);
+    return response.data;
   },
 
   /**

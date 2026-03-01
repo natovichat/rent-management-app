@@ -28,10 +28,14 @@ export class PersonsService {
   }
 
   async findAll(query: QueryPersonDto) {
-    const { page = 1, limit = 10, search, type } = query;
+    const { page = 1, limit = 10, search, type, includeDeleted } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.PersonWhereInput = {};
+
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     if (type) {
       where.type = type;
@@ -66,9 +70,12 @@ export class PersonsService {
     };
   }
 
-  async findOne(id: string) {
-    const person = await this.prisma.person.findUnique({
-      where: { id },
+  async findOne(id: string, includeDeleted = false) {
+    const person = await this.prisma.person.findFirst({
+      where: {
+        id,
+        ...(!includeDeleted && { deletedAt: null }),
+      },
     });
 
     if (!person) {
@@ -96,13 +103,13 @@ export class PersonsService {
   }
 
   async remove(id: string) {
-    const person = await this.prisma.person.findUnique({
-      where: { id },
+    const person = await this.prisma.person.findFirst({
+      where: { id, deletedAt: null },
       include: {
-        mortgageOwnerOf: { take: 1 },
-        mortgagePayerOf: { take: 1 },
-        tenantsOf: { take: 1 },
-        ownershipsOf: { take: 1 },
+        mortgageOwnerOf: { where: { deletedAt: null }, take: 1 },
+        mortgagePayerOf: { where: { deletedAt: null }, take: 1 },
+        tenantsOf: { where: { deletedAt: null }, take: 1 },
+        ownershipsOf: { where: { deletedAt: null }, take: 1 },
       },
     });
 
@@ -126,8 +133,24 @@ export class PersonsService {
       );
     }
 
-    return this.prisma.person.delete({
+    return this.prisma.person.update({
       where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  async restore(id: string) {
+    const person = await this.prisma.person.findFirst({
+      where: { id, deletedAt: { not: null } },
+    });
+
+    if (!person) {
+      throw new NotFoundException(`Deleted person with id ${id} not found`);
+    }
+
+    return this.prisma.person.update({
+      where: { id },
+      data: { deletedAt: null },
     });
   }
 }

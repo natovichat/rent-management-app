@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
@@ -30,7 +30,10 @@ import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import { rentalAgreementsApi, RentalAgreement, RentalAgreementStatus } from '@/lib/api/leases';
+import RestoreIcon from '@mui/icons-material/RestoreFromTrash';
+import { rentalAgreementsApi, RentalAgreement, RentalAgreementStatus, RentalAgreementFilters } from '@/lib/api/leases';
+import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
+import { getUserProfile } from '@/lib/auth';
 import LeaseForm from './LeaseForm';
 
 const formatCurrency = (amount: number) =>
@@ -123,6 +126,8 @@ export default function LeaseList() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
+  const { showDeleted } = useShowDeleted();
+  const [isAdmin, setIsAdmin] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [statusFilter, setStatusFilter] = useState<RentalAgreementStatus | ''>('');
@@ -137,17 +142,26 @@ export default function LeaseList() {
   }>({ open: false, message: '', severity: 'success' });
 
   useEffect(() => {
+    const profile = getUserProfile();
+    setIsAdmin(profile?.role === 'ADMIN');
+  }, []);
+
+  useEffect(() => {
     setPage(1);
   }, [statusFilter]);
 
+  const includeDeleted = isAdmin && showDeleted;
+
+  const apiFilters = useMemo((): RentalAgreementFilters | undefined => {
+    const f: RentalAgreementFilters = {};
+    if (statusFilter) f.status = statusFilter as RentalAgreementStatus;
+    if (includeDeleted) f.includeDeleted = true;
+    return Object.keys(f).length > 0 ? f : undefined;
+  }, [statusFilter, includeDeleted]);
+
   const { data, isLoading } = useQuery({
-    queryKey: ['rental-agreements', page, pageSize, statusFilter],
-    queryFn: () =>
-      rentalAgreementsApi.getRentalAgreements(
-        page,
-        pageSize,
-        statusFilter ? { status: statusFilter as RentalAgreementStatus } : undefined,
-      ),
+    queryKey: ['rental-agreements', page, pageSize, statusFilter, includeDeleted],
+    queryFn: () => rentalAgreementsApi.getRentalAgreements(page, pageSize, apiFilters),
   });
 
   const leases = data?.data || [];
@@ -162,6 +176,17 @@ export default function LeaseList() {
     },
     onError: () => {
       setSnackbar({ open: true, message: 'שגיאה במחיקת חוזה', severity: 'error' });
+    },
+  });
+
+  const restoreMutation = useMutation({
+    mutationFn: rentalAgreementsApi.restoreRentalAgreement,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['rental-agreements'] });
+      setSnackbar({ open: true, message: 'חוזה שוחזר בהצלחה', severity: 'success' });
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה בשחזור חוזה', severity: 'error' });
     },
   });
 
@@ -229,26 +254,39 @@ export default function LeaseList() {
       width: 150,
       align: 'left',
       headerAlign: 'left',
-      getActions: (params) => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<EditIcon />}
-          label="עריכה"
-          onClick={() => {
-            setSelectedLease(params.row);
-            setOpenDialog(true);
-          }}
-        />,
-        <GridActionsCellItem
-          key="delete"
-          icon={<DeleteIcon />}
-          label="מחיקה"
-          onClick={() => {
-            setLeaseToDelete(params.row);
-            setDeleteDialogOpen(true);
-          }}
-        />,
-      ],
+      getActions: (params) => {
+        const isDeleted = !!params.row.deletedAt;
+        if (isDeleted && isAdmin) {
+          return [
+            <GridActionsCellItem
+              key="restore"
+              icon={<RestoreIcon />}
+              label="שחזר"
+              onClick={() => restoreMutation.mutate(params.row.id)}
+            />,
+          ];
+        }
+        return [
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditIcon />}
+            label="עריכה"
+            onClick={() => {
+              setSelectedLease(params.row);
+              setOpenDialog(true);
+            }}
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteIcon />}
+            label="מחיקה"
+            onClick={() => {
+              setLeaseToDelete(params.row);
+              setDeleteDialogOpen(true);
+            }}
+          />,
+        ];
+      },
     },
   ];
 
@@ -364,6 +402,12 @@ export default function LeaseList() {
                 textAlign: 'right',
                 paddingRight: '16px',
               },
+              '& .row-deleted': {
+                color: 'text.disabled',
+                textDecoration: 'line-through',
+                bgcolor: 'action.hover',
+                opacity: 0.6,
+              },
             }}
             paginationMode="server"
             rowCount={data?.meta?.total || 0}
@@ -374,6 +418,7 @@ export default function LeaseList() {
             }}
             pageSizeOptions={[10, 25, 50, 100]}
             getRowId={(row) => row.id}
+            getRowClassName={(params) => params.row.deletedAt ? 'row-deleted' : ''}
           />
         )}
       </Box>

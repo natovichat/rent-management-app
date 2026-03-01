@@ -42,10 +42,14 @@ export class BankAccountsService {
    * Find all bank accounts with pagination and filters.
    */
   async findAll(query: QueryBankAccountDto) {
-    const { page = 1, limit = 20, bankName, accountType, isActive } = query;
+    const { page = 1, limit = 20, bankName, accountType, isActive, includeDeleted } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.BankAccountWhereInput = {};
+
+    if (!includeDeleted) {
+      where.deletedAt = null;
+    }
 
     if (bankName) {
       where.bankName = { contains: bankName, mode: 'insensitive' };
@@ -81,9 +85,12 @@ export class BankAccountsService {
   /**
    * Find a bank account by ID.
    */
-  async findOne(id: string) {
-    const bankAccount = await this.prisma.bankAccount.findUnique({
-      where: { id },
+  async findOne(id: string, includeDeleted = false) {
+    const bankAccount = await this.prisma.bankAccount.findFirst({
+      where: {
+        id,
+        ...(!includeDeleted && { deletedAt: null }),
+      },
     });
 
     if (!bankAccount) {
@@ -123,14 +130,14 @@ export class BankAccountsService {
   }
 
   /**
-   * Delete a bank account.
-   * Prevents deletion when linked to mortgages.
+   * Soft-delete a bank account.
+   * Prevents deletion when linked to active mortgages.
    */
   async remove(id: string) {
     await this.findOne(id);
 
     const mortgageCount = await this.prisma.mortgage.count({
-      where: { bankAccountId: id },
+      where: { bankAccountId: id, deletedAt: null },
     });
 
     if (mortgageCount > 0) {
@@ -139,8 +146,27 @@ export class BankAccountsService {
       );
     }
 
-    return this.prisma.bankAccount.delete({
+    return this.prisma.bankAccount.update({
       where: { id },
+      data: { deletedAt: new Date() },
+    });
+  }
+
+  /**
+   * Restore a soft-deleted bank account.
+   */
+  async restore(id: string) {
+    const bankAccount = await this.prisma.bankAccount.findFirst({
+      where: { id, deletedAt: { not: null } },
+    });
+
+    if (!bankAccount) {
+      throw new NotFoundException(`Deleted bank account with ID ${id} not found`);
+    }
+
+    return this.prisma.bankAccount.update({
+      where: { id },
+      data: { deletedAt: null },
     });
   }
 
@@ -157,6 +183,7 @@ export class BankAccountsService {
       where: {
         bankName,
         accountNumber,
+        deletedAt: null,
         ...(excludeId ? { id: { not: excludeId } } : {}),
       },
     });

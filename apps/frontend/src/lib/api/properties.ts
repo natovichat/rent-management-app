@@ -13,6 +13,7 @@ export type EstimationSource = 'PROFESSIONAL_APPRAISAL' | 'MARKET_ESTIMATE' | 'T
 export interface Property {
   id: string;
   address: string;
+  deletedAt?: string | null;
   fileNumber?: string;
   type?: PropertyType;
   status?: PropertyStatus;
@@ -149,6 +150,7 @@ export interface PropertyFilters {
   status?: PropertyStatus;
   city?: string;
   country?: string;
+  includeDeleted?: boolean;
 }
 
 /**
@@ -182,6 +184,9 @@ export const propertiesApi = {
     }
     if (filters?.country) {
       params.append('country', filters.country);
+    }
+    if (filters?.includeDeleted) {
+      params.append('includeDeleted', 'true');
     }
 
     const response = await api.get<PropertiesResponse>(`/properties?${params}`);
@@ -223,10 +228,18 @@ export const propertiesApi = {
   },
 
   /**
-   * Delete a property.
+   * Delete (soft-delete) a property.
    */
   deleteProperty: async (id: string): Promise<void> => {
     await api.delete(`/properties/${id}`);
+  },
+
+  /**
+   * Restore a soft-deleted property.
+   */
+  restoreProperty: async (id: string): Promise<Property> => {
+    const response = await api.patch<Property>(`/properties/${id}/restore`);
+    return response.data;
   },
 
   /**
