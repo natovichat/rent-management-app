@@ -13,17 +13,27 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { IsEmail, IsEnum, IsBoolean, IsOptional } from 'class-validator';
 import { UserRole } from '@prisma/client';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 class AddUserDto {
+  @IsEmail()
   email: string;
+
+  @IsOptional()
+  @IsEnum(UserRole)
   role?: UserRole;
 }
 
 class UpdateUserDto {
+  @IsOptional()
+  @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsEnum(UserRole)
   role?: UserRole;
 }
 
