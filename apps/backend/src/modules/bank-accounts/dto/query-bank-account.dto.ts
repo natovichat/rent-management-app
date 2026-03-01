@@ -69,4 +69,14 @@ export class QueryBankAccountDto {
   @Min(1)
   @Max(100)
   limit?: number = 20;
+
+  @ApiPropertyOptional({ description: 'Include soft-deleted records', default: false })
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  includeDeleted?: boolean;
 }

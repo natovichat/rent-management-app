@@ -3,11 +3,12 @@ import {
   IsString,
   IsInt,
   IsEnum,
+  IsBoolean,
   Min,
   Max,
   MaxLength,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PersonType } from '@prisma/client';
 
@@ -56,4 +57,14 @@ export class QueryPersonDto {
   @IsOptional()
   @IsEnum(PersonType)
   type?: PersonType;
+
+  @ApiPropertyOptional({ description: 'Include soft-deleted records (admin only)', default: false })
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  includeDeleted?: boolean;
 }

@@ -3,10 +3,11 @@ import {
   IsEnum,
   IsUUID,
   IsInt,
+  IsBoolean,
   Min,
   Max,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { RentalAgreementStatus } from '@prisma/client';
 import { RENTAL_AGREEMENT_STATUSES } from './create-rental-agreement.dto';
@@ -64,4 +65,14 @@ export class QueryRentalAgreementDto {
   @Min(1)
   @Max(100)
   limit?: number = 20;
+
+  @ApiPropertyOptional({ description: 'Include soft-deleted records (admin only)', default: false })
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  includeDeleted?: boolean;
 }

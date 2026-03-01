@@ -3,11 +3,12 @@ import {
   IsString,
   IsEnum,
   IsInt,
+  IsBoolean,
   Min,
   Max,
   MaxLength,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { PropertyType, PropertyStatus } from '@prisma/client';
 import { PROPERTY_TYPES, PROPERTY_STATUSES } from './create-property.dto';
@@ -86,4 +87,14 @@ export class QueryPropertyDto {
   @IsString()
   @MaxLength(100)
   country?: string;
+
+  @ApiPropertyOptional({ description: 'Include soft-deleted records (admin only)', default: false })
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  includeDeleted?: boolean;
 }

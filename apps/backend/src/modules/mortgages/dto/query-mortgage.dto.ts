@@ -3,10 +3,11 @@ import {
   IsEnum,
   IsUUID,
   IsInt,
+  IsBoolean,
   Min,
   Max,
 } from 'class-validator';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { MortgageStatus } from '@prisma/client';
 import { MORTGAGE_STATUSES } from './create-mortgage.dto';
@@ -56,4 +57,14 @@ export class QueryMortgageDto {
   @Min(1)
   @Max(100)
   limit?: number = 20;
+
+  @ApiPropertyOptional({ description: 'Include soft-deleted records (admin only)', default: false })
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  includeDeleted?: boolean;
 }
