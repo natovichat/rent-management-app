@@ -1,0 +1,1279 @@
+{
+  "generated_at": "2026-03-01T07:35:50.358553",
+  "groups": [
+    {
+      "group": "netobitz",
+      "source_tag": "מקור: משפחת נטוביץ",
+      "owners": [
+        {
+          "name": "יצחק נטוביץ",
+          "phone": null,
+          "email": null
+        }
+      ],
+      "properties": [
+        {
+          "address": "הפלמ\"ח 50, ירושלים",
+          "city": "ירושלים",
+          "file_number": "2642/7",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "מלכין בלה ואיתם טובול",
+              "email": "belina241@gmail.co.il",
+              "phone": "054-5454918",
+              "start_date": "2020-11-10",
+              "end_date": "2026-11-09",
+              "monthly_rent": 6000,
+              "status": "ACTIVE",
+              "apartment_number": "1",
+              "floor": "1",
+              "rooms": "3",
+              "notes": "מופקד לליאת, מעבירים חצי  חודש לאיציק ולאילן אשר"
+            }
+          ]
+        },
+        {
+          "address": "הרוא\"ה 295, רמת גן",
+          "city": "רמת גן",
+          "file_number": "2642/6",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "עדי ויהודה בן שמואל",
+              "email": "ybsklasa@gmail.com",
+              "phone": "050-6822652",
+              "start_date": "2020-11-10",
+              "end_date": "2028-01-09",
+              "monthly_rent": 6500,
+              "status": "ACTIVE",
+              "apartment_number": "2",
+              "floor": "3",
+              "rooms": "1",
+              "notes": null
+            },
+            {
+              "tenant_name": "רלי דודי",
+              "email": null,
+              "phone": "508368619",
+              "start_date": null,
+              "end_date": null,
+              "monthly_rent": 3700,
+              "status": "ACTIVE",
+              "apartment_number": null,
+              "floor": null,
+              "rooms": null,
+              "notes": "נטו דיור"
+            },
+            {
+              "tenant_name": "מיכל מדמון",
+              "email": null,
+              "phone": "505856657",
+              "start_date": "2024-08-01",
+              "end_date": "2026-03-30",
+              "monthly_rent": 3500,
+              "status": "ACTIVE",
+              "apartment_number": null,
+              "floor": "2",
+              "rooms": "2",
+              "notes": "נטו דיור"
+            }
+          ]
+        },
+        {
+          "address": "מנדלי 7, תל אביב",
+          "city": "תל אביב",
+          "file_number": "1672/41",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "לירון יצחק",
+              "email": "lironitzhak24k@gmail.com",
+              "phone": "053-9523524",
+              "start_date": "2025-02-01",
+              "end_date": "2026-01-31",
+              "monthly_rent": 3700,
+              "status": "EXPIRED",
+              "apartment_number": "16",
+              "floor": "2",
+              "rooms": "1",
+              "notes": null
+            },
+            {
+              "tenant_name": "אלכסיי פירנוב",
+              "email": "apinarov@gmail.com",
+              "phone": "050-6076949",
+              "start_date": "2020-04-01",
+              "end_date": "2026-03-31",
+              "monthly_rent": 3700,
+              "status": "ACTIVE",
+              "apartment_number": "17",
+              "floor": "1",
+              "rooms": "1",
+              "notes": "העברה בנקאית"
+            }
+          ]
+        },
+        {
+          "address": "לביא 6, גבעתיים",
+          "city": "גבעתיים",
+          "file_number": "933/6",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "יעל שייה גטניו",
+              "email": null,
+              "phone": null,
+              "start_date": null,
+              "end_date": null,
+              "monthly_rent": 5000,
+              "status": "ACTIVE",
+              "apartment_number": "4",
+              "floor": "2",
+              "rooms": "2",
+              "notes": "בטיפול יעקב לאובר שיק אחת לחודשיים"
+            }
+          ]
+        },
+        {
+          "address": "שלום עליכם 6, רמת גן",
+          "city": "רמת גן",
+          "file_number": "933/12",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "זדה רינה",
+              "email": "rinazzaadd@gmail.com",
+              "phone": "054-4566415",
+              "start_date": "2020-06-30",
+              "end_date": "2026-07-14",
+              "monthly_rent": 5400,
+              "status": "ACTIVE",
+              "apartment_number": "3",
+              "floor": "6",
+              "rooms": "3.5",
+              "notes": "מופקד לחשבון של ליאת דיסקונט"
+            }
+          ]
+        },
+        {
+          "address": "פטרסון 3, תל אביב",
+          "city": "תל אביב",
+          "file_number": "2642/2",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "שלמה ניימן",
+              "email": "shlomo.neiman92@gmail.com",
+              "phone": "053-2361393",
+              "start_date": "2024-04-01",
+              "end_date": "2026-03-31",
+              "monthly_rent": 4845,
+              "status": "ACTIVE",
+              "apartment_number": "אין",
+              "floor": "2",
+              "rooms": "2",
+              "notes": "מופקד לחשבון של מיכל"
+            }
+          ]
+        },
+        {
+          "address": "טבנקין 22, גבעתיים",
+          "city": "גבעתיים",
+          "file_number": "157/318",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "סיוון ויניב סימן טוב",
+              "email": "sivansimantovm@gmail.com",
+              "phone": "054-4477517",
+              "start_date": "2020-08-01",
+              "end_date": "2025-08-31",
+              "monthly_rent": 16000,
+              "status": "EXPIRED",
+              "apartment_number": "21",
+              "floor": "5+6",
+              "rooms": "3.5",
+              "notes": "בטיפול עו\"ד פרישטיק"
+            }
+          ]
+        },
+        {
+          "address": "אלנבי 85, תל אביב",
+          "city": "תל אביב",
+          "file_number": "157/345.1",
+          "is_existing_in_db": true,
+          "subsection": "נאמנות אביעד נטוביץ",
+          "leases": [
+            {
+              "tenant_name": "רדפורד הלוחש לסוסים",
+              "email": null,
+              "phone": "052-8745005",
+              "start_date": "2020-04-01",
+              "end_date": "2026-09-30",
+              "monthly_rent": 1100,
+              "status": "ACTIVE",
+              "apartment_number": "3",
+              "floor": "1",
+              "rooms": "1",
+              "notes": "משלם בחודשו לאביעד -ישראל כץ"
+            },
+            {
+              "tenant_name": "ירדן לוינסון",
+              "email": "miki@donitza.co.il",
+              "phone": "054-6967020",
+              "start_date": "2024-02-01",
+              "end_date": "2027-01-31",
+              "monthly_rent": 4300,
+              "status": "ACTIVE",
+              "apartment_number": "14",
+              "floor": "3",
+              "rooms": "3",
+              "notes": "מיקי 1/3 , אביעד 2/3"
+            }
+          ]
+        },
+        {
+          "address": "שאול חרנ\"ם 10, פתח תקווה",
+          "city": "פתח תקווה",
+          "file_number": "157/368",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "יוסי ושולה מזרחי",
+              "email": null,
+              "phone": "50-540-4765",
+              "start_date": "2025-10-17",
+              "end_date": "2026-10-16",
+              "monthly_rent": 9000,
+              "status": "ACTIVE",
+              "apartment_number": "45",
+              "floor": "13",
+              "rooms": "3",
+              "notes": "דירה גדולה"
+            },
+            {
+              "tenant_name": "אביאל ורחל מאמו",
+              "email": null,
+              "phone": "055-5009573",
+              "start_date": "2023-10-08",
+              "end_date": "2026-10-07",
+              "monthly_rent": 7050,
+              "status": "ACTIVE",
+              "apartment_number": "47",
+              "floor": "14",
+              "rooms": "3",
+              "notes": "דירה קטנה"
+            },
+            {
+              "tenant_name": "ברכה רוזן",
+              "email": null,
+              "phone": "052-8222186",
+              "start_date": "2023-11-09",
+              "end_date": "2025-11-09",
+              "monthly_rent": 7400,
+              "status": "EXPIRED",
+              "apartment_number": "6",
+              "floor": "2",
+              "rooms": "5",
+              "notes": "דירה של צביקה נטוביץ - חידוש חוזה דרכו 052-3273253 , 1/3 שייך לאיציק"
+            }
+          ]
+        },
+        {
+          "address": "שאול חרנ\"ם 6, פתח תקווה",
+          "city": "פתח תקווה",
+          "file_number": "157/370",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "איציק נטוביץ",
+              "email": "itzhak@natolaw.co.il",
+              "phone": "054-4336308",
+              "start_date": "2023-10-01",
+              "end_date": "2027-10-01",
+              "monthly_rent": 8000,
+              "status": "ACTIVE",
+              "apartment_number": "45",
+              "floor": "12",
+              "rooms": "6",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "address": "הרברט סמואל 71, חדרה",
+          "city": "חדרה",
+          "file_number": "108/740",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "יבולים דרום,עמוס שמור,יצחק נטוביץ",
+              "email": null,
+              "phone": null,
+              "start_date": null,
+              "end_date": "2025-11-30",
+              "monthly_rent": 1000,
+              "status": "EXPIRED",
+              "apartment_number": "דירה",
+              "floor": "קרקע",
+              "rooms": null,
+              "notes": "#ERROR!"
+            }
+          ]
+        },
+        {
+          "address": "כנרת 5, בני ברק",
+          "city": "בני ברק",
+          "file_number": "226/186",
+          "is_existing_in_db": true,
+          "subsection": "main",
+          "leases": [
+            {
+              "tenant_name": "דורון ויגלר",
+              "email": "wiegler.law@gmail.com",
+              "phone": "052-2501035",
+              "start_date": "2020-07-01",
+              "end_date": null,
+              "monthly_rent": 2925,
+              "status": "ACTIVE",
+              "apartment_number": "26",
+              "floor": "26",
+              "rooms": "1",
+              "notes": "משלם כל חודש"
+            },
+            {
+              "tenant_name": "תמר לרנר",
+              "email": "tamar@zllaw.co.il",
+              "phone": "054-4262631",
+              "start_date": "2023-10-08",
+              "end_date": null,
+              "monthly_rent": 9828,
+              "status": "ACTIVE",
+              "apartment_number": "26",
+              "floor": "26",
+              "rooms": "2",
+              "notes": "שכירות + חניות +ציוד משרדי"
+            }
+          ]
+        },
+        {
+          "address": "פבריגט 32, רמת גן",
+          "city": "רמת גן",
+          "file_number": "6459/1.1",
+          "is_existing_in_db": false,
+          "subsection": "נטו דיור",
+          "leases": [
+            {
+              "tenant_name": "שלומי גולן ושמרית לוגסי",
+              "email": "sifuluxshlomo@gmail.com",
+              "phone": "054-7549305",
+              "start_date": "2022-06-01",
+              "end_date": "2026-05-03",
+              "monthly_rent": 6500,
+              "status": "ACTIVE",
+              "apartment_number": "2",
+              "floor": "קרקע",
+              "rooms": "3",
+              "notes": "נטו דיור"
+            }
+          ]
+        },
+        {
+          "address": "קדושי מזריץ, לוד",
+          "city": "לוד",
+          "file_number": "6459/2.1",
+          "is_existing_in_db": false,
+          "subsection": "נטו דיור",
+          "leases": [
+            {
+              "tenant_name": "מרדכי ברנז",
+              "email": "motybz@yahoo.com",
+              "phone": "052-6725226",
+              "start_date": "2023-03-20",
+              "end_date": "2026-03-31",
+              "monthly_rent": 3600,
+              "status": "ACTIVE",
+              "apartment_number": "13",
+              "floor": null,
+              "rooms": null,
+              "notes": "נטו דיור"
+            }
+          ]
+        },
+        {
+          "address": "טרומן 16, רמת גן",
+          "city": "רמת גן",
+          "file_number": "6459/8",
+          "is_existing_in_db": false,
+          "subsection": "נטו דיור",
+          "leases": []
+        },
+        {
+          "address": "צפת 36, זיכרון יעקב",
+          "city": "זיכרון יעקב",
+          "file_number": "5005/14",
+          "is_existing_in_db": false,
+          "subsection": "עזבון טאובר",
+          "leases": [
+            {
+              "tenant_name": "ניסים סעדון",
+              "email": null,
+              "phone": "050-2399519",
+              "start_date": "2020-05-30",
+              "end_date": "2026-05-31",
+              "monthly_rent": 2200,
+              "status": "ACTIVE",
+              "apartment_number": "בית",
+              "floor": "קרקע",
+              "rooms": "1",
+              "notes": "עזבון טאובר"
+            }
+          ]
+        },
+        {
+          "address": "פלמ\"ח 9, פתח תקווה",
+          "city": "פתח תקווה",
+          "file_number": "6430/11",
+          "is_existing_in_db": false,
+          "subsection": "נאמנות אביעד נטוביץ",
+          "leases": [
+            {
+              "tenant_name": "מיראל חמודה",
+              "email": null,
+              "phone": "054-7786551",
+              "start_date": "2025-05-01",
+              "end_date": "2026-04-30",
+              "monthly_rent": 6350,
+              "status": "ACTIVE",
+              "apartment_number": "1",
+              "floor": "1",
+              "rooms": "3",
+              "notes": "#ERROR!"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "sharon",
+      "source_tag": "מקור: עיזבון שלמה שרון (6422)",
+      "owners": [
+        {
+          "name": "משפחת שרון",
+          "phone": null,
+          "email": null
+        }
+      ],
+      "properties": [
+        {
+          "address": "עוזי חיטמן 2, רעננה",
+          "city": "רעננה",
+          "file_number": "6422/4.2",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "נועם ואיילת טל",
+              "email": "noam_tal1@hotmail.com",
+              "phone": "050-9112369",
+              "start_date": "2020-04-01",
+              "end_date": "2026-03-31",
+              "monthly_rent": 6500,
+              "status": "ACTIVE",
+              "apartment_number": "3",
+              "floor": "1",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "דן ולירון לויצקי",
+              "email": "dleritzky@gmail.com",
+              "phone": "585235354",
+              "start_date": "2024-06-05",
+              "end_date": "2026-07-31",
+              "monthly_rent": 11000,
+              "status": "ACTIVE",
+              "apartment_number": "15",
+              "floor": "5",
+              "rooms": "5.5",
+              "notes": "יש חוזה חתום + שיקים עד 8/2024"
+            }
+          ]
+        },
+        {
+          "address": "עוזי חיטמן 4, רעננה",
+          "city": "רעננה",
+          "file_number": "6422/3.4",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "צווילינג ירדנה וערן",
+              "email": null,
+              "phone": "054-7261948",
+              "start_date": "2019-03-17",
+              "end_date": "2027-06-30",
+              "monthly_rent": 7770,
+              "status": "ACTIVE",
+              "apartment_number": "2",
+              "floor": "קרקע",
+              "rooms": "6",
+              "notes": null
+            },
+            {
+              "tenant_name": "אפרת ודורון יולזרי",
+              "email": "efratiefrat@gmail.com",
+              "phone": "052-3877232",
+              "start_date": "2019-05-27",
+              "end_date": "2028-05-31",
+              "monthly_rent": 6284,
+              "status": "ACTIVE",
+              "apartment_number": "4",
+              "floor": "1",
+              "rooms": "5",
+              "notes": null
+            },
+            {
+              "tenant_name": "אמיר וזהר עצמוני",
+              "email": null,
+              "phone": "054-4270420",
+              "start_date": "2019-10-10",
+              "end_date": "2025-10-09",
+              "monthly_rent": 6800,
+              "status": "EXPIRED",
+              "apartment_number": "6",
+              "floor": "2",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "אורן ושני ויינרייך",
+              "email": null,
+              "phone": "052-8551115",
+              "start_date": "2019-07-01",
+              "end_date": "2026-06-30",
+              "monthly_rent": 7200,
+              "status": "ACTIVE",
+              "apartment_number": "10",
+              "floor": "3",
+              "rooms": "5",
+              "notes": null
+            },
+            {
+              "tenant_name": "שושן מוטי ועילית",
+              "email": "motish298@gmail.com",
+              "phone": "052-8724095",
+              "start_date": "2022-12-13",
+              "end_date": "2026-06-29",
+              "monthly_rent": 8400,
+              "status": "ACTIVE",
+              "apartment_number": "12",
+              "floor": "4",
+              "rooms": "5",
+              "notes": "התקבלו 2 המחאות פיקדון כל אחת ע\"ס 8,000 ₪ כאשר המחאה אחת הופקדה בחשבון העיזבון והמחאה שניה מוחזקת למשמורת במשרד"
+            },
+            {
+              "tenant_name": "גדעון ומיכל אנהולט",
+              "email": "michal.steinberg@outlook.com",
+              "phone": "054-5424942",
+              "start_date": "2022-07-01",
+              "end_date": "2026-06-30",
+              "monthly_rent": 12075,
+              "status": "ACTIVE",
+              "apartment_number": "15",
+              "floor": "5+6",
+              "rooms": "6.5",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "address": "עוזי חיטמן 6, רעננה",
+          "city": "רעננה",
+          "file_number": "6422/2.7",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "אורטל ורועי ציוני",
+              "email": "roey.ziuni@gmail.com",
+              "phone": "542430982",
+              "start_date": "2024-05-15",
+              "end_date": "2026-05-14",
+              "monthly_rent": 9500,
+              "status": "ACTIVE",
+              "apartment_number": "2",
+              "floor": "קרקע",
+              "rooms": "6",
+              "notes": null
+            },
+            {
+              "tenant_name": "ברק שצמן וים פיאטקובסקי",
+              "email": "vamus111@gmail.com",
+              "phone": "054-4709880",
+              "start_date": "2025-05-10",
+              "end_date": "2027-05-09",
+              "monthly_rent": 6600,
+              "status": "ACTIVE",
+              "apartment_number": "4",
+              "floor": "1",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "ברוס ז'אן קלוד",
+              "email": null,
+              "phone": "058-5130148",
+              "start_date": "2018-11-20",
+              "end_date": "2026-06-18",
+              "monthly_rent": 6300,
+              "status": "ACTIVE",
+              "apartment_number": "5",
+              "floor": "1",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "ראובן ופאולה פורמן",
+              "email": "reuvenf@tlmw.com",
+              "phone": "054-4331564",
+              "start_date": "2018-11-20",
+              "end_date": "2025-11-30",
+              "monthly_rent": 6600,
+              "status": "EXPIRED",
+              "apartment_number": "10",
+              "floor": "3",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "ניר חמו אברהם ודניס אקר",
+              "email": null,
+              "phone": "050-7700320",
+              "start_date": "2020-03-01",
+              "end_date": "2026-02-28",
+              "monthly_rent": 6200,
+              "status": "EXPIRED",
+              "apartment_number": "11",
+              "floor": "3",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "גליה דולב ואריה אשד",
+              "email": null,
+              "phone": "050-6303247",
+              "start_date": "2020-05-20",
+              "end_date": "2026-07-30",
+              "monthly_rent": 7200,
+              "status": "ACTIVE",
+              "apartment_number": "12",
+              "floor": "4",
+              "rooms": "5",
+              "notes": "ניתנו שיקים עד 10/06/25"
+            },
+            {
+              "tenant_name": "חן ומור פיפק",
+              "email": "chenpkpk@gmail.com",
+              "phone": "052-345-3284",
+              "start_date": "2025-08-01",
+              "end_date": "2027-07-30",
+              "monthly_rent": 10000,
+              "status": "ACTIVE",
+              "apartment_number": "15",
+              "floor": "5+6",
+              "rooms": "6.5",
+              "notes": "יש חוזה חתום + שיקים עד 30/7/24 ויש לקבל שיקים לשנת 2025 ע\"ס 10000"
+            }
+          ]
+        },
+        {
+          "address": "עוזי חיטמן 18, רעננה",
+          "city": "רעננה",
+          "file_number": "6422/6.9",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "ליטל דניאל ולביא יצחקי",
+              "email": "L.Daniel@shibolet.com",
+              "phone": "054-7688549",
+              "start_date": "2020-09-01",
+              "end_date": "2026-08-31",
+              "monthly_rent": 11000,
+              "status": "ACTIVE",
+              "apartment_number": "1",
+              "floor": "קרקע",
+              "rooms": "6",
+              "notes": null
+            },
+            {
+              "tenant_name": "אריאל ושרית סתון",
+              "email": "nadan25@walla.co.il",
+              "phone": "054-2471789",
+              "start_date": "2022-08-15",
+              "end_date": "2026-08-14",
+              "monthly_rent": 11500,
+              "status": "ACTIVE",
+              "apartment_number": "2",
+              "floor": "5+6",
+              "rooms": "6.5",
+              "notes": null
+            },
+            {
+              "tenant_name": "אורן גיל",
+              "email": "ronigil0707@gmail.com",
+              "phone": "506286976",
+              "start_date": "2025-08-15",
+              "end_date": "2026-08-14",
+              "monthly_rent": 6800,
+              "status": "ACTIVE",
+              "apartment_number": "3",
+              "floor": "1",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "אוריין ואלעד דהאן",
+              "email": "oryand200@gmail.com",
+              "phone": "054-3003754",
+              "start_date": "2020-08-06",
+              "end_date": "2026-08-06",
+              "monthly_rent": 7400,
+              "status": "ACTIVE",
+              "apartment_number": "4",
+              "floor": "1",
+              "rooms": "5",
+              "notes": null
+            },
+            {
+              "tenant_name": "מרדכי ודיאנה סלם",
+              "email": "guysalem@zahav.net.il",
+              "phone": "050-2169534",
+              "start_date": "2020-07-07",
+              "end_date": "2026-07-06",
+              "monthly_rent": 6300,
+              "status": "ACTIVE",
+              "apartment_number": "5",
+              "floor": "1",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "אורי נעמת",
+              "email": "ori.naamat@gmail.com",
+              "phone": "050-6364844",
+              "start_date": "2020-09-01",
+              "end_date": "2026-08-31",
+              "monthly_rent": 6800,
+              "status": "ACTIVE",
+              "apartment_number": "6",
+              "floor": "2",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "מיכל כהן ודן גנון",
+              "email": "michalycohen@gmail.com",
+              "phone": "052-8464666",
+              "start_date": "2020-09-01",
+              "end_date": "2026-08-30",
+              "monthly_rent": 7500,
+              "status": "ACTIVE",
+              "apartment_number": "7",
+              "floor": "2",
+              "rooms": "5",
+              "notes": null
+            },
+            {
+              "tenant_name": "טל ועומר פריוה",
+              "email": "amirzarfaty6@gmail.com",
+              "phone": "050-4030922",
+              "start_date": "2026-02-01",
+              "end_date": "2027-12-31",
+              "monthly_rent": 7700,
+              "status": "ACTIVE",
+              "apartment_number": "8",
+              "floor": "2",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "גלי פרג",
+              "email": "gali_0522@walla.com",
+              "phone": "052-4440521",
+              "start_date": "2020-07-30",
+              "end_date": "2026-07-29",
+              "monthly_rent": 5565,
+              "status": "ACTIVE",
+              "apartment_number": "9",
+              "floor": "3",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "יוגב חיימוביץ ומעיין",
+              "email": "yogevch@gmail.com",
+              "phone": "054-5713931",
+              "start_date": "2025-07-01",
+              "end_date": "2027-07-31",
+              "monthly_rent": 9000,
+              "status": "ACTIVE",
+              "apartment_number": "10",
+              "floor": "3",
+              "rooms": "5",
+              "notes": null
+            },
+            {
+              "tenant_name": "שיר וליאור שמעוני",
+              "email": "shiraviv96@gmail.com",
+              "phone": "054-633805",
+              "start_date": "2025-03-15",
+              "end_date": "2027-03-15",
+              "monthly_rent": 6800,
+              "status": "ACTIVE",
+              "apartment_number": "11",
+              "floor": "3",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "יעל ואלון מרום",
+              "email": "yaeltm1@gmail.com",
+              "phone": "054-44651698",
+              "start_date": "2023-07-01",
+              "end_date": "2026-06-30",
+              "monthly_rent": 8610,
+              "status": "ACTIVE",
+              "apartment_number": "12",
+              "floor": "4",
+              "rooms": "5",
+              "notes": "יש שיקים עד 6/25"
+            },
+            {
+              "tenant_name": "גבאי בנד גאיה  ואור",
+              "email": "gaianband10@gmail.com",
+              "phone": "050-7731101",
+              "start_date": "2022-01-05",
+              "end_date": "2026-01-04",
+              "monthly_rent": 7245,
+              "status": "EXPIRED",
+              "apartment_number": "113331313",
+              "floor": "4",
+              "rooms": "5",
+              "notes": null
+            },
+            {
+              "tenant_name": "שון ויעל ליהי אביב זקס",
+              "email": "yaelaviv91@gmail.com",
+              "phone": "054-6209977",
+              "start_date": "2020-11-01",
+              "end_date": "2026-09-14",
+              "monthly_rent": 9000,
+              "status": "ACTIVE",
+              "apartment_number": "14",
+              "floor": "5",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "שלמה ומיכל יושאי",
+              "email": "shlomiyoshai@gmail.com",
+              "phone": "050-7535604",
+              "start_date": "2020-08-10",
+              "end_date": "2026-08-09",
+              "monthly_rent": 11000,
+              "status": "ACTIVE",
+              "apartment_number": "15",
+              "floor": "5 ו-6",
+              "rooms": "6",
+              "notes": null
+            },
+            {
+              "tenant_name": "אריאל ודוד ברמי",
+              "email": "arielshemesh345@gmail.com",
+              "phone": "052-3302304",
+              "start_date": "2024-12-01",
+              "end_date": "2026-11-30",
+              "monthly_rent": 12000,
+              "status": "ACTIVE",
+              "apartment_number": "16",
+              "floor": "5",
+              "rooms": "6",
+              "notes": null
+            },
+            {
+              "tenant_name": "הדס ואלעד דרורי",
+              "email": "nmhadas@gmail.com",
+              "phone": "054-6226048",
+              "start_date": "2024-11-11",
+              "end_date": "2026-11-10",
+              "monthly_rent": 12500,
+              "status": "ACTIVE",
+              "apartment_number": "17",
+              "floor": "5 ו-6",
+              "rooms": "6",
+              "notes": null
+            }
+          ]
+        },
+        {
+          "address": "עוזי חיטמן 16, רעננה",
+          "city": "רעננה",
+          "file_number": "6422/5.1",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "ויקטוריה סמוטוגה וליה",
+              "email": "Lias@psagot.co.il",
+              "phone": "050-5815818",
+              "start_date": "2020-08-01",
+              "end_date": "2026-07-31",
+              "monthly_rent": 6800,
+              "status": "ACTIVE",
+              "apartment_number": "11",
+              "floor": "3",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "סשה ליוור ואנסטסיה",
+              "email": "sachaliwer@gmail.com",
+              "phone": "054-2129246",
+              "start_date": "2020-09-10",
+              "end_date": "2026-09-09",
+              "monthly_rent": 6400,
+              "status": "ACTIVE",
+              "apartment_number": "3",
+              "floor": "1",
+              "rooms": "4",
+              "notes": null
+            },
+            {
+              "tenant_name": "רועי וגילי פרמינגר",
+              "email": "roy103@gmail.com",
+              "phone": "052-6677555",
+              "start_date": "2020-11-01",
+              "end_date": "2026-10-31",
+              "monthly_rent": 7400,
+              "status": "ACTIVE",
+              "apartment_number": "13",
+              "floor": "4",
+              "rooms": "5",
+              "notes": null
+            },
+            {
+              "tenant_name": "עופר סלע",
+              "email": "Osela@kpmg.com",
+              "phone": "052-8540076",
+              "start_date": "2021-12-31",
+              "end_date": "2025-12-31",
+              "monthly_rent": 8240,
+              "status": "EXPIRED",
+              "apartment_number": "16",
+              "floor": "5 ו-6",
+              "rooms": "6",
+              "notes": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "harmon",
+      "source_tag": "מקור: משפחת חרמון (618)",
+      "owners": [
+        {
+          "name": "אברהם חרמון",
+          "phone": null,
+          "email": null
+        },
+        {
+          "name": "שמעון חרמון",
+          "phone": null,
+          "email": null
+        }
+      ],
+      "properties": [
+        {
+          "address": "אריה בראון 12, פתח תקווה",
+          "city": "פתח תקווה",
+          "file_number": "618/12",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "ליאת וחזי רחמנוב",
+              "email": "liat.rahmanov@gmail.com",
+              "phone": "054-6818364",
+              "start_date": "2020-08-01",
+              "end_date": "2025-06-30",
+              "monthly_rent": 6400,
+              "status": "EXPIRED",
+              "apartment_number": "22",
+              "floor": "6",
+              "rooms": "5",
+              "notes": "חתמו חוזה לשנה  נוספת + נתנו שיקים",
+              "landlord": "אברהם חרמון"
+            },
+            {
+              "tenant_name": "קארין כהן הוכמן",
+              "email": "karin.cohen@gmail.com",
+              "phone": "050-5474756",
+              "start_date": "2023-07-01",
+              "end_date": "2025-06-30",
+              "monthly_rent": 7500,
+              "status": "EXPIRED",
+              "apartment_number": "24",
+              "floor": "6",
+              "rooms": "6",
+              "notes": "חתום",
+              "landlord": "אברהם חרמון"
+            },
+            {
+              "tenant_name": "רבינוביץ דודי",
+              "email": null,
+              "phone": "526413640",
+              "start_date": "2023-06-01",
+              "end_date": "2025-05-30",
+              "monthly_rent": 6400,
+              "status": "EXPIRED",
+              "apartment_number": "33",
+              "floor": "8",
+              "rooms": "5",
+              "notes": null,
+              "landlord": "אברהם חרמון"
+            },
+            {
+              "tenant_name": "אלעד וסטאפני מזנזיק",
+              "email": "eladmagazanik@gmail.com",
+              "phone": "523319595",
+              "start_date": "2024-01-01",
+              "end_date": "2026-12-31",
+              "monthly_rent": 7700,
+              "status": "ACTIVE",
+              "apartment_number": "8",
+              "floor": "2",
+              "rooms": "6",
+              "notes": "שיקים לשנה",
+              "landlord": "אברהם חרמון"
+            },
+            {
+              "tenant_name": "פינטו בייגל פזית וחנן",
+              "email": "pazitpb@gmail.com",
+              "phone": "054-4470766",
+              "start_date": "2020-07-28",
+              "end_date": "2025-07-24",
+              "monthly_rent": 6500,
+              "status": "EXPIRED",
+              "apartment_number": "23",
+              "floor": "6",
+              "rooms": null,
+              "notes": null,
+              "landlord": "אברהם חרמון"
+            },
+            {
+              "tenant_name": "תומר ואורלי ניר",
+              "email": "nir.tomer74@gmail.com",
+              "phone": "054-2200144",
+              "start_date": "2020-06-15",
+              "end_date": "2025-06-15",
+              "monthly_rent": 6500,
+              "status": "EXPIRED",
+              "apartment_number": "5",
+              "floor": "1",
+              "rooms": "5",
+              "notes": "חתמו  על חוזה + נתנו שיקים",
+              "landlord": "שמעון חרמון"
+            },
+            {
+              "tenant_name": "נעם ואסתר בוני",
+              "email": "esterboni@walla.com",
+              "phone": "050-3550599",
+              "start_date": "2020-06-15",
+              "end_date": "2025-06-14",
+              "monthly_rent": 7500,
+              "status": "EXPIRED",
+              "apartment_number": "32",
+              "floor": "8",
+              "rooms": "6",
+              "notes": "חתמו חוזה לשנה נוספת + נתנו שיקים עד 2025",
+              "landlord": "שמעון חרמון"
+            },
+            {
+              "tenant_name": "ליאור כחלון וליטל",
+              "email": "lital@messas-cpa.co.il",
+              "phone": "050-9010803",
+              "start_date": "2021-10-01",
+              "end_date": "2026-09-30",
+              "monthly_rent": 6500,
+              "status": "ACTIVE",
+              "apartment_number": "25",
+              "floor": "6",
+              "rooms": "5",
+              "notes": null,
+              "landlord": "שמעון חרמון"
+            },
+            {
+              "tenant_name": "יפה ויצחק פרח",
+              "email": "yafaperah@gmail.com",
+              "phone": "050-6430328",
+              "start_date": "2020-07-01",
+              "end_date": "2025-06-30",
+              "monthly_rent": 7250,
+              "status": "EXPIRED",
+              "apartment_number": "20",
+              "floor": "5",
+              "rooms": "6",
+              "notes": "חתמו חוזה לשנה נוספת + נתנו שיקים  (היתה להם אופציה )",
+              "landlord": "שמעון חרמון"
+            },
+            {
+              "tenant_name": "אילנה וייסמן",
+              "email": "ilana@eventosisrael.com",
+              "phone": "054-4480962",
+              "start_date": "2020-06-30",
+              "end_date": "2025-06-29",
+              "monthly_rent": 7300,
+              "status": "EXPIRED",
+              "apartment_number": "16",
+              "floor": "4",
+              "rooms": "6",
+              "notes": "חתמה ונתנה שיקים",
+              "landlord": "שמעון חרמון"
+            }
+          ]
+        },
+        {
+          "address": "הפלמח 35 ת\"א",
+          "city": "ישראל",
+          "file_number": "618/19",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "מלכאן רחמיים",
+              "email": null,
+              "phone": "544397555",
+              "start_date": "2023-08-15",
+              "end_date": "2025-08-14",
+              "monthly_rent": 4100,
+              "status": "EXPIRED",
+              "apartment_number": null,
+              "floor": null,
+              "rooms": null,
+              "notes": null
+            }
+          ]
+        },
+        {
+          "address": "דוד המלך 12 תל אביב",
+          "city": "תל אביב",
+          "file_number": "618/23",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "לי – קו בניה ומסחר בע\"מ (לשנות)",
+              "email": null,
+              "phone": "50-442-2431",
+              "start_date": "2024-11-21",
+              "end_date": "2025-11-20",
+              "monthly_rent": 8300,
+              "status": "EXPIRED",
+              "apartment_number": null,
+              "floor": null,
+              "rooms": null,
+              "notes": "פקדון 16,000 ₪"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "greenspan",
+      "source_tag": "מקור: רחלי גרינשפן (6557)",
+      "owners": [
+        {
+          "name": "רחל גרינשפן",
+          "phone": null,
+          "email": null
+        }
+      ],
+      "properties": [
+        {
+          "address": "הקונגרס 3, תל אביב",
+          "city": "תל אביב",
+          "file_number": "6557",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "רומי פילו",
+              "email": null,
+              "phone": null,
+              "start_date": null,
+              "end_date": "2026-03-31",
+              "monthly_rent": 5000,
+              "status": "ACTIVE",
+              "apartment_number": null,
+              "floor": null,
+              "rooms": null,
+              "notes": null
+            },
+            {
+              "tenant_name": "רחל פליישמן",
+              "email": null,
+              "phone": "0587027335",
+              "start_date": null,
+              "end_date": "2026-05-15",
+              "monthly_rent": 6300,
+              "status": "ACTIVE",
+              "apartment_number": null,
+              "floor": null,
+              "rooms": null,
+              "notes": null
+            }
+          ]
+        },
+        {
+          "address": "משה סנה 9, רמת גן",
+          "city": "רמת גן",
+          "file_number": "6557",
+          "is_existing_in_db": false,
+          "leases": [
+            {
+              "tenant_name": "אלה שלום – ישורון",
+              "email": null,
+              "phone": null,
+              "start_date": null,
+              "end_date": "2026-12-31",
+              "monthly_rent": 5700,
+              "status": "ACTIVE",
+              "apartment_number": null,
+              "floor": null,
+              "rooms": null,
+              "notes": null
+            },
+            {
+              "tenant_name": "רונן פולק",
+              "email": null,
+              "phone": "0528005517",
+              "start_date": null,
+              "end_date": "2026-03-31",
+              "monthly_rent": 6000,
+              "status": "ACTIVE",
+              "apartment_number": null,
+              "floor": null,
+              "rooms": null,
+              "notes": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

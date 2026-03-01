@@ -385,7 +385,12 @@ async function main() {
   log('='.repeat(60));
 
   // Load JSON
-  const jsonPath = path.resolve(__dirname, '../../../../legacy/data/all-rental-data.json');
+  // In Docker: __dirname = /app/prisma/seeds, JSON is in same dir
+  // Locally: falls back to legacy/data/
+  const jsonPath =
+    fs.existsSync(path.resolve(__dirname, 'all-rental-data.json'))
+      ? path.resolve(__dirname, 'all-rental-data.json')
+      : path.resolve(__dirname, '../../../../legacy/data/all-rental-data.json');
   if (!fs.existsSync(jsonPath)) {
     throw new Error(`JSON file not found: ${jsonPath}`);
   }
