@@ -234,15 +234,20 @@ export class RentalAgreementsService {
    * Returns agreements sorted by end date ascending.
    */
   async findExpiring(months: number) {
-    const now = new Date();
     const future = new Date();
     future.setMonth(future.getMonth() + months);
 
+    // Returns already-expired agreements AND agreements expiring within the next X months
     return this.prisma.rentalAgreement.findMany({
       where: {
         deletedAt: null,
-        status: { in: ['ACTIVE', 'FUTURE'] },
-        endDate: { gte: now, lte: future },
+        OR: [
+          { status: 'EXPIRED' },
+          {
+            status: { in: ['ACTIVE', 'FUTURE'] },
+            endDate: { lte: future },
+          },
+        ],
       },
       orderBy: { endDate: 'asc' },
       include: rentalAgreementInclude,

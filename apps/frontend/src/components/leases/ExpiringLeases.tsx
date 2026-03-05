@@ -22,7 +22,7 @@ import {
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import EventIcon from '@mui/icons-material/Event';
-import { rentalAgreementsApi, RentalAgreement, RenewalStatus } from '@/lib/api/leases';
+import { rentalAgreementsApi, RentalAgreement, RentalAgreementStatus, RenewalStatus } from '@/lib/api/leases';
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat('he-IL', {
@@ -41,9 +41,24 @@ const getDaysUntilExpiry = (endDate: string): number => {
 };
 
 const getExpiryUrgency = (days: number): 'error' | 'warning' | 'info' => {
+  if (days <= 0) return 'error';   // already expired
   if (days <= 30) return 'error';
   if (days <= 60) return 'warning';
   return 'info';
+};
+
+const STATUS_LABELS: Record<RentalAgreementStatus, string> = {
+  ACTIVE: 'פעיל',
+  FUTURE: 'עתידי',
+  EXPIRED: 'פג תוקף',
+  TERMINATED: 'בוטל',
+};
+
+const STATUS_COLORS: Record<RentalAgreementStatus, 'success' | 'info' | 'error' | 'default'> = {
+  ACTIVE: 'success',
+  FUTURE: 'info',
+  EXPIRED: 'error',
+  TERMINATED: 'default',
 };
 
 const RENEWAL_STATUS_LABELS: Record<RenewalStatus, string> = {
@@ -92,11 +107,19 @@ function MobileExpiringCard({ item, onRenewalStatusChange, isUpdating }: MobileE
           <Typography variant="body2">
             שכ&quot;ד: {formatCurrency(item.monthlyRent ?? 0)}
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <EventIcon fontSize="small" color={urgency} />
-            <Typography variant="body2" color={`${urgency}.main`} fontWeight={600}>
-              {formatDate(item.endDate)} ({days} ימים)
-            </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+            <Chip
+              label={STATUS_LABELS[item.status] ?? item.status}
+              color={STATUS_COLORS[item.status] ?? 'default'}
+              size="small"
+            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <EventIcon fontSize="small" color={urgency} />
+              <Typography variant="body2" color={`${urgency}.main`} fontWeight={600}>
+                {formatDate(item.endDate)}
+                {days < 0 ? ` (פג לפני ${Math.abs(days)} ימים)` : ` (${days} ימים)`}
+              </Typography>
+            </Box>
           </Box>
           <FormControl size="small" fullWidth>
             <InputLabel>סטטוס חידוש</InputLabel>
@@ -192,17 +215,36 @@ export default function ExpiringLeases() {
       valueFormatter: (params) => formatDate(params.value ?? ''),
     },
     {
+      field: 'status',
+      headerName: 'סטטוס',
+      width: 120,
+      align: 'center',
+      headerAlign: 'center',
+      renderCell: (params) => {
+        const status = params.value as RentalAgreementStatus;
+        return (
+          <Chip
+            label={STATUS_LABELS[status] ?? status}
+            color={STATUS_COLORS[status] ?? 'default'}
+            size="small"
+          />
+        );
+      },
+    },
+    {
       field: 'daysLeft',
       headerName: 'ימים לסיום',
-      width: 130,
+      width: 140,
       align: 'center',
       headerAlign: 'center',
       valueGetter: (params) => getDaysUntilExpiry(params.row.endDate),
       renderCell: (params) => {
         const days = params.value as number;
         const urgency = getExpiryUrgency(days);
+        const label = days < 0 ? `פג לפני ${Math.abs(days)} ימים` : `${days} ימים`;
+        const tooltip = days < 0 ? 'כבר פג תוקף!' : days <= 30 ? 'דחוף!' : days <= 60 ? 'שים לב' : '';
         return (
-          <Tooltip title={urgency === 'error' ? 'דחוף!' : urgency === 'warning' ? 'שים לב' : ''}>
+          <Tooltip title={tooltip}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               {urgency !== 'info' && <WarningAmberIcon fontSize="small" color={urgency} />}
               <Typography
@@ -210,7 +252,7 @@ export default function ExpiringLeases() {
                 color={`${urgency}.main`}
                 fontWeight={urgency !== 'info' ? 700 : 400}
               >
-                {days} ימים
+                {label}
               </Typography>
             </Box>
           </Tooltip>
