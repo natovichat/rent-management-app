@@ -144,10 +144,16 @@ export class OwnershipsController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
     @Query('includeDeleted') includeDeleted?: string,
+    @Query('personName') personName?: string,
   ) {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
-    return this.ownershipsService.findAll(pageNum, limitNum, includeDeleted === 'true');
+    return this.ownershipsService.findAll(
+      pageNum,
+      limitNum,
+      includeDeleted === 'true',
+      personName,
+    );
   }
 
   @Get(':id')

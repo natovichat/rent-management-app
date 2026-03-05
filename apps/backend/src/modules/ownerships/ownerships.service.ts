@@ -52,12 +52,22 @@ export class OwnershipsService {
   /**
    * Find all ownerships with pagination (includes property and person)
    */
-  async findAll(page: number = 1, limit: number = 20, includeDeleted = false) {
+  async findAll(
+    page: number = 1,
+    limit: number = 20,
+    includeDeleted = false,
+    personName?: string,
+  ) {
     const skip = (page - 1) * limit;
 
     const where: Prisma.OwnershipWhereInput = {};
     if (!includeDeleted) {
       where.deletedAt = null;
+    }
+    if (personName?.trim()) {
+      where.person = {
+        name: { contains: personName.trim(), mode: 'insensitive' },
+      };
     }
 
     const [ownerships, total] = await Promise.all([

@@ -64,9 +64,11 @@ export const ownershipsApi = {
     page = 1,
     limit = 20,
     includeDeleted?: boolean,
+    personName?: string,
   ): Promise<OwnershipsResponse> => {
     const params: Record<string, unknown> = { page, limit };
     if (includeDeleted) params.includeDeleted = 'true';
+    if (personName?.trim()) params.personName = personName.trim();
     const response = await api.get<OwnershipsResponse>('/ownerships', { params });
     return response.data;
   },

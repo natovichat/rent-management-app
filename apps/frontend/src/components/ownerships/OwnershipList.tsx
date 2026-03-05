@@ -20,7 +20,9 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  InputAdornment,
   Snackbar,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -28,9 +30,11 @@ import {
 } from '@mui/material';
 import {
   Add as AddIcon,
+  Clear as ClearIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
   RestoreFromTrash as RestoreIcon,
+  Search as SearchIcon,
 } from '@mui/icons-material';
 import {
   ownershipsApi,
@@ -120,6 +124,7 @@ export default function OwnershipList() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
+  const [personNameFilter, setPersonNameFilter] = useState('');
   const [openForm, setOpenForm] = useState(false);
   const [selectedOwnership, setSelectedOwnership] = useState<Ownership | null>(
     null,
@@ -141,8 +146,8 @@ export default function OwnershipList() {
   const includeDeleted = isAdmin && showDeleted;
 
   const { data, isLoading } = useQuery({
-    queryKey: ['ownerships', page, pageSize, includeDeleted],
-    queryFn: () => ownershipsApi.getOwnerships(page, pageSize, includeDeleted),
+    queryKey: ['ownerships', page, pageSize, includeDeleted, personNameFilter],
+    queryFn: () => ownershipsApi.getOwnerships(page, pageSize, includeDeleted, personNameFilter),
   });
 
   const ownerships = data?.data || [];
@@ -300,7 +305,7 @@ export default function OwnershipList() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          mb: 3,
+          mb: 2,
         }}
       >
         <Typography variant="h5" component="h2">
@@ -316,6 +321,39 @@ export default function OwnershipList() {
         >
           הוסף בעלות
         </Button>
+      </Box>
+
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          size="small"
+          placeholder="חיפוש לפי שם בעלים..."
+          value={personNameFilter}
+          onChange={(e) => {
+            setPersonNameFilter(e.target.value);
+            setPage(1);
+          }}
+          sx={{ minWidth: 280 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon fontSize="small" color="action" />
+              </InputAdornment>
+            ),
+            endAdornment: personNameFilter ? (
+              <InputAdornment position="end">
+                <IconButton
+                  size="small"
+                  onClick={() => {
+                    setPersonNameFilter('');
+                    setPage(1);
+                  }}
+                >
+                  <ClearIcon fontSize="small" />
+                </IconButton>
+              </InputAdornment>
+            ) : null,
+          }}
+        />
       </Box>
 
       {isMobile ? (
