@@ -148,7 +148,7 @@ export default function OwnershipList() {
 
   const { data: personsData } = useQuery({
     queryKey: ['persons-for-filter'],
-    queryFn: () => personsApi.getPersons(1, 500),
+    queryFn: () => personsApi.getPersons(1, 100),
     staleTime: 5 * 60 * 1000,
   });
 
