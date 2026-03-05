@@ -1,6 +1,7 @@
 import { api } from '../api';
 
 export type RentalAgreementStatus = 'FUTURE' | 'ACTIVE' | 'EXPIRED' | 'TERMINATED';
+export type RenewalStatus = 'PENDING' | 'IN_PROGRESS' | 'RENEWED' | 'NOT_RENEWING';
 
 export interface RentalAgreement {
   id: string;
@@ -10,6 +11,7 @@ export interface RentalAgreement {
   startDate: string;
   endDate: string;
   status: RentalAgreementStatus;
+  renewalStatus: RenewalStatus;
   hasExtensionOption?: boolean;
   extensionUntilDate?: string;
   extensionMonthlyRent?: number;
@@ -132,6 +134,22 @@ export const rentalAgreementsApi = {
    */
   restoreRentalAgreement: async (id: string): Promise<RentalAgreement> => {
     const response = await api.patch<RentalAgreement>(`/rental-agreements/${id}/restore`);
+    return response.data;
+  },
+
+  /**
+   * Get agreements expiring within the next X months.
+   */
+  getExpiringAgreements: async (months: number = 3): Promise<RentalAgreement[]> => {
+    const response = await api.get<RentalAgreement[]>(`/rental-agreements/expiring?months=${months}`);
+    return response.data;
+  },
+
+  /**
+   * Update the renewal status of a rental agreement.
+   */
+  updateRenewalStatus: async (id: string, renewalStatus: RenewalStatus): Promise<RentalAgreement> => {
+    const response = await api.patch<RentalAgreement>(`/rental-agreements/${id}/renewal-status`, { renewalStatus });
     return response.data;
   },
 };

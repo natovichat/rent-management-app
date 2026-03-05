@@ -7,7 +7,7 @@ import { PrismaService } from '../../database/prisma.service';
 import { CreateRentalAgreementDto } from './dto/create-rental-agreement.dto';
 import { UpdateRentalAgreementDto } from './dto/update-rental-agreement.dto';
 import { QueryRentalAgreementDto } from './dto/query-rental-agreement.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, RenewalStatus } from '@prisma/client';
 
 const rentalAgreementInclude = {
   property: true,
@@ -225,6 +225,39 @@ export class RentalAgreementsService {
     return this.prisma.rentalAgreement.update({
       where: { id },
       data: { deletedAt: new Date() },
+      include: rentalAgreementInclude,
+    });
+  }
+
+  /**
+   * Find all active/future rental agreements expiring within the next X months.
+   * Returns agreements sorted by end date ascending.
+   */
+  async findExpiring(months: number) {
+    const now = new Date();
+    const future = new Date();
+    future.setMonth(future.getMonth() + months);
+
+    return this.prisma.rentalAgreement.findMany({
+      where: {
+        deletedAt: null,
+        status: { in: ['ACTIVE', 'FUTURE'] },
+        endDate: { gte: now, lte: future },
+      },
+      orderBy: { endDate: 'asc' },
+      include: rentalAgreementInclude,
+    });
+  }
+
+  /**
+   * Update the renewal status of a rental agreement.
+   */
+  async updateRenewalStatus(id: string, renewalStatus: RenewalStatus) {
+    await this.findOne(id);
+
+    return this.prisma.rentalAgreement.update({
+      where: { id },
+      data: { renewalStatus },
       include: rentalAgreementInclude,
     });
   }

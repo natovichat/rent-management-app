@@ -22,7 +22,15 @@ import { CreateRentalAgreementDto } from './dto/create-rental-agreement.dto';
 import { UpdateRentalAgreementDto } from './dto/update-rental-agreement.dto';
 import { QueryRentalAgreementDto } from './dto/query-rental-agreement.dto';
 import { RentalAgreementEntity } from './entities/rental-agreement.entity';
-import { RentalAgreementStatus } from '@prisma/client';
+import { RentalAgreementStatus, RenewalStatus } from '@prisma/client';
+import { IsEnum } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
+class UpdateRenewalStatusDto {
+  @ApiProperty({ enum: RenewalStatus, description: 'New renewal status' })
+  @IsEnum(RenewalStatus)
+  renewalStatus: RenewalStatus;
+}
 
 @ApiTags('rental-agreements')
 @Controller('rental-agreements')
@@ -74,6 +82,31 @@ export class RentalAgreementsController {
   })
   findAll(@Query() query: QueryRentalAgreementDto) {
     return this.rentalAgreementsService.findAll(query);
+  }
+
+  @Get('expiring')
+  @ApiOperation({ summary: 'Get agreements expiring within X months' })
+  @ApiQuery({ name: 'months', required: false, type: Number, description: 'Number of months ahead (default: 3)' })
+  @ApiResponse({
+    status: 200,
+    description: 'List of agreements expiring within the specified months',
+    type: [RentalAgreementEntity],
+  })
+  findExpiring(@Query('months') months?: string) {
+    const m = months ? parseInt(months, 10) : 3;
+    return this.rentalAgreementsService.findExpiring(m);
+  }
+
+  @Patch(':id/renewal-status')
+  @ApiOperation({ summary: 'Update renewal status of a rental agreement' })
+  @ApiParam({ name: 'id', description: 'Rental agreement UUID' })
+  @ApiResponse({ status: 200, description: 'Renewal status updated', type: RentalAgreementEntity })
+  @ApiResponse({ status: 404, description: 'Rental agreement not found' })
+  updateRenewalStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateRenewalStatusDto,
+  ) {
+    return this.rentalAgreementsService.updateRenewalStatus(id, dto.renewalStatus);
   }
 
   @Get(':id')
