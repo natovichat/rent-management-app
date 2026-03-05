@@ -144,7 +144,7 @@ export class OwnershipsController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
     @Query('includeDeleted') includeDeleted?: string,
-    @Query('personName') personName?: string,
+    @Query('personId') personId?: string,
   ) {
     const pageNum = page ? parseInt(page, 10) : 1;
     const limitNum = limit ? parseInt(limit, 10) : 20;
@@ -152,7 +152,7 @@ export class OwnershipsController {
       pageNum,
       limitNum,
       includeDeleted === 'true',
-      personName,
+      personId,
     );
   }
 

@@ -19,10 +19,12 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  FormControl,
   IconButton,
-  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
   Snackbar,
-  TextField,
   Typography,
   useMediaQuery,
   useTheme,
@@ -30,17 +32,16 @@ import {
 } from '@mui/material';
 import {
   Add as AddIcon,
-  Clear as ClearIcon,
   Delete as DeleteIcon,
   Edit as EditIcon,
   RestoreFromTrash as RestoreIcon,
-  Search as SearchIcon,
 } from '@mui/icons-material';
 import {
   ownershipsApi,
   Ownership,
   OwnershipType,
 } from '@/lib/api/ownerships';
+import { personsApi } from '@/lib/api/persons';
 import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
 import { getUserProfile } from '@/lib/auth';
 import OwnershipForm from './OwnershipForm';
@@ -124,7 +125,7 @@ export default function OwnershipList() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
-  const [personNameFilter, setPersonNameFilter] = useState('');
+  const [personIdFilter, setPersonIdFilter] = useState('');
   const [openForm, setOpenForm] = useState(false);
   const [selectedOwnership, setSelectedOwnership] = useState<Ownership | null>(
     null,
@@ -145,9 +146,19 @@ export default function OwnershipList() {
 
   const includeDeleted = isAdmin && showDeleted;
 
+  const { data: personsData } = useQuery({
+    queryKey: ['persons-for-filter'],
+    queryFn: () => personsApi.getPersons(1, 500),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const personOptions = (personsData?.data ?? [])
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name, 'he'));
+
   const { data, isLoading } = useQuery({
-    queryKey: ['ownerships', page, pageSize, includeDeleted, personNameFilter],
-    queryFn: () => ownershipsApi.getOwnerships(page, pageSize, includeDeleted, personNameFilter),
+    queryKey: ['ownerships', page, pageSize, includeDeleted, personIdFilter],
+    queryFn: () => ownershipsApi.getOwnerships(page, pageSize, includeDeleted, personIdFilter),
   });
 
   const ownerships = data?.data || [];
@@ -324,36 +335,26 @@ export default function OwnershipList() {
       </Box>
 
       <Box sx={{ mb: 3 }}>
-        <TextField
-          size="small"
-          placeholder="חיפוש לפי שם בעלים..."
-          value={personNameFilter}
-          onChange={(e) => {
-            setPersonNameFilter(e.target.value);
-            setPage(1);
-          }}
-          sx={{ minWidth: 280 }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon fontSize="small" color="action" />
-              </InputAdornment>
-            ),
-            endAdornment: personNameFilter ? (
-              <InputAdornment position="end">
-                <IconButton
-                  size="small"
-                  onClick={() => {
-                    setPersonNameFilter('');
-                    setPage(1);
-                  }}
-                >
-                  <ClearIcon fontSize="small" />
-                </IconButton>
-              </InputAdornment>
-            ) : null,
-          }}
-        />
+        <FormControl size="small" sx={{ minWidth: 280 }}>
+          <InputLabel id="owner-filter-label">סינון לפי בעלים</InputLabel>
+          <Select
+            labelId="owner-filter-label"
+            value={personIdFilter}
+            label="סינון לפי בעלים"
+            onChange={(e) => {
+              setPersonIdFilter(e.target.value);
+              setPage(1);
+            }}
+            displayEmpty
+          >
+            <MenuItem value="">כל הבעלים</MenuItem>
+            {personOptions.map((person) => (
+              <MenuItem key={person.id} value={person.id}>
+                {person.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Box>
 
       {isMobile ? (

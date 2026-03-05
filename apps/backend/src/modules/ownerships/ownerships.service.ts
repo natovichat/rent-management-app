@@ -56,7 +56,7 @@ export class OwnershipsService {
     page: number = 1,
     limit: number = 20,
     includeDeleted = false,
-    personName?: string,
+    personId?: string,
   ) {
     const skip = (page - 1) * limit;
 
@@ -64,10 +64,8 @@ export class OwnershipsService {
     if (!includeDeleted) {
       where.deletedAt = null;
     }
-    if (personName?.trim()) {
-      where.person = {
-        name: { contains: personName.trim(), mode: 'insensitive' },
-      };
+    if (personId?.trim()) {
+      where.personId = personId.trim();
     }
 
     const [ownerships, total] = await Promise.all([
