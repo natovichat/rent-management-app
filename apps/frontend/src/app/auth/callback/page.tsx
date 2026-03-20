@@ -36,7 +36,7 @@ function AuthCallbackContent() {
           // Fetch user profile using the new token
           const API_URL =
             process.env.NEXT_PUBLIC_API_URL ||
-            'https://rent-app-backend-18433050712.us-central1.run.app';
+            'https://rent-app-backend-33ifaayi2a-uc.a.run.app';
           const profileResponse = await fetch(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${token}` },
           });
@@ -73,7 +73,7 @@ function AuthCallbackContent() {
         // Exchange code via backend
         const API_URL =
           process.env.NEXT_PUBLIC_API_URL ||
-          'https://rent-app-backend-18433050712.us-central1.run.app';
+          'https://rent-app-backend-33ifaayi2a-uc.a.run.app';
         const response = await fetch(
           `${API_URL}/api/auth/google/callback?code=${code}`,
           { method: 'GET' },

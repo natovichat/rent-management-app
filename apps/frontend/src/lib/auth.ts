@@ -27,7 +27,7 @@ export interface UserProfile {
 const getApiBaseUrl = (): string => {
   return (
     process.env.NEXT_PUBLIC_API_URL ||
-    'https://rent-app-backend-18433050712.us-central1.run.app'
+    'https://rent-app-backend-33ifaayi2a-uc.a.run.app'
   );
 };
 

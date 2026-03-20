@@ -3,7 +3,7 @@ import axios from 'axios';
 export const api = axios.create({
   baseURL:
     (process.env.NEXT_PUBLIC_API_URL ||
-      'https://rent-app-backend-18433050712.us-central1.run.app') + '/api',
+      'https://rent-app-backend-33ifaayi2a-uc.a.run.app') + '/api',
   headers: {
     'Content-Type': 'application/json',
   },
