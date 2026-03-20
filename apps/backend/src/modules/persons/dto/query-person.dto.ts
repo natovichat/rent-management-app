@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PersonType } from '@prisma/client';
+import { PersonType } from '../../../firebase/types';
 
 /**
  * DTO for querying persons with pagination, search, and type filter

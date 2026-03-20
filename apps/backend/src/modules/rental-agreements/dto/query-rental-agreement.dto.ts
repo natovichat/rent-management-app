@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { RentalAgreementStatus } from '@prisma/client';
+import { RentalAgreementStatus } from '../../../firebase/types';
 import { RENTAL_AGREEMENT_STATUSES } from './create-rental-agreement.dto';
 
 /**

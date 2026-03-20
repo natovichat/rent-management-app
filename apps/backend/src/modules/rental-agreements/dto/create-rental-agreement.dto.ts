@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { RentalAgreementStatus } from '@prisma/client';
+import { RentalAgreementStatus } from '../../../firebase/types';
 
 export const RENTAL_AGREEMENT_STATUSES = Object.values(RentalAgreementStatus);
 

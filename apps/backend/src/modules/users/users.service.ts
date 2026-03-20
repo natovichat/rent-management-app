@@ -4,8 +4,10 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { User, UserRole } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import * as admin from 'firebase-admin';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { User, UserRole } from '../../firebase/types';
 
 interface ValidateOrCreateUserInput {
   googleId: string;
@@ -14,139 +16,162 @@ interface ValidateOrCreateUserInput {
   picture?: string;
 }
 
+const COLLECTION = 'users';
+
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
+
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
+  }
+
+  private docToUser(doc: admin.firestore.DocumentSnapshot): User {
+    return this.firebase.convertTimestamps<User>({ id: doc.id, ...doc.data() });
+  }
 
   async validateOrCreateUser(input: ValidateOrCreateUserInput): Promise<User> {
     const { googleId, email, name, picture } = input;
+    const db = this.firebase.db;
 
-    // Check if any users exist (first user becomes ADMIN)
-    const userCount = await this.prisma.user.count();
+    // Count all users to detect first-ever user
+    const countSnap = await this.col.count().get();
+    const userCount = countSnap.data().count;
 
-    // Try to find by googleId first, then by email
-    let user = await this.prisma.user.findFirst({
-      where: { OR: [{ googleId }, { email }] },
-    });
+    // Try to find by googleId or email
+    let userSnap = await this.col
+      .where('googleId', '==', googleId)
+      .limit(1)
+      .get();
 
-    if (!user) {
-      // New user - check if first user (auto-ADMIN) or needs whitelist
+    let userDoc = userSnap.docs[0] ?? null;
+
+    if (!userDoc) {
+      const byEmail = await this.col.where('email', '==', email).limit(1).get();
+      userDoc = byEmail.docs[0] ?? null;
+    }
+
+    if (!userDoc) {
+      // New user
       if (userCount === 0) {
-        // First user ever - create as ADMIN
-        user = await this.prisma.user.create({
-          data: {
-            email,
-            googleId,
-            name,
-            picture,
-            role: UserRole.ADMIN,
-            isActive: true,
-            lastLoginAt: new Date(),
-          },
-        });
-        return user;
+        // First user ever → ADMIN
+        const id = uuidv4();
+        const now = admin.firestore.Timestamp.now();
+        const data: Omit<User, 'id'> = {
+          email,
+          googleId,
+          name,
+          picture,
+          role: UserRole.ADMIN,
+          isActive: true,
+          lastLoginAt: now.toDate(),
+          createdAt: now.toDate(),
+          updatedAt: now.toDate(),
+        };
+        await this.col.doc(id).set(data);
+        return { id, ...data };
       }
 
-      // Not first user - check if email is pre-approved in whitelist
-      const whitelistEntry = await this.prisma.user.findUnique({
-        where: { email },
-      });
-
-      if (!whitelistEntry) {
+      // Check whitelist
+      const whitelistSnap = await this.col.where('email', '==', email).limit(1).get();
+      if (whitelistSnap.empty) {
         throw new ForbiddenException(
           'האימייל שלך אינו מורשה לגשת למערכת. צור קשר עם המנהל כדי לקבל גישה.',
         );
       }
 
-      if (!whitelistEntry.isActive) {
+      const wl = this.docToUser(whitelistSnap.docs[0]);
+      if (!wl.isActive) {
         throw new ForbiddenException('הגישה שלך הושעתה. צור קשר עם המנהל.');
       }
 
-      // Update with Google info on first OAuth login
-      user = await this.prisma.user.update({
-        where: { email },
-        data: {
-          googleId,
-          name: name || whitelistEntry.name,
-          picture,
-          lastLoginAt: new Date(),
-        },
-      });
-      return user;
+      const updates = {
+        googleId,
+        name: name || wl.name,
+        picture,
+        lastLoginAt: new Date(),
+        updatedAt: new Date(),
+      };
+      await this.col.doc(wl.id).update(updates);
+      return { ...wl, ...updates };
     }
 
-    // Existing user - check if active
+    const user = this.docToUser(userDoc);
+
     if (!user.isActive) {
       throw new ForbiddenException('הגישה שלך הושעתה. צור קשר עם המנהל.');
     }
 
-    // Update last login and profile info
-    user = await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        googleId: googleId || user.googleId,
-        name: name || user.name,
-        picture: picture || user.picture,
-        lastLoginAt: new Date(),
-      },
-    });
-
-    return user;
+    const updates = {
+      googleId: googleId || user.googleId,
+      name: name || user.name,
+      picture: picture || user.picture,
+      lastLoginAt: new Date(),
+      updatedAt: new Date(),
+    };
+    await this.col.doc(user.id).update(updates);
+    return { ...user, ...updates };
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { id } });
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) return null;
+    return this.docToUser(doc);
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({ where: { email } });
+    const snap = await this.col.where('email', '==', email).limit(1).get();
+    if (snap.empty) return null;
+    return this.docToUser(snap.docs[0]);
   }
 
   async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({
-      orderBy: [{ role: 'asc' }, { createdAt: 'asc' }],
-    });
+    const snap = await this.col.orderBy('role').orderBy('createdAt').get();
+    return snap.docs.map((d) => this.docToUser(d));
   }
 
   async addToWhitelist(email: string, role: UserRole = UserRole.MEMBER): Promise<User> {
-    const existing = await this.prisma.user.findUnique({ where: { email } });
+    const existing = await this.findByEmail(email);
     if (existing) {
       throw new ConflictException('כתובת האימייל כבר קיימת ברשימת המורשים');
     }
-    return this.prisma.user.create({
-      data: { email, role, isActive: true },
-    });
+    const id = uuidv4();
+    const now = new Date();
+    const data: Omit<User, 'id'> = {
+      email,
+      role,
+      isActive: true,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.col.doc(id).set(data);
+    return { id, ...data };
   }
 
   async setActive(id: string, isActive: boolean): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new NotFoundException('משתמש לא נמצא');
-    }
-    return this.prisma.user.update({ where: { id }, data: { isActive } });
+    const user = await this.findById(id);
+    if (!user) throw new NotFoundException('משתמש לא נמצא');
+    await this.col.doc(id).update({ isActive, updatedAt: new Date() });
+    return { ...user, isActive };
   }
 
   async updateRole(id: string, role: UserRole): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new NotFoundException('משתמש לא נמצא');
-    }
-    return this.prisma.user.update({ where: { id }, data: { role } });
+    const user = await this.findById(id);
+    if (!user) throw new NotFoundException('משתמש לא נמצא');
+    await this.col.doc(id).update({ role, updatedAt: new Date() });
+    return { ...user, role };
   }
 
   async updateName(id: string, name: string): Promise<User> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new NotFoundException('משתמש לא נמצא');
-    }
-    return this.prisma.user.update({ where: { id }, data: { name } });
+    const user = await this.findById(id);
+    if (!user) throw new NotFoundException('משתמש לא נמצא');
+    await this.col.doc(id).update({ name, updatedAt: new Date() });
+    return { ...user, name };
   }
 
   async remove(id: string): Promise<void> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new NotFoundException('משתמש לא נמצא');
-    }
-    await this.prisma.user.delete({ where: { id } });
+    const user = await this.findById(id);
+    if (!user) throw new NotFoundException('משתמש לא נמצא');
+    await this.col.doc(id).delete();
   }
 }

@@ -5,10 +5,10 @@ import {
   PersonOwnershipsController,
   OwnershipsController,
 } from './ownerships.controller';
-import { PrismaModule } from '../../database/prisma.module';
+
 
 @Module({
-  imports: [PrismaModule],
+  imports: [],
   controllers: [
     PropertyOwnershipsController,
     PersonOwnershipsController,

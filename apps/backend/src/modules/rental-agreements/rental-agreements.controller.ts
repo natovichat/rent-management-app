@@ -22,7 +22,7 @@ import { CreateRentalAgreementDto } from './dto/create-rental-agreement.dto';
 import { UpdateRentalAgreementDto } from './dto/update-rental-agreement.dto';
 import { QueryRentalAgreementDto } from './dto/query-rental-agreement.dto';
 import { RentalAgreementEntity } from './entities/rental-agreement.entity';
-import { RentalAgreementStatus, RenewalStatus } from '@prisma/client';
+import { RentalAgreementStatus, RenewalStatus } from '../../firebase/types';
 import { IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 

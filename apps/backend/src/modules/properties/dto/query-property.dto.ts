@@ -10,7 +10,7 @@ import {
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PropertyType, PropertyStatus } from '@prisma/client';
+import { PropertyType, PropertyStatus } from '../../../firebase/types';
 import { PROPERTY_TYPES, PROPERTY_STATUSES } from './create-property.dto';
 
 /**

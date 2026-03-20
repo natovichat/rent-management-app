@@ -6,7 +6,7 @@ import { MortgagesService } from './mortgages.service';
 import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { MortgageStatus } from '@prisma/client';
+import { MortgageStatus } from '../../firebase/types';
 
 describe('MortgagesController', () => {
   let app: INestApplication;

@@ -25,7 +25,7 @@ import { CreateRentalPaymentRequestEventDto } from './dto/create-rental-payment-
 import { UpdatePropertyEventDto } from './dto/update-property-event.dto';
 import { QueryPropertyEventDto } from './dto/query-property-event.dto';
 import { PropertyEventEntity } from './entities/property-event.entity';
-import { PropertyEventType } from '@prisma/client';
+import { PropertyEventType } from '../../firebase/types';
 
 @ApiTags('property-events')
 @Controller('properties/:propertyId/events')

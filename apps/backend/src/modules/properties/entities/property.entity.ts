@@ -10,7 +10,7 @@ import {
   ManagementFeeFrequency,
   TaxFrequency,
   EstimationSource,
-} from '@prisma/client';
+} from '../../../firebase/types';
 
 /**
  * Property entity for Swagger documentation

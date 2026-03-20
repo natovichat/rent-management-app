@@ -9,7 +9,7 @@ import {
 import { OwnershipsService } from './ownerships.service';
 import { CreateOwnershipDto } from './dto/create-ownership.dto';
 import { UpdateOwnershipDto } from './dto/update-ownership.dto';
-import { OwnershipType } from '@prisma/client';
+import { OwnershipType } from '../../firebase/types';
 
 const mockPropertyId = '550e8400-e29b-41d4-a716-446655440001';
 const mockPersonId = '550e8400-e29b-41d4-a716-446655440002';

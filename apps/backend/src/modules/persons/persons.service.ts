@@ -3,154 +3,144 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { Person } from '../../firebase/types';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { QueryPersonDto } from './dto/query-person.dto';
-import { Prisma } from '@prisma/client';
+
+const COLLECTION = 'persons';
 
 @Injectable()
 export class PersonsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  async create(dto: CreatePersonDto) {
-    return this.prisma.person.create({
-      data: {
-        name: dto.name,
-        type: dto.type ?? undefined,
-        idNumber: dto.idNumber ?? undefined,
-        email: dto.email ?? undefined,
-        phone: dto.phone ?? undefined,
-        address: dto.address ?? undefined,
-        notes: dto.notes ?? undefined,
-      },
-    });
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
+  }
+
+  private docToPerson(doc: FirebaseFirestore.DocumentSnapshot): Person {
+    return this.firebase.convertTimestamps<Person>({ id: doc.id, ...doc.data() });
+  }
+
+  async create(dto: CreatePersonDto): Promise<Person> {
+    const id = uuidv4();
+    const now = new Date();
+    const data: Omit<Person, 'id'> = {
+      name: dto.name,
+      type: dto.type ?? undefined,
+      idNumber: dto.idNumber ?? undefined,
+      email: dto.email ?? undefined,
+      phone: dto.phone ?? undefined,
+      address: dto.address ?? undefined,
+      notes: dto.notes ?? undefined,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.col.doc(id).set(data);
+    return { id, ...data };
   }
 
   async findAll(query: QueryPersonDto) {
     const { page = 1, limit = 10, search, type, includeDeleted } = query;
-    const skip = (page - 1) * limit;
 
-    const where: Prisma.PersonWhereInput = {};
+    let q = this.col as FirebaseFirestore.Query;
 
     if (!includeDeleted) {
-      where.deletedAt = null;
+      q = q.where('deletedAt', '==', null);
     }
 
     if (type) {
-      where.type = type;
+      q = q.where('type', '==', type);
     }
 
+    q = q.orderBy('name');
+
+    const snap = await q.get();
+    let docs = snap.docs.map((d) => this.docToPerson(d));
+
+    // Client-side search filter (Firestore doesn't support multi-field OR text search)
     if (search?.trim()) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { email: { contains: search, mode: 'insensitive' } },
-        { phone: { contains: search, mode: 'insensitive' } },
-      ];
-    }
-
-    const [data, total] = await Promise.all([
-      this.prisma.person.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { name: 'asc' },
-      }),
-      this.prisma.person.count({ where }),
-    ]);
-
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
-  }
-
-  async findOne(id: string, includeDeleted = false) {
-    const person = await this.prisma.person.findFirst({
-      where: {
-        id,
-        ...(!includeDeleted && { deletedAt: null }),
-      },
-    });
-
-    if (!person) {
-      throw new NotFoundException(`Person with id ${id} not found`);
-    }
-
-    return person;
-  }
-
-  async update(id: string, dto: UpdatePersonDto) {
-    await this.findOne(id);
-
-    return this.prisma.person.update({
-      where: { id },
-      data: {
-        ...(dto.name !== undefined && { name: dto.name }),
-        ...(dto.type !== undefined && { type: dto.type }),
-        ...(dto.idNumber !== undefined && { idNumber: dto.idNumber }),
-        ...(dto.email !== undefined && { email: dto.email }),
-        ...(dto.phone !== undefined && { phone: dto.phone }),
-        ...(dto.address !== undefined && { address: dto.address }),
-        ...(dto.notes !== undefined && { notes: dto.notes }),
-      },
-    });
-  }
-
-  async remove(id: string) {
-    const person = await this.prisma.person.findFirst({
-      where: { id, deletedAt: null },
-      include: {
-        mortgageOwnerOf: { where: { deletedAt: null }, take: 1 },
-        mortgagePayerOf: { where: { deletedAt: null }, take: 1 },
-        tenantsOf: { where: { deletedAt: null }, take: 1 },
-        ownershipsOf: { where: { deletedAt: null }, take: 1 },
-      },
-    });
-
-    if (!person) {
-      throw new NotFoundException(`Person with id ${id} not found`);
-    }
-
-    const hasMortgageOwner = person.mortgageOwnerOf.length > 0;
-    const hasMortgagePayer = person.mortgagePayerOf.length > 0;
-    const hasRentalAgreements = person.tenantsOf.length > 0;
-    const hasOwnerships = person.ownershipsOf.length > 0;
-
-    if (hasMortgageOwner || hasMortgagePayer || hasRentalAgreements || hasOwnerships) {
-      const relations: string[] = [];
-      if (hasMortgageOwner) relations.push('mortgages (as owner)');
-      if (hasMortgagePayer) relations.push('mortgages (as payer)');
-      if (hasRentalAgreements) relations.push('rental agreements');
-      if (hasOwnerships) relations.push('property ownerships');
-      throw new ConflictException(
-        `Cannot delete person: has related ${relations.join(', ')}`,
+      const lower = search.trim().toLowerCase();
+      docs = docs.filter(
+        (p) =>
+          p.name?.toLowerCase().includes(lower) ||
+          p.email?.toLowerCase().includes(lower) ||
+          p.phone?.toLowerCase().includes(lower),
       );
     }
 
-    return this.prisma.person.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+    const total = docs.length;
+    const skip = (page - 1) * limit;
+    const data = docs.slice(skip, skip + limit);
+
+    return {
+      data,
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+    };
   }
 
-  async restore(id: string) {
-    const person = await this.prisma.person.findFirst({
-      where: { id, deletedAt: { not: null } },
-    });
+  async findOne(id: string, includeDeleted = false): Promise<Person> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Person with id ${id} not found`);
+    const person = this.docToPerson(doc);
+    if (!includeDeleted && person.deletedAt) {
+      throw new NotFoundException(`Person with id ${id} not found`);
+    }
+    return person;
+  }
 
-    if (!person) {
-      throw new NotFoundException(`Deleted person with id ${id} not found`);
+  async update(id: string, dto: UpdatePersonDto): Promise<Person> {
+    const person = await this.findOne(id);
+    const updates: Partial<Person> = { updatedAt: new Date() };
+    if (dto.name !== undefined) updates.name = dto.name;
+    if (dto.type !== undefined) updates.type = dto.type;
+    if (dto.idNumber !== undefined) updates.idNumber = dto.idNumber;
+    if (dto.email !== undefined) updates.email = dto.email;
+    if (dto.phone !== undefined) updates.phone = dto.phone;
+    if (dto.address !== undefined) updates.address = dto.address;
+    if (dto.notes !== undefined) updates.notes = dto.notes;
+    await this.col.doc(id).update(updates as Record<string, unknown>);
+    return { ...person, ...updates };
+  }
+
+  async remove(id: string): Promise<Person> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Person with id ${id} not found`);
+    const person = this.docToPerson(doc);
+    if (person.deletedAt) throw new NotFoundException(`Person with id ${id} not found`);
+
+    // Check related active records
+    const [mortOwner, mortPayer, rentals, ownerships] = await Promise.all([
+      this.firebase.db.collection('mortgages').where('mortgageOwnerId', '==', id).where('deletedAt', '==', null).limit(1).get(),
+      this.firebase.db.collection('mortgages').where('payerId', '==', id).where('deletedAt', '==', null).limit(1).get(),
+      this.firebase.db.collection('rentalAgreements').where('tenantId', '==', id).where('deletedAt', '==', null).limit(1).get(),
+      this.firebase.db.collection('ownerships').where('personId', '==', id).where('deletedAt', '==', null).limit(1).get(),
+    ]);
+
+    const relations: string[] = [];
+    if (!mortOwner.empty) relations.push('mortgages (as owner)');
+    if (!mortPayer.empty) relations.push('mortgages (as payer)');
+    if (!rentals.empty) relations.push('rental agreements');
+    if (!ownerships.empty) relations.push('property ownerships');
+
+    if (relations.length > 0) {
+      throw new ConflictException(`Cannot delete person: has related ${relations.join(', ')}`);
     }
 
-    return this.prisma.person.update({
-      where: { id },
-      data: { deletedAt: null },
-    });
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: now, updatedAt: now });
+    return { ...person, deletedAt: now };
+  }
+
+  async restore(id: string): Promise<Person> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Deleted person with id ${id} not found`);
+    const person = this.docToPerson(doc);
+    if (!person.deletedAt) throw new NotFoundException(`Deleted person with id ${id} not found`);
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: null, updatedAt: now });
+    return { ...person, deletedAt: undefined, updatedAt: now };
   }
 }

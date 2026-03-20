@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { OwnershipType } from '@prisma/client';
+import { OwnershipType } from '../../../firebase/types';
 
 export const OWNERSHIP_TYPES = Object.values(OwnershipType);
 

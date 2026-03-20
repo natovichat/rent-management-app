@@ -3,8 +3,8 @@ import {
   PropertyEventType,
   ExpenseEventType,
   RentalPaymentStatus,
-} from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
+} from '../../../firebase/types';
+
 
 /**
  * Property event entity for Swagger documentation.
@@ -30,10 +30,10 @@ export class PropertyEventEntity {
   description?: string | null;
 
   @ApiPropertyOptional({ description: 'Estimated value' })
-  estimatedValue?: Decimal | number | null;
+  estimatedValue?: number | null;
 
   @ApiPropertyOptional({ description: 'Estimated rent' })
-  estimatedRent?: Decimal | number | null;
+  estimatedRent?: number | null;
 
   // PlanningProcessEvent
   @ApiPropertyOptional({ description: 'Planning stage' })
@@ -50,7 +50,7 @@ export class PropertyEventEntity {
   damageType?: string | null;
 
   @ApiPropertyOptional({ description: 'Estimated damage cost' })
-  estimatedDamageCost?: Decimal | number | null;
+  estimatedDamageCost?: number | null;
 
   @ApiPropertyOptional({ description: 'Linked expense event ID' })
   expenseId?: string | null;
@@ -63,7 +63,7 @@ export class PropertyEventEntity {
   expenseType?: ExpenseEventType | null;
 
   @ApiPropertyOptional({ description: 'Amount' })
-  amount?: Decimal | number | null;
+  amount?: number | null;
 
   @ApiPropertyOptional({ description: 'Paid to bank account ID' })
   paidToAccountId?: string | null;
@@ -82,7 +82,7 @@ export class PropertyEventEntity {
   year?: number | null;
 
   @ApiPropertyOptional({ description: 'Amount due' })
-  amountDue?: Decimal | number | null;
+  amountDue?: number | null;
 
   @ApiPropertyOptional({ description: 'Payment date' })
   paymentDate?: Date | null;

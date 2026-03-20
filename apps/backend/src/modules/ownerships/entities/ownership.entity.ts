@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { OwnershipType } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
+import { OwnershipType } from '../../../firebase/types';
+
 import { PersonEntity } from '../../persons/entities/person.entity';
 import { PropertyEntity } from '../../properties/entities/property.entity';
 
@@ -30,7 +30,7 @@ export class OwnershipEntity {
     description: 'Ownership percentage (0-100)',
     example: 50,
   })
-  ownershipPercentage: Decimal | number;
+  ownershipPercentage: number;
 
   @ApiProperty({
     description: 'Ownership type',
@@ -42,7 +42,7 @@ export class OwnershipEntity {
   @ApiPropertyOptional({
     description: 'Management fee amount',
   })
-  managementFee?: Decimal | number | null;
+  managementFee?: number | null;
 
   @ApiProperty({
     description: 'Whether this is a family division',

@@ -22,7 +22,7 @@ import { CreateMortgageDto } from './dto/create-mortgage.dto';
 import { UpdateMortgageDto } from './dto/update-mortgage.dto';
 import { QueryMortgageDto } from './dto/query-mortgage.dto';
 import { MortgageEntity } from './entities/mortgage.entity';
-import { MortgageStatus } from '@prisma/client';
+import { MortgageStatus } from '../../firebase/types';
 
 @ApiTags('mortgages')
 @Controller('mortgages')

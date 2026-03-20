@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { PropertyEventType } from '@prisma/client';
+import { PropertyEventType } from '../../../firebase/types';
 
 export const PROPERTY_EVENT_TYPES = Object.values(PropertyEventType);
 

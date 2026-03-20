@@ -3,112 +3,81 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { UtilityInfo } from '../../firebase/types';
 import { CreateUtilityInfoDto } from './dto/create-utility-info.dto';
 import { UpdateUtilityInfoDto } from './dto/update-utility-info.dto';
 
-/**
- * Service for managing utility info (1:1 with Property).
- * Handles CRUD operations with property existence validation
- * and enforces one UtilityInfo per property.
- */
+const COLLECTION = 'utilityInfo';
+
 @Injectable()
 export class UtilityInfoService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  /**
-   * Create utility info for a property.
-   * Validates property exists and no existing utility info (1:1 constraint).
-   */
-  async create(propertyId: string, dto: CreateUtilityInfoDto) {
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
+  }
+
+  private docToUI(doc: FirebaseFirestore.DocumentSnapshot): UtilityInfo {
+    return this.firebase.convertTimestamps<UtilityInfo>({ id: doc.id, ...doc.data() });
+  }
+
+  async create(propertyId: string, dto: CreateUtilityInfoDto): Promise<UtilityInfo> {
     await this.ensurePropertyExists(propertyId);
-    await this.ensureNoExistingUtilityInfo(propertyId);
+    await this.ensureNoExisting(propertyId);
 
-    return this.prisma.utilityInfo.create({
-      data: {
-        propertyId,
-        arnonaAccountNumber: dto.arnonaAccountNumber,
-        electricityAccountNumber: dto.electricityAccountNumber,
-        waterAccountNumber: dto.waterAccountNumber,
-        vaadBayitName: dto.vaadBayitName,
-        waterMeterNumber: dto.waterMeterNumber,
-        electricityMeterNumber: dto.electricityMeterNumber,
-        notes: dto.notes,
-      },
-    });
+    const id = uuidv4();
+    const now = new Date();
+    const data: Omit<UtilityInfo, 'id'> = {
+      propertyId,
+      arnonaAccountNumber: dto.arnonaAccountNumber,
+      electricityAccountNumber: dto.electricityAccountNumber,
+      waterAccountNumber: dto.waterAccountNumber,
+      vaadBayitName: dto.vaadBayitName,
+      waterMeterNumber: dto.waterMeterNumber,
+      electricityMeterNumber: dto.electricityMeterNumber,
+      notes: dto.notes,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.col.doc(id).set(data);
+    return { id, ...data };
   }
 
-  /**
-   * Find utility info by property ID.
-   */
-  async findByProperty(propertyId: string) {
-    const utilityInfo = await this.prisma.utilityInfo.findUnique({
-      where: { propertyId },
-    });
-
-    if (!utilityInfo) {
-      throw new NotFoundException(
-        `Utility info for property ${propertyId} not found`,
-      );
-    }
-
-    return utilityInfo;
+  async findByProperty(propertyId: string): Promise<UtilityInfo> {
+    const snap = await this.col.where('propertyId', '==', propertyId).limit(1).get();
+    if (snap.empty) throw new NotFoundException(`Utility info for property ${propertyId} not found`);
+    return this.docToUI(snap.docs[0]);
   }
 
-  /**
-   * Update utility info for a property.
-   */
-  async update(propertyId: string, dto: UpdateUtilityInfoDto) {
-    await this.findByProperty(propertyId);
-
-    const data: Record<string, string | undefined> = {};
-    if (dto.arnonaAccountNumber !== undefined)
-      data.arnonaAccountNumber = dto.arnonaAccountNumber;
-    if (dto.electricityAccountNumber !== undefined)
-      data.electricityAccountNumber = dto.electricityAccountNumber;
-    if (dto.waterAccountNumber !== undefined)
-      data.waterAccountNumber = dto.waterAccountNumber;
-    if (dto.vaadBayitName !== undefined)
-      data.vaadBayitName = dto.vaadBayitName;
-    if (dto.waterMeterNumber !== undefined)
-      data.waterMeterNumber = dto.waterMeterNumber;
-    if (dto.electricityMeterNumber !== undefined)
-      data.electricityMeterNumber = dto.electricityMeterNumber;
-    if (dto.notes !== undefined) data.notes = dto.notes;
-
-    return this.prisma.utilityInfo.update({
-      where: { propertyId },
-      data,
-    });
+  async update(propertyId: string, dto: UpdateUtilityInfoDto): Promise<UtilityInfo> {
+    const existing = await this.findByProperty(propertyId);
+    const updates: Partial<UtilityInfo> = { updatedAt: new Date() };
+    if (dto.arnonaAccountNumber !== undefined) updates.arnonaAccountNumber = dto.arnonaAccountNumber;
+    if (dto.electricityAccountNumber !== undefined) updates.electricityAccountNumber = dto.electricityAccountNumber;
+    if (dto.waterAccountNumber !== undefined) updates.waterAccountNumber = dto.waterAccountNumber;
+    if (dto.vaadBayitName !== undefined) updates.vaadBayitName = dto.vaadBayitName;
+    if (dto.waterMeterNumber !== undefined) updates.waterMeterNumber = dto.waterMeterNumber;
+    if (dto.electricityMeterNumber !== undefined) updates.electricityMeterNumber = dto.electricityMeterNumber;
+    if (dto.notes !== undefined) updates.notes = dto.notes;
+    await this.col.doc(existing.id).update(updates as Record<string, unknown>);
+    return { ...existing, ...updates };
   }
 
-  /**
-   * Remove utility info for a property.
-   */
-  async remove(propertyId: string) {
-    await this.findByProperty(propertyId);
-
-    return this.prisma.utilityInfo.delete({
-      where: { propertyId },
-    });
+  async remove(propertyId: string): Promise<void> {
+    const existing = await this.findByProperty(propertyId);
+    await this.col.doc(existing.id).delete();
   }
 
   private async ensurePropertyExists(propertyId: string) {
-    const property = await this.prisma.property.findUnique({
-      where: { id: propertyId },
-    });
-
-    if (!property) {
-      throw new NotFoundException(`Property with ID ${propertyId} not found`);
-    }
+    const doc = await this.firebase.db.collection('properties').doc(propertyId).get();
+    if (!doc.exists) throw new NotFoundException(`Property with ID ${propertyId} not found`);
   }
 
-  private async ensureNoExistingUtilityInfo(propertyId: string) {
-    const existing = await this.prisma.utilityInfo.findUnique({
-      where: { propertyId },
-    });
-
-    if (existing) {
+  private async ensureNoExisting(propertyId: string) {
+    const snap = await this.col.where('propertyId', '==', propertyId).limit(1).get();
+    if (!snap.empty) {
       throw new ConflictException(
         `Utility info already exists for property ${propertyId}. Use PATCH to update.`,
       );

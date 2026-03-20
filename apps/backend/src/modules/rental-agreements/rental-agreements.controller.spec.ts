@@ -6,7 +6,7 @@ import { RentalAgreementsService } from './rental-agreements.service';
 import { CreateRentalAgreementDto } from './dto/create-rental-agreement.dto';
 import { UpdateRentalAgreementDto } from './dto/update-rental-agreement.dto';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
-import { RentalAgreementStatus } from '@prisma/client';
+import { RentalAgreementStatus } from '../../firebase/types';
 
 describe('RentalAgreementsController', () => {
   let app: INestApplication;

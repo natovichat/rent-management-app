@@ -3,274 +3,187 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { Ownership, Person, Property } from '../../firebase/types';
 import { CreateOwnershipDto } from './dto/create-ownership.dto';
 import { UpdateOwnershipDto } from './dto/update-ownership.dto';
-import { OwnershipType, Prisma } from '@prisma/client';
 
-const OWNERSHIP_INCLUDE = {
-  person: true,
-  property: true,
-} as const;
+const COLLECTION = 'ownerships';
 
-/**
- * Service for managing ownerships (M:N junction between Person and Property)
- */
 @Injectable()
 export class OwnershipsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  /**
-   * Create a new ownership for a property
-   */
-  async create(propertyId: string, dto: CreateOwnershipDto) {
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
+  }
+
+  private docToOwnership(doc: FirebaseFirestore.DocumentSnapshot): Ownership {
+    return this.firebase.convertTimestamps<Ownership>({ id: doc.id, ...doc.data() });
+  }
+
+  private async populateOwnership(o: Ownership): Promise<Ownership> {
+    const [personDoc, propertyDoc] = await Promise.all([
+      this.firebase.db.collection('persons').doc(o.personId).get(),
+      this.firebase.db.collection('properties').doc(o.propertyId).get(),
+    ]);
+    return {
+      ...o,
+      person: personDoc.exists
+        ? this.firebase.convertTimestamps<Person>({ id: personDoc.id, ...personDoc.data() })
+        : undefined,
+      property: propertyDoc.exists
+        ? this.firebase.convertTimestamps<Property>({ id: propertyDoc.id, ...propertyDoc.data() })
+        : undefined,
+    };
+  }
+
+  async create(propertyId: string, dto: CreateOwnershipDto): Promise<Ownership> {
     await this.ensurePropertyExists(propertyId);
     await this.ensurePersonExists(dto.personId);
 
     if (dto.ownershipPercentage < 0 || dto.ownershipPercentage > 100) {
-      throw new BadRequestException(
-        'ownershipPercentage must be between 0 and 100',
-      );
+      throw new BadRequestException('ownershipPercentage must be between 0 and 100');
     }
 
-    return this.prisma.ownership.create({
-      data: {
-        propertyId,
-        personId: dto.personId,
-        ownershipPercentage: dto.ownershipPercentage,
-        ownershipType: dto.ownershipType as OwnershipType,
-        startDate: new Date(dto.startDate),
-        endDate: dto.endDate ? new Date(dto.endDate) : null,
-        managementFee: dto.managementFee ?? null,
-        familyDivision: dto.familyDivision ?? false,
-        notes: dto.notes ?? null,
-      },
-      include: OWNERSHIP_INCLUDE,
-    });
+    const id = uuidv4();
+    const now = new Date();
+    const data: Omit<Ownership, 'id' | 'person' | 'property'> = {
+      propertyId,
+      personId: dto.personId,
+      ownershipPercentage: dto.ownershipPercentage,
+      ownershipType: dto.ownershipType,
+      startDate: new Date(dto.startDate),
+      endDate: dto.endDate ? new Date(dto.endDate) : undefined,
+      managementFee: dto.managementFee,
+      familyDivision: dto.familyDivision ?? false,
+      notes: dto.notes,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.col.doc(id).set(data);
+    const ownership: Ownership = { id, ...data };
+    return this.populateOwnership(ownership);
   }
 
-  /**
-   * Find all ownerships with pagination (includes property and person)
-   */
-  async findAll(
-    page: number = 1,
-    limit: number = 20,
-    includeDeleted = false,
-    personId?: string,
-  ) {
+  async findAll(page = 1, limit = 20, includeDeleted = false, personId?: string) {
+    let q = this.col as FirebaseFirestore.Query;
+
+    if (!includeDeleted) q = q.where('deletedAt', '==', null);
+    if (personId?.trim()) q = q.where('personId', '==', personId.trim());
+    q = q.orderBy('startDate', 'desc');
+
+    const snap = await q.get();
+    const all = snap.docs.map((d) => this.docToOwnership(d));
+    const total = all.length;
     const skip = (page - 1) * limit;
-
-    const where: Prisma.OwnershipWhereInput = {};
-    if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-    if (personId?.trim()) {
-      where.personId = personId.trim();
-    }
-
-    const [ownerships, total] = await Promise.all([
-      this.prisma.ownership.findMany({
-        where,
-        skip,
-        take: limit,
-        include: OWNERSHIP_INCLUDE,
-        orderBy: { startDate: 'desc' },
-      }),
-      this.prisma.ownership.count({ where }),
-    ]);
+    const paged = all.slice(skip, skip + limit);
+    const populated = await Promise.all(paged.map((o) => this.populateOwnership(o)));
 
     return {
-      data: ownerships,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
-      },
+      data: populated,
+      meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
     };
   }
 
-  /**
-   * Find all ownerships for a property (includes person details)
-   */
-  async findByProperty(propertyId: string, includeDeleted = false) {
+  async findByProperty(propertyId: string, includeDeleted = false): Promise<Ownership[]> {
     await this.ensurePropertyExists(propertyId);
-
-    const where: Prisma.OwnershipWhereInput = { propertyId };
-    if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-
-    return this.prisma.ownership.findMany({
-      where,
-      include: OWNERSHIP_INCLUDE,
-      orderBy: { startDate: 'desc' },
-    });
+    let q = this.col.where('propertyId', '==', propertyId) as FirebaseFirestore.Query;
+    if (!includeDeleted) q = q.where('deletedAt', '==', null);
+    q = q.orderBy('startDate', 'desc');
+    const snap = await q.get();
+    const all = snap.docs.map((d) => this.docToOwnership(d));
+    return Promise.all(all.map((o) => this.populateOwnership(o)));
   }
 
-  /**
-   * Find all ownerships for a person (includes property details)
-   */
-  async findByPerson(personId: string, includeDeleted = false) {
+  async findByPerson(personId: string, includeDeleted = false): Promise<Ownership[]> {
     await this.ensurePersonExists(personId);
-
-    const where: Prisma.OwnershipWhereInput = { personId };
-    if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-
-    return this.prisma.ownership.findMany({
-      where,
-      include: OWNERSHIP_INCLUDE,
-      orderBy: { startDate: 'desc' },
-    });
+    let q = this.col.where('personId', '==', personId) as FirebaseFirestore.Query;
+    if (!includeDeleted) q = q.where('deletedAt', '==', null);
+    q = q.orderBy('startDate', 'desc');
+    const snap = await q.get();
+    const all = snap.docs.map((d) => this.docToOwnership(d));
+    return Promise.all(all.map((o) => this.populateOwnership(o)));
   }
 
-  /**
-   * Find one ownership by ID
-   */
-  async findOne(id: string, includeDeleted = false) {
-    const ownership = await this.prisma.ownership.findFirst({
-      where: {
-        id,
-        ...(!includeDeleted && { deletedAt: null }),
-      },
-      include: OWNERSHIP_INCLUDE,
-    });
-
-    if (!ownership) {
-      throw new NotFoundException(`Ownership with id ${id} not found`);
-    }
-
-    return ownership;
+  async findOne(id: string, includeDeleted = false): Promise<Ownership> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Ownership with id ${id} not found`);
+    const o = this.docToOwnership(doc);
+    if (!includeDeleted && o.deletedAt) throw new NotFoundException(`Ownership with id ${id} not found`);
+    return this.populateOwnership(o);
   }
 
-  /**
-   * Validate total ownership percentage for a property (active ownerships only)
-   * Active = endDate is null or in the future
-   */
   async validateTotalOwnership(propertyId: string) {
     await this.ensurePropertyExists(propertyId);
-
     const now = new Date();
-    const activeOwnerships = await this.prisma.ownership.findMany({
-      where: {
-        propertyId,
-        deletedAt: null,
-        OR: [{ endDate: null }, { endDate: { gt: now } }],
-      },
-      select: { ownershipPercentage: true },
-    });
+    const snap = await this.col.where('propertyId', '==', propertyId).where('deletedAt', '==', null).get();
+    const active = snap.docs
+      .map((d) => this.docToOwnership(d))
+      .filter((o) => !o.endDate || o.endDate > now);
 
-    const totalPercentage = activeOwnerships.reduce(
-      (sum, o) => sum + Number(o.ownershipPercentage),
-      0,
-    );
-
+    const totalPercentage = active.reduce((sum, o) => sum + Number(o.ownershipPercentage), 0);
     const isValid = Math.abs(totalPercentage - 100) < 0.01;
-    const message = isValid
-      ? `Total ownership is ${totalPercentage.toFixed(2)}%`
-      : `Total ownership is ${totalPercentage.toFixed(2)}% (expected 100%)`;
-
     return {
       isValid,
       totalPercentage: Math.round(totalPercentage * 100) / 100,
-      message,
+      message: isValid
+        ? `Total ownership is ${totalPercentage.toFixed(2)}%`
+        : `Total ownership is ${totalPercentage.toFixed(2)}% (expected 100%)`,
     };
   }
 
-  /**
-   * Update an ownership
-   */
-  async update(id: string, dto: UpdateOwnershipDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateOwnershipDto): Promise<Ownership> {
+    const existing = await this.findOne(id);
 
-    if (dto.personId !== undefined) {
-      await this.ensurePersonExists(dto.personId);
+    if (dto.personId !== undefined) await this.ensurePersonExists(dto.personId);
+    if (dto.ownershipPercentage !== undefined && (dto.ownershipPercentage < 0 || dto.ownershipPercentage > 100)) {
+      throw new BadRequestException('ownershipPercentage must be between 0 and 100');
     }
 
-    if (
-      dto.ownershipPercentage !== undefined &&
-      (dto.ownershipPercentage < 0 || dto.ownershipPercentage > 100)
-    ) {
-      throw new BadRequestException(
-        'ownershipPercentage must be between 0 and 100',
-      );
-    }
+    const updates: Partial<Ownership> = { updatedAt: new Date() };
+    if (dto.personId !== undefined) updates.personId = dto.personId;
+    if (dto.ownershipPercentage !== undefined) updates.ownershipPercentage = dto.ownershipPercentage;
+    if (dto.ownershipType !== undefined) updates.ownershipType = dto.ownershipType;
+    if (dto.startDate !== undefined) updates.startDate = new Date(dto.startDate);
+    if (dto.endDate !== undefined) updates.endDate = dto.endDate ? new Date(dto.endDate) : undefined;
+    if (dto.managementFee !== undefined) updates.managementFee = dto.managementFee;
+    if (dto.familyDivision !== undefined) updates.familyDivision = dto.familyDivision;
+    if (dto.notes !== undefined) updates.notes = dto.notes;
 
-    const data: Prisma.OwnershipUpdateInput = {};
-    if (dto.personId !== undefined) data.person = { connect: { id: dto.personId } };
-    if (dto.ownershipPercentage !== undefined)
-      data.ownershipPercentage = dto.ownershipPercentage;
-    if (dto.ownershipType !== undefined)
-      data.ownershipType = dto.ownershipType as OwnershipType;
-    if (dto.startDate !== undefined) data.startDate = new Date(dto.startDate);
-    if (dto.endDate !== undefined)
-      data.endDate = dto.endDate ? new Date(dto.endDate) : null;
-    if (dto.managementFee !== undefined)
-      data.managementFee = dto.managementFee ?? null;
-    if (dto.familyDivision !== undefined)
-      data.familyDivision = dto.familyDivision;
-    if (dto.notes !== undefined) data.notes = dto.notes ?? null;
-
-    return this.prisma.ownership.update({
-      where: { id },
-      data,
-      include: OWNERSHIP_INCLUDE,
-    });
+    await this.col.doc(id).update(updates as Record<string, unknown>);
+    return this.populateOwnership({ ...existing, ...updates });
   }
 
-  /**
-   * Soft-delete an ownership
-   */
-  async remove(id: string) {
-    await this.findOne(id);
-
-    return this.prisma.ownership.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+  async remove(id: string): Promise<Ownership> {
+    const existing = await this.findOne(id);
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: now, updatedAt: now });
+    return { ...existing, deletedAt: now };
   }
 
-  /**
-   * Restore a soft-deleted ownership
-   */
-  async restore(id: string) {
-    const ownership = await this.prisma.ownership.findFirst({
-      where: { id, deletedAt: { not: null } },
-      include: OWNERSHIP_INCLUDE,
-    });
-
-    if (!ownership) {
-      throw new NotFoundException(`Deleted ownership with id ${id} not found`);
-    }
-
-    return this.prisma.ownership.update({
-      where: { id },
-      data: { deletedAt: null },
-      include: OWNERSHIP_INCLUDE,
-    });
+  async restore(id: string): Promise<Ownership> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Deleted ownership with id ${id} not found`);
+    const o = this.docToOwnership(doc);
+    if (!o.deletedAt) throw new NotFoundException(`Deleted ownership with id ${id} not found`);
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: null, updatedAt: now });
+    return this.populateOwnership({ ...o, deletedAt: undefined, updatedAt: now });
   }
 
-  private async ensurePropertyExists(propertyId: string, message?: string) {
-    const property = await this.prisma.property.findFirst({
-      where: { id: propertyId, deletedAt: null },
-    });
-    if (!property) {
-      throw new NotFoundException(
-        message ?? `Property with id ${propertyId} not found`,
-      );
+  private async ensurePropertyExists(propertyId: string) {
+    const doc = await this.firebase.db.collection('properties').doc(propertyId).get();
+    if (!doc.exists || doc.data()?.deletedAt) {
+      throw new NotFoundException(`Property with id ${propertyId} not found`);
     }
   }
 
-  private async ensurePersonExists(personId: string, message?: string) {
-    const person = await this.prisma.person.findFirst({
-      where: { id: personId, deletedAt: null },
-    });
-    if (!person) {
-      throw new NotFoundException(
-        message ?? `Person with id ${personId} not found`,
-      );
+  private async ensurePersonExists(personId: string) {
+    const doc = await this.firebase.db.collection('persons').doc(personId).get();
+    if (!doc.exists || doc.data()?.deletedAt) {
+      throw new NotFoundException(`Person with id ${personId} not found`);
     }
   }
 }

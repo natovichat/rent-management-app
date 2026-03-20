@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ExpenseEventType } from '@prisma/client';
+import { ExpenseEventType } from '../../../firebase/types';
 
 export const EXPENSE_EVENT_TYPES = Object.values(ExpenseEventType);
 

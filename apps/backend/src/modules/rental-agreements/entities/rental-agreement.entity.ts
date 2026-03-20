@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { RentalAgreementStatus } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
+import { RentalAgreementStatus } from '../../../firebase/types';
+
 
 /**
  * Rental agreement entity for Swagger documentation.
@@ -17,7 +17,7 @@ export class RentalAgreementEntity {
   tenantId: string;
 
   @ApiProperty({ description: 'Monthly rent amount', example: 5000 })
-  monthlyRent: Decimal | number;
+  monthlyRent: number;
 
   @ApiProperty({ description: 'Start date' })
   startDate: Date;
@@ -38,7 +38,7 @@ export class RentalAgreementEntity {
   extensionUntilDate?: Date | null;
 
   @ApiPropertyOptional({ description: 'Monthly rent during extension period' })
-  extensionMonthlyRent?: Decimal | number | null;
+  extensionMonthlyRent?: number | null;
 
   @ApiPropertyOptional({ description: 'Notes' })
   notes?: string | null;

@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MortgageStatus } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
+import { MortgageStatus } from '../../../firebase/types';
+
 
 /**
  * Mortgage entity for Swagger documentation.
@@ -17,16 +17,16 @@ export class MortgageEntity {
   bank: string;
 
   @ApiProperty({ description: 'Loan amount', example: 1000000 })
-  loanAmount: Decimal | number;
+  loanAmount: number;
 
   @ApiPropertyOptional({ description: 'Interest rate (e.g. 3.5 for 3.5%)' })
-  interestRate?: Decimal | number | null;
+  interestRate?: number | null;
 
   @ApiPropertyOptional({ description: 'Monthly payment amount' })
-  monthlyPayment?: Decimal | number | null;
+  monthlyPayment?: number | null;
 
   @ApiPropertyOptional({ description: 'Early repayment penalty' })
-  earlyRepaymentPenalty?: Decimal | number | null;
+  earlyRepaymentPenalty?: number | null;
 
   @ApiPropertyOptional({ description: 'Bank account ID' })
   bankAccountId?: string | null;

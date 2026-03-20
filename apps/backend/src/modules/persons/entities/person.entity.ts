@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PersonType } from '@prisma/client';
+import { PersonType } from '../../../firebase/types';
 
 /**
  * Person entity for Swagger documentation (universal entity for individuals and companies)

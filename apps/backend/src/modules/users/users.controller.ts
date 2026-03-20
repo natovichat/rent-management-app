@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { IsEmail, IsEnum, IsBoolean, IsOptional } from 'class-validator';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../../firebase/types';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 

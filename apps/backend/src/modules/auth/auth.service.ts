@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
+import { User } from '../../firebase/types';
 import { JwtPayload } from './strategies/jwt.strategy';
 
 @Injectable()

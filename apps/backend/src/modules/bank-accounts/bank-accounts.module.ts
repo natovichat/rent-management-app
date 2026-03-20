@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { BankAccountsController } from './bank-accounts.controller';
 import { BankAccountsService } from './bank-accounts.service';
-import { PrismaModule } from '../../database/prisma.module';
+
 
 @Module({
-  imports: [PrismaModule],
+  imports: [],
   controllers: [BankAccountsController],
   providers: [BankAccountsService],
   exports: [BankAccountsService],

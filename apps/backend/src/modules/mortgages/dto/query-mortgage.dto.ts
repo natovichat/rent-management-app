@@ -9,7 +9,7 @@ import {
 } from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { MortgageStatus } from '@prisma/client';
+import { MortgageStatus } from '../../../firebase/types';
 import { MORTGAGE_STATUSES } from './create-mortgage.dto';
 
 /**

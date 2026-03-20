@@ -3,9 +3,9 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
-import { PropertyEventType } from '@prisma/client';
-import { Prisma } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { PropertyEvent, PropertyEventType, Property, RentalAgreement, BankAccount, RentalPaymentStatus } from '../../firebase/types';
 import { CreatePlanningProcessEventDto } from './dto/create-planning-process-event.dto';
 import { CreatePropertyDamageEventDto } from './dto/create-property-damage-event.dto';
 import { CreateExpenseEventDto } from './dto/create-expense-event.dto';
@@ -13,366 +13,235 @@ import { CreateRentalPaymentRequestEventDto } from './dto/create-rental-payment-
 import { UpdatePropertyEventDto } from './dto/update-property-event.dto';
 import { QueryPropertyEventDto } from './dto/query-property-event.dto';
 
-const propertyEventInclude = {
-  property: true,
-  rentalAgreement: true,
-  paidToAccount: true,
-  linkedExpense: true,
-} as const;
+const COLLECTION = 'propertyEvents';
 
-/**
- * Service for managing property events (STI with 4 subtypes).
- * Sets eventType discriminator in service methods, not in DTOs.
- */
 @Injectable()
 export class PropertyEventsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  /**
-   * Create a PlanningProcessEvent.
-   */
-  async createPlanningProcess(
-    propertyId: string,
-    dto: CreatePlanningProcessEventDto,
-  ) {
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
+  }
+
+  private docToEvent(doc: FirebaseFirestore.DocumentSnapshot): PropertyEvent {
+    return this.firebase.convertTimestamps<PropertyEvent>({ id: doc.id, ...doc.data() });
+  }
+
+  private async populateEvent(e: PropertyEvent): Promise<PropertyEvent> {
+    const [propDoc, raDoc, baDoc, expenseDoc] = await Promise.all([
+      this.firebase.db.collection('properties').doc(e.propertyId).get(),
+      e.rentalAgreementId ? this.firebase.db.collection('rentalAgreements').doc(e.rentalAgreementId).get() : null,
+      e.paidToAccountId ? this.firebase.db.collection('bankAccounts').doc(e.paidToAccountId).get() : null,
+      e.expenseId ? this.col.doc(e.expenseId).get() : null,
+    ]);
+    return {
+      ...e,
+      property: propDoc.exists ? this.firebase.convertTimestamps<Property>({ id: propDoc.id, ...propDoc.data() }) : undefined,
+      rentalAgreement: raDoc?.exists ? this.firebase.convertTimestamps<RentalAgreement>({ id: raDoc.id, ...raDoc.data() }) : undefined,
+      paidToAccount: baDoc?.exists ? this.firebase.convertTimestamps<BankAccount>({ id: baDoc.id, ...baDoc.data() }) : undefined,
+      linkedExpense: expenseDoc?.exists ? this.firebase.convertTimestamps<PropertyEvent>({ id: expenseDoc.id, ...expenseDoc.data() }) : undefined,
+    };
+  }
+
+  private async createEvent(data: Omit<PropertyEvent, 'id' | 'property' | 'rentalAgreement' | 'paidToAccount' | 'linkedExpense'>): Promise<PropertyEvent> {
+    const id = uuidv4();
+    await this.col.doc(id).set(data);
+    return this.populateEvent({ id, ...data });
+  }
+
+  async createPlanningProcess(propertyId: string, dto: CreatePlanningProcessEventDto): Promise<PropertyEvent> {
     await this.ensurePropertyExists(propertyId);
-
-    const data: Prisma.PropertyEventCreateInput = {
-      property: { connect: { id: propertyId } },
+    const now = new Date();
+    return this.createEvent({
+      propertyId,
       eventType: PropertyEventType.PlanningProcessEvent,
       eventDate: new Date(dto.eventDate),
       planningStage: dto.planningStage,
       developerName: dto.developerName,
       projectedSizeAfter: dto.projectedSizeAfter,
       description: dto.description,
-    };
-
-    return this.prisma.propertyEvent.create({
-      data,
-      include: propertyEventInclude,
+      createdAt: now,
+      updatedAt: now,
     });
   }
 
-  /**
-   * Create a PropertyDamageEvent.
-   */
-  async createPropertyDamage(
-    propertyId: string,
-    dto: CreatePropertyDamageEventDto,
-  ) {
+  async createPropertyDamage(propertyId: string, dto: CreatePropertyDamageEventDto): Promise<PropertyEvent> {
     await this.ensurePropertyExists(propertyId);
-
-    const data: Prisma.PropertyEventCreateInput = {
-      property: { connect: { id: propertyId } },
+    if (dto.expenseId) await this.ensureExpenseEventExists(dto.expenseId, propertyId);
+    const now = new Date();
+    return this.createEvent({
+      propertyId,
       eventType: PropertyEventType.PropertyDamageEvent,
       eventDate: new Date(dto.eventDate),
       damageType: dto.damageType,
       estimatedDamageCost: dto.estimatedDamageCost,
+      expenseId: dto.expenseId,
       description: dto.description,
-    };
-
-    if (dto.expenseId) {
-      await this.ensureExpenseEventExists(dto.expenseId, propertyId);
-      data.linkedExpense = { connect: { id: dto.expenseId } };
-    }
-
-    return this.prisma.propertyEvent.create({
-      data,
-      include: propertyEventInclude,
+      createdAt: now,
+      updatedAt: now,
     });
   }
 
-  /**
-   * Create an ExpenseEvent.
-   */
-  async createExpense(propertyId: string, dto: CreateExpenseEventDto) {
+  async createExpense(propertyId: string, dto: CreateExpenseEventDto): Promise<PropertyEvent> {
     await this.ensurePropertyExists(propertyId);
-
-    const data: Prisma.PropertyEventCreateInput = {
-      property: { connect: { id: propertyId } },
+    if (dto.paidToAccountId) await this.ensureBankAccountExists(dto.paidToAccountId);
+    const now = new Date();
+    return this.createEvent({
+      propertyId,
       eventType: PropertyEventType.ExpenseEvent,
       eventDate: new Date(dto.eventDate),
       expenseType: dto.expenseType,
       amount: dto.amount,
+      paidToAccountId: dto.paidToAccountId,
       affectsPropertyValue: dto.affectsPropertyValue ?? false,
       description: dto.description,
-    };
-
-    if (dto.paidToAccountId) {
-      await this.ensureBankAccountExists(dto.paidToAccountId);
-      data.paidToAccount = { connect: { id: dto.paidToAccountId } };
-    }
-
-    return this.prisma.propertyEvent.create({
-      data,
-      include: propertyEventInclude,
+      createdAt: now,
+      updatedAt: now,
     });
   }
 
-  /**
-   * Create a RentalPaymentRequestEvent.
-   */
-  async createRentalPaymentRequest(
-    propertyId: string,
-    dto: CreateRentalPaymentRequestEventDto,
-  ) {
+  async createRentalPaymentRequest(propertyId: string, dto: CreateRentalPaymentRequestEventDto): Promise<PropertyEvent> {
     await this.ensurePropertyExists(propertyId);
     await this.ensureRentalAgreementExists(dto.rentalAgreementId, propertyId);
-
-    const data: Prisma.PropertyEventCreateInput = {
-      property: { connect: { id: propertyId } },
+    const now = new Date();
+    return this.createEvent({
+      propertyId,
       eventType: PropertyEventType.RentalPaymentRequestEvent,
       eventDate: new Date(dto.eventDate),
-      rentalAgreement: { connect: { id: dto.rentalAgreementId } },
+      rentalAgreementId: dto.rentalAgreementId,
       month: dto.month,
       year: dto.year,
       amountDue: dto.amountDue,
       paymentDate: dto.paymentDate ? new Date(dto.paymentDate) : undefined,
-      paymentStatus: dto.paymentStatus ?? 'PENDING',
+      paymentStatus: (dto.paymentStatus ?? RentalPaymentStatus.PENDING) as RentalPaymentStatus,
       description: dto.description,
-    };
-
-    return this.prisma.propertyEvent.create({
-      data,
-      include: propertyEventInclude,
+      createdAt: now,
+      updatedAt: now,
     });
   }
 
-  /**
-   * Find events by property with pagination and eventType filter.
-   */
   async findByProperty(propertyId: string, query: QueryPropertyEventDto) {
     await this.ensurePropertyExists(propertyId);
-
     const { page = 1, limit = 10, eventType, includeDeleted } = query;
+
+    let q = this.col.where('propertyId', '==', propertyId) as FirebaseFirestore.Query;
+    if (!includeDeleted) q = q.where('deletedAt', '==', null);
+    if (eventType) q = q.where('eventType', '==', eventType);
+    q = q.orderBy('eventDate', 'desc');
+
+    const snap = await q.get();
+    const docs = snap.docs.map((d) => this.docToEvent(d));
+    const total = docs.length;
     const skip = (page - 1) * limit;
+    const paged = docs.slice(skip, skip + limit);
+    const populated = await Promise.all(paged.map((e) => this.populateEvent(e)));
 
-    const where: Prisma.PropertyEventWhereInput = { propertyId };
-
-    if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-
-    if (eventType) {
-      where.eventType = eventType;
-    }
-
-    const [data, total] = await Promise.all([
-      this.prisma.propertyEvent.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { eventDate: 'desc' },
-        include: propertyEventInclude,
-      }),
-      this.prisma.propertyEvent.count({ where }),
-    ]);
-
-    return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
-    };
+    return { data: populated, meta: { page, limit, total, totalPages: Math.ceil(total / limit) } };
   }
 
-  /**
-   * Find one event by property and event ID.
-   */
-  async findOne(propertyId: string, eventId: string, includeDeleted = false) {
-    const event = await this.prisma.propertyEvent.findFirst({
-      where: {
-        id: eventId,
-        propertyId,
-        ...(!includeDeleted && { deletedAt: null }),
-      },
-      include: propertyEventInclude,
-    });
-
-    if (!event) {
-      throw new NotFoundException(
-        `Property event with ID ${eventId} not found for property ${propertyId}`,
-      );
-    }
-
-    return event;
+  async findOne(propertyId: string, eventId: string, includeDeleted = false): Promise<PropertyEvent> {
+    const doc = await this.col.doc(eventId).get();
+    if (!doc.exists) throw new NotFoundException(`Property event with ID ${eventId} not found for property ${propertyId}`);
+    const event = this.docToEvent(doc);
+    if (event.propertyId !== propertyId) throw new NotFoundException(`Property event with ID ${eventId} not found for property ${propertyId}`);
+    if (!includeDeleted && event.deletedAt) throw new NotFoundException(`Property event with ID ${eventId} not found for property ${propertyId}`);
+    return this.populateEvent(event);
   }
 
-  /**
-   * Partial update. Preserves eventType.
-   */
-  async update(
-    propertyId: string,
-    eventId: string,
-    dto: UpdatePropertyEventDto,
-  ) {
+  async update(propertyId: string, eventId: string, dto: UpdatePropertyEventDto): Promise<PropertyEvent> {
     const existing = await this.findOne(propertyId, eventId);
 
-    const data: Prisma.PropertyEventUpdateInput = {};
-
-    if (dto.eventDate !== undefined) {
-      data.eventDate = new Date(dto.eventDate);
-    }
-    if (dto.description !== undefined) data.description = dto.description;
-    if (dto.estimatedValue !== undefined)
-      data.estimatedValue = dto.estimatedValue;
-    if (dto.estimatedRent !== undefined) data.estimatedRent = dto.estimatedRent;
-
-    // PlanningProcessEvent
-    if (dto.planningStage !== undefined)
-      data.planningStage = dto.planningStage;
-    if (dto.developerName !== undefined)
-      data.developerName = dto.developerName;
-    if (dto.projectedSizeAfter !== undefined)
-      data.projectedSizeAfter = dto.projectedSizeAfter;
-
-    // PropertyDamageEvent
-    if (dto.damageType !== undefined) data.damageType = dto.damageType;
-    if (dto.estimatedDamageCost !== undefined)
-      data.estimatedDamageCost = dto.estimatedDamageCost;
+    const updates: Partial<PropertyEvent> = { updatedAt: new Date() };
+    if (dto.eventDate !== undefined) updates.eventDate = new Date(dto.eventDate);
+    if (dto.description !== undefined) updates.description = dto.description;
+    if (dto.estimatedValue !== undefined) updates.estimatedValue = dto.estimatedValue;
+    if (dto.estimatedRent !== undefined) updates.estimatedRent = dto.estimatedRent;
+    if (dto.planningStage !== undefined) updates.planningStage = dto.planningStage;
+    if (dto.developerName !== undefined) updates.developerName = dto.developerName;
+    if (dto.projectedSizeAfter !== undefined) updates.projectedSizeAfter = dto.projectedSizeAfter;
+    if (dto.damageType !== undefined) updates.damageType = dto.damageType;
+    if (dto.estimatedDamageCost !== undefined) updates.estimatedDamageCost = dto.estimatedDamageCost;
     if (dto.expenseId !== undefined) {
-      if (dto.expenseId === null || dto.expenseId === '') {
-        data.linkedExpense = { disconnect: true };
+      if (!dto.expenseId) {
+        updates.expenseId = undefined;
       } else {
         await this.ensureExpenseEventExists(dto.expenseId, propertyId);
-        data.linkedExpense = { connect: { id: dto.expenseId } };
+        updates.expenseId = dto.expenseId;
       }
     }
-
-    // ExpenseEvent
-    if (dto.expenseType !== undefined) data.expenseType = dto.expenseType;
-    if (dto.amount !== undefined) data.amount = dto.amount;
+    if (dto.expenseType !== undefined) updates.expenseType = dto.expenseType;
+    if (dto.amount !== undefined) updates.amount = dto.amount;
     if (dto.paidToAccountId !== undefined) {
-      if (dto.paidToAccountId === null || dto.paidToAccountId === '') {
-        data.paidToAccount = { disconnect: true };
+      if (!dto.paidToAccountId) {
+        updates.paidToAccountId = undefined;
       } else {
         await this.ensureBankAccountExists(dto.paidToAccountId);
-        data.paidToAccount = { connect: { id: dto.paidToAccountId } };
+        updates.paidToAccountId = dto.paidToAccountId;
       }
     }
-    if (dto.affectsPropertyValue !== undefined)
-      data.affectsPropertyValue = dto.affectsPropertyValue;
-
-    // RentalPaymentRequestEvent
+    if (dto.affectsPropertyValue !== undefined) updates.affectsPropertyValue = dto.affectsPropertyValue;
     if (dto.rentalAgreementId !== undefined) {
-      if (dto.rentalAgreementId === null || dto.rentalAgreementId === '') {
-        data.rentalAgreement = { disconnect: true };
+      if (!dto.rentalAgreementId) {
+        updates.rentalAgreementId = undefined;
       } else {
-        await this.ensureRentalAgreementExists(
-          dto.rentalAgreementId,
-          propertyId,
-        );
-        data.rentalAgreement = { connect: { id: dto.rentalAgreementId } };
+        await this.ensureRentalAgreementExists(dto.rentalAgreementId, propertyId);
+        updates.rentalAgreementId = dto.rentalAgreementId;
       }
     }
-    if (dto.month !== undefined) data.month = dto.month;
-    if (dto.year !== undefined) data.year = dto.year;
-    if (dto.amountDue !== undefined) data.amountDue = dto.amountDue;
-    if (dto.paymentDate !== undefined) {
-      data.paymentDate = dto.paymentDate
-        ? new Date(dto.paymentDate)
-        : null;
-    }
-    if (dto.paymentStatus !== undefined)
-      data.paymentStatus = dto.paymentStatus;
+    if (dto.month !== undefined) updates.month = dto.month;
+    if (dto.year !== undefined) updates.year = dto.year;
+    if (dto.amountDue !== undefined) updates.amountDue = dto.amountDue;
+    if (dto.paymentDate !== undefined) updates.paymentDate = dto.paymentDate ? new Date(dto.paymentDate) : undefined;
+    if (dto.paymentStatus !== undefined) updates.paymentStatus = dto.paymentStatus as PropertyEvent['paymentStatus'];
 
-    return this.prisma.propertyEvent.update({
-      where: { id: eventId },
-      data,
-      include: propertyEventInclude,
-    });
+    await this.col.doc(eventId).update(updates as Record<string, unknown>);
+    return this.populateEvent({ ...existing, ...updates });
   }
 
-  /**
-   * Soft-delete a property event.
-   */
-  async remove(propertyId: string, eventId: string) {
-    await this.findOne(propertyId, eventId);
-
-    return this.prisma.propertyEvent.update({
-      where: { id: eventId },
-      data: { deletedAt: new Date() },
-      include: propertyEventInclude,
-    });
+  async remove(propertyId: string, eventId: string): Promise<PropertyEvent> {
+    const existing = await this.findOne(propertyId, eventId);
+    const now = new Date();
+    await this.col.doc(eventId).update({ deletedAt: now, updatedAt: now });
+    return { ...existing, deletedAt: now };
   }
 
-  /**
-   * Restore a soft-deleted property event.
-   */
-  async restore(propertyId: string, eventId: string) {
-    const event = await this.prisma.propertyEvent.findFirst({
-      where: { id: eventId, propertyId, deletedAt: { not: null } },
-      include: propertyEventInclude,
-    });
-
-    if (!event) {
-      throw new NotFoundException(
-        `Deleted property event with ID ${eventId} not found for property ${propertyId}`,
-      );
+  async restore(propertyId: string, eventId: string): Promise<PropertyEvent> {
+    const doc = await this.col.doc(eventId).get();
+    if (!doc.exists) throw new NotFoundException(`Deleted property event with ID ${eventId} not found for property ${propertyId}`);
+    const event = this.docToEvent(doc);
+    if (event.propertyId !== propertyId || !event.deletedAt) {
+      throw new NotFoundException(`Deleted property event with ID ${eventId} not found for property ${propertyId}`);
     }
-
-    return this.prisma.propertyEvent.update({
-      where: { id: eventId },
-      data: { deletedAt: null },
-      include: propertyEventInclude,
-    });
+    const now = new Date();
+    await this.col.doc(eventId).update({ deletedAt: null, updatedAt: now });
+    return this.populateEvent({ ...event, deletedAt: undefined, updatedAt: now });
   }
 
   private async ensurePropertyExists(propertyId: string) {
-    const property = await this.prisma.property.findFirst({
-      where: { id: propertyId, deletedAt: null },
-    });
-    if (!property) {
-      throw new NotFoundException(
-        `Property with ID ${propertyId} not found`,
-      );
+    const doc = await this.firebase.db.collection('properties').doc(propertyId).get();
+    if (!doc.exists || doc.data()?.deletedAt) {
+      throw new NotFoundException(`Property with ID ${propertyId} not found`);
     }
   }
 
-  private async ensureExpenseEventExists(
-    expenseId: string,
-    propertyId: string,
-  ) {
-    const expense = await this.prisma.propertyEvent.findFirst({
-      where: {
-        id: expenseId,
-        propertyId,
-        eventType: PropertyEventType.ExpenseEvent,
-        deletedAt: null,
-      },
-    });
-    if (!expense) {
-      throw new BadRequestException(
-        `ExpenseEvent with ID ${expenseId} not found for this property`,
-      );
+  private async ensureExpenseEventExists(expenseId: string, propertyId: string) {
+    const doc = await this.col.doc(expenseId).get();
+    if (!doc.exists || doc.data()?.eventType !== PropertyEventType.ExpenseEvent || doc.data()?.propertyId !== propertyId || doc.data()?.deletedAt) {
+      throw new BadRequestException(`ExpenseEvent with ID ${expenseId} not found for this property`);
     }
   }
 
   private async ensureBankAccountExists(accountId: string) {
-    const account = await this.prisma.bankAccount.findFirst({
-      where: { id: accountId, deletedAt: null },
-    });
-    if (!account) {
-      throw new BadRequestException(
-        `Bank account with ID ${accountId} not found`,
-      );
+    const doc = await this.firebase.db.collection('bankAccounts').doc(accountId).get();
+    if (!doc.exists || doc.data()?.deletedAt) {
+      throw new BadRequestException(`Bank account with ID ${accountId} not found`);
     }
   }
 
-  private async ensureRentalAgreementExists(
-    rentalAgreementId: string,
-    propertyId: string,
-  ) {
-    const agreement = await this.prisma.rentalAgreement.findFirst({
-      where: { id: rentalAgreementId, propertyId, deletedAt: null },
-    });
-    if (!agreement) {
-      throw new BadRequestException(
-        `Rental agreement with ID ${rentalAgreementId} not found for this property`,
-      );
+  private async ensureRentalAgreementExists(rentalAgreementId: string, propertyId: string) {
+    const doc = await this.firebase.db.collection('rentalAgreements').doc(rentalAgreementId).get();
+    if (!doc.exists || doc.data()?.propertyId !== propertyId || doc.data()?.deletedAt) {
+      throw new BadRequestException(`Rental agreement with ID ${rentalAgreementId} not found for this property`);
     }
   }
 }

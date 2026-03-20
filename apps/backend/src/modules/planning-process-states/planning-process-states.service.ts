@@ -3,98 +3,75 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { PlanningProcessState } from '../../firebase/types';
 import { CreatePlanningProcessStateDto } from './dto/create-planning-process-state.dto';
 import { UpdatePlanningProcessStateDto } from './dto/update-planning-process-state.dto';
 
-/**
- * Service for managing PlanningProcessState (1:1 with Property)
- */
+const COLLECTION = 'planningProcessStates';
+
 @Injectable()
 export class PlanningProcessStatesService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  /**
-   * Create a planning process state for a property.
-   * Ensures property exists and no state already exists (1:1 constraint).
-   */
-  async create(propertyId: string, dto: CreatePlanningProcessStateDto) {
-    const property = await this.prisma.property.findUnique({
-      where: { id: propertyId },
-      include: { planningProcessState: true },
-    });
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
+  }
 
-    if (!property) {
-      throw new NotFoundException(`Property with id ${propertyId} not found`);
-    }
+  private docToState(doc: FirebaseFirestore.DocumentSnapshot): PlanningProcessState {
+    return this.firebase.convertTimestamps<PlanningProcessState>({ id: doc.id, ...doc.data() });
+  }
 
-    if (property.planningProcessState) {
+  async create(propertyId: string, dto: CreatePlanningProcessStateDto): Promise<PlanningProcessState> {
+    const propDoc = await this.firebase.db.collection('properties').doc(propertyId).get();
+    if (!propDoc.exists) throw new NotFoundException(`Property with id ${propertyId} not found`);
+
+    const existing = await this.col.where('propertyId', '==', propertyId).limit(1).get();
+    if (!existing.empty) {
       throw new ConflictException(
         `Property ${propertyId} already has a planning process state. Use PATCH to update.`,
       );
     }
 
-    return this.prisma.planningProcessState.create({
-      data: {
-        propertyId,
-        stateType: dto.stateType,
-        lastUpdateDate: new Date(dto.lastUpdateDate),
-        developerName: dto.developerName,
-        projectedSizeAfter: dto.projectedSizeAfter,
-        notes: dto.notes,
-      },
-    });
+    const id = uuidv4();
+    const now = new Date();
+    const data: Omit<PlanningProcessState, 'id'> = {
+      propertyId,
+      stateType: dto.stateType,
+      lastUpdateDate: new Date(dto.lastUpdateDate),
+      developerName: dto.developerName,
+      projectedSizeAfter: dto.projectedSizeAfter,
+      notes: dto.notes,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.col.doc(id).set(data);
+    return { id, ...data };
   }
 
-  /**
-   * Find planning process state by property ID
-   */
-  async findByProperty(propertyId: string) {
-    const state = await this.prisma.planningProcessState.findUnique({
-      where: { propertyId },
-    });
-
-    if (!state) {
-      throw new NotFoundException(
-        `Planning process state for property ${propertyId} not found`,
-      );
+  async findByProperty(propertyId: string): Promise<PlanningProcessState> {
+    const snap = await this.col.where('propertyId', '==', propertyId).limit(1).get();
+    if (snap.empty) {
+      throw new NotFoundException(`Planning process state for property ${propertyId} not found`);
     }
-
-    return state;
+    return this.docToState(snap.docs[0]);
   }
 
-  /**
-   * Update planning process state for a property
-   */
-  async update(propertyId: string, dto: UpdatePlanningProcessStateDto) {
-    await this.findByProperty(propertyId);
-
-    return this.prisma.planningProcessState.update({
-      where: { propertyId },
-      data: {
-        ...(dto.stateType !== undefined && { stateType: dto.stateType }),
-        ...(dto.lastUpdateDate !== undefined && {
-          lastUpdateDate: new Date(dto.lastUpdateDate),
-        }),
-        ...(dto.developerName !== undefined && {
-          developerName: dto.developerName,
-        }),
-        ...(dto.projectedSizeAfter !== undefined && {
-          projectedSizeAfter: dto.projectedSizeAfter,
-        }),
-        ...(dto.notes !== undefined && { notes: dto.notes }),
-      },
-    });
+  async update(propertyId: string, dto: UpdatePlanningProcessStateDto): Promise<PlanningProcessState> {
+    const existing = await this.findByProperty(propertyId);
+    const updates: Partial<PlanningProcessState> = { updatedAt: new Date() };
+    if (dto.stateType !== undefined) updates.stateType = dto.stateType;
+    if (dto.lastUpdateDate !== undefined) updates.lastUpdateDate = new Date(dto.lastUpdateDate);
+    if (dto.developerName !== undefined) updates.developerName = dto.developerName;
+    if (dto.projectedSizeAfter !== undefined) updates.projectedSizeAfter = dto.projectedSizeAfter;
+    if (dto.notes !== undefined) updates.notes = dto.notes;
+    await this.col.doc(existing.id).update(updates as Record<string, unknown>);
+    return { ...existing, ...updates };
   }
 
-  /**
-   * Remove planning process state for a property
-   */
-  async remove(propertyId: string) {
-    await this.findByProperty(propertyId);
-
-    await this.prisma.planningProcessState.delete({
-      where: { propertyId },
-    });
+  async remove(propertyId: string): Promise<void> {
+    const existing = await this.findByProperty(propertyId);
+    await this.col.doc(existing.id).delete();
   }
 }

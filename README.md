@@ -361,11 +361,11 @@ npm install
 npm install --workspaces
 ```
 
-## 🚀 Deployment to Production (GCP + Supabase)
+## 🚀 Deployment to Production (GCP + Cloud SQL)
 
 This project includes automatic CI/CD deployment using:
 - **Google Cloud Run** - Backend & Frontend hosting
-- **Supabase** - PostgreSQL database (Free tier!)
+- **Google Cloud SQL** - Managed PostgreSQL database
 - **GitHub Actions** - Automatic deployment pipeline
 
 ### Quick Deploy (5 minutes!)
@@ -376,9 +376,9 @@ gcloud auth login
 gcloud config set project calm-armor-616
 # (see full commands in QUICK_DEPLOY.md)
 
-# 2. Setup Supabase (Database - FREE!)
-# Go to: https://supabase.com
-# Create project and get connection string
+# 2. Setup Cloud SQL (Database)
+# Go to: https://console.cloud.google.com/sql
+# Create a PostgreSQL instance and get connection string
 
 # 3. Add GitHub Secrets
 # Go to: https://github.com/natovichat/rent-management-app/settings/secrets/actions
@@ -390,7 +390,6 @@ git push origin main
 
 **📖 Detailed Guides:**
 - [Quick Deploy Guide](docs/QUICK_DEPLOY.md) - 5 minute setup ⚡
-- [Supabase Setup](docs/SUPABASE_SETUP.md) - Database configuration 🗄️
 - [Full Deployment Guide](docs/DEPLOYMENT_GUIDE.md) - Complete documentation 📚
 
 **🎯 Deployment Features:**
@@ -399,7 +398,6 @@ git push origin main
 - ✅ Frontend deployed to Cloud Run
 - ✅ Database migrations run automatically
 - ✅ Zero-downtime deployments
-- 💰 **Free database** with Supabase!
 
 ## 📚 Documentation
 
@@ -408,7 +406,6 @@ git push origin main
 - [Database Schema](docs/database-schema.mdc)
 - [Rent Application Standards](.cursor/rules/rent-application-standards.mdc)
 - [Quick Deploy Guide](docs/QUICK_DEPLOY.md) ⚡ - Start here!
-- [Supabase Setup](docs/SUPABASE_SETUP.md) 🗄️ - Free database
 - [Full Deployment Guide](docs/DEPLOYMENT_GUIDE.md) 📚 - Complete docs
 
 ## 🔗 Useful Links

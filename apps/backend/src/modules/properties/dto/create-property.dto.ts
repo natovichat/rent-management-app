@@ -24,7 +24,7 @@ import {
   ManagementFeeFrequency,
   TaxFrequency,
   EstimationSource,
-} from '@prisma/client';
+} from '../../../firebase/types';
 
 export const PROPERTY_TYPES = Object.values(PropertyType);
 export const PROPERTY_STATUSES = Object.values(PropertyStatus);

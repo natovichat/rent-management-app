@@ -16,7 +16,7 @@ import { Type } from 'class-transformer';
 import {
   ExpenseEventType,
   RentalPaymentStatus,
-} from '@prisma/client';
+} from '../../../firebase/types';
 
 /**
  * DTO for partial update of a property event.

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PlanningProcessStatesController } from './planning-process-states.controller';
 import { PlanningProcessStatesService } from './planning-process-states.service';
-import { PrismaModule } from '../../database/prisma.module';
+
 
 @Module({
-  imports: [PrismaModule],
+  imports: [],
   controllers: [PlanningProcessStatesController],
   providers: [PlanningProcessStatesService],
   exports: [PlanningProcessStatesService],

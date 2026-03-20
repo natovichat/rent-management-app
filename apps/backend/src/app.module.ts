@@ -5,7 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import configuration from './config/configuration';
 
-import { PrismaModule } from './database/prisma.module';
+import { FirebaseModule } from './firebase/firebase.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
@@ -39,7 +39,7 @@ import { PropertyEventsModule } from './modules/property-events/property-events.
       },
     ]),
     ScheduleModule.forRoot(),
-    PrismaModule,
+    FirebaseModule,
     AuthModule,
     UsersModule,
     BankAccountsModule,

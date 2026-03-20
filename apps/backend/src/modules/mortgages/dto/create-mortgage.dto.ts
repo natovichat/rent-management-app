@@ -11,7 +11,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { MortgageStatus } from '@prisma/client';
+import { MortgageStatus } from '../../../firebase/types';
 
 export const MORTGAGE_STATUSES = Object.values(MortgageStatus);
 

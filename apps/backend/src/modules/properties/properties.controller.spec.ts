@@ -12,7 +12,7 @@ import { MortgagesService } from '../mortgages/mortgages.service';
 import { RentalAgreementsService } from '../rental-agreements/rental-agreements.service';
 import { CreatePropertyDto } from './dto/create-property.dto';
 import { UpdatePropertyDto } from './dto/update-property.dto';
-import { PropertyType, PropertyStatus } from '@prisma/client';
+import { PropertyType, PropertyStatus } from '../../firebase/types';
 
 const mockProperty = {
   id: '550e8400-e29b-41d4-a716-446655440000',

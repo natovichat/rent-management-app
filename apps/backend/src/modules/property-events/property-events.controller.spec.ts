@@ -3,14 +3,14 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { PropertyEventsController } from './property-events.controller';
 import { PropertyEventsService } from './property-events.service';
-import { PropertyEventType } from '@prisma/client';
+import { PropertyEventType } from '../../firebase/types';
 import { CreatePlanningProcessEventDto } from './dto/create-planning-process-event.dto';
 import { CreatePropertyDamageEventDto } from './dto/create-property-damage-event.dto';
 import { CreateExpenseEventDto } from './dto/create-expense-event.dto';
 import { CreateRentalPaymentRequestEventDto } from './dto/create-rental-payment-request-event.dto';
 import { UpdatePropertyEventDto } from './dto/update-property-event.dto';
 import { NotFoundException } from '@nestjs/common';
-import { ExpenseEventType } from '@prisma/client';
+import { ExpenseEventType } from '../../firebase/types';
 
 const propertyId = '550e8400-e29b-41d4-a716-446655440001';
 const eventId = '550e8400-e29b-41d4-a716-446655440010';
@@ -164,7 +164,7 @@ describe('PropertyEventsController', () => {
     it('should create ExpenseEvent and return 201', async () => {
       const dto: CreateExpenseEventDto = {
         eventDate: '2025-01-15',
-        expenseType: ExpenseEventType.REPAIRS,
+        expenseType: ExpenseEventType.REPAIR,
         amount: 1500,
       };
       mockPropertyEventsService.createExpense.mockResolvedValue({

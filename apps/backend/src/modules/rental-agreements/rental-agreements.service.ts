@@ -3,369 +3,227 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import * as admin from 'firebase-admin';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { RentalAgreement, RenewalStatus, RentalStatus, Person, Property } from '../../firebase/types';
 import { CreateRentalAgreementDto } from './dto/create-rental-agreement.dto';
 import { UpdateRentalAgreementDto } from './dto/update-rental-agreement.dto';
 import { QueryRentalAgreementDto } from './dto/query-rental-agreement.dto';
-import { Prisma, RenewalStatus } from '@prisma/client';
 
-const rentalAgreementInclude = {
-  property: true,
-  tenant: true,
-} as const;
+const COLLECTION = 'rentalAgreements';
 
-/**
- * Service for managing rental agreements.
- * Handles CRUD operations with validation of related entities.
- */
 @Injectable()
 export class RentalAgreementsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  /**
-   * Create a new rental agreement.
-   * Validates that property and tenant (Person) exist, endDate after startDate, monthlyRent > 0.
-   */
-  async create(dto: CreateRentalAgreementDto) {
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
+  }
+
+  private docToRA(doc: FirebaseFirestore.DocumentSnapshot): RentalAgreement {
+    return this.firebase.convertTimestamps<RentalAgreement>({ id: doc.id, ...doc.data() });
+  }
+
+  private async populateRA(ra: RentalAgreement): Promise<RentalAgreement> {
+    const [propDoc, tenantDoc] = await Promise.all([
+      this.firebase.db.collection('properties').doc(ra.propertyId).get(),
+      this.firebase.db.collection('persons').doc(ra.tenantId).get(),
+    ]);
+    return {
+      ...ra,
+      property: propDoc.exists
+        ? this.firebase.convertTimestamps<Property>({ id: propDoc.id, ...propDoc.data() })
+        : undefined,
+      tenant: tenantDoc.exists
+        ? this.firebase.convertTimestamps<Person>({ id: tenantDoc.id, ...tenantDoc.data() })
+        : undefined,
+    };
+  }
+
+  async create(dto: CreateRentalAgreementDto): Promise<RentalAgreement> {
     await this.validateCreateDto(dto);
 
-    const data: Prisma.RentalAgreementCreateInput = {
-      property: { connect: { id: dto.propertyId } },
-      tenant: { connect: { id: dto.tenantId } },
+    const id = uuidv4();
+    const now = new Date();
+    const data: Omit<RentalAgreement, 'id' | 'property' | 'tenant'> = {
+      propertyId: dto.propertyId,
+      tenantId: dto.tenantId,
       monthlyRent: dto.monthlyRent,
       startDate: new Date(dto.startDate),
       endDate: new Date(dto.endDate),
-      status: dto.status ?? 'FUTURE',
+      status: (dto.status ?? 'FUTURE') as RentalStatus,
       hasExtensionOption: dto.hasExtensionOption ?? false,
+      extensionUntilDate: dto.extensionUntilDate ? new Date(dto.extensionUntilDate) : undefined,
+      extensionMonthlyRent: dto.extensionMonthlyRent,
+      notes: dto.notes,
+      createdAt: now,
+      updatedAt: now,
     };
-
-    if (dto.extensionUntilDate) {
-      data.extensionUntilDate = new Date(dto.extensionUntilDate);
-    }
-    if (dto.extensionMonthlyRent != null) {
-      data.extensionMonthlyRent = dto.extensionMonthlyRent;
-    }
-    if (dto.notes !== undefined) {
-      data.notes = dto.notes;
-    }
-
-    return this.prisma.rentalAgreement.create({
-      data,
-      include: rentalAgreementInclude,
-    });
+    await this.col.doc(id).set(data);
+    return this.populateRA({ id, ...data });
   }
 
-  /**
-   * Find all rental agreements with pagination and filters.
-   */
   async findAll(query: QueryRentalAgreementDto) {
     const { page = 1, limit = 20, status, propertyId, tenantId, includeDeleted } = query;
+
+    let q = this.col as FirebaseFirestore.Query;
+    if (!includeDeleted) q = q.where('deletedAt', '==', null);
+    if (status) q = q.where('status', '==', status);
+    if (propertyId) q = q.where('propertyId', '==', propertyId);
+    if (tenantId) q = q.where('tenantId', '==', tenantId);
+    q = q.orderBy('createdAt', 'desc');
+
+    const snap = await q.get();
+    const docs = snap.docs.map((d) => this.docToRA(d));
+    const total = docs.length;
     const skip = (page - 1) * limit;
-
-    const where: Prisma.RentalAgreementWhereInput = {};
-
-    if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-
-    if (status) {
-      where.status = status;
-    }
-    if (propertyId) {
-      where.propertyId = propertyId;
-    }
-    if (tenantId) {
-      where.tenantId = tenantId;
-    }
-
-    const [data, total] = await Promise.all([
-      this.prisma.rentalAgreement.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: { createdAt: 'desc' },
-        include: rentalAgreementInclude,
-      }),
-      this.prisma.rentalAgreement.count({ where }),
-    ]);
+    const paged = docs.slice(skip, skip + limit);
+    const populated = await Promise.all(paged.map((ra) => this.populateRA(ra)));
 
     return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      data: populated,
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   }
 
-  /**
-   * Find a rental agreement by ID with property and tenant.
-   */
-  async findOne(id: string, includeDeleted = false) {
-    const agreement = await this.prisma.rentalAgreement.findFirst({
-      where: {
-        id,
-        ...(!includeDeleted && { deletedAt: null }),
-      },
-      include: rentalAgreementInclude,
-    });
-
-    if (!agreement) {
-      throw new NotFoundException(
-        `Rental agreement with ID ${id} not found`,
-      );
-    }
-
-    return agreement;
+  async findOne(id: string, includeDeleted = false): Promise<RentalAgreement> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Rental agreement with ID ${id} not found`);
+    const ra = this.docToRA(doc);
+    if (!includeDeleted && ra.deletedAt) throw new NotFoundException(`Rental agreement with ID ${id} not found`);
+    return this.populateRA(ra);
   }
 
-  /**
-   * Find rental agreements by property ID.
-   */
-  async findByProperty(propertyId: string, includeDeleted = false) {
-    const property = await this.prisma.property.findFirst({
-      where: { id: propertyId, deletedAt: null },
-    });
-
-    if (!property) {
-      throw new NotFoundException(
-        `Property with ID ${propertyId} not found`,
-      );
+  async findByProperty(propertyId: string, includeDeleted = false): Promise<RentalAgreement[]> {
+    const propDoc = await this.firebase.db.collection('properties').doc(propertyId).get();
+    if (!propDoc.exists || propDoc.data()?.deletedAt) {
+      throw new NotFoundException(`Property with ID ${propertyId} not found`);
     }
-
-    const where: Prisma.RentalAgreementWhereInput = { propertyId };
-    if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-
-    return this.prisma.rentalAgreement.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      include: rentalAgreementInclude,
-    });
+    let q = this.col.where('propertyId', '==', propertyId) as FirebaseFirestore.Query;
+    if (!includeDeleted) q = q.where('deletedAt', '==', null);
+    q = q.orderBy('createdAt', 'desc');
+    const snap = await q.get();
+    const docs = snap.docs.map((d) => this.docToRA(d));
+    return Promise.all(docs.map((ra) => this.populateRA(ra)));
   }
 
-  /**
-   * Find rental agreements by tenant (Person) ID.
-   */
-  async findByTenant(tenantId: string, includeDeleted = false) {
-    const person = await this.prisma.person.findFirst({
-      where: { id: tenantId, deletedAt: null },
-    });
-
-    if (!person) {
-      throw new NotFoundException(
-        `Person (tenant) with ID ${tenantId} not found`,
-      );
+  async findByTenant(tenantId: string, includeDeleted = false): Promise<RentalAgreement[]> {
+    const personDoc = await this.firebase.db.collection('persons').doc(tenantId).get();
+    if (!personDoc.exists || personDoc.data()?.deletedAt) {
+      throw new NotFoundException(`Person (tenant) with ID ${tenantId} not found`);
     }
-
-    const where: Prisma.RentalAgreementWhereInput = { tenantId };
-    if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-
-    return this.prisma.rentalAgreement.findMany({
-      where,
-      orderBy: { createdAt: 'desc' },
-      include: rentalAgreementInclude,
-    });
+    let q = this.col.where('tenantId', '==', tenantId) as FirebaseFirestore.Query;
+    if (!includeDeleted) q = q.where('deletedAt', '==', null);
+    q = q.orderBy('createdAt', 'desc');
+    const snap = await q.get();
+    const docs = snap.docs.map((d) => this.docToRA(d));
+    return Promise.all(docs.map((ra) => this.populateRA(ra)));
   }
 
-  /**
-   * Update a rental agreement.
-   */
-  async update(id: string, dto: UpdateRentalAgreementDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateRentalAgreementDto): Promise<RentalAgreement> {
+    const existing = await this.findOne(id);
     await this.validateUpdateDto(dto);
 
-    const data: Prisma.RentalAgreementUpdateInput = {};
-
-    if (dto.propertyId !== undefined) {
-      data.property = { connect: { id: dto.propertyId } };
-    }
-    if (dto.tenantId !== undefined) {
-      data.tenant = { connect: { id: dto.tenantId } };
-    }
-    if (dto.monthlyRent !== undefined) data.monthlyRent = dto.monthlyRent;
-    if (dto.startDate !== undefined) {
-      data.startDate = new Date(dto.startDate);
-    }
-    if (dto.endDate !== undefined) {
-      data.endDate = new Date(dto.endDate);
-    }
-    if (dto.status !== undefined) data.status = dto.status;
-    if (dto.hasExtensionOption !== undefined) {
-      data.hasExtensionOption = dto.hasExtensionOption;
-    }
+    const updates: Partial<RentalAgreement> = { updatedAt: new Date() };
+    if (dto.propertyId !== undefined) updates.propertyId = dto.propertyId;
+    if (dto.tenantId !== undefined) updates.tenantId = dto.tenantId;
+    if (dto.monthlyRent !== undefined) updates.monthlyRent = dto.monthlyRent;
+    if (dto.startDate !== undefined) updates.startDate = new Date(dto.startDate);
+    if (dto.endDate !== undefined) updates.endDate = new Date(dto.endDate);
+    if (dto.status !== undefined) updates.status = dto.status as unknown as RentalStatus;
+    if (dto.hasExtensionOption !== undefined) updates.hasExtensionOption = dto.hasExtensionOption;
     if (dto.extensionUntilDate !== undefined) {
-      data.extensionUntilDate = dto.extensionUntilDate
-        ? new Date(dto.extensionUntilDate)
-        : null;
+      updates.extensionUntilDate = dto.extensionUntilDate ? new Date(dto.extensionUntilDate) : undefined;
     }
-    if (dto.extensionMonthlyRent !== undefined) {
-      data.extensionMonthlyRent = dto.extensionMonthlyRent;
-    }
-    if (dto.notes !== undefined) data.notes = dto.notes;
+    if (dto.extensionMonthlyRent !== undefined) updates.extensionMonthlyRent = dto.extensionMonthlyRent;
+    if (dto.notes !== undefined) updates.notes = dto.notes;
 
-    return this.prisma.rentalAgreement.update({
-      where: { id },
-      data,
-      include: rentalAgreementInclude,
-    });
+    await this.col.doc(id).update(updates as Record<string, unknown>);
+    return this.populateRA({ ...existing, ...updates });
   }
 
-  /**
-   * Soft-delete a rental agreement.
-   */
-  async remove(id: string) {
-    await this.findOne(id);
-
-    return this.prisma.rentalAgreement.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-      include: rentalAgreementInclude,
-    });
+  async remove(id: string): Promise<RentalAgreement> {
+    const existing = await this.findOne(id);
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: now, updatedAt: now });
+    return { ...existing, deletedAt: now };
   }
 
-  /**
-   * Find all active/future rental agreements expiring within the next X months.
-   * Returns agreements sorted by end date ascending.
-   */
-  async findExpiring(months: number) {
+  async findExpiring(months: number): Promise<RentalAgreement[]> {
     const future = new Date();
     future.setMonth(future.getMonth() + months);
 
-    // Returns already-expired agreements AND agreements expiring within the next X months
-    return this.prisma.rentalAgreement.findMany({
-      where: {
-        deletedAt: null,
-        OR: [
-          { status: 'EXPIRED' },
-          {
-            status: { in: ['ACTIVE', 'FUTURE'] },
-            endDate: { lte: future },
-          },
-        ],
-      },
-      orderBy: { endDate: 'asc' },
-      include: rentalAgreementInclude,
-    });
-  }
+    const snap = await this.col
+      .where('deletedAt', '==', null)
+      .orderBy('endDate')
+      .get();
 
-  /**
-   * Update the renewal status of a rental agreement.
-   */
-  async updateRenewalStatus(id: string, renewalStatus: RenewalStatus) {
-    await this.findOne(id);
-
-    return this.prisma.rentalAgreement.update({
-      where: { id },
-      data: { renewalStatus },
-      include: rentalAgreementInclude,
-    });
-  }
-
-  /**
-   * Restore a soft-deleted rental agreement.
-   */
-  async restore(id: string) {
-    const agreement = await this.prisma.rentalAgreement.findFirst({
-      where: { id, deletedAt: { not: null } },
-      include: rentalAgreementInclude,
-    });
-
-    if (!agreement) {
-      throw new NotFoundException(
-        `Deleted rental agreement with ID ${id} not found`,
+    const docs = snap.docs
+      .map((d) => this.docToRA(d))
+      .filter(
+        (ra) =>
+          ra.status === 'EXPIRED' ||
+          (['ACTIVE', 'FUTURE'].includes(ra.status) && ra.endDate <= future),
       );
-    }
 
-    return this.prisma.rentalAgreement.update({
-      where: { id },
-      data: { deletedAt: null },
-      include: rentalAgreementInclude,
-    });
+    return Promise.all(docs.map((ra) => this.populateRA(ra)));
   }
 
-  /**
-   * Validate create DTO: property and tenant exist, endDate after startDate, monthlyRent > 0.
-   */
+  async updateRenewalStatus(id: string, renewalStatus: RenewalStatus): Promise<RentalAgreement> {
+    const existing = await this.findOne(id);
+    const now = new Date();
+    await this.col.doc(id).update({ renewalStatus, updatedAt: now });
+    return this.populateRA({ ...existing, renewalStatus, updatedAt: now });
+  }
+
+  async restore(id: string): Promise<RentalAgreement> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Deleted rental agreement with ID ${id} not found`);
+    const ra = this.docToRA(doc);
+    if (!ra.deletedAt) throw new NotFoundException(`Deleted rental agreement with ID ${id} not found`);
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: null, updatedAt: now });
+    return this.populateRA({ ...ra, deletedAt: undefined, updatedAt: now });
+  }
+
   private async validateCreateDto(dto: CreateRentalAgreementDto) {
-    const property = await this.prisma.property.findFirst({
-      where: { id: dto.propertyId, deletedAt: null },
-    });
-    if (!property) {
-      throw new BadRequestException(
-        `Property with ID ${dto.propertyId} not found`,
-      );
+    const propDoc = await this.firebase.db.collection('properties').doc(dto.propertyId).get();
+    if (!propDoc.exists || propDoc.data()?.deletedAt) {
+      throw new BadRequestException(`Property with ID ${dto.propertyId} not found`);
     }
-
-    const person = await this.prisma.person.findFirst({
-      where: { id: dto.tenantId, deletedAt: null },
-    });
-    if (!person) {
-      throw new BadRequestException(
-        `Person (tenant) with ID ${dto.tenantId} not found`,
-      );
+    const personDoc = await this.firebase.db.collection('persons').doc(dto.tenantId).get();
+    if (!personDoc.exists || personDoc.data()?.deletedAt) {
+      throw new BadRequestException(`Person (tenant) with ID ${dto.tenantId} not found`);
     }
-
-    const startDate = new Date(dto.startDate);
-    const endDate = new Date(dto.endDate);
-    if (endDate <= startDate) {
-      throw new BadRequestException(
-        'endDate must be after startDate',
-      );
+    if (new Date(dto.endDate) <= new Date(dto.startDate)) {
+      throw new BadRequestException('endDate must be after startDate');
     }
-
     if (dto.monthlyRent <= 0) {
-      throw new BadRequestException(
-        'monthlyRent must be greater than 0',
-      );
+      throw new BadRequestException('monthlyRent must be greater than 0');
     }
   }
 
-  /**
-   * Validate update DTO: related entities exist, date consistency when both provided.
-   */
   private async validateUpdateDto(dto: UpdateRentalAgreementDto) {
     if (dto.propertyId) {
-      const property = await this.prisma.property.findFirst({
-        where: { id: dto.propertyId, deletedAt: null },
-      });
-      if (!property) {
-        throw new BadRequestException(
-          `Property with ID ${dto.propertyId} not found`,
-        );
+      const propDoc = await this.firebase.db.collection('properties').doc(dto.propertyId).get();
+      if (!propDoc.exists || propDoc.data()?.deletedAt) {
+        throw new BadRequestException(`Property with ID ${dto.propertyId} not found`);
       }
     }
-
     if (dto.tenantId) {
-      const person = await this.prisma.person.findFirst({
-        where: { id: dto.tenantId, deletedAt: null },
-      });
-      if (!person) {
-        throw new BadRequestException(
-          `Person (tenant) with ID ${dto.tenantId} not found`,
-        );
+      const personDoc = await this.firebase.db.collection('persons').doc(dto.tenantId).get();
+      if (!personDoc.exists || personDoc.data()?.deletedAt) {
+        throw new BadRequestException(`Person (tenant) with ID ${dto.tenantId} not found`);
       }
     }
-
     if (dto.startDate != null && dto.endDate != null) {
-      const startDate = new Date(dto.startDate);
-      const endDate = new Date(dto.endDate);
-      if (endDate <= startDate) {
-        throw new BadRequestException(
-          'endDate must be after startDate',
-        );
+      if (new Date(dto.endDate) <= new Date(dto.startDate)) {
+        throw new BadRequestException('endDate must be after startDate');
       }
     }
-
     if (dto.monthlyRent != null && dto.monthlyRent <= 0) {
-      throw new BadRequestException(
-        'monthlyRent must be greater than 0',
-      );
+      throw new BadRequestException('monthlyRent must be greater than 0');
     }
   }
 }

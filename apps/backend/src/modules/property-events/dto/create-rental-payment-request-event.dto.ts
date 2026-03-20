@@ -12,7 +12,7 @@ import {
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { RentalPaymentStatus } from '@prisma/client';
+import { RentalPaymentStatus } from '../../../firebase/types';
 
 export const RENTAL_PAYMENT_STATUSES = Object.values(RentalPaymentStatus);
 

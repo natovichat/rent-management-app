@@ -3,110 +3,91 @@ import {
   NotFoundException,
   ConflictException,
 } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service';
+import { v4 as uuidv4 } from 'uuid';
+import { FirebaseService } from '../../firebase/firebase.service';
+import { BankAccount } from '../../firebase/types';
 import { CreateBankAccountDto } from './dto/create-bank-account.dto';
 import { UpdateBankAccountDto } from './dto/update-bank-account.dto';
 import { QueryBankAccountDto } from './dto/query-bank-account.dto';
-import { Prisma } from '@prisma/client';
 
-/**
- * Service for managing bank accounts.
- * Handles CRUD operations with uniqueness validation (bankName + accountNumber)
- * and prevents deletion when linked to mortgages.
- */
+const COLLECTION = 'bankAccounts';
+
 @Injectable()
 export class BankAccountsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly firebase: FirebaseService) {}
 
-  /**
-   * Create a new bank account.
-   * Validates uniqueness of bankName + accountNumber combination.
-   */
-  async create(dto: CreateBankAccountDto) {
-    await this.checkUniqueness(dto.bankName, dto.accountNumber);
-
-    return this.prisma.bankAccount.create({
-      data: {
-        bankName: dto.bankName,
-        branchNumber: dto.branchNumber,
-        accountNumber: dto.accountNumber,
-        accountType: dto.accountType,
-        accountHolder: dto.accountHolder,
-        notes: dto.notes,
-        isActive: dto.isActive ?? true,
-      },
-    });
+  private get col() {
+    return this.firebase.db.collection(COLLECTION);
   }
 
-  /**
-   * Find all bank accounts with pagination and filters.
-   */
+  private docToBA(doc: FirebaseFirestore.DocumentSnapshot): BankAccount {
+    return this.firebase.convertTimestamps<BankAccount>({ id: doc.id, ...doc.data() });
+  }
+
+  async create(dto: CreateBankAccountDto): Promise<BankAccount> {
+    await this.checkUniqueness(dto.bankName, dto.accountNumber);
+    const id = uuidv4();
+    const now = new Date();
+    const data: Omit<BankAccount, 'id'> = {
+      bankName: dto.bankName,
+      branchNumber: dto.branchNumber,
+      accountNumber: dto.accountNumber,
+      accountType: dto.accountType,
+      accountHolder: dto.accountHolder,
+      notes: dto.notes,
+      isActive: dto.isActive ?? true,
+      createdAt: now,
+      updatedAt: now,
+    };
+    await this.col.doc(id).set(data);
+    return { id, ...data };
+  }
+
   async findAll(query: QueryBankAccountDto) {
     const { page = 1, limit = 20, bankName, accountType, isActive, includeDeleted } = query;
-    const skip = (page - 1) * limit;
 
-    const where: Prisma.BankAccountWhereInput = {};
+    let q = this.col as FirebaseFirestore.Query;
 
     if (!includeDeleted) {
-      where.deletedAt = null;
-    }
-
-    if (bankName) {
-      where.bankName = { contains: bankName, mode: 'insensitive' };
+      q = q.where('deletedAt', '==', null);
     }
     if (accountType) {
-      where.accountType = accountType;
+      q = q.where('accountType', '==', accountType);
     }
     if (isActive !== undefined) {
-      where.isActive = isActive;
+      q = q.where('isActive', '==', isActive);
     }
 
-    const [data, total] = await Promise.all([
-      this.prisma.bankAccount.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: [{ bankName: 'asc' }, { createdAt: 'desc' }],
-      }),
-      this.prisma.bankAccount.count({ where }),
-    ]);
+    q = q.orderBy('bankName').orderBy('createdAt', 'desc');
 
+    const snap = await q.get();
+    let docs = snap.docs.map((d) => this.docToBA(d));
+
+    if (bankName) {
+      const lower = bankName.toLowerCase();
+      docs = docs.filter((a) => a.bankName.toLowerCase().includes(lower));
+    }
+
+    const total = docs.length;
+    const skip = (page - 1) * limit;
     return {
-      data,
-      meta: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
-      },
+      data: docs.slice(skip, skip + limit),
+      meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   }
 
-  /**
-   * Find a bank account by ID.
-   */
-  async findOne(id: string, includeDeleted = false) {
-    const bankAccount = await this.prisma.bankAccount.findFirst({
-      where: {
-        id,
-        ...(!includeDeleted && { deletedAt: null }),
-      },
-    });
-
-    if (!bankAccount) {
+  async findOne(id: string, includeDeleted = false): Promise<BankAccount> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Bank account with ID ${id} not found`);
+    const ba = this.docToBA(doc);
+    if (!includeDeleted && ba.deletedAt) {
       throw new NotFoundException(`Bank account with ID ${id} not found`);
     }
-
-    return bankAccount;
+    return ba;
   }
 
-  /**
-   * Update a bank account.
-   * Validates uniqueness when bankName or accountNumber are changed.
-   */
-  async update(id: string, dto: UpdateBankAccountDto) {
+  async update(id: string, dto: UpdateBankAccountDto): Promise<BankAccount> {
     const existing = await this.findOne(id);
-
     const bankName = dto.bankName ?? existing.bankName;
     const accountNumber = dto.accountNumber ?? existing.accountNumber;
 
@@ -114,81 +95,59 @@ export class BankAccountsService {
       await this.checkUniqueness(bankName, accountNumber, id);
     }
 
-    const data: Prisma.BankAccountUpdateInput = {};
-    if (dto.bankName !== undefined) data.bankName = dto.bankName;
-    if (dto.branchNumber !== undefined) data.branchNumber = dto.branchNumber;
-    if (dto.accountNumber !== undefined) data.accountNumber = dto.accountNumber;
-    if (dto.accountType !== undefined) data.accountType = dto.accountType;
-    if (dto.accountHolder !== undefined) data.accountHolder = dto.accountHolder;
-    if (dto.notes !== undefined) data.notes = dto.notes;
-    if (dto.isActive !== undefined) data.isActive = dto.isActive;
+    const updates: Partial<BankAccount> = { updatedAt: new Date() };
+    if (dto.bankName !== undefined) updates.bankName = dto.bankName;
+    if (dto.branchNumber !== undefined) updates.branchNumber = dto.branchNumber;
+    if (dto.accountNumber !== undefined) updates.accountNumber = dto.accountNumber;
+    if (dto.accountType !== undefined) updates.accountType = dto.accountType;
+    if (dto.accountHolder !== undefined) updates.accountHolder = dto.accountHolder;
+    if (dto.notes !== undefined) updates.notes = dto.notes;
+    if (dto.isActive !== undefined) updates.isActive = dto.isActive;
 
-    return this.prisma.bankAccount.update({
-      where: { id },
-      data,
-    });
+    await this.col.doc(id).update(updates as Record<string, unknown>);
+    return { ...existing, ...updates };
   }
 
-  /**
-   * Soft-delete a bank account.
-   * Prevents deletion when linked to active mortgages.
-   */
-  async remove(id: string) {
+  async remove(id: string): Promise<BankAccount> {
     await this.findOne(id);
 
-    const mortgageCount = await this.prisma.mortgage.count({
-      where: { bankAccountId: id, deletedAt: null },
-    });
+    const mortgageSnap = await this.firebase.db
+      .collection('mortgages')
+      .where('bankAccountId', '==', id)
+      .where('deletedAt', '==', null)
+      .get();
 
-    if (mortgageCount > 0) {
+    if (!mortgageSnap.empty) {
       throw new ConflictException(
-        `Cannot delete bank account: it is linked to ${mortgageCount} mortgage(s). Remove the mortgage links first.`,
+        `Cannot delete bank account: it is linked to ${mortgageSnap.size} mortgage(s). Remove the mortgage links first.`,
       );
     }
 
-    return this.prisma.bankAccount.update({
-      where: { id },
-      data: { deletedAt: new Date() },
-    });
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: now, updatedAt: now });
+    const doc = await this.col.doc(id).get();
+    return this.docToBA(doc);
   }
 
-  /**
-   * Restore a soft-deleted bank account.
-   */
-  async restore(id: string) {
-    const bankAccount = await this.prisma.bankAccount.findFirst({
-      where: { id, deletedAt: { not: null } },
-    });
-
-    if (!bankAccount) {
-      throw new NotFoundException(`Deleted bank account with ID ${id} not found`);
-    }
-
-    return this.prisma.bankAccount.update({
-      where: { id },
-      data: { deletedAt: null },
-    });
+  async restore(id: string): Promise<BankAccount> {
+    const doc = await this.col.doc(id).get();
+    if (!doc.exists) throw new NotFoundException(`Deleted bank account with ID ${id} not found`);
+    const ba = this.docToBA(doc);
+    if (!ba.deletedAt) throw new NotFoundException(`Deleted bank account with ID ${id} not found`);
+    const now = new Date();
+    await this.col.doc(id).update({ deletedAt: null, updatedAt: now });
+    return { ...ba, deletedAt: undefined, updatedAt: now };
   }
 
-  /**
-   * Check uniqueness of bankName + accountNumber.
-   * Excludes existing record when updating.
-   */
-  private async checkUniqueness(
-    bankName: string,
-    accountNumber: string,
-    excludeId?: string,
-  ) {
-    const existing = await this.prisma.bankAccount.findFirst({
-      where: {
-        bankName,
-        accountNumber,
-        deletedAt: null,
-        ...(excludeId ? { id: { not: excludeId } } : {}),
-      },
-    });
+  private async checkUniqueness(bankName: string, accountNumber: string, excludeId?: string) {
+    const snap = await this.col
+      .where('bankName', '==', bankName)
+      .where('accountNumber', '==', accountNumber)
+      .where('deletedAt', '==', null)
+      .get();
 
-    if (existing) {
+    const conflict = snap.docs.find((d) => d.id !== excludeId);
+    if (conflict) {
       throw new ConflictException(
         `Bank account with bank "${bankName}" and account number "${accountNumber}" already exists`,
       );

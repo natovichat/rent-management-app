@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PersonType } from '@prisma/client';
+import { PersonType } from '../../../firebase/types';
 
 export const PERSON_TYPES = Object.values(PersonType);
 
