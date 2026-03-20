@@ -60,3 +60,9 @@ Thumbs.db
 Dockerfile*
 docker-compose*
 .dockerignore
+
+# Sensitive config files
+config/
+firebase.json
+firestore.rules
+required_env_vars.txt

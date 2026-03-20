@@ -1,0 +1,19 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'apps/backend/Dockerfile'
+      - '-t'
+      - 'gcr.io/rent-application-9a1da/rent-app-backend:latest'
+      - '.'
+    timeout: '600s'
+
+images:
+  - 'gcr.io/rent-application-9a1da/rent-app-backend:latest'
+
+options:
+  machineType: 'E2_MEDIUM'
+  logging: CLOUD_LOGGING_ONLY
+
+timeout: '660s'
