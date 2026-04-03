@@ -333,6 +333,10 @@ export interface RentalAgreement {
   extensionUntilDate?: Date;
   extensionMonthlyRent?: number;
   notes?: string;
+  /** Total amount the tenant has actually paid so far */
+  paidAmount?: number;
+  /** The last month (inclusive) for which the tenant has paid, e.g. 2026-03-01 */
+  paidUntilDate?: Date;
   deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;

@@ -16,6 +16,10 @@ export interface RentalAgreement {
   extensionUntilDate?: string;
   extensionMonthlyRent?: number;
   notes?: string;
+  /** Total amount the tenant has actually paid so far */
+  paidAmount?: number;
+  /** Last month (inclusive) for which the tenant has paid, ISO date string */
+  paidUntilDate?: string;
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;

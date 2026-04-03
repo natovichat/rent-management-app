@@ -6,7 +6,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 import * as admin from 'firebase-admin';
 import { FirebaseService } from '../../firebase/firebase.service';
-import { RentalAgreement, RenewalStatus, RentalStatus, Person, Property } from '../../firebase/types';
+import { RentalAgreement, RenewalStatus, RentalStatus, Person, Property, PropertyEventType } from '../../firebase/types';
 import { CreateRentalAgreementDto } from './dto/create-rental-agreement.dto';
 import { UpdateRentalAgreementDto } from './dto/update-rental-agreement.dto';
 import { QueryRentalAgreementDto } from './dto/query-rental-agreement.dto';
@@ -81,9 +81,10 @@ export class RentalAgreementsService {
     const skip = (page - 1) * limit;
     const paged = docs.slice(skip, skip + limit);
     const populated = await Promise.all(paged.map((ra) => this.populateRA(ra)));
+    const withStats = await this.attachPaymentStats(populated);
 
     return {
-      data: populated,
+      data: withStats,
       meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
     };
   }
@@ -93,7 +94,9 @@ export class RentalAgreementsService {
     if (!doc.exists) throw new NotFoundException(`Rental agreement with ID ${id} not found`);
     const ra = this.docToRA(doc);
     if (!includeDeleted && ra.deletedAt) throw new NotFoundException(`Rental agreement with ID ${id} not found`);
-    return this.populateRA(ra);
+    const populated = await this.populateRA(ra);
+    const [withStats] = await this.attachPaymentStats([populated]);
+    return withStats;
   }
 
   async findByProperty(propertyId: string, includeDeleted = false): Promise<RentalAgreement[]> {
@@ -106,7 +109,8 @@ export class RentalAgreementsService {
     q = q.orderBy('createdAt', 'desc');
     const snap = await q.get();
     const docs = snap.docs.map((d) => this.docToRA(d));
-    return Promise.all(docs.map((ra) => this.populateRA(ra)));
+    const populated = await Promise.all(docs.map((ra) => this.populateRA(ra)));
+    return this.attachPaymentStats(populated);
   }
 
   async findByTenant(tenantId: string, includeDeleted = false): Promise<RentalAgreement[]> {
@@ -119,7 +123,8 @@ export class RentalAgreementsService {
     q = q.orderBy('createdAt', 'desc');
     const snap = await q.get();
     const docs = snap.docs.map((d) => this.docToRA(d));
-    return Promise.all(docs.map((ra) => this.populateRA(ra)));
+    const populated = await Promise.all(docs.map((ra) => this.populateRA(ra)));
+    return this.attachPaymentStats(populated);
   }
 
   async update(id: string, dto: UpdateRentalAgreementDto): Promise<RentalAgreement> {
@@ -186,6 +191,53 @@ export class RentalAgreementsService {
     const now = new Date();
     await this.col.doc(id).update({ deletedAt: null, updatedAt: now });
     return this.populateRA({ ...ra, deletedAt: undefined, updatedAt: now });
+  }
+
+  /**
+   * Fetches all PAID RentalPaymentRequestEvents in one Firestore query,
+   * then attaches computed paidAmount and paidUntilDate to each agreement.
+   */
+  private async attachPaymentStats(ras: RentalAgreement[]): Promise<RentalAgreement[]> {
+    if (ras.length === 0) return ras;
+
+    const raIds = new Set(ras.map((ra) => ra.id));
+
+    const snap = await this.firebase.db
+      .collection('propertyEvents')
+      .where('eventType', '==', PropertyEventType.RentalPaymentRequestEvent)
+      .where('paymentStatus', '==', 'PAID')
+      .where('deletedAt', '==', null)
+      .get();
+
+    // Aggregate per rental agreement
+    const stats = new Map<string, { totalPaid: number; maxYear: number; maxMonth: number }>();
+    snap.docs.forEach((doc) => {
+      const d = doc.data();
+      const raId: string | undefined = d['rentalAgreementId'];
+      if (!raId || !raIds.has(raId)) return;
+
+      const entry = stats.get(raId) ?? { totalPaid: 0, maxYear: 0, maxMonth: 0 };
+      entry.totalPaid += Number(d['amountDue'] ?? 0);
+
+      const y = Number(d['year'] ?? 0);
+      const m = Number(d['month'] ?? 0);
+      if (y > entry.maxYear || (y === entry.maxYear && m > entry.maxMonth)) {
+        entry.maxYear = y;
+        entry.maxMonth = m;
+      }
+      stats.set(raId, entry);
+    });
+
+    return ras.map((ra) => {
+      const s = stats.get(ra.id);
+      if (!s || s.totalPaid === 0) return ra;
+      return {
+        ...ra,
+        paidAmount: s.totalPaid,
+        // First day of the latest paid month
+        paidUntilDate: new Date(s.maxYear, s.maxMonth - 1, 1),
+      };
+    });
   }
 
   private async validateCreateDto(dto: CreateRentalAgreementDto) {

@@ -46,6 +46,34 @@ const formatCurrency = (amount: number) =>
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString('he-IL');
 
+/**
+ * Count full months from lease startDate until today (or endDate if past), inclusive.
+ * Example: Jan 2025 → Apr 2026 = 16 months.
+ */
+function calcExpectedPayment(startDate: string, endDate: string, monthlyRent: number): number {
+  if (!startDate || !endDate) return 0;
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const today = new Date();
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0;
+  if (start > today) return 0;
+  // Cap at min(today, endDate)
+  const ref = today <= end ? today : end;
+  const months =
+    (ref.getFullYear() - start.getFullYear()) * 12 +
+    (ref.getMonth() - start.getMonth()) +
+    1;
+  return Math.max(0, months) * monthlyRent;
+}
+
+/** Format a paidUntilDate as "MM/YYYY" */
+function formatPaidUntil(dateString?: string): string {
+  if (!dateString) return '—';
+  const d = new Date(dateString);
+  if (isNaN(d.getTime())) return '—';
+  return d.toLocaleDateString('he-IL', { month: '2-digit', year: 'numeric' });
+}
+
 const getStatusColor = (status: RentalAgreementStatus) => {
   switch (status) {
     case 'ACTIVE':
@@ -232,6 +260,43 @@ export default function LeaseList() {
       align: 'right',
       headerAlign: 'right',
       valueFormatter: (params) => formatDate(params.value ?? ''),
+    },
+    {
+      field: 'expectedPayment',
+      headerName: 'חייב לשלם',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      description: 'סה"כ תשלומים צפויים מתחילת החוזה ועד היום',
+      valueGetter: (params) =>
+        calcExpectedPayment(
+          params.row.startDate ?? '',
+          params.row.endDate ?? '',
+          params.row.monthlyRent ?? 0,
+        ),
+      valueFormatter: (params) =>
+        params.value > 0 ? formatCurrency(params.value) : '—',
+    },
+    {
+      field: 'paidAmount',
+      headerName: 'שילם בפועל',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      description: 'סה"כ תשלומים שהתקבלו (אירועי תשלום בסטטוס שולם)',
+      valueGetter: (params) => params.row.paidAmount ?? 0,
+      valueFormatter: (params) =>
+        params.value > 0 ? formatCurrency(params.value) : '—',
+    },
+    {
+      field: 'paidUntilDate',
+      headerName: 'שילם עד חודש',
+      width: 130,
+      align: 'right',
+      headerAlign: 'right',
+      description: 'החודש האחרון (כולל) שעבורו התקבל תשלום',
+      valueGetter: (params) => params.row.paidUntilDate,
+      valueFormatter: (params) => formatPaidUntil(params.value),
     },
     {
       field: 'status',
