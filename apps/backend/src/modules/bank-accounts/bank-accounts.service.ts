@@ -36,6 +36,7 @@ export class BankAccountsService {
       accountHolder: dto.accountHolder,
       notes: dto.notes,
       isActive: dto.isActive ?? true,
+      deletedAt: null,
       createdAt: now,
       updatedAt: now,
     };

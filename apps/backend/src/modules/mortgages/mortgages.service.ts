@@ -68,6 +68,7 @@ export class MortgagesService {
       earlyRepaymentPenalty: dto.earlyRepaymentPenalty,
       endDate: dto.endDate ? new Date(dto.endDate) : undefined,
       notes: dto.notes,
+      deletedAt: null,
       createdAt: now,
       updatedAt: now,
     };

@@ -14,6 +14,8 @@ export class FirebaseService implements OnModuleInit {
           privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
         }),
       });
+      // Silently drop undefined fields instead of throwing on set()/update()
+      admin.firestore().settings({ ignoreUndefinedProperties: true });
       this.logger.log('Firebase Admin SDK initialized');
     }
   }

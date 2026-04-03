@@ -45,8 +45,9 @@ export class PropertyEventsService {
 
   private async createEvent(data: Omit<PropertyEvent, 'id' | 'property' | 'rentalAgreement' | 'paidToAccount' | 'linkedExpense'>): Promise<PropertyEvent> {
     const id = uuidv4();
-    await this.col.doc(id).set(data);
-    return this.populateEvent({ id, ...data });
+    const dataWithDeletedAt = { ...data, deletedAt: data.deletedAt ?? null };
+    await this.col.doc(id).set(dataWithDeletedAt);
+    return this.populateEvent({ id, ...dataWithDeletedAt });
   }
 
   async createPlanningProcess(propertyId: string, dto: CreatePlanningProcessEventDto): Promise<PropertyEvent> {

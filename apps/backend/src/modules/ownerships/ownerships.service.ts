@@ -59,6 +59,7 @@ export class OwnershipsService {
       managementFee: dto.managementFee,
       familyDivision: dto.familyDivision ?? false,
       notes: dto.notes,
+      deletedAt: null,
       createdAt: now,
       updatedAt: now,
     };

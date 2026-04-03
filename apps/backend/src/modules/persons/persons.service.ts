@@ -35,6 +35,7 @@ export class PersonsService {
       phone: dto.phone ?? undefined,
       address: dto.address ?? undefined,
       notes: dto.notes ?? undefined,
+      deletedAt: null,   // Required: findAll filters where('deletedAt', '==', null)
       createdAt: now,
       updatedAt: now,
     };

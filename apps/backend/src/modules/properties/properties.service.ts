@@ -90,7 +90,7 @@ export class PropertiesService {
   async create(dto: CreatePropertyDto): Promise<Property> {
     const id = uuidv4();
     const now = new Date();
-    const data = { ...this.dtoToData(dto), createdAt: now, updatedAt: now };
+    const data = { ...this.dtoToData(dto), deletedAt: null, createdAt: now, updatedAt: now };
     await this.col.doc(id).set(data);
     return this.docToProperty(await this.col.doc(id).get());
   }

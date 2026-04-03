@@ -191,7 +191,7 @@ export interface Person {
   phone?: string;
   address?: string;
   notes?: string;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -205,7 +205,7 @@ export interface BankAccount {
   accountHolder?: string;
   notes?: string;
   isActive: boolean;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -267,7 +267,7 @@ export interface Property {
   restrictions?: string;
   estimationSource?: string;
   notes?: string;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   // Virtual populated fields
@@ -286,7 +286,7 @@ export interface Ownership {
   managementFee?: number;
   familyDivision: boolean;
   notes?: string;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   // Virtual populated fields
@@ -310,7 +310,7 @@ export interface Mortgage {
   earlyRepaymentPenalty?: number;
   linkedProperties: string[];
   notes?: string;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   // Virtual populated fields
@@ -333,7 +333,7 @@ export interface RentalAgreement {
   extensionUntilDate?: Date;
   extensionMonthlyRent?: number;
   notes?: string;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   // Virtual populated fields
@@ -369,7 +369,7 @@ export interface PropertyEvent {
   amountDue?: number;
   paymentDate?: Date;
   paymentStatus?: PaymentStatus | RentalPaymentStatus;
-  deletedAt?: Date;
+  deletedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
   // Virtual populated fields

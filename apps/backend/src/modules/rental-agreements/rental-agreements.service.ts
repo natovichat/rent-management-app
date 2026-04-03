@@ -57,6 +57,7 @@ export class RentalAgreementsService {
       extensionUntilDate: dto.extensionUntilDate ? new Date(dto.extensionUntilDate) : undefined,
       extensionMonthlyRent: dto.extensionMonthlyRent,
       notes: dto.notes,
+      deletedAt: null,
       createdAt: now,
       updatedAt: now,
     };
