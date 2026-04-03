@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -174,6 +174,17 @@ export default function PropertyEventForm({ propertyId, onSuccess, onCancel }: P
       amountDue: 0, paymentStatus: 'PENDING', description: '', rentalAgreementId: '', paymentDate: '',
     },
   });
+
+  // Auto-fill amountDue from selected lease's monthlyRent
+  const selectedLeaseId = rentalForm.watch('rentalAgreementId');
+  useEffect(() => {
+    if (selectedLeaseId && leases.length > 0) {
+      const selectedLease = leases.find((l: any) => l.id === selectedLeaseId);
+      if (selectedLease?.monthlyRent) {
+        rentalForm.setValue('amountDue', selectedLease.monthlyRent);
+      }
+    }
+  }, [selectedLeaseId, leases, rentalForm]);
 
   // ── Damage form ──
   const damageForm = useForm<DamageFormData>({

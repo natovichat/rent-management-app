@@ -57,7 +57,7 @@ const BOTTOM_NAV_ITEMS = [
   { label: 'לוח בקרה', href: '/dashboard', icon: <DashboardIcon /> },
   { label: 'נכסים', href: '/properties', icon: <ApartmentIcon /> },
   { label: 'חוזים', href: '/leases', icon: <DescriptionIcon /> },
-  { label: 'משכנתאות', href: '/mortgages', icon: <AccountBalanceIcon /> },
+  { label: 'תשלומים', href: '/payments', icon: <PaymentsIcon /> },
   { label: 'אנשים', href: '/persons', icon: <GroupIcon /> },
 ] as const;
 
@@ -107,7 +107,7 @@ function getBottomNavValue(pathname: string): string {
   if (pathname === '/dashboard') return '/dashboard';
   if (pathname.startsWith('/properties')) return '/properties';
   if (pathname.startsWith('/leases')) return '/leases';
-  if (pathname.startsWith('/mortgages')) return '/mortgages';
+  if (pathname.startsWith('/payments')) return '/payments';
   if (pathname.startsWith('/persons')) return '/persons';
   return '';
 }

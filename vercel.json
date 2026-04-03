@@ -13,11 +13,11 @@
     }
   ],
   "env": {
-    "NEXT_PUBLIC_API_URL": "https://rent-app-backend-6s337cqx6a-uc.a.run.app"
+    "NEXT_PUBLIC_API_URL": "https://rent-app-backend-33ifaayi2a-uc.a.run.app"
   },
   "build": {
     "env": {
-      "NEXT_PUBLIC_API_URL": "https://rent-app-backend-6s337cqx6a-uc.a.run.app"
+      "NEXT_PUBLIC_API_URL": "https://rent-app-backend-33ifaayi2a-uc.a.run.app"
     }
   }
 }

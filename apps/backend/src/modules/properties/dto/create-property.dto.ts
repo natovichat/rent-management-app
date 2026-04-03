@@ -203,6 +203,16 @@ export class CreatePropertyDto {
   balconySizeSqm?: number;
 
   @ApiPropertyOptional({
+    description: 'Balcony area in sqm (alias for balconySizeSqm)',
+    example: 15.5,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  balconyArea?: number;
+
+  @ApiPropertyOptional({
     description: 'Storage size in sqm',
     example: 8.0,
   })
@@ -211,6 +221,100 @@ export class CreatePropertyDto {
   @IsNumber()
   @Min(0)
   storageSizeSqm?: number;
+
+  @ApiPropertyOptional({
+    description: 'Floor number of the apartment',
+    example: 3,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  floor?: number;
+
+  @ApiPropertyOptional({
+    description: 'Whether property has storage room',
+    default: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  storage?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Plot size in sqm',
+    example: 500,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  plotSize?: number;
+
+  @ApiPropertyOptional({
+    description: 'Building potential description',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  buildingPotential?: string;
+
+  @ApiPropertyOptional({
+    description: 'Co-owners information',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  coOwners?: string;
+
+  @ApiPropertyOptional({
+    description: 'Whether sale is pending',
+    default: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  isSoldPending?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Investment company ID',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(100)
+  investmentCompanyId?: string;
+
+  @ApiPropertyOptional({
+    description: 'Development status',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  developmentStatus?: string;
+
+  @ApiPropertyOptional({
+    description: 'Development company name',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  developmentCompany?: string;
+
+  @ApiPropertyOptional({
+    description: 'Expected completion in years',
+    example: 2,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  expectedCompletionYears?: number;
+
+  @ApiPropertyOptional({
+    description: 'Additional property details',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(2000)
+  propertyDetails?: string;
 
   @ApiPropertyOptional({
     description: 'Parking type',

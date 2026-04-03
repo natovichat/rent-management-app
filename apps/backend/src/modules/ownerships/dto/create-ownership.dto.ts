@@ -5,7 +5,7 @@ import {
   IsBoolean,
   IsNumber,
   IsDateString,
-  IsUUID,
+  IsNotEmpty,
   Min,
   Max,
 } from 'class-validator';
@@ -20,10 +20,11 @@ export const OWNERSHIP_TYPES = Object.values(OwnershipType);
  */
 export class CreateOwnershipDto {
   @ApiProperty({
-    description: 'Person UUID (owner of the property)',
+    description: 'Person ID (owner of the property)',
     example: '550e8400-e29b-41d4-a716-446655440000',
   })
-  @IsUUID('4', { message: 'personId must be a valid UUID' })
+  @IsString()
+  @IsNotEmpty({ message: 'personId is required' })
   personId: string;
 
   @ApiProperty({
