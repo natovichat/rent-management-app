@@ -65,7 +65,7 @@ interface PropertyOwnership {
   id: string;
   ownerId: string;
   ownershipPercentage: number;
-  ownershipType: 'FULL' | 'PARTIAL' | 'PARTNERSHIP' | 'COMPANY';
+  ownershipType: 'FULL' | 'PARTIAL' | 'SHARED' | 'TRUST' | 'REAL' | 'NOMINEE';
   startDate: string;
   endDate?: string;
   notes?: string;

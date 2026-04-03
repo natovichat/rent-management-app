@@ -45,21 +45,21 @@ import { api } from '@/lib/api';
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
 const OWNERSHIP_TYPE_LABELS: Record<OwnershipType, string> = {
-  FULL: 'בעלות מלאה',
+  FULL:    'בעלות מלאה',
   PARTIAL: 'בעלות חלקית',
-  PARTNERSHIP: 'שותפות',
-  COMPANY: 'חברה',
-  REAL: 'בעלות ריאלית',
-  LEGAL: 'בעלות חוקית',
+  SHARED:  'בעלות משותפת',
+  TRUST:   'נאמנות',
+  REAL:    'זכות קניינית',
+  NOMINEE: 'נאמן רשמי',
 };
 
 const OWNERSHIP_TYPE_COLORS: Record<OwnershipType, 'success' | 'primary' | 'secondary' | 'warning' | 'info' | 'default'> = {
-  FULL: 'success',
+  FULL:    'success',
   PARTIAL: 'primary',
-  PARTNERSHIP: 'secondary',
-  COMPANY: 'warning',
-  REAL: 'info',
-  LEGAL: 'default',
+  SHARED:  'secondary',
+  TRUST:   'warning',
+  REAL:    'info',
+  NOMINEE: 'default',
 };
 
 interface PersonOption {

@@ -23,6 +23,9 @@ import {
 import { propertiesApi } from '@/lib/api/properties';
 import { personsApi } from '@/lib/api/persons';
 
+const OWNERSHIP_TYPES = ['FULL', 'PARTIAL', 'SHARED', 'TRUST', 'REAL', 'NOMINEE'] as const;
+type OwnershipTypeValue = typeof OWNERSHIP_TYPES[number];
+
 const ownershipSchema = z.object({
   propertyId: z.string().min(1, 'נכס הוא שדה חובה'),
   personId: z.string().min(1, 'אדם הוא שדה חובה'),
@@ -30,7 +33,7 @@ const ownershipSchema = z.object({
     .number()
     .min(0, 'אחוז בעלות חייב להיות בין 0 ל-100')
     .max(100, 'אחוז בעלות חייב להיות בין 0 ל-100'),
-  ownershipType: z.enum(['REAL', 'LEGAL'], {
+  ownershipType: z.enum(OWNERSHIP_TYPES, {
     required_error: 'סוג בעלות הוא שדה חובה',
   }),
   startDate: z.string().min(1, 'תאריך התחלה הוא שדה חובה'),
@@ -40,9 +43,13 @@ const ownershipSchema = z.object({
 
 type OwnershipFormData = z.infer<typeof ownershipSchema>;
 
-const OWNERSHIP_TYPE_OPTIONS: { value: 'REAL' | 'LEGAL'; label: string }[] = [
-  { value: 'REAL', label: 'חקרי' },
-  { value: 'LEGAL', label: 'משפטית' },
+const OWNERSHIP_TYPE_OPTIONS: { value: OwnershipTypeValue; label: string }[] = [
+  { value: 'FULL',    label: 'בעלות מלאה' },
+  { value: 'PARTIAL', label: 'בעלות חלקית' },
+  { value: 'SHARED',  label: 'בעלות משותפת' },
+  { value: 'TRUST',   label: 'נאמנות' },
+  { value: 'REAL',    label: 'זכות קניינית' },
+  { value: 'NOMINEE', label: 'נאמן רשמי' },
 ];
 
 interface OwnershipFormProps {
@@ -87,9 +94,9 @@ export default function OwnershipForm({
         ? Number(ownership.ownershipPercentage)
         : 0,
       ownershipType:
-        (ownership?.ownershipType === 'REAL' || ownership?.ownershipType === 'LEGAL'
+        (ownership?.ownershipType && OWNERSHIP_TYPES.includes(ownership.ownershipType as OwnershipTypeValue)
           ? ownership.ownershipType
-          : 'REAL') as OwnershipFormData['ownershipType'],
+          : 'FULL') as OwnershipFormData['ownershipType'],
       startDate: ownership?.startDate
         ? ownership.startDate.substring(0, 10)
         : '',

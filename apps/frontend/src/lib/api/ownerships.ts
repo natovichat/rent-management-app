@@ -1,6 +1,6 @@
 import { api } from '../api';
 
-export type OwnershipType = 'FULL' | 'PARTIAL' | 'PARTNERSHIP' | 'COMPANY' | 'REAL' | 'LEGAL';
+export type OwnershipType = 'FULL' | 'PARTIAL' | 'SHARED' | 'TRUST' | 'REAL' | 'NOMINEE';
 
 export interface Ownership {
   id: string;
