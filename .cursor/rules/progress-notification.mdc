@@ -1,11 +1,18 @@
 ---
-description: Send a progress notification email to natovichat@gmail.com after completing any meaningful work on the rentApplication project
+description: After meaningful progress, notify via Telegram bot first, fall back to email
 alwaysApply: true
 ---
 
-# Progress Notification - MANDATORY
+# Progress Notification — MANDATORY
 
-After completing any meaningful progress on the rentApplication project, send a summary email to **natovichat@gmail.com**.
+After completing any meaningful progress, send a notification.
+
+## Priority Order
+
+1. **Telegram bot** (preferred — instant)
+2. **Email fallback** (if Telegram fails)
+
+---
 
 ## When to Send
 
@@ -13,31 +20,99 @@ Send after:
 - Completing a feature, user story, or epic milestone
 - Fixing a bug or resolving an issue
 - Finishing a refactor or code improvement
-- Completing a test run or QA cycle
-- Any other notable progress in a session
+- Completing a test/QA cycle
+- Every ~3 significant commits in a session
+- Any other notable progress
 
-## How to Send
+---
 
-Use `send_email.py` with a brief summary of what was accomplished:
+## Step 1 — Try Telegram Bot (always first)
+
+```bash
+BOT_TOKEN="8722895048:AAEMNGpEjQnECJToK-L3TqxurbW1usnO5fg"
+CHAT_ID="6360483866"
+MSG="[emoji] [Short title]
+
+[2-3 sentence summary of what was done]"
+
+curl -s -o /dev/null -w "%{http_code}" \
+  -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+  -H "Content-Type: application/json" \
+  -d "{\"chat_id\": ${CHAT_ID}, \"text\": \"${MSG}\", \"parse_mode\": \"Markdown\"}"
+```
+
+If the HTTP status is `200` → done. ✅
+
+---
+
+## Step 2 — Email Fallback (only if Telegram fails)
+
+If curl returns anything other than `200`, send email:
 
 ```bash
 python3 /Users/aviad.natovich/Code/Tasks/Tools/send_email.py \
-  --subject "rentApplication Progress: [Short Title]" \
-  --body "[What was done - 2-3 sentences max]" \
+  --subject "Progress: [Short Title]" \
+  --body "[What was done — 2-3 sentences]" \
   --to "natovichat@gmail.com"
 ```
 
-## Example
+---
+
+## Complete One-Liner Pattern
 
 ```bash
+TELEGRAM_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+  -X POST "https://api.telegram.org/bot8722895048:AAEMNGpEjQnECJToK-L3TqxurbW1usnO5fg/sendMessage" \
+  -H "Content-Type: application/json" \
+  -d '{"chat_id": 6360483866, "text": "✅ *[Title]*\n\n[Summary]", "parse_mode": "Markdown"}') \
+&& [ "$TELEGRAM_STATUS" = "200" ] \
+|| python3 /Users/aviad.natovich/Code/Tasks/Tools/send_email.py \
+     --subject "Progress: [Title]" \
+     --body "[Summary]" \
+     --to "natovichat@gmail.com"
+```
+
+---
+
+## Message Format
+
+### Telegram message
+```
+✅ *[Short title — what was done]*
+
+[2-3 sentences of what changed and why]
+
+Files: [key files changed]
+```
+
+### Email subject
+```
+Progress: [Short Title]
+```
+
+---
+
+## Examples
+
+### Telegram example
+```bash
+curl -s -X POST "https://api.telegram.org/bot8722895048:AAEMNGpEjQnECJToK-L3TqxurbW1usnO5fg/sendMessage" \
+  -H "Content-Type: application/json" \
+  -d '{"chat_id": 6360483866, "text": "✅ *Bot: local skill injection added*\n\nAdded 7 skill files injected into local model system prompt to improve tool usage and reduce filler responses. Skills compressed to <2k chars to avoid context overflow.", "parse_mode": "Markdown"}'
+```
+
+### Email fallback example
+```bash
 python3 /Users/aviad.natovich/Code/Tasks/Tools/send_email.py \
-  --subject "rentApplication Progress: Property list filtering added" \
-  --body "Implemented server-side filtering for the property list page. Added query params for address, status, and owner. All unit tests pass." \
+  --subject "Progress: Bot local skill injection added" \
+  --body "Added 7 skill files injected into local model system prompt. Skills compressed to <2k chars to avoid context overflow." \
   --to "natovichat@gmail.com"
 ```
+
+---
 
 ## Notes
-
-- Keep the body concise (2-3 sentences max)
-- Subject should start with `rentApplication Progress:`
-- Send once per meaningful session milestone, not after every small edit
+- Send **once per milestone**, not after every small edit
+- ~3 commits = one notification trigger
+- Keep message concise — max 3 sentences
+- Always try Telegram first, even outside working hours

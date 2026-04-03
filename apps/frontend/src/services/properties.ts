@@ -33,8 +33,8 @@ export interface Property {
   parkingSpaces?: number;
   balconyArea?: number;
   // Financial
-  acquisitionPrice?: number;
-  acquisitionDate?: string;
+  purchasePrice?: number;
+  purchaseDate?: string;
   acquisitionMethod?: AcquisitionMethod;
   rentalIncome?: number;
   projectedValue?: number;
@@ -147,8 +147,8 @@ export interface CreatePropertyDto {
   parkingSpaces?: number;
   balconyArea?: number;
   // Financial
-  acquisitionPrice?: number;
-  acquisitionDate?: string;
+  purchasePrice?: number;
+  purchaseDate?: string;
   acquisitionMethod?: AcquisitionMethod;
   rentalIncome?: number;
   projectedValue?: number;
