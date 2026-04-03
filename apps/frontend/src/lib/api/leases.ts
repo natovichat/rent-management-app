@@ -160,3 +160,55 @@ export const rentalAgreementsApi = {
 
 // Backward compatibility: export as leasesApi
 export const leasesApi = rentalAgreementsApi;
+
+// ── Payment Events ──────────────────────────────────────────────────────────
+
+export type RentalPaymentStatus =
+  | 'PENDING'
+  | 'PAID'
+  | 'LATE'
+  | 'PARTIAL'
+  | 'CHECK_RECEIVED';
+
+export interface PaymentEvent {
+  id: string;
+  propertyId: string;
+  rentalAgreementId: string;
+  eventType: string;
+  eventDate: string;
+  month: number;
+  year: number;
+  amountDue: number;
+  paymentDate?: string;
+  paymentStatus: RentalPaymentStatus;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export const paymentEventsApi = {
+  /**
+   * Get all rental payment events for a specific rental agreement.
+   */
+  getByRentalAgreement: async (rentalAgreementId: string): Promise<PaymentEvent[]> => {
+    const response = await api.get<PaymentEvent[]>(
+      `/rental-agreements/${rentalAgreementId}/payment-events`,
+    );
+    return response.data;
+  },
+
+  /**
+   * Update the status/fields of an existing payment event.
+   */
+  updatePaymentEvent: async (
+    propertyId: string,
+    eventId: string,
+    data: { paymentStatus: RentalPaymentStatus; paymentDate?: string; amountDue?: number },
+  ): Promise<PaymentEvent> => {
+    const response = await api.patch<PaymentEvent>(
+      `/properties/${propertyId}/events/${eventId}`,
+      data,
+    );
+    return response.data;
+  },
+};

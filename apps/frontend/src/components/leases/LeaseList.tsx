@@ -26,7 +26,8 @@ import {
   IconButton,
   Fab,
 } from '@mui/material';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem, GridRenderCellParams } from '@mui/x-data-grid';
+import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
@@ -297,6 +298,40 @@ export default function LeaseList() {
       description: 'החודש האחרון (כולל) שעבורו התקבל תשלום',
       valueGetter: (params) => params.row.paidUntilDate,
       valueFormatter: (params) => formatPaidUntil(params.value),
+    },
+    {
+      field: 'balance',
+      headerName: 'חוב / זכות',
+      width: 140,
+      align: 'right',
+      headerAlign: 'right',
+      description: 'הפרש: כמה ששולם פחות כמה שהיה צריך לשלם (חיובי = זכות, שלילי = חוב)',
+      valueGetter: (params) => {
+        const expected = calcExpectedPayment(
+          params.row.startDate ?? '',
+          params.row.endDate ?? '',
+          params.row.monthlyRent ?? 0,
+        );
+        return (params.row.paidAmount ?? 0) - expected;
+      },
+      renderCell: (params: GridRenderCellParams<RentalAgreement, number>) => {
+        const val = params.value ?? 0;
+        const isCredit = val >= 0;
+        const label = val === 0 ? '—' : `${isCredit ? '+' : ''}${formatCurrency(val)}`;
+        return (
+          <Tooltip title={isCredit ? 'זכות (שולם יותר מהנדרש)' : 'חוב (טרם שולם)'}>
+            <Box
+              component="span"
+              sx={{
+                color: val === 0 ? 'text.secondary' : isCredit ? 'success.main' : 'error.main',
+                fontWeight: val !== 0 ? 600 : 400,
+              }}
+            >
+              {label}
+            </Box>
+          </Tooltip>
+        );
+      },
     },
     {
       field: 'status',

@@ -38,6 +38,7 @@ import {
   Logout as LogoutIcon,
   Settings as SettingsIcon,
   Person as PersonIcon,
+  Payments as PaymentsIcon,
 } from '@mui/icons-material';
 import {
   getUserProfile,
@@ -97,6 +98,7 @@ const NAV_GROUPS: NavGroup[] = [
         icon: <AccountBalanceWalletIcon />,
       },
       { label: 'חוזי שכירות', href: '/leases', icon: <DescriptionIcon /> },
+      { label: 'תשלומי שכירות', href: '/payments', icon: <PaymentsIcon /> },
     ],
   },
 ];

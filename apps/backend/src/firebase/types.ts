@@ -95,6 +95,7 @@ export enum RentalPaymentStatus {
   PAID = 'PAID',
   LATE = 'LATE',
   PARTIAL = 'PARTIAL',
+  CHECK_RECEIVED = 'CHECK_RECEIVED',
 }
 
 export enum ExpenseEventType {

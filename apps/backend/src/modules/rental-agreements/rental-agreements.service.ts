@@ -194,6 +194,34 @@ export class RentalAgreementsService {
   }
 
   /**
+   * Returns all RentalPaymentRequestEvents for a given rental agreement,
+   * ordered by year + month ascending. Used by the payments screen.
+   */
+  async getPaymentEvents(id: string): Promise<Record<string, unknown>[]> {
+    await this.findOne(id); // validates existence
+
+    const snap = await this.firebase.db
+      .collection('propertyEvents')
+      .where('eventType', '==', PropertyEventType.RentalPaymentRequestEvent)
+      .where('rentalAgreementId', '==', id)
+      .where('deletedAt', '==', null)
+      .get();
+
+    const events = snap.docs
+      .map((doc) => {
+        const data = doc.data();
+        return this.firebase.convertTimestamps<Record<string, unknown>>({ id: doc.id, ...data });
+      })
+      .sort((a, b) => {
+        const ay = Number(a['year'] ?? 0), am = Number(a['month'] ?? 0);
+        const by = Number(b['year'] ?? 0), bm = Number(b['month'] ?? 0);
+        return ay !== by ? ay - by : am - bm;
+      });
+
+    return events;
+  }
+
+  /**
    * Fetches all PAID RentalPaymentRequestEvents in one Firestore query,
    * then attaches computed paidAmount and paidUntilDate to each agreement.
    */

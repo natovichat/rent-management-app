@@ -84,6 +84,15 @@ export class RentalAgreementsController {
     return this.rentalAgreementsService.findAll(query);
   }
 
+  @Get(':id/payment-events')
+  @ApiOperation({ summary: 'Get all rental payment events for a specific rental agreement' })
+  @ApiParam({ name: 'id', description: 'Rental agreement UUID' })
+  @ApiResponse({ status: 200, description: 'List of payment events ordered by year/month asc' })
+  @ApiResponse({ status: 404, description: 'Rental agreement not found' })
+  getPaymentEvents(@Param('id') id: string) {
+    return this.rentalAgreementsService.getPaymentEvents(id);
+  }
+
   @Get('expiring')
   @ApiOperation({ summary: 'Get agreements expiring within X months' })
   @ApiQuery({ name: 'months', required: false, type: Number, description: 'Number of months ahead (default: 3)' })
