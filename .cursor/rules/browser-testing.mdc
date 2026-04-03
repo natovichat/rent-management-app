@@ -1,0 +1,140 @@
+# Browser Testing - MANDATORY When Developing Frontend Features
+
+**CRITICAL**: Any frontend feature must be tested in the browser using the `cursor-ide-browser` MCP before being considered done.
+
+## Golden Rule
+
+```
+🌐 TEST IN BROWSER — not just TypeScript
+📸 TAKE SCREENSHOTS to verify UI
+🔍 CHECK NETWORK REQUESTS for API errors
+🐛 CATCH BUGS before the user does
+```
+
+---
+
+## When to Test in the Browser
+
+Test in the browser after **every** frontend change that affects:
+
+- New pages or routes
+- New components or UI elements
+- Data fetching (API calls)
+- Form interactions
+- Navigation links
+- Filters, dropdowns, selects
+- Conditional rendering
+
+---
+
+## Browser Testing Workflow
+
+### Step 1: Identify the correct deployment URL
+
+The frontend is deployed on **Vercel**:
+```
+https://rent-management-app-frontend.vercel.app
+```
+
+Local dev server (if running):
+```
+http://localhost:3001
+```
+
+> ⚠️ The old Cloud Run URL (`rent-application-frontend-*.run.app`) is **NOT active** — do not use it.
+
+### Step 2: Wait for Vercel deployment (after push)
+
+After `git push origin main`, Vercel deploys automatically.
+- Check that the new page/route is accessible before testing
+- If the route returns 404, the deployment is still in progress — wait ~1 min
+
+### Step 3: Navigate and snapshot
+
+```
+browser_navigate(url)
+browser_snapshot()        ← always take snapshot first before clicking
+```
+
+### Step 4: Check network requests for API errors
+
+```
+browser_network_requests()  ← look for 401, 403, 500 errors
+browser_console_messages()  ← look for JS errors
+```
+
+### Step 5: Interact with the UI
+
+```
+browser_click(ref)         ← use refs from snapshot
+browser_take_screenshot()  ← verify visual output
+```
+
+### Step 6: Verify the feature works end-to-end
+
+- Does the data load?
+- Are dropdowns populated?
+- Do filters work?
+- Are error states shown when APIs fail?
+
+---
+
+## Common Bugs to Catch
+
+| Symptom | Likely Cause | How to Detect |
+|--------|-------------|--------------|
+| Empty dropdown | API returns 401/400 | `browser_network_requests()` |
+| Page shows 404 | Route not deployed yet | Wait and retry |
+| No data in table | API filter too restrictive | Check network URL params |
+| Redirect to login | Token expired or missing | Check 401 response |
+| Component crashes | TypeScript/runtime error | `browser_console_messages()` |
+
+---
+
+## Lessons Learned (from real bugs)
+
+### Bug: Payments page dropdown was empty
+
+- **Root cause**: Query used `status=ACTIVE` filter that returned 401 because
+  the token was invalid **or** no leases matched the filter.
+- **Detected by**: `browser_network_requests()` showed the API call returned 401.
+- **Fixed by**: Removing the restrictive filter, loading all leases instead.
+
+### Lesson: Always check network requests after building any data-fetching component.
+
+---
+
+## MCP Browser Tools Quick Reference
+
+```
+browser_navigate(url)           — navigate to URL
+browser_snapshot()              — get page structure and element refs
+browser_take_screenshot()       — capture visual screenshot
+browser_click(ref)              — click element
+browser_fill(ref, value)        — fill input field
+browser_select_option(ref, val) — select dropdown option
+browser_network_requests()      — show recent network calls + status codes
+browser_console_messages()      — show browser console errors/warnings
+browser_lock()                  — lock before interactions
+browser_unlock()                — unlock when done
+```
+
+---
+
+## Checklist Before Marking a Feature as Done
+
+- [ ] TypeScript compiles: `npx tsc --noEmit`
+- [ ] Deployed to Vercel (after push)
+- [ ] Page/route loads in browser (no 404)
+- [ ] No API errors in network requests (no 401/500)
+- [ ] No JS errors in browser console
+- [ ] Data populates correctly (dropdowns, tables, cards)
+- [ ] Interactions work (click, select, submit)
+- [ ] Screenshot taken to confirm visual output
+
+---
+
+**Rationale:** TypeScript checks only validate types at compile-time. Runtime bugs
+(wrong API calls, auth failures, empty states, rendering issues) are only caught
+by actually running the app in the browser. A 5-minute browser test saves hours
+of debugging production issues.

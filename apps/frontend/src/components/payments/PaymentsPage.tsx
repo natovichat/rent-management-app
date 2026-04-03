@@ -159,10 +159,10 @@ export default function PaymentsPage() {
     open: false, message: '', severity: 'success',
   });
 
-  // Fetch all active leases for the selector dropdown
-  const { data: leasesData, isLoading: leasesLoading } = useQuery({
-    queryKey: ['rental-agreements', { status: 'ACTIVE' }],
-    queryFn: () => rentalAgreementsApi.getRentalAgreements(1, 200, { status: 'ACTIVE' }),
+  // Fetch all leases for the selector dropdown (no status filter — show all)
+  const { data: leasesData, isLoading: leasesLoading, error: leasesError } = useQuery({
+    queryKey: ['rental-agreements-all-for-payments'],
+    queryFn: () => rentalAgreementsApi.getRentalAgreements(1, 200),
   });
   const allLeases: RentalAgreement[] = leasesData?.data ?? [];
 
@@ -310,6 +310,13 @@ export default function PaymentsPage() {
       <Typography variant="h5" fontWeight={700} gutterBottom>
         תשלומי שכירות
       </Typography>
+
+      {/* Error banner */}
+      {leasesError && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          שגיאה בטעינת רשימת החוזים. נסה לרענן את הדף.
+        </Alert>
+      )}
 
       {/* Filters */}
       <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
