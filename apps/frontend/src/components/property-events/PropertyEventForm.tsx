@@ -109,7 +109,6 @@ const expenseSchema = z.object({
 });
 
 const rentalPaymentSchema = z.object({
-  eventDate: z.string().min(1, 'תאריך הוא שדה חובה'),
   description: z.string().optional(),
   rentalAgreementId: z.string().min(1, 'חוזה שכירות הוא שדה חובה'),
   month: z.coerce.number().min(1).max(12),
@@ -171,7 +170,7 @@ export default function PropertyEventForm({ propertyId, onSuccess, onCancel }: P
   const rentalForm = useForm<RentalFormData>({
     resolver: zodResolver(rentalPaymentSchema),
     defaultValues: {
-      eventDate: today, month: new Date().getMonth() + 1, year: new Date().getFullYear(),
+      month: new Date().getMonth() + 1, year: new Date().getFullYear(),
       amountDue: 0, paymentStatus: 'PENDING', description: '', rentalAgreementId: '', paymentDate: '',
     },
   });
@@ -194,7 +193,11 @@ export default function PropertyEventForm({ propertyId, onSuccess, onCancel }: P
         case 'ExpenseEvent':
           return propertyEventsApi.createExpenseEvent(propertyId, data);
         case 'RentalPaymentRequestEvent':
-          return propertyEventsApi.createRentalPaymentRequestEvent(propertyId, data);
+          // Inject today's date as eventDate (hidden from user)
+          return propertyEventsApi.createRentalPaymentRequestEvent(propertyId, {
+            ...data,
+            eventDate: new Date().toISOString().split('T')[0],
+          });
         case 'PropertyDamageEvent':
           return propertyEventsApi.createPropertyDamageEvent(propertyId, data);
         case 'PlanningProcessEvent':
@@ -337,7 +340,6 @@ export default function PropertyEventForm({ propertyId, onSuccess, onCancel }: P
             </Select>
           </FormControl>
         )} />
-        <TextField label="תאריך דרישה *" type="date" {...rentalForm.register('eventDate')} fullWidth InputLabelProps={{ shrink: true }} />
         <TextField label="תאריך תשלום בפועל" type="date" {...rentalForm.register('paymentDate')} fullWidth InputLabelProps={{ shrink: true }} />
         <TextField label="תיאור" {...rentalForm.register('description')} fullWidth multiline rows={2} />
         <Divider />

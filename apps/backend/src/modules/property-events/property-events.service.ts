@@ -108,7 +108,7 @@ export class PropertyEventsService {
     return this.createEvent({
       propertyId,
       eventType: PropertyEventType.RentalPaymentRequestEvent,
-      eventDate: new Date(dto.eventDate),
+      eventDate: dto.eventDate ? new Date(dto.eventDate) : now,
       rentalAgreementId: dto.rentalAgreementId,
       month: dto.month,
       year: dto.year,

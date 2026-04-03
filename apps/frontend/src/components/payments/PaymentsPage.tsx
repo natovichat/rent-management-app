@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
@@ -16,10 +16,29 @@ import {
   Stack,
   Skeleton,
   Divider,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  CircularProgress,
+  Tooltip,
 } from '@mui/material';
 import Grid from '@mui/material/Grid';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { rentalAgreementsApi, paymentEventsApi, RentalAgreement, PaymentEvent, RentalPaymentStatus } from '@/lib/api/leases';
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridRowSelectionModel,
+} from '@mui/x-data-grid';
+import {
+  rentalAgreementsApi,
+  paymentEventsApi,
+  RentalAgreement,
+  PaymentEvent,
+  RentalPaymentStatus,
+} from '@/lib/api/leases';
+import { propertyEventsApi } from '@/lib/api/property-events';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -30,6 +49,9 @@ const HEBREW_MONTHS = [
 
 const formatCurrency = (amount: number) =>
   new Intl.NumberFormat('he-IL', { style: 'currency', currency: 'ILS', maximumFractionDigits: 0 }).format(amount);
+
+const currentYear = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: 10 }, (_, i) => currentYear - 5 + i);
 
 type PaymentStatusFilter = RentalPaymentStatus | 'NOT_PAID' | 'ALL';
 
@@ -43,6 +65,7 @@ interface ScheduleRow {
   status: RentalPaymentStatus | 'NOT_PAID';
   eventId?: string;
   propertyId?: string;
+  rentalAgreementId?: string;
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -96,7 +119,8 @@ function buildSchedule(lease: RentalAgreement, events: PaymentEvent[]): Schedule
       actualAmount: ev ? ev.amountDue : 0,
       status: ev ? ev.paymentStatus : 'NOT_PAID',
       eventId: ev?.id,
-      propertyId: ev?.propertyId,
+      propertyId: ev?.propertyId || lease.propertyId,
+      rentalAgreementId: lease.id,
     });
 
     cur = new Date(y, m, 1); // advance one month
@@ -155,6 +179,20 @@ export default function PaymentsPage() {
   const queryClient = useQueryClient();
   const [selectedLeaseId, setSelectedLeaseId] = useState<string>('');
   const [statusFilter, setStatusFilter] = useState<PaymentStatusFilter>('ALL');
+
+  // Date range filter state
+  const [fromYear, setFromYear] = useState<number | ''>('');
+  const [fromMonth, setFromMonth] = useState<number | ''>('');
+  const [toYear, setToYear] = useState<number | ''>('');
+  const [toMonth, setToMonth] = useState<number | ''>('');
+
+  // Row selection state
+  const [rowSelectionModel, setRowSelectionModel] = useState<GridRowSelectionModel>([]);
+
+  // Bulk action state
+  const [bulkActionDialogOpen, setBulkActionDialogOpen] = useState(false);
+  const [bulkTargetStatus, setBulkTargetStatus] = useState<RentalPaymentStatus>('PAID');
+
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false, message: '', severity: 'success',
   });
@@ -184,13 +222,31 @@ export default function PaymentsPage() {
   }, [selectedLease, events]);
 
   const filteredRows = useMemo(() => {
-    if (statusFilter === 'ALL') return scheduleRows;
-    if (statusFilter === 'NOT_PAID')
-      return scheduleRows.filter((r) => r.status === 'NOT_PAID' || r.status === 'PENDING' || r.status === 'LATE');
-    return scheduleRows.filter((r) => r.status === statusFilter);
-  }, [scheduleRows, statusFilter]);
+    let rows = scheduleRows;
 
-  // Mutation for updating payment status
+    // Status filter
+    if (statusFilter !== 'ALL') {
+      if (statusFilter === 'NOT_PAID') {
+        rows = rows.filter((r) => r.status === 'NOT_PAID' || r.status === 'PENDING' || r.status === 'LATE');
+      } else {
+        rows = rows.filter((r) => r.status === statusFilter);
+      }
+    }
+
+    // Date range filter
+    if (fromYear !== '' && fromMonth !== '') {
+      const fromYM = (fromYear as number) * 12 + (fromMonth as number);
+      rows = rows.filter((r) => r.year * 12 + r.month >= fromYM);
+    }
+    if (toYear !== '' && toMonth !== '') {
+      const toYM = (toYear as number) * 12 + (toMonth as number);
+      rows = rows.filter((r) => r.year * 12 + r.month <= toYM);
+    }
+
+    return rows;
+  }, [scheduleRows, statusFilter, fromYear, fromMonth, toYear, toMonth]);
+
+  // Mutation for updating payment status (single row)
   const updateStatusMutation = useMutation({
     mutationFn: ({
       propertyId,
@@ -211,6 +267,68 @@ export default function PaymentsPage() {
       setSnackbar({ open: true, message: 'שגיאה בעדכון הסטטוס', severity: 'error' });
     },
   });
+
+  // Bulk status update mutation
+  const bulkUpdateMutation = useMutation({
+    mutationFn: async ({ rows, newStatus }: { rows: ScheduleRow[]; newStatus: RentalPaymentStatus }) => {
+      const today = new Date().toISOString().split('T')[0];
+      const results = await Promise.allSettled(
+        rows.map(async (row) => {
+          const paymentDate = newStatus === 'PAID' ? today : undefined;
+          const propertyId = row.propertyId!;
+
+          if (row.eventId) {
+            // Update existing event
+            return paymentEventsApi.updatePaymentEvent(propertyId, row.eventId, {
+              paymentStatus: newStatus,
+              ...(paymentDate ? { paymentDate } : {}),
+            });
+          } else {
+            // Create new rent collection event
+            return propertyEventsApi.createRentalPaymentRequestEvent(propertyId, {
+              rentalAgreementId: row.rentalAgreementId!,
+              month: row.month,
+              year: row.year,
+              amountDue: row.expectedAmount,
+              paymentStatus: newStatus,
+              ...(paymentDate ? { paymentDate } : {}),
+            } as any);
+          }
+        }),
+      );
+
+      const failed = results.filter((r) => r.status === 'rejected').length;
+      const succeeded = results.filter((r) => r.status === 'fulfilled').length;
+      return { succeeded, failed };
+    },
+    onSuccess: ({ succeeded, failed }) => {
+      queryClient.invalidateQueries({ queryKey: ['payment-events', selectedLeaseId] });
+      queryClient.invalidateQueries({ queryKey: ['rental-agreements'] });
+      setRowSelectionModel([]);
+      setBulkActionDialogOpen(false);
+      if (failed > 0) {
+        setSnackbar({
+          open: true,
+          message: `עודכנו ${succeeded} רשומות בהצלחה, ${failed} נכשלו`,
+          severity: 'error',
+        });
+      } else {
+        setSnackbar({
+          open: true,
+          message: `${succeeded} רשומות עודכנו בהצלחה`,
+          severity: 'success',
+        });
+      }
+    },
+    onError: () => {
+      setSnackbar({ open: true, message: 'שגיאה בעדכון הרשומות', severity: 'error' });
+    },
+  });
+
+  const handleBulkUpdate = useCallback(() => {
+    const selectedRows = filteredRows.filter((r) => rowSelectionModel.includes(r.id));
+    bulkUpdateMutation.mutate({ rows: selectedRows, newStatus: bulkTargetStatus });
+  }, [filteredRows, rowSelectionModel, bulkTargetStatus, bulkUpdateMutation]);
 
   const columns: GridColDef<ScheduleRow>[] = [
     {
@@ -265,23 +383,39 @@ export default function PaymentsPage() {
       sortable: false,
       renderCell: (params: GridRenderCellParams<ScheduleRow>) => {
         const row = params.row;
-        if (!row.eventId || !row.propertyId) return <Typography variant="caption" color="text.disabled">ללא אירוע</Typography>;
 
-        const currentStatus = row.status as RentalPaymentStatus;
-        const options: RentalPaymentStatus[] = ['PAID', 'CHECK_RECEIVED', 'PENDING'];
-        const next = options.find((s) => s !== currentStatus);
-        if (!next) return null;
+        const currentStatus = (row.status === 'NOT_PAID' ? 'PENDING' : row.status) as RentalPaymentStatus;
+        const options: RentalPaymentStatus[] = ['PAID', 'CHECK_RECEIVED', 'PENDING', 'LATE', 'PARTIAL'];
 
         return (
           <Select
             size="small"
             value={currentStatus}
             onChange={(e) => {
-              updateStatusMutation.mutate({
-                propertyId: row.propertyId!,
-                eventId: row.eventId!,
-                status: e.target.value as RentalPaymentStatus,
-              });
+              const newStatus = e.target.value as RentalPaymentStatus;
+              if (row.eventId && row.propertyId) {
+                updateStatusMutation.mutate({
+                  propertyId: row.propertyId,
+                  eventId: row.eventId,
+                  status: newStatus,
+                });
+              } else if (row.propertyId && row.rentalAgreementId) {
+                // Create new event with selected status
+                const today = new Date().toISOString().split('T')[0];
+                propertyEventsApi.createRentalPaymentRequestEvent(row.propertyId, {
+                  rentalAgreementId: row.rentalAgreementId,
+                  month: row.month,
+                  year: row.year,
+                  amountDue: row.expectedAmount,
+                  paymentStatus: newStatus,
+                  ...(newStatus === 'PAID' ? { paymentDate: today } : {}),
+                } as any).then(() => {
+                  queryClient.invalidateQueries({ queryKey: ['payment-events', selectedLeaseId] });
+                  setSnackbar({ open: true, message: 'אירוע נוצר והסטטוס עודכן', severity: 'success' });
+                }).catch(() => {
+                  setSnackbar({ open: true, message: 'שגיאה ביצירת האירוע', severity: 'error' });
+                });
+              }
             }}
             sx={{ fontSize: '0.75rem', height: 32, minWidth: 140 }}
             disabled={updateStatusMutation.isPending}
@@ -305,6 +439,8 @@ export default function PaymentsPage() {
     return `${prop}${tenant}` || lease.id;
   };
 
+  const selectedRowCount = rowSelectionModel.length;
+
   return (
     <Box sx={{ p: 3, direction: 'rtl' }}>
       <Typography variant="h5" fontWeight={700} gutterBottom>
@@ -321,6 +457,7 @@ export default function PaymentsPage() {
       {/* Filters */}
       <Paper variant="outlined" sx={{ p: 2, mb: 2 }}>
         <Grid container spacing={2} alignItems="center" direction="row-reverse">
+          {/* Lease selector */}
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth size="small">
               <InputLabel>חוזה שכירות</InputLabel>
@@ -329,6 +466,11 @@ export default function PaymentsPage() {
                 onChange={(e) => {
                   setSelectedLeaseId(e.target.value as string);
                   setStatusFilter('ALL');
+                  setRowSelectionModel([]);
+                  setFromYear('');
+                  setFromMonth('');
+                  setToYear('');
+                  setToMonth('');
                 }}
                 label="חוזה שכירות"
               >
@@ -348,6 +490,7 @@ export default function PaymentsPage() {
             </FormControl>
           </Grid>
 
+          {/* Status filter */}
           <Grid item xs={12} sm={3}>
             <FormControl fullWidth size="small" disabled={!selectedLeaseId}>
               <InputLabel>סטטוס תשלום</InputLabel>
@@ -378,6 +521,69 @@ export default function PaymentsPage() {
             </Grid>
           )}
         </Grid>
+
+        {/* Date range filter */}
+        {selectedLeaseId && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="caption" color="text.secondary" display="block" mb={1}>
+              סינון לפי טווח תאריכים
+            </Typography>
+            <Grid container spacing={1.5} alignItems="center" direction="row-reverse">
+              <Grid item xs={6} sm={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>משנה</InputLabel>
+                  <Select
+                    value={fromYear}
+                    onChange={(e) => setFromYear(e.target.value as number | '')}
+                    label="משנה"
+                  >
+                    <MenuItem value=""><em>ללא</em></MenuItem>
+                    {YEAR_OPTIONS.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} sm={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>מחודש</InputLabel>
+                  <Select
+                    value={fromMonth}
+                    onChange={(e) => setFromMonth(e.target.value as number | '')}
+                    label="מחודש"
+                  >
+                    <MenuItem value=""><em>ללא</em></MenuItem>
+                    {HEBREW_MONTHS.map((m, i) => <MenuItem key={i + 1} value={i + 1}>{m}</MenuItem>)}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} sm={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>עד שנה</InputLabel>
+                  <Select
+                    value={toYear}
+                    onChange={(e) => setToYear(e.target.value as number | '')}
+                    label="עד שנה"
+                  >
+                    <MenuItem value=""><em>ללא</em></MenuItem>
+                    {YEAR_OPTIONS.map((y) => <MenuItem key={y} value={y}>{y}</MenuItem>)}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} sm={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>עד חודש</InputLabel>
+                  <Select
+                    value={toMonth}
+                    onChange={(e) => setToMonth(e.target.value as number | '')}
+                    label="עד חודש"
+                  >
+                    <MenuItem value=""><em>ללא</em></MenuItem>
+                    {HEBREW_MONTHS.map((m, i) => <MenuItem key={i + 1} value={i + 1}>{m}</MenuItem>)}
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
       </Paper>
 
       {/* Summary */}
@@ -386,6 +592,45 @@ export default function PaymentsPage() {
           <SummaryBar rows={scheduleRows} />
           <Divider sx={{ mb: 2 }} />
         </>
+      )}
+
+      {/* Bulk action bar */}
+      {selectedRowCount > 0 && (
+        <Paper
+          variant="outlined"
+          sx={{
+            p: 1.5,
+            mb: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            direction: 'rtl',
+            backgroundColor: 'primary.50',
+            borderColor: 'primary.main',
+          }}
+        >
+          <Typography variant="body2" fontWeight={600}>
+            {selectedRowCount} שורות נבחרו
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Button
+              variant="outlined"
+              size="small"
+              onClick={() => setRowSelectionModel([])}
+            >
+              בטל בחירה
+            </Button>
+            <Tooltip title="עדכן סטטוס לכל השורות שנבחרו">
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() => setBulkActionDialogOpen(true)}
+              >
+                עדכן סטטוס ({selectedRowCount})
+              </Button>
+            </Tooltip>
+          </Stack>
+        </Paper>
       )}
 
       {/* Table */}
@@ -404,6 +649,9 @@ export default function PaymentsPage() {
             columns={columns}
             pageSizeOptions={[12, 24, 50]}
             initialState={{ pagination: { paginationModel: { pageSize: 50 } } }}
+            checkboxSelection
+            rowSelectionModel={rowSelectionModel}
+            onRowSelectionModelChange={(newModel) => setRowSelectionModel(newModel)}
             sx={{
               direction: 'rtl',
               '& .MuiDataGrid-columnHeaders': { backgroundColor: 'rgba(0,0,0,0.04)' },
@@ -411,7 +659,6 @@ export default function PaymentsPage() {
               '& .MuiDataGrid-columnHeader': { direction: 'rtl' },
             }}
             autoHeight
-            disableRowSelectionOnClick
             getRowClassName={(params) => {
               const s = params.row.status;
               if (s === 'PAID') return 'row-paid';
@@ -422,6 +669,56 @@ export default function PaymentsPage() {
           />
         </Box>
       )}
+
+      {/* Bulk status update dialog */}
+      <Dialog
+        open={bulkActionDialogOpen}
+        onClose={() => setBulkActionDialogOpen(false)}
+        maxWidth="xs"
+        fullWidth
+      >
+        <DialogTitle>עדכון סטטוס ל-{selectedRowCount} רשומות</DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 1 }}>
+            <Typography variant="body2" color="text.secondary" mb={2}>
+              בחר את הסטטוס החדש עבור כל השורות שנבחרו.
+              {bulkTargetStatus === 'PAID' && (
+                <Box component="span" sx={{ display: 'block', mt: 0.5, color: 'success.main', fontWeight: 600 }}>
+                  תאריך התשלום בפועל יוגדר להיום אוטומטית.
+                </Box>
+              )}
+              {'\n'}רשומות ללא אירוע קיים — ייווצר אירוע גבייה חדש עם סכום החוזה.
+            </Typography>
+            <FormControl fullWidth>
+              <InputLabel>סטטוס חדש</InputLabel>
+              <Select
+                value={bulkTargetStatus}
+                onChange={(e) => setBulkTargetStatus(e.target.value as RentalPaymentStatus)}
+                label="סטטוס חדש"
+              >
+                <MenuItem value="PAID">{STATUS_LABELS.PAID}</MenuItem>
+                <MenuItem value="CHECK_RECEIVED">{STATUS_LABELS.CHECK_RECEIVED}</MenuItem>
+                <MenuItem value="PENDING">{STATUS_LABELS.PENDING}</MenuItem>
+                <MenuItem value="LATE">{STATUS_LABELS.LATE}</MenuItem>
+                <MenuItem value="PARTIAL">{STATUS_LABELS.PARTIAL}</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setBulkActionDialogOpen(false)} disabled={bulkUpdateMutation.isPending}>
+            ביטול
+          </Button>
+          <Button
+            variant="contained"
+            onClick={handleBulkUpdate}
+            disabled={bulkUpdateMutation.isPending}
+            startIcon={bulkUpdateMutation.isPending ? <CircularProgress size={16} /> : null}
+          >
+            {bulkUpdateMutation.isPending ? 'מעדכן...' : 'עדכן'}
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <Snackbar
         open={snackbar.open}

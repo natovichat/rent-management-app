@@ -21,15 +21,16 @@ export const RENTAL_PAYMENT_STATUSES = Object.values(RentalPaymentStatus);
  * eventType is set by the service, not in DTO.
  */
 export class CreateRentalPaymentRequestEventDto {
-  @ApiProperty({
-    description: 'Event date',
+  @ApiPropertyOptional({
+    description: 'Event date (defaults to today if not provided)',
     example: '2025-01-15',
   })
+  @IsOptional()
   @IsDateString(
     {},
     { message: 'eventDate must be a valid ISO 8601 date string' },
   )
-  eventDate: string;
+  eventDate?: string;
 
   @ApiProperty({
     description: 'Rental agreement UUID',
