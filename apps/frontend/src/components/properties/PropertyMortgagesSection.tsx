@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Accordion,
@@ -36,6 +36,8 @@ import {
   Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { mortgagesApi, Mortgage, CreateMortgageDto } from '@/lib/api/mortgages';
+import { personsApi } from '@/lib/api/persons';
+import { getApiErrorMessage } from '@/lib/api-error';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -175,12 +177,44 @@ function AddMortgageDialog({
   const [status, setStatus] = useState<MortgageStatus>('ACTIVE');
   const [earlyRepaymentPenalty, setEarlyRepaymentPenalty] = useState('');
   const [notes, setNotes] = useState('');
+  const [payerId, setPayerId] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  const { data: personsResponse } = useQuery({
+    queryKey: ['persons', 'mortgage-dialog', open],
+    queryFn: () => personsApi.getPersons(1, 200),
+    enabled: open,
+  });
+  const persons = personsResponse?.data ?? [];
+
+  useEffect(() => {
+    if (!open) return;
+    setBank('');
+    setLoanAmount('');
+    setInterestRate('');
+    setMonthlyPayment('');
+    setStartDate(new Date().toISOString().split('T')[0]);
+    setEndDate('');
+    setStatus('ACTIVE');
+    setEarlyRepaymentPenalty('');
+    setNotes('');
+    setPayerId('');
+    setError('');
+  }, [open]);
 
   async function handleSubmit() {
     if (!bank || !loanAmount || !startDate) {
       setError('יש למלא בנק, סכום הלוואה ותאריך התחלה');
+      return;
+    }
+    if (!payerId) {
+      setError('יש לבחור משלם (אדם או גוף שמשלם את המשכנתא)');
+      return;
+    }
+    const amount = parseFloat(loanAmount);
+    if (Number.isNaN(amount) || amount <= 0) {
+      setError('סכום הלוואה חייב להיות מספר חיובי');
       return;
     }
     setSubmitting(true);
@@ -189,7 +223,8 @@ function AddMortgageDialog({
       const dto: CreateMortgageDto = {
         propertyId,
         bank,
-        loanAmount: parseFloat(loanAmount),
+        loanAmount: amount,
+        payerId,
         startDate,
         status,
         ...(endDate && { endDate }),
@@ -201,8 +236,8 @@ function AddMortgageDialog({
       await mortgagesApi.createMortgage(dto);
       onSuccess();
       onClose();
-    } catch {
-      setError('שגיאה ביצירת המשכנתא');
+    } catch (e) {
+      setError(getApiErrorMessage(e, 'לא ניתן ליצור משכנתא. נסה שוב או פנה לתמיכה.'));
     } finally {
       setSubmitting(false);
     }
@@ -222,6 +257,25 @@ function AddMortgageDialog({
             fullWidth
             autoFocus
           />
+
+          <FormControl fullWidth required>
+            <InputLabel id="mortgage-payer-label">משלם *</InputLabel>
+            <Select
+              labelId="mortgage-payer-label"
+              value={payerId}
+              label="משלם *"
+              onChange={e => setPayerId(e.target.value)}
+            >
+              <MenuItem value="">
+                <em>בחר משלם</em>
+              </MenuItem>
+              {persons.map(p => (
+                <MenuItem key={p.id} value={p.id}>
+                  {p.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
           <TextField
             label="סכום הלוואה (₪) *"
@@ -326,7 +380,12 @@ export default function PropertyMortgagesSection({ propertyId }: Props) {
       queryClient.invalidateQueries({ queryKey: ['property-mortgages', propertyId] });
       setSnackbar({ open: true, message: 'משכנתא נמחקה בהצלחה', severity: 'success' });
     },
-    onError: () => setSnackbar({ open: true, message: 'שגיאה במחיקת המשכנתא', severity: 'error' }),
+    onError: (err: unknown) =>
+      setSnackbar({
+        open: true,
+        message: getApiErrorMessage(err, 'לא ניתן למחוק את המשכנתא.'),
+        severity: 'error',
+      }),
   });
 
   const activeMortgages = mortgages.filter(m => m.status === 'ACTIVE');
