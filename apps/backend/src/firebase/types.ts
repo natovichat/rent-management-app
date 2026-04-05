@@ -422,6 +422,43 @@ export interface UtilityInfo {
   updatedAt: Date;
 }
 
+export enum OwnerPaymentStatus {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  PARTIAL = 'PARTIAL',
+}
+
+export interface OwnerPayment {
+  id: string;
+  ownershipId: string;
+  rentalAgreementId: string;
+  propertyId: string;
+  personId: string;
+  /** Year the payment is for */
+  year: number;
+  /** Month (1-12) the payment is for */
+  month: number;
+  /** Total rent collected for this month */
+  totalRent: number;
+  /** Owner's ownership percentage (0-100) */
+  ownershipPercentage: number;
+  /** Amount owed to owner = totalRent * ownershipPercentage / 100 */
+  amountDue: number;
+  /** Amount actually transferred to owner */
+  amountPaid: number;
+  status: OwnerPaymentStatus;
+  paymentDate?: Date;
+  notes?: string;
+  deletedAt?: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  // Virtual populated fields
+  ownership?: Ownership;
+  rentalAgreement?: RentalAgreement;
+  person?: Person;
+  property?: Property;
+}
+
 /** Paginated response */
 export interface PaginatedResult<T> {
   data: T[];

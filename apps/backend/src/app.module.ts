@@ -18,6 +18,7 @@ import { OwnershipsModule } from './modules/ownerships/ownerships.module';
 import { MortgagesModule } from './modules/mortgages/mortgages.module';
 import { RentalAgreementsModule } from './modules/rental-agreements/rental-agreements.module';
 import { PropertyEventsModule } from './modules/property-events/property-events.module';
+import { OwnerPaymentsModule } from './modules/owner-payments/owner-payments.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { PropertyEventsModule } from './modules/property-events/property-events.
     MortgagesModule,
     RentalAgreementsModule,
     PropertyEventsModule,
+    OwnerPaymentsModule,
   ],
   controllers: [],
   providers: [

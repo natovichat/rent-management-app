@@ -58,7 +58,7 @@ const BOTTOM_NAV_ITEMS = [
   { label: 'נכסים', href: '/properties', icon: <ApartmentIcon /> },
   { label: 'חוזים', href: '/leases', icon: <DescriptionIcon /> },
   { label: 'תשלומים', href: '/payments', icon: <PaymentsIcon /> },
-  { label: 'אנשים', href: '/persons', icon: <GroupIcon /> },
+  { label: 'בעלים', href: '/owner-payments', icon: <AccountBalanceWalletIcon /> },
 ] as const;
 
 interface NavItem {
@@ -99,6 +99,7 @@ const NAV_GROUPS: NavGroup[] = [
       },
       { label: 'חוזי שכירות', href: '/leases', icon: <DescriptionIcon /> },
       { label: 'תשלומי שכירות', href: '/payments', icon: <PaymentsIcon /> },
+      { label: 'תשלומים לבעלים', href: '/owner-payments', icon: <AccountBalanceWalletIcon /> },
     ],
   },
 ];
@@ -107,6 +108,7 @@ function getBottomNavValue(pathname: string): string {
   if (pathname === '/dashboard') return '/dashboard';
   if (pathname.startsWith('/properties')) return '/properties';
   if (pathname.startsWith('/leases')) return '/leases';
+  if (pathname.startsWith('/owner-payments')) return '/owner-payments';
   if (pathname.startsWith('/payments')) return '/payments';
   if (pathname.startsWith('/persons')) return '/persons';
   return '';
