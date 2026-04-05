@@ -23,6 +23,7 @@ import {
   Chip,
   Snackbar,
 } from '@mui/material';
+import { getApiErrorMessage } from '@/lib/api-error';
 import { mortgagesApi, Mortgage, CreateMortgageDto } from '@/lib/api/mortgages';
 import { propertiesApi } from '@/services/properties';
 import { bankAccountsApi, CreateBankAccountDto, BankAccount } from '@/lib/api/bank-accounts';
@@ -43,7 +44,7 @@ const mortgageSchema = z.object({
   status: z.enum(['ACTIVE', 'PAID_OFF', 'REFINANCED', 'DEFAULTED']),
   bankAccountId: z.string().optional().or(z.literal('')),
   mortgageOwnerId: z.string().optional().or(z.literal('')),
-  payerId: z.string().optional().or(z.literal('')),
+  payerId: z.string().min(1, 'יש לבחור משלם'),
   linkedProperties: z.array(z.string()).optional(),
   notes: z.string().optional(),
 }).refine((data) => {
@@ -191,10 +192,10 @@ export default function MortgageForm({
         severity: 'success',
       });
     },
-    onError: () => {
+    onError: (err: unknown) => {
       setSnackbar({
         open: true,
-        message: 'שגיאה ביצירת חשבון בנק',
+        message: getApiErrorMessage(err, 'לא ניתן ליצור חשבון בנק.'),
         severity: 'error',
       });
     },
@@ -253,13 +254,11 @@ export default function MortgageForm({
   });
 
   const onSubmit = (data: MortgageFormData) => {
-    console.log('[MortgageForm] Form submitted with data:', data);
     mutation.mutate(data);
   };
 
-  const onError = (errors: any) => {
-    console.error('[MortgageForm] Form validation errors:', errors);
-    console.error('[MortgageForm] Form values:', watch());
+  const onValidationError = () => {
+    // react-hook-form surfaces field errors; no generic toast needed
   };
 
   const selectedPropertyId = watch('propertyId');
@@ -272,7 +271,7 @@ export default function MortgageForm({
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <Box 
         component="form" 
-        onSubmit={handleSubmit(onSubmit, onError)}
+        onSubmit={handleSubmit(onSubmit, onValidationError)}
         noValidate
       >
         <DialogTitle>
@@ -282,7 +281,10 @@ export default function MortgageForm({
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
             {mutation.isError && (
               <Alert severity="error">
-                שגיאה בשמירת משכנתא. אנא נסה שוב.
+                {getApiErrorMessage(
+                  mutation.error,
+                  'לא ניתן לשמור את המשכנתא.',
+                )}
               </Alert>
             )}
 

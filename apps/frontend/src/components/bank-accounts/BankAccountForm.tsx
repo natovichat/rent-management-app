@@ -10,6 +10,7 @@ import {
   CreateBankAccountDto,
   bankAccountsApi,
 } from '@/lib/api/bank-accounts';
+import { getApiErrorMessage } from '@/lib/api-error';
 import { useQueryClient } from '@tanstack/react-query';
 
 const bankAccountSchema = z.object({
@@ -88,8 +89,7 @@ export default function BankAccountForm({
     >
       {mutation.isError && (
         <Alert severity="error">
-          {(mutation.error as any)?.response?.data?.message ||
-            'שגיאה בשמירת חשבון בנק'}
+          {getApiErrorMessage(mutation.error, 'לא ניתן לשמור את חשבון הבנק.')}
         </Alert>
       )}
 

@@ -15,6 +15,7 @@ import {
   DialogContent,
   DialogActions,
 } from '@mui/material';
+import { getApiErrorMessage } from '@/lib/api-error';
 import { mortgagesApi, CreatePaymentDto } from '@/lib/api/mortgages';
 
 const paymentSchema = z.object({
@@ -98,7 +99,7 @@ export default function MortgagePaymentForm({
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: 1 }}>
             {mutation.isError && (
               <Alert severity="error">
-                שגיאה ברישום תשלום. אנא נסה שוב.
+                {getApiErrorMessage(mutation.error, 'לא ניתן לרשום את התשלום.')}
               </Alert>
             )}
 
