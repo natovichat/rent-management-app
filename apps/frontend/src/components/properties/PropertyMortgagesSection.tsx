@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Accordion,
@@ -11,15 +11,6 @@ import {
   Button,
   Chip,
   Divider,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Select,
   Skeleton,
   Alert,
   Snackbar,
@@ -35,9 +26,9 @@ import {
   Add as AddIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
-import { mortgagesApi, Mortgage, CreateMortgageDto } from '@/lib/api/mortgages';
-import { personsApi } from '@/lib/api/persons';
+import { mortgagesApi, Mortgage } from '@/lib/api/mortgages';
 import { getApiErrorMessage } from '@/lib/api-error';
+import MortgageForm from '@/components/mortgages/MortgageForm';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -153,208 +144,6 @@ function MortgageRow({
   );
 }
 
-// ─── Add Mortgage Dialog ─────────────────────────────────────────────────────
-
-function AddMortgageDialog({
-  open,
-  propertyId,
-  onClose,
-  onSuccess,
-}: {
-  open: boolean;
-  propertyId: string;
-  onClose: () => void;
-  onSuccess: () => void;
-}) {
-  const today = new Date().toISOString().split('T')[0];
-
-  const [bank, setBank] = useState('');
-  const [loanAmount, setLoanAmount] = useState('');
-  const [interestRate, setInterestRate] = useState('');
-  const [monthlyPayment, setMonthlyPayment] = useState('');
-  const [startDate, setStartDate] = useState(today);
-  const [endDate, setEndDate] = useState('');
-  const [status, setStatus] = useState<MortgageStatus>('ACTIVE');
-  const [earlyRepaymentPenalty, setEarlyRepaymentPenalty] = useState('');
-  const [notes, setNotes] = useState('');
-  const [payerId, setPayerId] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-
-  const { data: personsResponse } = useQuery({
-    queryKey: ['persons', 'mortgage-dialog', open],
-    queryFn: () => personsApi.getPersons(1, 200),
-    enabled: open,
-  });
-  const persons = personsResponse?.data ?? [];
-
-  useEffect(() => {
-    if (!open) return;
-    setBank('');
-    setLoanAmount('');
-    setInterestRate('');
-    setMonthlyPayment('');
-    setStartDate(new Date().toISOString().split('T')[0]);
-    setEndDate('');
-    setStatus('ACTIVE');
-    setEarlyRepaymentPenalty('');
-    setNotes('');
-    setPayerId('');
-    setError('');
-  }, [open]);
-
-  async function handleSubmit() {
-    if (!bank || !loanAmount || !startDate) {
-      setError('יש למלא בנק, סכום הלוואה ותאריך התחלה');
-      return;
-    }
-    if (!payerId) {
-      setError('יש לבחור משלם (אדם או גוף שמשלם את המשכנתא)');
-      return;
-    }
-    const amount = parseFloat(loanAmount);
-    if (Number.isNaN(amount) || amount <= 0) {
-      setError('סכום הלוואה חייב להיות מספר חיובי');
-      return;
-    }
-    setSubmitting(true);
-    setError('');
-    try {
-      const dto: CreateMortgageDto = {
-        propertyId,
-        bank,
-        loanAmount: amount,
-        payerId,
-        startDate,
-        status,
-        ...(endDate && { endDate }),
-        ...(interestRate && { interestRate: parseFloat(interestRate) }),
-        ...(monthlyPayment && { monthlyPayment: parseFloat(monthlyPayment) }),
-        ...(earlyRepaymentPenalty && { earlyRepaymentPenalty: parseFloat(earlyRepaymentPenalty) }),
-        ...(notes && { notes }),
-      };
-      await mortgagesApi.createMortgage(dto);
-      onSuccess();
-      onClose();
-    } catch (e) {
-      setError(getApiErrorMessage(e, 'לא ניתן ליצור משכנתא. נסה שוב או פנה לתמיכה.'));
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
-  return (
-    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>הוספת משכנתא</DialogTitle>
-      <DialogContent>
-        <Stack spacing={2} sx={{ pt: 1 }}>
-          {error && <Alert severity="error">{error}</Alert>}
-
-          <TextField
-            label="בנק *"
-            value={bank}
-            onChange={e => setBank(e.target.value)}
-            fullWidth
-            autoFocus
-          />
-
-          <FormControl fullWidth required>
-            <InputLabel id="mortgage-payer-label">משלם *</InputLabel>
-            <Select
-              labelId="mortgage-payer-label"
-              value={payerId}
-              label="משלם *"
-              onChange={e => setPayerId(e.target.value)}
-            >
-              <MenuItem value="">
-                <em>בחר משלם</em>
-              </MenuItem>
-              {persons.map(p => (
-                <MenuItem key={p.id} value={p.id}>
-                  {p.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <TextField
-            label="סכום הלוואה (₪) *"
-            type="number"
-            value={loanAmount}
-            onChange={e => setLoanAmount(e.target.value)}
-            fullWidth
-          />
-
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            <TextField
-              label="ריבית שנתית (%)"
-              type="number"
-              value={interestRate}
-              onChange={e => setInterestRate(e.target.value)}
-              inputProps={{ step: 0.01 }}
-            />
-            <TextField
-              label="תשלום חודשי (₪)"
-              type="number"
-              value={monthlyPayment}
-              onChange={e => setMonthlyPayment(e.target.value)}
-            />
-          </Box>
-
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-            <TextField
-              label="תאריך התחלה *"
-              type="date"
-              value={startDate}
-              onChange={e => setStartDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-            <TextField
-              label="תאריך סיום"
-              type="date"
-              value={endDate}
-              onChange={e => setEndDate(e.target.value)}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Box>
-
-          <FormControl fullWidth>
-            <InputLabel>סטטוס</InputLabel>
-            <Select value={status} onChange={e => setStatus(e.target.value as MortgageStatus)} label="סטטוס">
-              {(Object.keys(STATUS_LABELS) as MortgageStatus[]).map(s => (
-                <MenuItem key={s} value={s}>{STATUS_LABELS[s]}</MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-
-          <TextField
-            label="עמלת פירעון מוקדם (₪)"
-            type="number"
-            value={earlyRepaymentPenalty}
-            onChange={e => setEarlyRepaymentPenalty(e.target.value)}
-            fullWidth
-          />
-
-          <TextField
-            label="הערות"
-            value={notes}
-            onChange={e => setNotes(e.target.value)}
-            fullWidth
-            multiline
-            rows={2}
-          />
-        </Stack>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>ביטול</Button>
-        <Button variant="contained" onClick={handleSubmit} disabled={submitting}>
-          {submitting ? 'שומר...' : 'הוסף משכנתא'}
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-}
-
 // ─── Main Section ────────────────────────────────────────────────────────────
 
 interface Props {
@@ -457,15 +246,19 @@ export default function PropertyMortgagesSection({ propertyId }: Props) {
         </AccordionDetails>
       </Accordion>
 
-      <AddMortgageDialog
-        open={addOpen}
-        propertyId={propertyId}
-        onClose={() => setAddOpen(false)}
-        onSuccess={() => {
-          queryClient.invalidateQueries({ queryKey: ['property-mortgages', propertyId] });
-          setSnackbar({ open: true, message: 'משכנתא נוספה בהצלחה', severity: 'success' });
-        }}
-      />
+      {addOpen && (
+        <MortgageForm
+          open
+          mortgage={null}
+          propertyId={propertyId}
+          onClose={() => setAddOpen(false)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ['property-mortgages', propertyId] });
+            queryClient.invalidateQueries({ queryKey: ['mortgages'] });
+            setSnackbar({ open: true, message: 'משכנתא נוספה בהצלחה', severity: 'success' });
+          }}
+        />
+      )}
 
       <Snackbar
         open={snackbar.open}
