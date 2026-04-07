@@ -12,7 +12,6 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  ListItemSecondaryAction,
   Avatar,
   Chip,
   IconButton,
@@ -25,6 +24,7 @@ import {
   Tooltip,
   Divider,
   Paper,
+  Snackbar,
 } from '@mui/material';
 import {
   PersonAdd as PersonAddIcon,
@@ -44,32 +44,50 @@ export default function UserManagementTab() {
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [newEmail, setNewEmail] = useState('');
   const [newRole, setNewRole] = useState<'ADMIN' | 'MEMBER'>('MEMBER');
+  const [dialogError, setDialogError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<UserDto | null>(null);
-  const [feedbackMessage, setFeedbackMessage] = useState<{
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean;
     text: string;
     severity: 'success' | 'error';
-  } | null>(null);
+  }>({ open: false, text: '', severity: 'success' });
+
+  const showSuccess = (text: string) =>
+    setSnackbar({ open: true, text, severity: 'success' });
+  const showError = (text: string) =>
+    setSnackbar({ open: true, text, severity: 'error' });
 
   const { data: users, isLoading, error } = useQuery({
     queryKey: ['users'],
     queryFn: usersApi.list,
   });
 
+  const handleCloseAddDialog = () => {
+    setAddDialogOpen(false);
+    setNewEmail('');
+    setNewRole('MEMBER');
+    setDialogError(null);
+  };
+
   const addMutation = useMutation({
     mutationFn: () => usersApi.addUser(newEmail.trim(), newRole),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
-      setAddDialogOpen(false);
-      setNewEmail('');
-      setNewRole('MEMBER');
-      setFeedbackMessage({ text: 'המשתמש נוסף בהצלחה', severity: 'success' });
+      handleCloseAddDialog();
+      showSuccess('המשתמש נוסף בהצלחה');
     },
     onError: (err: any) => {
       const msg =
         err?.response?.data?.message || 'שגיאה בהוספת המשתמש';
-      setFeedbackMessage({ text: msg, severity: 'error' });
+      setDialogError(Array.isArray(msg) ? msg.join(', ') : msg);
     },
   });
+
+  const handleAddSubmit = () => {
+    if (!newEmail.trim()) return;
+    setDialogError(null);
+    addMutation.mutate();
+  };
 
   const toggleActiveMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
@@ -78,7 +96,7 @@ export default function UserManagementTab() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: () => {
-      setFeedbackMessage({ text: 'שגיאה בעדכון המשתמש', severity: 'error' });
+      showError('שגיאה בעדכון המשתמש');
     },
   });
 
@@ -94,7 +112,7 @@ export default function UserManagementTab() {
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: () => {
-      setFeedbackMessage({ text: 'שגיאה בעדכון הרשאות', severity: 'error' });
+      showError('שגיאה בעדכון הרשאות');
     },
   });
 
@@ -103,12 +121,12 @@ export default function UserManagementTab() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });
       setDeleteTarget(null);
-      setFeedbackMessage({ text: 'המשתמש הוסר בהצלחה', severity: 'success' });
+      showSuccess('המשתמש הוסר בהצלחה');
     },
     onError: (err: any) => {
       const msg =
         err?.response?.data?.message || 'שגיאה במחיקת המשתמש';
-      setFeedbackMessage({ text: msg, severity: 'error' });
+      showError(Array.isArray(msg) ? msg.join(', ') : msg);
       setDeleteTarget(null);
     },
   });
@@ -158,16 +176,6 @@ export default function UserManagementTab() {
         </Button>
       </Box>
 
-      {feedbackMessage && (
-        <Alert
-          severity={feedbackMessage.severity}
-          onClose={() => setFeedbackMessage(null)}
-          sx={{ mb: 2 }}
-        >
-          {feedbackMessage.text}
-        </Alert>
-      )}
-
       {/* Users list */}
       <Paper variant="outlined">
         <List disablePadding>
@@ -182,8 +190,6 @@ export default function UserManagementTab() {
                   sx={{
                     opacity: user.isActive ? 1 : 0.6,
                     py: 1.5,
-                    flexWrap: { xs: 'wrap', sm: 'nowrap' },
-                    gap: 1,
                   }}
                 >
                   <ListItemAvatar>
@@ -262,16 +268,14 @@ export default function UserManagementTab() {
                     }
                   />
 
-                  <ListItemSecondaryAction
+                  {/* Actions - inline, not absolutely positioned */}
+                  <Box
                     sx={{
-                      position: 'relative',
-                      transform: 'none',
-                      top: 'auto',
-                      right: 'auto',
                       display: 'flex',
                       alignItems: 'center',
                       gap: 0.5,
                       flexShrink: 0,
+                      ml: 'auto',
                     }}
                   >
                     {/* Toggle admin role */}
@@ -335,7 +339,7 @@ export default function UserManagementTab() {
                         </IconButton>
                       </Tooltip>
                     )}
-                  </ListItemSecondaryAction>
+                  </Box>
                 </ListItem>
               </Box>
             );
@@ -363,50 +367,72 @@ export default function UserManagementTab() {
       {/* Add User Dialog */}
       <Dialog
         open={addDialogOpen}
-        onClose={() => setAddDialogOpen(false)}
+        onClose={handleCloseAddDialog}
         maxWidth="xs"
         fullWidth
       >
-        <DialogTitle sx={{ direction: 'rtl' }}>הוסף משתמש חדש</DialogTitle>
-        <DialogContent sx={{ direction: 'rtl', pt: '8px !important' }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            הכנס את כתובת Gmail של המשתמש. הם יוכלו להתחבר לאחר שתוסיף אותם
-            לרשימה.
-          </Typography>
-          <TextField
-            fullWidth
-            label="כתובת Gmail"
-            type="email"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            placeholder="user@gmail.com"
-            autoFocus
-            sx={{ mb: 2 }}
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={newRole === 'ADMIN'}
-                onChange={(e) =>
-                  setNewRole(e.target.checked ? 'ADMIN' : 'MEMBER')
-                }
-              />
-            }
-            label="מנהל מערכת"
-          />
-        </DialogContent>
-        <DialogActions sx={{ direction: 'rtl', px: 3, pb: 2 }}>
-          <Button onClick={() => setAddDialogOpen(false)} variant="outlined">
-            ביטול
-          </Button>
-          <Button
-            variant="contained"
-            onClick={() => addMutation.mutate()}
-            disabled={!newEmail.trim() || addMutation.isPending}
-          >
-            {addMutation.isPending ? 'מוסיף...' : 'הוסף משתמש'}
-          </Button>
-        </DialogActions>
+        <Box
+          component="form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAddSubmit();
+          }}
+        >
+          <DialogTitle sx={{ direction: 'rtl' }}>הוסף משתמש חדש</DialogTitle>
+          <DialogContent sx={{ direction: 'rtl', pt: '8px !important' }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              הכנס את כתובת Gmail של המשתמש. הם יוכלו להתחבר לאחר שתוסיף
+              אותם לרשימה.
+            </Typography>
+            {dialogError && (
+              <Alert severity="error" sx={{ mb: 2 }} onClose={() => setDialogError(null)}>
+                {dialogError}
+              </Alert>
+            )}
+            <TextField
+              fullWidth
+              label="כתובת Gmail"
+              type="email"
+              value={newEmail}
+              onChange={(e) => {
+                setNewEmail(e.target.value);
+                setDialogError(null);
+              }}
+              placeholder="user@gmail.com"
+              autoFocus
+              sx={{ mb: 2 }}
+              disabled={addMutation.isPending}
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={newRole === 'ADMIN'}
+                  onChange={(e) =>
+                    setNewRole(e.target.checked ? 'ADMIN' : 'MEMBER')
+                  }
+                  disabled={addMutation.isPending}
+                />
+              }
+              label="מנהל מערכת"
+            />
+          </DialogContent>
+          <DialogActions sx={{ direction: 'rtl', px: 3, pb: 2 }}>
+            <Button
+              onClick={handleCloseAddDialog}
+              variant="outlined"
+              disabled={addMutation.isPending}
+            >
+              ביטול
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={!newEmail.trim() || addMutation.isPending}
+            >
+              {addMutation.isPending ? 'מוסיף...' : 'הוסף משתמש'}
+            </Button>
+          </DialogActions>
+        </Box>
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
@@ -428,7 +454,11 @@ export default function UserManagementTab() {
           </Typography>
         </DialogContent>
         <DialogActions sx={{ direction: 'rtl', px: 3, pb: 2 }}>
-          <Button onClick={() => setDeleteTarget(null)} variant="outlined">
+          <Button
+            onClick={() => setDeleteTarget(null)}
+            variant="outlined"
+            disabled={deleteMutation.isPending}
+          >
             ביטול
           </Button>
           <Button
@@ -441,6 +471,22 @@ export default function UserManagementTab() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Global success/error snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          severity={snackbar.severity}
+          onClose={() => setSnackbar((s) => ({ ...s, open: false }))}
+          variant="filled"
+        >
+          {snackbar.text}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
