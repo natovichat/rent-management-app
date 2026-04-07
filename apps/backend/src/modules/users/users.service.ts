@@ -126,8 +126,15 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    const snap = await this.col.orderBy('role').orderBy('createdAt').get();
-    return snap.docs.map((d) => this.docToUser(d));
+    const snap = await this.col.get();
+    const users = snap.docs.map((d) => this.docToUser(d));
+    // Sort in memory: ADMINs first, then by createdAt ascending
+    return users.sort((a, b) => {
+      if (a.role !== b.role) {
+        return a.role === UserRole.ADMIN ? -1 : 1;
+      }
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+    });
   }
 
   async addToWhitelist(email: string, role: UserRole = UserRole.MEMBER): Promise<User> {
