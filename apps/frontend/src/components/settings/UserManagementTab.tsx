@@ -46,6 +46,8 @@ export default function UserManagementTab() {
   const [newRole, setNewRole] = useState<'ADMIN' | 'MEMBER'>('MEMBER');
   const [dialogError, setDialogError] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<UserDto | null>(null);
+  const [pendingActiveId, setPendingActiveId] = useState<string | null>(null);
+  const [pendingRoleId, setPendingRoleId] = useState<string | null>(null);
   const [snackbar, setSnackbar] = useState<{
     open: boolean;
     text: string;
@@ -93,9 +95,11 @@ export default function UserManagementTab() {
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       usersApi.updateUser(id, { isActive }),
     onSuccess: () => {
+      setPendingActiveId(null);
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: () => {
+      setPendingActiveId(null);
       showError('שגיאה בעדכון המשתמש');
     },
   });
@@ -109,9 +113,11 @@ export default function UserManagementTab() {
       role: 'ADMIN' | 'MEMBER';
     }) => usersApi.updateUser(id, { role }),
     onSuccess: () => {
+      setPendingRoleId(null);
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },
     onError: () => {
+      setPendingRoleId(null);
       showError('שגיאה בעדכון הרשאות');
     },
   });
@@ -290,14 +296,15 @@ export default function UserManagementTab() {
                         <span>
                           <IconButton
                             size="small"
-                            onClick={() =>
+                            onClick={() => {
+                              setPendingRoleId(user.id);
                               toggleRoleMutation.mutate({
                                 id: user.id,
                                 role:
                                   user.role === 'ADMIN' ? 'MEMBER' : 'ADMIN',
-                              })
-                            }
-                            disabled={toggleRoleMutation.isPending}
+                              });
+                            }}
+                            disabled={pendingRoleId === user.id}
                             color={
                               user.role === 'ADMIN' ? 'primary' : 'default'
                             }
@@ -313,17 +320,20 @@ export default function UserManagementTab() {
                       <Tooltip
                         title={user.isActive ? 'השעה גישה' : 'אפשר גישה'}
                       >
-                        <Switch
-                          size="small"
-                          checked={user.isActive}
-                          onChange={(e) =>
-                            toggleActiveMutation.mutate({
-                              id: user.id,
-                              isActive: e.target.checked,
-                            })
-                          }
-                          disabled={toggleActiveMutation.isPending}
-                        />
+                        <span>
+                          <Switch
+                            size="small"
+                            checked={user.isActive}
+                            onChange={(e) => {
+                              setPendingActiveId(user.id);
+                              toggleActiveMutation.mutate({
+                                id: user.id,
+                                isActive: e.target.checked,
+                              });
+                            }}
+                            disabled={pendingActiveId === user.id}
+                          />
+                        </span>
                       </Tooltip>
                     )}
 
