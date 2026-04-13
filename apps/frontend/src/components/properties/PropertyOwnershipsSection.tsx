@@ -40,7 +40,7 @@ import {
   Business as BusinessIcon,
 } from '@mui/icons-material';
 import { ownershipsApi, Ownership, CreateOwnershipDto, OwnershipType } from '@/lib/api/ownerships';
-import { api } from '@/lib/api';
+import { personsApi, Person } from '@/lib/api/persons';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -72,13 +72,7 @@ const DIALOG_SELECT_MENU_PROPS = {
   },
 } as const;
 
-interface PersonOption {
-  id: string;
-  name: string;
-  type?: 'INDIVIDUAL' | 'COMPANY' | 'PARTNERSHIP';
-  email?: string;
-  phone?: string;
-}
+type PersonOption = Pick<Person, 'id' | 'name' | 'type' | 'email' | 'phone'>;
 
 // ─── Mini PersonRow ─────────────────────────────────────────────────────────────
 
@@ -192,14 +186,11 @@ function AddOwnershipDialog({
 
   const { data: personsData, isLoading: isPersonsLoading } = useQuery({
     queryKey: ['persons-for-ownership'],
-    queryFn: async () => {
-      const res = await api.get('/persons', { params: { limit: 200 } });
-      return res.data;
-    },
+    queryFn: () => personsApi.getPersons(1, 100),
     staleTime: 5 * 60 * 1000,
   });
 
-  const persons: PersonOption[] = personsData?.data ?? personsData ?? [];
+  const persons: PersonOption[] = personsData?.data ?? [];
 
   async function handleSubmit() {
     if (!personId || !percentage || !startDate) {

@@ -44,7 +44,7 @@ import {
   RentalAgreementStatus,
   CreateRentalAgreementDto,
 } from '@/lib/api/leases';
-import { api } from '@/lib/api';
+import { personsApi } from '@/lib/api/persons';
 
 // ─── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -184,14 +184,11 @@ function AddLeaseDialog({
 
   const { data: personsData, isLoading: isPersonsLoading } = useQuery({
     queryKey: ['persons-for-lease'],
-    queryFn: async () => {
-      const res = await api.get('/persons', { params: { limit: 200 } });
-      return res.data;
-    },
+    queryFn: () => personsApi.getPersons(1, 100),
     staleTime: 5 * 60 * 1000,
   });
 
-  const persons: Tenant[] = personsData?.data ?? personsData ?? [];
+  const persons: Tenant[] = personsData?.data ?? [];
 
   async function handleSubmit() {
     if (!tenantId || !monthlyRent || !startDate || !endDate) {
