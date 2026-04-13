@@ -62,6 +62,16 @@ const STATUS_COLORS: Record<RentalAgreementStatus, 'success' | 'info' | 'default
   TERMINATED: 'error',
 };
 
+const DIALOG_SELECT_MENU_PROPS = {
+  disablePortal: true,
+  disableScrollLock: true,
+  PaperProps: {
+    sx: {
+      maxHeight: 320,
+    },
+  },
+} as const;
+
 // ─── LeaseRow ──────────────────────────────────────────────────────────────────
 
 function LeaseRow({
@@ -172,13 +182,13 @@ function AddLeaseDialog({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const { data: personsData } = useQuery({
+  const { data: personsData, isLoading: isPersonsLoading } = useQuery({
     queryKey: ['persons-for-lease'],
     queryFn: async () => {
       const res = await api.get('/persons', { params: { limit: 200 } });
       return res.data;
     },
-    enabled: open,
+    staleTime: 5 * 60 * 1000,
   });
 
   const persons: Tenant[] = personsData?.data ?? personsData ?? [];
@@ -219,10 +229,30 @@ function AddLeaseDialog({
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
           {error && <Alert severity="error">{error}</Alert>}
+          {!isPersonsLoading && persons.length === 0 && (
+            <Alert severity="warning">
+              לא נמצאו אנשים במערכת. יש להוסיף אדם לפני יצירת חוזה שכירות.
+            </Alert>
+          )}
 
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={isPersonsLoading}>
             <InputLabel>שוכר *</InputLabel>
-            <Select value={tenantId} onChange={e => setTenantId(e.target.value)} label="שוכר *">
+            <Select
+              value={tenantId}
+              onChange={e => setTenantId(e.target.value)}
+              label="שוכר *"
+              MenuProps={DIALOG_SELECT_MENU_PROPS}
+            >
+              {isPersonsLoading && (
+                <MenuItem value="" disabled>
+                  טוען שוכרים...
+                </MenuItem>
+              )}
+              {!isPersonsLoading && persons.length === 0 && (
+                <MenuItem value="" disabled>
+                  לא נמצאו אנשים
+                </MenuItem>
+              )}
               {persons.map((p: Tenant) => (
                 <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
               ))}
@@ -258,7 +288,12 @@ function AddLeaseDialog({
 
           <FormControl fullWidth>
             <InputLabel>סטטוס</InputLabel>
-            <Select value={status} onChange={e => setStatus(e.target.value as RentalAgreementStatus)} label="סטטוס">
+            <Select
+              value={status}
+              onChange={e => setStatus(e.target.value as RentalAgreementStatus)}
+              label="סטטוס"
+              MenuProps={DIALOG_SELECT_MENU_PROPS}
+            >
               {(Object.keys(STATUS_LABELS) as RentalAgreementStatus[]).map(s => (
                 <MenuItem key={s} value={s}>{STATUS_LABELS[s]}</MenuItem>
               ))}

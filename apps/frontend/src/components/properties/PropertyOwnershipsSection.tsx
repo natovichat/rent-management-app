@@ -62,6 +62,16 @@ const OWNERSHIP_TYPE_COLORS: Record<OwnershipType, 'success' | 'primary' | 'seco
   NOMINEE: 'default',
 };
 
+const DIALOG_SELECT_MENU_PROPS = {
+  disablePortal: true,
+  disableScrollLock: true,
+  PaperProps: {
+    sx: {
+      maxHeight: 320,
+    },
+  },
+} as const;
+
 interface PersonOption {
   id: string;
   name: string;
@@ -180,13 +190,13 @@ function AddOwnershipDialog({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const { data: personsData } = useQuery({
+  const { data: personsData, isLoading: isPersonsLoading } = useQuery({
     queryKey: ['persons-for-ownership'],
     queryFn: async () => {
       const res = await api.get('/persons', { params: { limit: 200 } });
       return res.data;
     },
-    enabled: open,
+    staleTime: 5 * 60 * 1000,
   });
 
   const persons: PersonOption[] = personsData?.data ?? personsData ?? [];
@@ -227,10 +237,30 @@ function AddOwnershipDialog({
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
           {error && <Alert severity="error">{error}</Alert>}
+          {!isPersonsLoading && persons.length === 0 && (
+            <Alert severity="warning">
+              לא נמצאו אנשים במערכת. יש להוסיף אדם לפני יצירת בעלות.
+            </Alert>
+          )}
 
-          <FormControl fullWidth>
+          <FormControl fullWidth disabled={isPersonsLoading}>
             <InputLabel>אדם *</InputLabel>
-            <Select value={personId} onChange={e => setPersonId(e.target.value)} label="אדם *">
+            <Select
+              value={personId}
+              onChange={e => setPersonId(e.target.value)}
+              label="אדם *"
+              MenuProps={DIALOG_SELECT_MENU_PROPS}
+            >
+              {isPersonsLoading && (
+                <MenuItem value="" disabled>
+                  טוען אנשים...
+                </MenuItem>
+              )}
+              {!isPersonsLoading && persons.length === 0 && (
+                <MenuItem value="" disabled>
+                  לא נמצאו אנשים
+                </MenuItem>
+              )}
               {persons.map((p: PersonOption) => (
                 <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
               ))}
@@ -243,6 +273,7 @@ function AddOwnershipDialog({
               value={ownershipType}
               onChange={e => setOwnershipType(e.target.value as OwnershipType)}
               label="סוג בעלות"
+              MenuProps={DIALOG_SELECT_MENU_PROPS}
             >
               {(Object.keys(OWNERSHIP_TYPE_LABELS) as OwnershipType[]).map(t => (
                 <MenuItem key={t} value={t}>{OWNERSHIP_TYPE_LABELS[t]}</MenuItem>
