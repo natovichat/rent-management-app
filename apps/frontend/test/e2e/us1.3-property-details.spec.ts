@@ -122,9 +122,9 @@ test.describe('US1.3 - Add Property Details (TDD)', () => {
     // Fill country: ישראל
     await page.locator('input[name="country"]').fill('ישראל');
 
-    // Expand "שטחים ומידות" accordion for area fields
-    const areaAccordion = page.locator('[data-testid="accordion-שטחים-ומידות"]');
-    const areaSummary = page.locator('[data-testid="accordion-summary-שטחים-ומידות"]');
+    // Expand "מאפיינים פיזיים" accordion for area fields
+    const areaAccordion = page.locator('[data-testid="accordion-מאפיינים-פיזיים"]');
+    const areaSummary = page.locator('[data-testid="accordion-summary-מאפיינים-פיזיים"]');
     const isExpanded = await areaAccordion.getAttribute('aria-expanded');
     if (isExpanded !== 'true') {
       await areaSummary.click();
@@ -377,9 +377,9 @@ test.describe('US1.3 - Add Property Details (TDD)', () => {
     // Fill required address
     await page.locator('input[name="address"]').fill('רחוב בן גוריון 5, חיפה');
 
-    // Expand "שטחים ומידות" accordion
-    const areaAccordion = page.locator('[data-testid="accordion-שטחים-ומידות"]');
-    const areaSummary = page.locator('[data-testid="accordion-summary-שטחים-ומידות"]');
+    // Expand "מאפיינים פיזיים" accordion
+    const areaAccordion = page.locator('[data-testid="accordion-מאפיינים-פיזיים"]');
+    const areaSummary = page.locator('[data-testid="accordion-summary-מאפיינים-פיזיים"]');
     const isExpanded = await areaAccordion.getAttribute('aria-expanded');
     if (isExpanded !== 'true') {
       await areaSummary.click();

@@ -30,7 +30,11 @@ export interface Property {
   totalUnits?: number;
   parkingSpaces?: number;
   balconySizeSqm?: number;
+  balconyArea?: number;
   storageSizeSqm?: number;
+  roomCount?: number;
+  apartmentNumber?: string;
+  floor?: number;
   parkingType?: ParkingType;
   purchasePrice?: number;
   purchaseDate?: string;
@@ -92,7 +96,11 @@ export interface CreatePropertyDto {
   totalUnits?: number;
   parkingSpaces?: number;
   balconySizeSqm?: number;
+  balconyArea?: number;
   storageSizeSqm?: number;
+  roomCount?: number;
+  apartmentNumber?: string;
+  floor?: number;
   parkingType?: ParkingType;
   purchasePrice?: number;
   purchaseDate?: string;

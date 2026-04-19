@@ -96,6 +96,21 @@ export class PropertyEntity {
   floors?: number | null;
 
   @ApiPropertyOptional({
+    description: 'Apartment floor (not building floor count)',
+  })
+  floor?: number | null;
+
+  @ApiPropertyOptional({
+    description: 'Number of rooms',
+  })
+  roomCount?: number | null;
+
+  @ApiPropertyOptional({
+    description: 'Apartment number within the building',
+  })
+  apartmentNumber?: string | null;
+
+  @ApiPropertyOptional({
     description: 'Total number of units',
   })
   totalUnits?: number | null;

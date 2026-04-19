@@ -232,7 +232,12 @@ export interface Property {
   balconySizeSqm?: number;
   balconyArea?: number;
   storageSizeSqm?: number;
+  /** Apartment / unit floor (not building floor count) */
   floor?: number;
+  /** Number of rooms in the property */
+  roomCount?: number;
+  /** Apartment number within the building (e.g. 12, 12א) */
+  apartmentNumber?: string;
   storage?: boolean;
   plotSize?: number;
   buildingPotential?: string;

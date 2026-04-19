@@ -211,7 +211,7 @@ test.describe('US1.1 - Create Property (TDD)', () => {
     console.log(`Property status selected: ${statusValue}`);
     
     // Expand Area & Dimensions accordion (Accordion 2)
-    await expandAccordionSection('שטחים ומידות');
+    await expandAccordionSection('מאפיינים פיזיים');
     await page.waitForSelector('input[name="totalArea"]', { state: 'visible', timeout: 5000 });
     
     // Fill Area Information - use type="number" fields correctly
@@ -384,7 +384,7 @@ test.describe('US1.1 - Create Property (TDD)', () => {
     await page.waitForSelector('[role="listbox"]', { state: 'hidden', timeout: 3000 }); // Wait for menu to close
     
     // Expand and fill area fields (Accordion 2)
-    await expandAccordionSection('שטחים ומידות');
+    await expandAccordionSection('מאפיינים פיזיים');
     await page.waitForSelector('input[name="totalArea"]', { state: 'visible', timeout: 5000 });
     await page.fill('input[name="totalArea"]', '120.5');
     await page.locator('input[name="totalArea"]').blur();
@@ -578,7 +578,7 @@ test.describe('US1.1 - Create Property (TDD)', () => {
     await page.waitForTimeout(200);
     
     // Expand and fill area fields (Accordion 2)
-    await expandAccordionSection('שטחים ומידות');
+    await expandAccordionSection('מאפיינים פיזיים');
     await page.waitForSelector('input[name="totalArea"]', { state: 'visible', timeout: 5000 });
     await page.fill('input[name="totalArea"]', '120');
     await page.fill('input[name="landArea"]', '100');
@@ -648,7 +648,7 @@ test.describe('US1.1 - Create Property (TDD)', () => {
     await page.waitForTimeout(200);
     
     // Expand and fill area fields (Accordion 2)
-    await expandAccordionSection('שטחים ומידות');
+    await expandAccordionSection('מאפיינים פיזיים');
     await page.waitForSelector('input[name="totalArea"]', { state: 'visible', timeout: 5000 });
     await page.fill('input[name="totalArea"]', '120');
     await page.fill('input[name="landArea"]', '100');
@@ -781,7 +781,7 @@ test.describe('US1.1 - Create Property (TDD)', () => {
     await page.waitForSelector('[role="listbox"]', { state: 'hidden', timeout: 3000 });
     
     // Expand and fill area fields (Accordion 2)
-    await expandAccordionSection('שטחים ומידות');
+    await expandAccordionSection('מאפיינים פיזיים');
     await page.waitForSelector('input[name="totalArea"]', { state: 'visible', timeout: 5000 });
     await page.fill('input[name="totalArea"]', '120');
     await page.locator('input[name="totalArea"]').blur();
@@ -874,7 +874,7 @@ test.describe('US1.1 - Create Property (TDD)', () => {
     // List of all accordion sections (Hebrew names)
     const accordionSections = [
       'מידע בסיסי',
-      'שטחים ומידות',
+      'מאפיינים פיזיים',
       'פרטים פיננסיים',
       'משפטי ורישום',
       'פרטי הנכס',

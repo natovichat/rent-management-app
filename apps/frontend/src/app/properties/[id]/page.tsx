@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
@@ -105,11 +105,19 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 export default function PropertyDetailsPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const queryClient = useQueryClient();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const id = params.id as string;
   const [editOpen, setEditOpen] = useState(false);
+
+  /** Open edit dialog when arriving via /properties/:id?edit=1 (e.g. from dashboard or leases). */
+  useEffect(() => {
+    if (searchParams.get('edit') !== '1') return;
+    setEditOpen(true);
+    router.replace(`/properties/${id}`, { scroll: false });
+  }, [searchParams, id, router]);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false, message: '', severity: 'success',
@@ -294,10 +302,19 @@ export default function PropertyDetailsPage() {
           </Section>
         </Grid>
 
-        {/* Areas */}
+        {/* Physical attributes & areas */}
         <Grid item xs={12} md={6}>
-          <Section title="שטחים ומידות">
+          <Section title="מאפיינים פיזיים">
             <Grid container spacing={1.5}>
+              <Grid item xs={6}>
+                <InfoField label="מספר חדרים" value={property.roomCount} />
+              </Grid>
+              <Grid item xs={6}>
+                <InfoField label="מספר דירה בבניין" value={property.apartmentNumber} />
+              </Grid>
+              <Grid item xs={6}>
+                <InfoField label="קומה" value={property.floor} />
+              </Grid>
               <Grid item xs={6}>
                 <InfoField
                   label="שטח כולל (מ״ר)"
@@ -474,7 +491,13 @@ export default function PropertyDetailsPage() {
       </Grid>
 
       {/* Edit dialog */}
-      <Dialog open={editOpen} onClose={() => setEditOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        maxWidth="lg"
+        fullWidth
+        fullScreen={isMobile}
+      >
         <PropertyForm
           property={property as any}
           onClose={() => setEditOpen(false)}

@@ -19,7 +19,7 @@ export const COLUMN_LABELS: Record<string, string> = {
   country: 'מדינה',
   city: 'עיר',
 
-  // Property fields - Area & Dimensions
+  // Property fields - מאפיינים פיזיים / שטחים
   totalArea: 'שטח כולל (מ"ר)',
   landArea: 'שטח קרקע (מ"ר)',
   floors: 'מספר קומות',
@@ -127,7 +127,7 @@ export const COLUMN_LABELS: Record<string, string> = {
   // Unit fields
   propertyId: 'נכס',
   property: 'נכס',
-  apartmentNumber: 'מספר דירה',
+  apartmentNumber: 'מספר דירה בבניין',
   roomCount: 'מספר חדרים',
   area: 'שטח (מ"ר)',
   unitType: 'סוג יחידה',
@@ -214,8 +214,18 @@ export const COLUMN_GROUPS: Record<string, Array<{ label: string; fields: string
       fields: ['address', 'fileNumber', 'type', 'status', 'country', 'city'],
     },
     {
-      label: 'שטחים ומידות',
-      fields: ['totalArea', 'landArea', 'floors', 'totalUnits', 'parkingSpaces', 'balconyArea'],
+      label: 'מאפיינים פיזיים',
+      fields: [
+        'totalArea',
+        'landArea',
+        'floors',
+        'totalUnits',
+        'parkingSpaces',
+        'balconyArea',
+        'roomCount',
+        'apartmentNumber',
+        'floor',
+      ],
     },
     {
       label: 'פרטים פיננסיים',
@@ -239,7 +249,6 @@ export const COLUMN_GROUPS: Record<string, Array<{ label: string; fields: string
         'lastRenovationYear',
         'buildingPermitNumber',
         'propertyCondition',
-        'floor',
         'storage',
       ],
     },

@@ -233,6 +233,25 @@ export class CreatePropertyDto {
   floor?: number;
 
   @ApiPropertyOptional({
+    description: 'Number of rooms',
+    example: 4,
+  })
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  roomCount?: number;
+
+  @ApiPropertyOptional({
+    description: 'Apartment number within the building',
+    example: '12א',
+  })
+  @IsOptional()
+  @IsString()
+  @MaxLength(50)
+  apartmentNumber?: string;
+
+  @ApiPropertyOptional({
     description: 'Whether property has storage room',
     default: false,
   })

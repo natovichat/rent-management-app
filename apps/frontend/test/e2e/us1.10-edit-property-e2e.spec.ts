@@ -516,7 +516,7 @@ test.describe('US1.10 - Edit Property Information (TDD)', () => {
     await page.locator('button:has-text("ערוך נכס")').click();
     
     console.log('→ Step 2: Expand area section');
-    const areaAccordion = page.locator('[data-testid="accordion-summary-שטחים-ומידות"]');
+    const areaAccordion = page.locator('[data-testid="accordion-summary-מאפיינים-פיזיים"]');
     await areaAccordion.click();
     await page.waitForTimeout(500);
     
@@ -847,7 +847,7 @@ test.describe('US1.10 - Edit Property Information (TDD)', () => {
     await page.locator('[name="address"]').fill('Valid Address');
     
     // Expand area section
-    const areaAccordion = page.locator('[data-testid="accordion-summary-שטחים-ומידות"]');
+    const areaAccordion = page.locator('[data-testid="accordion-summary-מאפיינים-פיזיים"]');
     await areaAccordion.click();
     await page.waitForTimeout(500);
     

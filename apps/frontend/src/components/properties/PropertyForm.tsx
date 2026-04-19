@@ -120,6 +120,15 @@ const propertySchema = z
       coerceOptionalNumber,
       z.union([z.number().positive('שטח מרפסת חייב להיות מספר חיובי'), z.undefined()])
     ),
+    roomCount: z.preprocess(
+      coerceOptionalInt,
+      z.union([z.number().int().min(0, 'מספר חדרים חייב להיות שלם לא שלילי'), z.undefined()])
+    ),
+    apartmentNumber: z.string().max(50, 'עד 50 תווים').optional(),
+    floor: z.preprocess(
+      coerceOptionalInt,
+      z.union([z.number().int(), z.undefined()])
+    ),
 
     // Financial Details
     estimatedValue: z.preprocess(
@@ -168,10 +177,6 @@ const propertySchema = z
     propertyCondition: z.preprocess(
       (val) => (val === '' || val === null ? undefined : val),
       z.enum(['EXCELLENT', 'GOOD', 'FAIR', 'NEEDS_RENOVATION']).optional()
-    ),
-    floor: z.preprocess(
-      coerceOptionalInt,
-      z.union([z.number().int(), z.undefined()])
     ),
     storage: z.boolean().optional(),
 
@@ -342,6 +347,8 @@ export default function PropertyForm({
           totalUnits: property.totalUnits,
           parkingSpaces: property.parkingSpaces,
           balconyArea: property.balconyArea,
+          roomCount: property.roomCount,
+          apartmentNumber: property.apartmentNumber || '',
           estimatedValue: property.estimatedValue,
           acquisitionPrice: property.purchasePrice,
           acquisitionDate: property.purchaseDate ? property.purchaseDate.split('T')[0] : '',
@@ -463,6 +470,8 @@ export default function PropertyForm({
         ...(data.totalUnits !== undefined && { totalUnits: data.totalUnits }),
         ...(data.parkingSpaces !== undefined && { parkingSpaces: data.parkingSpaces }),
         ...(data.balconyArea !== undefined && { balconyArea: data.balconyArea }),
+        ...(data.roomCount !== undefined && { roomCount: data.roomCount }),
+        ...(data.apartmentNumber && { apartmentNumber: data.apartmentNumber }),
         ...(data.estimatedValue !== undefined && { estimatedValue: data.estimatedValue }),
         ...(data.acquisitionPrice !== undefined && { purchasePrice: data.acquisitionPrice }),
         ...(data.acquisitionDate && { purchaseDate: data.acquisitionDate }),
@@ -808,19 +817,51 @@ export default function PropertyForm({
               </AccordionDetails>
             </Accordion>
 
-            {/* Section 2: Area & Dimensions */}
-            <Accordion data-testid="accordion-שטחים-ומידות">
+            {/* Section 2: Physical attributes & areas */}
+            <Accordion data-testid="accordion-מאפיינים-פיזיים">
               <AccordionSummary 
                 expandIcon={<ExpandMoreIcon />}
-                data-testid="accordion-summary-שטחים-ומידות"
+                data-testid="accordion-summary-מאפיינים-פיזיים"
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <SquareFootIcon />
-                  <Typography variant="h6">שטחים ומידות</Typography>
+                  <Typography variant="h6">מאפיינים פיזיים</Typography>
                 </Box>
               </AccordionSummary>
               <AccordionDetails>
                 <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="מספר חדרים"
+                      type="number"
+                      {...propertyForm.register('roomCount')}
+                      error={!!propertyForm.formState.errors.roomCount}
+                      helperText={propertyForm.formState.errors.roomCount?.message}
+                      fullWidth
+                      disabled={propertyMutation.isPending}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="מספר דירה בבניין"
+                      {...propertyForm.register('apartmentNumber')}
+                      error={!!propertyForm.formState.errors.apartmentNumber}
+                      helperText={propertyForm.formState.errors.apartmentNumber?.message}
+                      fullWidth
+                      disabled={propertyMutation.isPending}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      label="קומה"
+                      type="number"
+                      {...propertyForm.register('floor')}
+                      error={!!propertyForm.formState.errors.floor}
+                      helperText={propertyForm.formState.errors.floor?.message}
+                      fullWidth
+                      disabled={propertyMutation.isPending}
+                    />
+                  </Grid>
                   <Grid item xs={12} sm={6}>
                     <TextField
                       label="שטח כולל (מ״ר)"
@@ -1134,17 +1175,6 @@ export default function PropertyForm({
                         <MenuItem value="NEEDS_RENOVATION">דורש שיפוץ</MenuItem>
                       </Select>
                     </FormControl>
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="קומה"
-                      type="number"
-                      {...propertyForm.register('floor')}
-                      error={!!propertyForm.formState.errors.floor}
-                      helperText={propertyForm.formState.errors.floor?.message}
-                      fullWidth
-                      disabled={propertyMutation.isPending}
-                    />
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <FormControlLabel

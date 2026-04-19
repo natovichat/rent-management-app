@@ -33,6 +33,7 @@ import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import HomeIcon from '@mui/icons-material/Home';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import RestoreIcon from '@mui/icons-material/RestoreFromTrash';
 import { mortgagesApi, Mortgage, MortgageFilters } from '@/lib/api/mortgages';
@@ -89,9 +90,10 @@ interface MobileMortgageCardProps {
   item: Mortgage;
   onEdit: () => void;
   onDelete: () => void;
+  onEditProperty?: () => void;
 }
 
-function MobileMortgageCard({ item, onEdit, onDelete }: MobileMortgageCardProps) {
+function MobileMortgageCard({ item, onEdit, onDelete, onEditProperty }: MobileMortgageCardProps) {
   return (
     <Card sx={{ mb: 1.5, borderRadius: 2 }} variant="outlined">
       <CardContent sx={{ pb: 0 }}>
@@ -120,6 +122,11 @@ function MobileMortgageCard({ item, onEdit, onDelete }: MobileMortgageCardProps)
         </Stack>
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+        {onEditProperty && (
+          <IconButton size="small" onClick={onEditProperty} aria-label="עריכת נכס" color="primary">
+            <HomeIcon />
+          </IconButton>
+        )}
         <IconButton size="small" onClick={onEdit} aria-label="עריכה">
           <EditIcon />
         </IconButton>
@@ -307,7 +314,7 @@ export default function MortgageList() {
       field: 'actions',
       type: 'actions',
       headerName: 'פעולות',
-      width: 150,
+      width: 200,
       align: 'left',
       headerAlign: 'left',
       getActions: (params) => {
@@ -322,7 +329,18 @@ export default function MortgageList() {
             />,
           ];
         }
+        const propertyId = params.row.propertyId || params.row.property?.id;
         return [
+          ...(propertyId
+            ? [
+                <GridActionsCellItem
+                  key="edit-property"
+                  icon={<HomeIcon />}
+                  label="עריכת נכס"
+                  onClick={() => router.push(`/properties/${propertyId}?edit=1`)}
+                />,
+              ]
+            : []),
           <GridActionsCellItem
             key="view"
             icon={<VisibilityIcon />}
@@ -428,7 +446,9 @@ export default function MortgageList() {
               </Typography>
             ) : (
               <>
-                {(data?.data || []).map((item) => (
+                {(data?.data || []).map((item) => {
+                  const pid = item.propertyId || item.property?.id;
+                  return (
                   <MobileMortgageCard
                     key={item.id}
                     item={item}
@@ -440,8 +460,12 @@ export default function MortgageList() {
                       setMortgageToDelete(item);
                       setDeleteDialogOpen(true);
                     }}
+                    onEditProperty={
+                      pid ? () => router.push(`/properties/${pid}?edit=1`) : undefined
+                    }
                   />
-                ))}
+                  );
+                })}
                 {(!data?.data || data.data.length === 0) && (
                   <Typography color="text.secondary" textAlign="center" py={4}>
                     אין נתונים להצגה

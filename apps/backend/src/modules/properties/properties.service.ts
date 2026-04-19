@@ -46,6 +46,8 @@ export class PropertiesService {
       balconyArea: dto.balconyArea ?? dto.balconySizeSqm,
       storageSizeSqm: dto.storageSizeSqm,
       floor: dto.floor,
+      roomCount: dto.roomCount,
+      apartmentNumber: dto.apartmentNumber,
       storage: dto.storage,
       plotSize: dto.plotSize,
       buildingPotential: dto.buildingPotential,

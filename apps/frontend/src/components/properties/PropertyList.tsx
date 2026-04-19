@@ -760,8 +760,9 @@ export default function PropertyList() {
       <Dialog
         open={openForm}
         onClose={handleCloseForm}
-        maxWidth="sm"
+        maxWidth="lg"
         fullWidth
+        fullScreen={isMobile}
       >
         <PropertyForm
           property={selectedProperty}

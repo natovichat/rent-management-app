@@ -27,11 +27,13 @@ export interface Property {
   helka?: string;
   isMortgaged?: boolean;
   investmentCompanyId?: string;
-  // Area & Dimensions
+  // מאפיינים פיזיים / שטחים
   floors?: number;
   totalUnits?: number;
   parkingSpaces?: number;
   balconyArea?: number;
+  roomCount?: number;
+  apartmentNumber?: string;
   // Financial
   purchasePrice?: number;
   purchaseDate?: string;
@@ -141,11 +143,13 @@ export interface CreatePropertyDto {
   helka?: string;
   isMortgaged?: boolean;
   investmentCompanyId?: string;
-  // Area & Dimensions
+  // מאפיינים פיזיים / שטחים
   floors?: number;
   totalUnits?: number;
   parkingSpaces?: number;
   balconyArea?: number;
+  roomCount?: number;
+  apartmentNumber?: string;
   // Financial
   purchasePrice?: number;
   purchaseDate?: string;

@@ -12,7 +12,8 @@ echo ""
 
 # Configuration
 FRONTEND_URL="https://rent-management-app-frontend.vercel.app"
-BACKEND_URL="https://rent-app-backend-6s337cqx6a-uc.a.run.app"
+# API base must include /api (matches Playwright smoke-tests fetch to ${BACKEND_URL}/properties)
+BACKEND_URL="https://rent-app-backend-33ifaayi2a-uc.a.run.app/api"
 TEST_DIR="apps/frontend/test/e2e/production"
 
 # Colors
@@ -51,7 +52,7 @@ else
 fi
 
 echo -e "${YELLOW}→${NC} Verifying production backend is accessible..."
-if curl -s -o /dev/null -w "%{http_code}" "$BACKEND_URL/health" | grep -q "200\|404"; then
+if curl -s -o /dev/null -w "%{http_code}" "${BACKEND_URL%/api}/api/auth/health" | grep -q "200"; then
   echo -e "${GREEN}✓${NC} Backend accessible"
 else
   echo -e "${RED}✗${NC} Backend not accessible at $BACKEND_URL"

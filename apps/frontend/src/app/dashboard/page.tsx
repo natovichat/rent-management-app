@@ -7,6 +7,7 @@ import {
   Chip,
   Container,
   Grid,
+  IconButton,
   Paper,
   Skeleton,
   Table,
@@ -15,6 +16,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -25,6 +27,7 @@ import {
   Groups as GroupsIcon,
   Home as HomeIcon,
   CreditCard as MortgageIcon,
+  Edit as EditIcon,
 } from '@mui/icons-material';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -257,12 +260,15 @@ export default function DashboardPage() {
                       <TableCell sx={{ textAlign: 'right' }}>כתובת</TableCell>
                       <TableCell sx={{ textAlign: 'right' }}>סוג</TableCell>
                       <TableCell sx={{ textAlign: 'right' }}>סטטוס</TableCell>
+                      <TableCell align="center" sx={{ width: 56 }}>
+                        עריכה
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {properties.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={3} sx={{ textAlign: 'center', py: 3 }}>
+                        <TableCell colSpan={4} sx={{ textAlign: 'center', py: 3 }}>
                           אין נכסים
                         </TableCell>
                       </TableRow>
@@ -279,6 +285,20 @@ export default function DashboardPage() {
                           </TableCell>
                           <TableCell sx={{ textAlign: 'right' }}>
                             {p.status ? PROPERTY_STATUS_LABELS[p.status] ?? p.status : '—'}
+                          </TableCell>
+                          <TableCell
+                            align="center"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Tooltip title="עריכת פרטי נכס">
+                              <IconButton
+                                size="small"
+                                aria-label="עריכת פרטי נכס"
+                                onClick={() => router.push(`/properties/${p.id}?edit=1`)}
+                              >
+                                <EditIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
                           </TableCell>
                         </TableRow>
                       ))

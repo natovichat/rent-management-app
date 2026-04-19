@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Box,
@@ -31,6 +32,7 @@ import Tooltip from '@mui/material/Tooltip';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import HomeIcon from '@mui/icons-material/Home';
 import RestoreIcon from '@mui/icons-material/RestoreFromTrash';
 import { rentalAgreementsApi, RentalAgreement, RentalAgreementStatus, RentalAgreementFilters } from '@/lib/api/leases';
 import { useShowDeleted } from '@/lib/hooks/useShowDeleted';
@@ -109,9 +111,10 @@ interface MobileLeaseCardProps {
   item: RentalAgreement;
   onEdit: () => void;
   onDelete: () => void;
+  onEditProperty?: () => void;
 }
 
-function MobileLeaseCard({ item, onEdit, onDelete }: MobileLeaseCardProps) {
+function MobileLeaseCard({ item, onEdit, onDelete, onEditProperty }: MobileLeaseCardProps) {
   return (
     <Card sx={{ mb: 1.5, borderRadius: 2 }} variant="outlined">
       <CardContent sx={{ pb: 0 }}>
@@ -137,6 +140,11 @@ function MobileLeaseCard({ item, onEdit, onDelete }: MobileLeaseCardProps) {
         </Stack>
       </CardContent>
       <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+        {onEditProperty && (
+          <IconButton size="small" onClick={onEditProperty} aria-label="עריכת נכס" color="primary">
+            <HomeIcon />
+          </IconButton>
+        )}
         <IconButton size="small" onClick={onEdit} aria-label="עריכה">
           <EditIcon />
         </IconButton>
@@ -152,6 +160,7 @@ function MobileLeaseCard({ item, onEdit, onDelete }: MobileLeaseCardProps) {
  * Component for displaying and managing the list of rental agreements (leases).
  */
 export default function LeaseList() {
+  const router = useRouter();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const queryClient = useQueryClient();
@@ -351,7 +360,7 @@ export default function LeaseList() {
       field: 'actions',
       type: 'actions',
       headerName: 'פעולות',
-      width: 150,
+      width: 200,
       align: 'left',
       headerAlign: 'left',
       getActions: (params) => {
@@ -367,6 +376,12 @@ export default function LeaseList() {
           ];
         }
         return [
+          <GridActionsCellItem
+            key="edit-property"
+            icon={<HomeIcon />}
+            label="עריכת נכס"
+            onClick={() => router.push(`/properties/${params.row.propertyId}?edit=1`)}
+          />,
           <GridActionsCellItem
             key="edit"
             icon={<EditIcon />}
@@ -468,6 +483,7 @@ export default function LeaseList() {
                   setLeaseToDelete(item);
                   setDeleteDialogOpen(true);
                 }}
+                onEditProperty={() => router.push(`/properties/${item.propertyId}?edit=1`)}
               />
                 ))}
                 {(!data?.data || data.data.length === 0) && (

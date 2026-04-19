@@ -194,10 +194,26 @@ export default function MortgageDetailsPage() {
                   <Typography variant="body2" color="text.secondary">
                     נכס
                   </Typography>
-                  <Typography variant="body1">
-                    {mortgage.property?.address || '-'}
-                    {mortgage.property?.fileNumber && ` (${mortgage.property.fileNumber})`}
-                  </Typography>
+                  <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="body1">
+                      {mortgage.property?.address || '-'}
+                      {mortgage.property?.fileNumber && ` (${mortgage.property.fileNumber})`}
+                    </Typography>
+                    {(mortgage.propertyId || mortgage.property?.id) && (
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        startIcon={<EditIcon />}
+                        onClick={() =>
+                          router.push(
+                            `/properties/${mortgage.propertyId ?? mortgage.property?.id}?edit=1`,
+                          )
+                        }
+                      >
+                        עריכת פרטי נכס
+                      </Button>
+                    )}
+                  </Box>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <Typography variant="body2" color="text.secondary">
